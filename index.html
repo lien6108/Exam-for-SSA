@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AWS SAA 模擬考試系統</title>
+  <meta name="description" content="AWS Solutions Architect Associate 線上模擬考試，65 題隨機抽題，滿分 1000 分，及格 700 分。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Start Screen -->
+    <section id="screen-start" class="screen active" aria-label="考試開始畫面">
+      <div class="start-hero">
+        <div class="start-badge">
+          <span class="badge-icon">☁️</span>
+          <span>AWS SAA-C03</span>
+        </div>
+        <h1 class="start-title">模擬考試系統</h1>
+        <p class="start-subtitle">Solutions Architect Associate</p>
+        <div class="start-meta">
+          <div class="meta-item">
+            <span class="meta-icon">📝</span>
+            <div>
+              <span class="meta-label">題目數量</span>
+              <span class="meta-value">65 題</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">⏱️</span>
+            <div>
+              <span class="meta-label">建議時間</span>
+              <span class="meta-value">130 分鐘</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">🎯</span>
+            <div>
+              <span class="meta-label">及格分數</span>
+              <span class="meta-value">700 / 1000</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📚</span>
+            <div>
+              <span class="meta-label">題庫數量</span>
+              <span id="bank-count" class="meta-value">載入中…</span>
+            </div>
+          </div>
+        </div>
+        <div id="start-error" class="error-banner hidden" role="alert"></div>
+        <button id="btn-start" class="btn-primary btn-large" disabled>
+          <span class="btn-icon">🚀</span>
+          <span>開始考試</span>
+        </button>
+        <div class="start-rules">
+          <h2 class="rules-title">考試規則</h2>
+          <ul class="rules-list">
+            <li>每次從題庫隨機抽取 65 題（題號越大，抽中機率越高）</li>
+            <li>單選題選擇一個答案，複選題需選擇所有正確答案</li>
+            <li>可標記題目並隨時切換上一題 / 下一題</li>
+            <li>全部作答完成後，進入答題列表確認後才可送出批改</li>
+            <li>送出後立即顯示成績與詳細解析</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Question Screen -->
+    <section id="screen-question" class="screen" aria-label="作答畫面">
+      <header class="exam-header">
+        <div class="exam-header-left">
+          <div class="exam-progress-info">
+            <span id="q-current" class="progress-current">1</span>
+            <span class="progress-sep">/</span>
+            <span id="q-total" class="progress-total">65</span>
+          </div>
+          <div class="exam-timer" id="exam-timer" aria-label="作答時間">00:00:00</div>
+        </div>
+        <div class="exam-header-right">
+          <button id="btn-review" class="btn-nav btn-review" aria-label="回到答題列表">
+            <span>📋 答題列表</span>
+          </button>
+          <div class="exam-progress-wrap">
+            <div class="exam-progress-bar-wrap">
+              <div id="exam-progress-bar" class="exam-progress-bar" style="width:0%"></div>
+            </div>
+            <span id="exam-answered-count" class="answered-count">0 / 65 已作答</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="question-main">
+        <div class="question-card" id="question-card">
+          <div class="question-top">
+            <div class="question-badges">
+              <span id="q-num-badge" class="q-num-badge">Q1</span>
+              <span id="q-type-badge" class="q-type-badge">單選題</span>
+              <span id="q-domain-badge" class="q-domain-badge">領域</span>
+            </div>
+            <button id="btn-mark" class="btn-mark" aria-pressed="false" title="標記此題">
+              <span class="mark-icon">🚩</span>
+              <span class="mark-text">標記</span>
+            </button>
+          </div>
+
+          <div class="question-body">
+            <p id="q-text" class="q-text"></p>
+          </div>
+
+          <fieldset class="options-fieldset" id="options-fieldset">
+            <legend class="sr-only">選項</legend>
+            <div id="options-container" class="options-container"></div>
+          </fieldset>
+        </div>
+      </main>
+
+      <nav class="question-nav" aria-label="題目導覽">
+        <button id="btn-prev" class="btn-nav btn-prev" aria-label="上一題">
+          <span>← 上一題</span>
+        </button>
+        <button id="btn-next" class="btn-nav btn-next" aria-label="下一題">
+          <span>下一題 →</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- Review Screen -->
+    <section id="screen-review" class="screen" aria-label="答題列表確認畫面">
+      <header class="review-header">
+        <h1 class="review-title">答題列表</h1>
+        <div class="review-summary-bar">
+          <span class="summary-item">
+            <span class="dot dot-answered"></span>
+            <span id="review-answered">0</span> 已作答
+          </span>
+          <span class="summary-item">
+            <span class="dot dot-unanswered"></span>
+            <span id="review-unanswered">0</span> 未作答
+          </span>
+          <span class="summary-item">
+            <span class="dot dot-marked"></span>
+            <span id="review-marked">0</span> 已標記
+          </span>
+        </div>
+      </header>
+
+      <div class="review-grid-wrap">
+        <div id="review-grid" class="review-grid" role="list" aria-label="所有題目狀態"></div>
+      </div>
+
+      <footer class="review-footer">
+        <button id="btn-back-exam" class="btn-secondary">← 繼續作答</button>
+        <button id="btn-submit" class="btn-danger" disabled>
+          <span>✔ 送出批改</span>
+        </button>
+      </footer>
+
+      <div id="submit-warning" class="submit-warning hidden" role="alert">
+        ⚠️ 尚有題目未作答，請完成所有題目後才能送出。
+      </div>
+    </section>
+
+    <!-- Result Screen -->
+    <section id="screen-result" class="screen" aria-label="考試結果畫面">
+      <div class="result-container">
+        <div class="result-hero" id="result-hero">
+          <div class="result-status-icon" id="result-icon">🏆</div>
+          <h1 id="result-status-text" class="result-status-text">恭喜通過！</h1>
+          <div class="result-score-ring">
+            <svg class="score-ring-svg" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-bg" cx="60" cy="60" r="52" />
+              <circle id="ring-progress" class="ring-progress" cx="60" cy="60" r="52" />
+            </svg>
+            <div class="score-ring-inner">
+              <span id="result-score" class="score-number">0</span>
+              <span class="score-max">/ 1000</span>
+            </div>
+          </div>
+          <div class="result-stats">
+            <div class="stat-card">
+              <span class="stat-label">作答時間</span>
+              <span id="stat-time" class="stat-value">--</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">正確題數</span>
+              <span id="stat-correct" class="stat-value">--</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">錯誤題數</span>
+              <span id="stat-wrong" class="stat-value">--</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-domains">
+          <h2 class="section-title">各領域正確率</h2>
+          <div id="domain-breakdown" class="domain-breakdown"></div>
+        </div>
+
+        <div class="result-wrong-list">
+          <h2 class="section-title">錯題列表</h2>
+          <div id="wrong-list" class="wrong-list"></div>
+        </div>
+
+        <button id="btn-restart" class="btn-primary btn-large restart-btn">
+          <span>🔄 再次挑戰</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
