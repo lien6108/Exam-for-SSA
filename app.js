@@ -2,19 +2,7 @@
 
 // ── 題庫檔案清單（相對路徑）────────────────────────────────────────
 const QUESTION_FILES = [
-  'AWS_SAA_前50題_繁中翻譯.md',
-  'AWS_SAA_第51到100題_繁中翻譯.md',
-  'AWS_SAA_第101到150題_繁中翻譯.md',
-  'AWS_SAA_第151到200題_繁中翻譯_跳過165_最新版.md',
-  'AWS_SAA_第200到250題_繁中翻譯.md',
-  'AWS_SAA_第251到300題_繁中翻譯.md',
-  'AWS_SAA_第301到350題_繁中翻譯.md',
-  'AWS_SAA_第351到400題_繁中翻譯.md',
-  'AWS_SAA_第401到450題_繁中翻譯.md',
-  'aws_451_500_zh.md',
-  'AWS_SAA_pages_501_600_zh.md',
-  'AWS_SAA_pages_601_700_zh.md',
-  'aws_saa_pages_701_800_zh.md',
+  'saa_003_zh-TW.md',
 ];
 
 const EXAM_SIZE   = 65;
