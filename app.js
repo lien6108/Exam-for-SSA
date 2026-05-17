@@ -114,8 +114,8 @@ function parseMarkdownQuestions(mdText) {
     const qMatch  = block.match(/\*\*題目\*\*\s*\n([\s\S]*?)(?=\*\*選項\*\*)/);
     // 選項
     const opMatch = block.match(/\*\*選項\*\*\s*\n([\s\S]*?)(?=\*\*答案\*\*)/);
-    // 答案
-    const anMatch = block.match(/\*\*答案\*\*\s*\n([A-Za-z]+)/);
+    // 答案（支援 "A"、"A,B" 與 "AB" 三種格式）
+    const anMatch = block.match(/\*\*答案\*\*\s*\n([A-Za-z,]+)/);
 
     if (!qMatch || !opMatch || !anMatch) return;
 
@@ -133,9 +133,9 @@ function parseMarkdownQuestions(mdText) {
 
     if (options.length < 2) return;
 
-    // 複選 or 單選
-    const answers = answerRaw.length === 1
-      ? [answerRaw]
+    // 複選 or 單選：逗號分隔 "A,B" 或連寫 "AB"
+    const answers = answerRaw.includes(',')
+      ? answerRaw.split(',').map(a => a.trim()).filter(a => /^[A-Z]$/.test(a))
       : answerRaw.split('').filter(c => /[A-Z]/.test(c));
 
     questions.push({ id, questionText, options, answers });
