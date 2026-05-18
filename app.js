@@ -157,7 +157,11 @@ function parseMarkdownQuestions(mdText) {
       ? answerRaw.split(',').map(a => a.trim()).filter(a => /^[A-Z]$/.test(a))
       : answerRaw.split('').filter(c => /[A-Z]/.test(c));
 
-    questions.push({ id, questionText, options, answers });
+    // 詳解（選填）
+    const exMatch = block.match(/\*\*詳解\*\*\s*\n([\s\S]*?)(?=^##|\Z)/m);
+    const explanation = exMatch ? exMatch[1].trim() : '';
+
+    questions.push({ id, questionText, options, answers, explanation });
   });
 
   return questions;
@@ -630,6 +634,21 @@ function renderResultPage(result) {
       item.appendChild(header);
       item.appendChild(qText);
       item.appendChild(answers);
+
+      if (q.explanation) {
+        const expEl = document.createElement('div');
+        expEl.className = 'explanation';
+        const expLabel = document.createElement('span');
+        expLabel.className = 'explanation-label';
+        expLabel.textContent = '詳解';
+        const expText = document.createElement('p');
+        expText.className = 'explanation-text';
+        expText.textContent = q.explanation;
+        expEl.appendChild(expLabel);
+        expEl.appendChild(expText);
+        item.appendChild(expEl);
+      }
+
       wrongEl.appendChild(item);
     });
   }
@@ -724,6 +743,10 @@ function renderQuizResult(correctCount, wrongItems) {
       : selected.map(k => { const o = q.options.find(x => x.key === k); return `${k}. ${o ? o.text : ''}`; }).join('　');
     const corrText = correct.map(k => { const o = q.options.find(x => x.key === k); return `${k}. ${o ? o.text : ''}`; }).join('　');
 
+    const expHtml = q.explanation
+      ? `<div class="explanation"><span class="explanation-label">詳解</span><p class="explanation-text">${q.explanation.replace(/</g, '&lt;')}</p></div>`
+      : '';
+
     item.innerHTML = `
       <div class="qri-header">
         <span class="qri-icon">${statusIcon}</span>
@@ -734,6 +757,7 @@ function renderQuizResult(correctCount, wrongItems) {
         <div class="qri-row"><span class="answer-label your">你的答案：</span><span class="answer-val">${yourText}</span></div>
         ${isCorrect ? '' : `<div class="qri-row"><span class="answer-label correct">正確答案：</span><span class="answer-val">${corrText}</span></div>`}
       </div>
+      ${expHtml}
     `;
     section.appendChild(item);
   });

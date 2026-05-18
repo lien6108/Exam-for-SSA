@@ -507,6 +507,30 @@ body {
 .qri-answers { display: flex; flex-direction: column; gap: .2rem; }
 .qri-row { display: flex; align-items: baseline; gap: .4rem; font-size: .875rem; flex-wrap: wrap; }
 
+/* ===== Explanation ===== */
+.explanation {
+  margin-top: .75rem;
+  padding: .75rem 1rem;
+  background: rgba(108,99,255,.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.explanation-label {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--accent2);
+  text-transform: uppercase;
+  margin-bottom: .35rem;
+}
+.explanation-text {
+  font-size: .875rem;
+  color: var(--text2);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
 /* ===== Animations ===== */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
