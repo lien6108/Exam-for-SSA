@@ -5,9 +5,28 @@ const QUESTION_FILES = [
   'saa_003_zh-TW.md',
 ];
 
-const EXAM_SIZE   = 65;
 const TOTAL_SCORE = 1000;
-const PASS_SCORE  = 700;
+
+const MODES = {
+  exam: {
+    size: 65,
+    timeLimit: null,
+    weighted: true,
+    hasReview: true,
+    hasMark: true,
+    passScore: 700,
+  },
+  quiz: {
+    size: 10,
+    timeLimit: 15 * 60,
+    weighted: false,
+    hasReview: false,
+    hasMark: false,
+    passScore: null,
+  },
+};
+
+let currentMode = 'exam';
 
 // ── 領域關鍵字規則 ────────────────────────────────────────────────
 const DOMAIN_RULES = [
@@ -197,20 +216,58 @@ function classifyDomain(question) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 6. startExam
+// 6. switchMode — 切換模式並更新首頁 meta
+// ═══════════════════════════════════════════════════════════════════
+function switchMode(mode) {
+  currentMode = mode;
+  const cfg = MODES[mode];
+
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    const isActive = btn.dataset.mode === mode;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+
+  $('meta-size').textContent = `${cfg.size} 題`;
+
+  if (cfg.timeLimit) {
+    $('meta-time-label').textContent = '限制時間';
+    $('meta-time').textContent = `${cfg.timeLimit / 60} 分鐘`;
+  } else {
+    $('meta-time-label').textContent = '建議時間';
+    $('meta-time').textContent = '130 分鐘';
+  }
+
+  $('meta-pass-item').style.display = cfg.passScore ? '' : 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 7. startExam
 // ═══════════════════════════════════════════════════════════════════
 function startExam() {
-  examQuestions = sampleWeightedQuestions(allQuestions, EXAM_SIZE);
-  // 依題號遞增排序方便閱讀
-  examQuestions.sort((a, b) => a.id - b.id);
+  const cfg = MODES[currentMode];
+
+  if (cfg.weighted) {
+    examQuestions = sampleWeightedQuestions(allQuestions, cfg.size);
+    examQuestions.sort((a, b) => a.id - b.id);
+  } else {
+    const pool = [...allQuestions];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    examQuestions = pool.slice(0, cfg.size);
+  }
+
   userAnswers  = {};
   markedSet    = new Set();
   currentIndex = 0;
   examElapsed  = 0;
   startTime    = Date.now();
 
-  // 預先分類領域
-  examQuestions.forEach(q => { q.domain = classifyDomain(q); });
+  if (cfg.weighted) {
+    examQuestions.forEach(q => { q.domain = classifyDomain(q); });
+  }
 
   showScreen('screen-question');
   renderQuestionPage(currentIndex);
@@ -230,18 +287,27 @@ function renderQuestionPage(idx) {
   $('q-total').textContent   = examQuestions.length;
   updateProgressBar();
 
+  const cfg = MODES[currentMode];
+
   // 徽章
   $('q-num-badge').textContent = `Q${q.id}`;
   const typeBadge = $('q-type-badge');
   typeBadge.textContent = isMulti ? '複選題' : '單選題';
   typeBadge.className = 'q-type-badge' + (isMulti ? ' multi' : '');
   $('q-domain-badge').textContent = q.domain ? q.domain.label.split('/')[0].trim() : '未分類';
+  $('q-domain-badge').style.display = cfg.weighted ? '' : 'none';
 
   // 標記
   const markBtn = $('btn-mark');
-  const isMarked = markedSet.has(idx);
-  markBtn.setAttribute('aria-pressed', isMarked);
-  markBtn.querySelector('.mark-text').textContent = isMarked ? '已標記' : '標記';
+  markBtn.style.display = cfg.hasMark ? '' : 'none';
+  if (cfg.hasMark) {
+    const isMarked = markedSet.has(idx);
+    markBtn.setAttribute('aria-pressed', isMarked);
+    markBtn.querySelector('.mark-text').textContent = isMarked ? '已標記' : '標記';
+  }
+
+  // 答題列表按鈕
+  $('btn-review').style.display = cfg.hasReview ? '' : 'none';
 
   // 題目文字（安全）
   $('q-text').textContent = q.questionText;
@@ -273,8 +339,18 @@ function renderQuestionPage(idx) {
   });
 
   // 導覽按鈕
+  const isLast = idx === examQuestions.length - 1;
   $('btn-prev').disabled = idx === 0;
-  $('btn-next').disabled = idx === examQuestions.length - 1;
+
+  if (!cfg.hasReview && isLast) {
+    $('btn-next').textContent = '送出批改 ✔';
+    $('btn-next').disabled = false;
+    $('btn-next').dataset.submitMode = 'true';
+  } else {
+    $('btn-next').textContent = '下一題 →';
+    $('btn-next').disabled = isLast;
+    delete $('btn-next').dataset.submitMode;
+  }
 }
 
 function handleOptionClick(idx, key, isMulti) {
@@ -403,9 +479,16 @@ function gradeExam() {
 // ═══════════════════════════════════════════════════════════════════
 function renderResultPage(result) {
   stopTimer();
+  const cfg = MODES[currentMode];
   const { score, correctCount, wrongItems, domainStats } = result;
-  const passed   = score >= PASS_SCORE;
   const wrongCnt = examQuestions.length - correctCount;
+
+  if (currentMode === 'quiz') {
+    renderQuizResult(correctCount, wrongItems);
+    return;
+  }
+
+  const passed = score >= cfg.passScore;
 
   // Hero
   const hero = $('result-hero');
@@ -419,7 +502,7 @@ function renderResultPage(result) {
   $('stat-wrong').textContent   = wrongCnt;
 
   // Score ring
-  const circ = 2 * Math.PI * 52; // ≈327
+  const circ = 2 * Math.PI * 52;
   const pct  = score / TOTAL_SCORE;
   const ring = $('ring-progress');
   ring.style.strokeDashoffset = circ * (1 - pct);
@@ -558,9 +641,28 @@ function renderResultPage(result) {
 function startTimer() {
   if (timerInterval) return;
   if (!startTime) startTime = Date.now();
+  const timeLimit = MODES[currentMode].timeLimit;
+  const timerEl = $('exam-timer');
+
   timerInterval = setInterval(() => {
     const elapsed = examElapsed + Math.floor((Date.now() - startTime) / 1000);
-    $('exam-timer').textContent = formatTime(elapsed);
+
+    if (timeLimit) {
+      const remaining = timeLimit - elapsed;
+      if (remaining <= 0) {
+        stopTimer();
+        const result = gradeExam();
+        renderResultPage(result);
+        return;
+      }
+      const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const ss = String(remaining % 60).padStart(2, '0');
+      timerEl.textContent = `${mm}:${ss}`;
+      timerEl.classList.toggle('timer-warning', remaining <= 60);
+    } else {
+      timerEl.textContent = formatTime(elapsed);
+      timerEl.classList.remove('timer-warning');
+    }
   }, 1000);
 }
 function stopTimer() {
@@ -575,6 +677,82 @@ function formatTime(s) {
   return `${h}:${m}:${sec}`;
 }
 
+// ── Quiz Result ───────────────────────────────────────────────────
+function renderQuizResult(correctCount, wrongItems) {
+  const resultContainer = document.querySelector('.result-container');
+
+  // 隱藏模擬考專用區塊
+  $('result-hero').style.display = 'none';
+  document.querySelector('.result-domains').style.display = 'none';
+  document.querySelector('.result-wrong-list').style.display = 'none';
+
+  // 移除舊的小考結果（避免重複）
+  const old = document.getElementById('quiz-result-section');
+  if (old) old.remove();
+
+  const section = document.createElement('div');
+  section.id = 'quiz-result-section';
+  section.className = 'quiz-result-section';
+
+  // 摘要
+  const summary = document.createElement('div');
+  summary.className = 'quiz-summary';
+  summary.innerHTML = `
+    <div class="quiz-summary-score">${correctCount} <span>/ ${examQuestions.length}</span></div>
+    <div class="quiz-summary-label">答對題數</div>
+    <div class="quiz-summary-time">作答時間 ${formatTime(examElapsed)}</div>
+  `;
+  section.appendChild(summary);
+
+  // 全題對錯清單
+  const listTitle = document.createElement('h2');
+  listTitle.className = 'section-title';
+  listTitle.textContent = '每題結果';
+  section.appendChild(listTitle);
+
+  examQuestions.forEach((q, i) => {
+    const selected = userAnswers[i] ? [...userAnswers[i]].sort() : [];
+    const correct  = [...q.answers].sort();
+    const isCorrect = selected.length === correct.length && correct.every(a => selected.includes(a));
+
+    const item = document.createElement('div');
+    item.className = `quiz-result-item ${isCorrect ? 'correct' : 'wrong'}`;
+
+    const statusIcon = isCorrect ? '✅' : '❌';
+    const yourText = selected.length === 0
+      ? '（未作答）'
+      : selected.map(k => { const o = q.options.find(x => x.key === k); return `${k}. ${o ? o.text : ''}`; }).join('　');
+    const corrText = correct.map(k => { const o = q.options.find(x => x.key === k); return `${k}. ${o ? o.text : ''}`; }).join('　');
+
+    item.innerHTML = `
+      <div class="qri-header">
+        <span class="qri-icon">${statusIcon}</span>
+        <span class="qri-num">Q${i + 1}</span>
+        <span class="qri-type">${q.answers.length >= 2 ? '複選' : '單選'}</span>
+      </div>
+      <div class="qri-answers">
+        <div class="qri-row"><span class="answer-label your">你的答案：</span><span class="answer-val">${yourText}</span></div>
+        ${isCorrect ? '' : `<div class="qri-row"><span class="answer-label correct">正確答案：</span><span class="answer-val">${corrText}</span></div>`}
+      </div>
+    `;
+    section.appendChild(item);
+  });
+
+  resultContainer.insertBefore(section, $('btn-restart'));
+  showScreen('screen-result');
+
+  // 再次挑戰後恢復模擬考專用區塊
+  $('btn-restart').onclick = () => {
+    $('result-hero').style.display = '';
+    document.querySelector('.result-domains').style.display = '';
+    document.querySelector('.result-wrong-list').style.display = '';
+    const s = document.getElementById('quiz-result-section');
+    if (s) s.remove();
+    stopTimer();
+    showScreen('screen-start');
+  };
+}
+
 // ── Screen helper ─────────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -586,10 +764,20 @@ function showScreen(id) {
 function wireEvents() {
   $('btn-start').addEventListener('click', startExam);
 
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+  });
+
   $('btn-prev').addEventListener('click', () => {
     if (currentIndex > 0) renderQuestionPage(currentIndex - 1);
   });
   $('btn-next').addEventListener('click', () => {
+    if ($('btn-next').dataset.submitMode) {
+      stopTimer();
+      const result = gradeExam();
+      renderResultPage(result);
+      return;
+    }
     if (currentIndex < examQuestions.length - 1) renderQuestionPage(currentIndex + 1);
   });
   $('btn-review').addEventListener('click', renderReviewPage);
@@ -620,8 +808,11 @@ function wireEvents() {
   });
 
   $('btn-restart').addEventListener('click', () => {
-    stopTimer();
-    showScreen('screen-start');
+    // 模擬考模式還原（小考模式的 btn-restart 由 renderQuizResult 覆寫 onclick）
+    if (currentMode !== 'quiz') {
+      stopTimer();
+      showScreen('screen-start');
+    }
   });
 }
 
