@@ -21,22 +21,34 @@
         </div>
         <h1 class="start-title">模擬考試系統</h1>
         <p class="start-subtitle">Solutions Architect Associate</p>
+
+        <div class="mode-switcher" role="tablist" aria-label="考試模式">
+          <button id="tab-exam" class="mode-tab active" role="tab" aria-selected="true" data-mode="exam">
+            <span class="mode-tab-icon">📝</span>
+            <span class="mode-tab-label">模擬考</span>
+          </button>
+          <button id="tab-quiz" class="mode-tab" role="tab" aria-selected="false" data-mode="quiz">
+            <span class="mode-tab-icon">⚡</span>
+            <span class="mode-tab-label">小考</span>
+          </button>
+        </div>
+
         <div class="start-meta">
           <div class="meta-item">
             <span class="meta-icon">📝</span>
             <div>
               <span class="meta-label">題目數量</span>
-              <span class="meta-value">65 題</span>
+              <span id="meta-size" class="meta-value">65 題</span>
             </div>
           </div>
           <div class="meta-item">
             <span class="meta-icon">⏱️</span>
             <div>
-              <span class="meta-label">建議時間</span>
-              <span class="meta-value">130 分鐘</span>
+              <span class="meta-label" id="meta-time-label">建議時間</span>
+              <span id="meta-time" class="meta-value">130 分鐘</span>
             </div>
           </div>
-          <div class="meta-item">
+          <div id="meta-pass-item" class="meta-item">
             <span class="meta-icon">🎯</span>
             <div>
               <span class="meta-label">及格分數</span>

@@ -1,0 +1,6 @@
+name = "exam-for-saa"
+compatibility_date = "2025-05-21"
+
+[assets]
+directory = "./"
+not_found_handling = "single-page-application"
