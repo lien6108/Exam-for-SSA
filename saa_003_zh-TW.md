@@ -3341,7 +3341,7 @@ D
 - A. 將月報遷移到Amazon Redshift。
 - B. 將月報移到Aurora複製品公司
 - C. 將Aurora 資料庫(database)號移動到更大的例項類.
-- D. 增加關於奧羅拉事件的IOPS。
+- D. 增加關於Aurora事件的IOPS。
 
 **答案**
 B
@@ -3353,7 +3353,7 @@ B
 - 其餘選項比較：
 - A：將月報遷移到Amazon Redshift。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將Aurora 資料庫(database)號移動到更大的例項類。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：增加關於奧羅拉事件的IOPS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：增加關於Aurora事件的IOPS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #145
 
@@ -3640,7 +3640,7 @@ A,C
 ## Question #157
 
 **題目**
-一家公司將資料儲存在Amazon Aurora PostgreSQL DB叢集中. 公司必須儲存5年的所有資料,5年後必須刪除所有資料. 該公司還必須無限期地保留稽核(audit)在資料庫(database)範圍內執行的行動記錄。 目前,該公司已經為奧羅拉配置了自動備份. 設計師應採取哪些步驟來滿足這些要求?(選二.
+一家公司將資料儲存在Amazon Aurora PostgreSQL DB叢集中. 公司必須儲存5年的所有資料,5年後必須刪除所有資料. 該公司還必須無限期地保留稽核(audit)在資料庫(database)範圍內執行的行動記錄。 目前,該公司已經為Aurora配置了自動備份. 設計師應採取哪些步驟來滿足這些要求?(選二.
 
 **選項**
 - A. 使用DB叢集的手動快照(snapshot).
@@ -7830,10 +7830,10 @@ C
 一個公司託管一個多級網路應用程式,使用Amazon Aurora MySQL DB叢集進行儲存. 應用程式級別以 Amazon EC2 為主機。 該公司的IT安全準則規定,資料庫(database)憑證應加密,每14天輪換一次。 一個解決方案設計師應該如何透過 " LEAST " 業務努力滿足這一要求?
 
 **選項**
-- A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與奧羅拉DB叢集聯絡起來. 配置自定義旋轉期14天.
+- A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天.
 - B. 在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼.
-- C. 在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在奧羅拉旋轉一次金鑰,並將新的憑證寫入檔案.
-- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次奧羅拉憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
+- C. 在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
+- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
 
 **答案**
 A
@@ -7841,11 +7841,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與奧羅拉DB叢集聯絡起來. 配置自定義旋轉期14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在奧羅拉旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次奧羅拉憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #337
 
@@ -7853,7 +7853,7 @@ A
 一個連在AWS上部署了一個網路應用程式. 公司在Amazon RDS上為MySQL託管後端資料庫(database),並設有初級DB例項和5個讀取複製件,以支援縮放需求. 讀取的複製件必須落後於初級DB例項不超過1秒. 資料庫(database)定期執行預定儲存的程式。 隨著網站流量的增加,複製品在高峰負荷期出現更多滯後. 一個解決方案架構師必須儘可能減少複寫(replication)的滯後. 解決方案架構師必須儘量減少對應用程式碼的修改,必須儘量減少正在進行的營運開銷(operational overhead). 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 將資料庫(database)移動到Amazon Aurora MySQL. 將讀取的複製品替換為奧羅拉複製品,並配置奧羅拉自動縮放. 將儲存的程式替換為 Aurora MySQL 本地函式。
+- A. 將資料庫(database)移動到Amazon Aurora MySQL. 將讀取的複製品替換為Aurora複製品,並配置Aurora自動縮放. 將儲存的程式替換為 Aurora MySQL 本地函式。
 - B. 在資料庫(database)前為Redis叢集部署一個Amazon ElastiCache。 修改應用程式,以便在應用程式詢問資料庫(database)之前檢查快取. 用 AWS Lambda 函式替換儲存程式.
 - C. 將 資料庫(database) 移動到執行於 Amazon EC2 例項的 MySQL 資料庫(database)。 為所有複製節點選擇大,計算最佳化的EC2例項. 維持EC2例項的儲存程式。
 - D. 將資料庫(database)型機車遷移到Amazon DynamoDB型機車. 提供大量閱讀容量單位,支援所需的吞吐量(throughput),並配置按需容量縮放. 將儲存的程式替換為 DynamoDB 流。
@@ -7864,7 +7864,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將資料庫(database)移動到Amazon Aurora MySQL. 將讀取的複製品替換為奧羅拉複製品,並配置奧羅拉自動縮放. 將儲存的程式替換為 Aurora MySQL 本地函式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：將資料庫(database)移動到Amazon Aurora MySQL. 將讀取的複製品替換為Aurora複製品,並配置Aurora自動縮放. 將儲存的程式替換為 Aurora MySQL 本地函式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在資料庫(database)前為Redis叢集部署一個Amazon ElastiCache。 修改應用程式,以便在應用程式詢問資料庫(database)之前檢查快取. 用 AWS Lambda 函式替換儲存程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將 資料庫(database) 移動到執行於 Amazon EC2 例項的 MySQL 資料庫(database)。 為所有複製節點選擇大,計算最佳化的EC2例項. 維持EC2例項的儲存程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -8881,7 +8881,7 @@ A
 
 **選項**
 - A. 設定新的亞馬遜文件DB(與MongoDB相容)叢集,包含一個讀的複製品. 縮放讀取的複製件生成報告。
-- B. 設定一個新的Amazon Aurora PostgreSQL DB叢集,其中包括一個Aurora複製品. 向奧羅拉複製公司提出詢問,以生成報告。
+- B. 設定一個新的Amazon Aurora PostgreSQL DB叢集,其中包括一個Aurora複製品. 向Aurora複製公司提出詢問,以生成報告。
 - C. 為 PostgreSQL 多AZ DB 例項設定新的 Amazon RDS。 配置報告模組,查詢二級RDS節點,使報告模組不影響主節點.
 - D. 設定一個新的 Amazon DynamoDB 表格來儲存文件. 使用固定的寫能力支援新文件條目. 自動縮放支援報告的讀取能力。
 
@@ -8894,7 +8894,7 @@ D
 - D：設定一個新的 Amazon DynamoDB 表格來儲存文件. 使用固定的寫能力支援新文件條目. 自動縮放支援報告的讀取能力。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：設定新的亞馬遜文件DB(與MongoDB相容)叢集,包含一個讀的複製品. 縮放讀取的複製件生成報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：設定一個新的Amazon Aurora PostgreSQL DB叢集,其中包括一個Aurora複製品. 向奧羅拉複製公司提出詢問,以生成報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：設定一個新的Amazon Aurora PostgreSQL DB叢集,其中包括一個Aurora複製品. 向Aurora複製公司提出詢問,以生成報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：為 PostgreSQL 多AZ DB 例項設定新的 Amazon RDS。 配置報告模組,查詢二級RDS節點,使報告模組不影響主節點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #382
@@ -10261,11 +10261,11 @@ A
 一家公司在應用測試時使用Amazon RDS用於MySQL DB例項. 在測試周期結束時終止 DB 例項之前,一個解決方案架構師建立了兩個備份. 解決方案架構師利用 Mysqldump 工具建立了第一個 資料庫(database) 垃圾堆。 解決方案架構師透過啟用最終的DB 快照(snapshot) RDS終止選項,創造了第二個備份(backup). 該公司目前正在計劃一個新的測試周期,希望從最近的備份(backup)中建立一個新的DB例項. 該公司選擇了相容MySQL的Amazon Aurora版本,以託管DB例項. 哪些解決方案將建立新的 DB 例項 ?(選二.
 
 **選項**
-- A. 將RDS 快照(snapshot)直接匯入奧羅拉.
-- B. 上傳RDS 快照(snapshot)至Amazon S3. 然後將RDS 快照(snapshot)匯入到奧羅拉.
-- C. 上傳資料庫(database)垃圾場至Amazon S3. 然後將資料庫(database)垃圾箱匯入奧羅拉.
+- A. 將RDS 快照(snapshot)直接匯入Aurora.
+- B. 上傳RDS 快照(snapshot)至Amazon S3. 然後將RDS 快照(snapshot)匯入到Aurora.
+- C. 上傳資料庫(database)垃圾場至Amazon S3. 然後將資料庫(database)垃圾箱匯入Aurora.
 - D. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)將 RDS 快照(snapshot) 匯入 Aurora.
-- E. 上傳資料庫(database)垃圾場至Amazon S3. 然後使用 AWS 資料庫(Database) 遷移服務(AWS DS)將 資料庫(database) 垃圾堆匯入奧羅拉.
+- E. 上傳資料庫(database)垃圾場至Amazon S3. 然後使用 AWS 資料庫(Database) 遷移服務(AWS DS)將 資料庫(database) 垃圾堆匯入Aurora.
 
 **答案**
 A,D
@@ -10274,12 +10274,12 @@ A,D
 
 **詳解**
 正確答案是 **A, D**。
-- A：將RDS 快照(snapshot)直接匯入奧羅拉。此選項符合題目條件，能有效滿足核心需求。
+- A：將RDS 快照(snapshot)直接匯入Aurora。此選項符合題目條件，能有效滿足核心需求。
 - D：使用 AWS 資料庫(Database) 遷移服務(AWS DS)將 RDS 快照(snapshot) 匯入 Aurora。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- B：上傳RDS 快照(snapshot)至Amazon S3. 然後將RDS 快照(snapshot)匯入到奧羅拉。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：上傳資料庫(database)垃圾場至Amazon S3. 然後將資料庫(database)垃圾箱匯入奧羅拉。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：上傳資料庫(database)垃圾場至Amazon S3. 然後使用 AWS 資料庫(Database) 遷移服務(AWS DS)將 資料庫(database) 垃圾堆匯入奧羅拉。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：上傳RDS 快照(snapshot)至Amazon S3. 然後將RDS 快照(snapshot)匯入到Aurora。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：上傳資料庫(database)垃圾場至Amazon S3. 然後將資料庫(database)垃圾箱匯入Aurora。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：上傳資料庫(database)垃圾場至Amazon S3. 然後使用 AWS 資料庫(Database) 遷移服務(AWS DS)將 資料庫(database) 垃圾堆匯入Aurora。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #441
 
@@ -16664,7 +16664,7 @@ A
 一家電子商務公司在AWS上執行其應用程式. 該應用程式為基礎資料庫(database)使用多AZ模式的Amazon Aurora PostgreSQL叢集. 在最近的一次宣傳活動中,應用程式經歷了沉重的閱讀負荷和書寫負荷。 使用者試圖存取應用程式時遇到超時問題。 一個解決方案架構師需要使應用架構更加可擴充套件,並且可以高度可用. LEAST故障時間將滿足這些要求的哪一個解決方案?
 
 **選項**
-- A. 建立一個以Aurora叢集為源的Amazon EventBridge規則. 建立一個 AWS Lambda 函式來記錄奧羅拉叢集的狀態變化事件. 新增 Lambda 函式作為 EventBridge 規則的目標. 新增額外的讀取節點以失敗到。
+- A. 建立一個以Aurora叢集為源的Amazon EventBridge規則. 建立一個 AWS Lambda 函式來記錄Aurora叢集的狀態變化事件. 新增 Lambda 函式作為 EventBridge 規則的目標. 新增額外的讀取節點以失敗到。
 - B. 修改 Aurora 叢集並啟用零下時重啟(ZDR)特性. 使用資料庫(Database)活動流在叢集上跟蹤叢集狀態.
 - C. 在 Aurora 叢集中新增額外的讀取例項。 為Aurora叢集建立一個Amazon RDS代理目標組.
 - D. 為 Redis 快取建立 Amazon ElastiCache。 透過使用AWS 資料庫(Database) 遷移服務(AWS DS),採用迴轉方式將Aurora叢集的資料複製到Redis.
@@ -16677,7 +16677,7 @@ B
 正確答案是 **B**。
 - B：修改 Aurora 叢集並啟用零下時重啟(ZDR)特性. 使用資料庫(Database)活動流在叢集上跟蹤叢集狀態。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立一個以Aurora叢集為源的Amazon EventBridge規則. 建立一個 AWS Lambda 函式來記錄奧羅拉叢集的狀態變化事件. 新增 Lambda 函式作為 EventBridge 規則的目標. 新增額外的讀取節點以失敗到 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立一個以Aurora叢集為源的Amazon EventBridge規則. 建立一個 AWS Lambda 函式來記錄Aurora叢集的狀態變化事件. 新增 Lambda 函式作為 EventBridge 規則的目標. 新增額外的讀取節點以失敗到 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在 Aurora 叢集中新增額外的讀取例項。 為Aurora叢集建立一個Amazon RDS代理目標組。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：為 Redis 快取建立 Amazon ElastiCache。 透過使用AWS 資料庫(Database) 遷移服務(AWS DS),採用迴轉方式將Aurora叢集的資料複製到Redis。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -17682,13 +17682,13 @@ C
 ## Question #755
 
 **題目**
-一公司的資料平臺使用Amazon Aurora MySQL 資料庫(database). 資料庫(database)有多個讀取複製品,多個DB例項跨越不同的可用區(Availability Zones). 使用者最近報告了資料庫(database)的錯誤,顯示連線過多. 公司希望當閱讀複製品晉升為主編時,將故障時間縮短20%. 哪種解決辦法能滿足這一要求?
+一公司的資料平臺使用Amazon Aurora MySQL 資料庫(database). 資料庫(database)有多個讀取複製品,多個DB例項跨越不同的可用區(Availability Zones). 使用者最近報告了資料庫(database)的錯誤,顯示連線過多. 公司希望當讀取副本晉升為主要節點時,將故障時間縮短20%. 哪種解決辦法能滿足這一要求?
 
 **選項**
-- A. 透過多AZ叢集部署從奧羅拉切換到Amazon RDS.
-- B. 在Aurora 資料庫(database)號機前使用Amazon RDS代機.
-- C. 與DynamoDB加速器(DAX)切換到Amazon DynamoDB,用於讀取連線.
-- D. 換乘具有遷移能力的Amazon Redshift.
+- A. 透過多AZ叢集部署從Aurora切換到Amazon RDS.
+- B. 在Aurora 資料庫執行個體前方使用 Amazon RDS Proxy.
+- C. 切換至 Amazon DynamoDB，並搭配 DynamoDB Accelerator (DAX) 用於讀取連線.
+- D. 遷移至 Amazon Redshift.
 
 **答案**
 A
@@ -17696,11 +17696,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：透過多AZ叢集部署從奧羅拉切換到Amazon RDS。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：透過多AZ叢集部署從Aurora切換到Amazon RDS。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：在Aurora 資料庫(database)號機前使用Amazon RDS代機。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：與DynamoDB加速器(DAX)切換到Amazon DynamoDB,用於讀取連線。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：換乘具有遷移能力的Amazon Redshift。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在Aurora 資料庫執行個體前方使用 Amazon RDS Proxy。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：切換至 Amazon DynamoDB，並搭配 DynamoDB Accelerator (DAX) 用於讀取連線。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：遷移至 Amazon Redshift。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #756
 
@@ -19905,7 +19905,7 @@ B
 一個大公司希望提供其位於全球的開發商為開發目的單獨,有限規模,管理的PostgreSQL資料庫. 資料庫的容量將很低。 開發者只有在積極工作時才需要資料庫. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 賦予開發人員單獨發射Amazon Aurora例項的能力. 設定一個程序,在工作日結束時關閉奧羅拉例項,並在下一個工作日開始時啟動奧羅拉例項.
+- A. 賦予開發人員單獨發射Amazon Aurora例項的能力. 設定一個程序,在工作日結束時關閉Aurora例項,並在下一個工作日開始時啟動Aurora例項.
 - B. 開發一個AWS Service Catalog產品,用於執行發射Amazon Aurora例項的尺寸限制. 當開發者需要開發資料庫(database)時,給予他們啟動產品的機會.
 - C. 建立 Amazon Aurora 無伺服器叢集。 開發一個 AWS Service Catalog 產品,在叢集中啟動帶有預設容量設定的資料庫. 允許開發者存取產品.
 - D. 監視AWS信任的顧問檢查閒置的Amazon RDS資料庫. 建立終止已識別閒置的 RDS 資料庫的程序。
@@ -19918,7 +19918,7 @@ C
 正確答案是 **C**。
 - C：建立 Amazon Aurora 無伺服器叢集。 開發一個 AWS Service Catalog 產品,在叢集中啟動帶有預設容量設定的資料庫. 允許開發者存取產品。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：賦予開發人員單獨發射Amazon Aurora例項的能力. 設定一個程序,在工作日結束時關閉奧羅拉例項,並在下一個工作日開始時啟動奧羅拉例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：賦予開發人員單獨發射Amazon Aurora例項的能力. 設定一個程序,在工作日結束時關閉Aurora例項,並在下一個工作日開始時啟動Aurora例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：開發一個AWS Service Catalog產品,用於執行發射Amazon Aurora例項的尺寸限制. 當開發者需要開發資料庫(database)時,給予他們啟動產品的機會。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：監視AWS信任的顧問檢查閒置的Amazon RDS資料庫. 建立終止已識別閒置的 RDS 資料庫的程序 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -22137,7 +22137,7 @@ C
 ## Question #946
 
 **題目**
-一家公司在Amazon Aurora MySQL DB叢集(包括六個Aurora複製品)上進行生產。 公司希望其一個部門的近實時報告查詢自動分佈在奧羅拉複製品的3個部門. 這三個複製品的計算和記憶體規格與DB叢集的其餘部分不同. 哪種解決辦法符合這些要求?
+一家公司在Amazon Aurora MySQL DB叢集(包括六個Aurora複製品)上進行生產。 公司希望其一個部門的近實時報告查詢自動分佈在Aurora複製品的3個部門. 這三個複製品的計算和記憶體規格與DB叢集的其餘部分不同. 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 建立和使用自定義的工作量終點
@@ -23260,10 +23260,10 @@ C
 一個公司託管一個多級網路應用程式,使用Amazon Aurora MySQL DB叢集進行儲存. 應用程式級別以 Amazon EC2 為主機。 該公司的IT安全準則授權資料庫(database)憑證加密,每14天輪換一次. 一個解決方案設計師應該如何透過 " LEAST " 業務努力滿足這一要求?
 
 **選項**
-- A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與奧羅拉DB叢集聯絡起來. 配置自定義旋轉期14天.
+- A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天.
 - B. 在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼.
-- C. 在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在奧羅拉旋轉一次金鑰,並將新的憑證寫入檔案.
-- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次奧羅拉憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
+- C. 在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
+- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
 
 **答案**
 A
@@ -23271,11 +23271,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與奧羅拉DB叢集聯絡起來. 配置自定義旋轉期14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在奧羅拉旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次奧羅拉憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #995
 
