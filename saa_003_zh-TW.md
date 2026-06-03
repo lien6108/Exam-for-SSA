@@ -7,7 +7,7 @@
 - A. 開啟目的地S3 儲存桶(S3 bucket)的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 儲存桶(S3 bucket).
 - B. 在最接近的區域(Region)中將每個站點的資料上傳到一個S3 儲存桶(S3 bucket). 使用 S3 Cross-Region Replication 複製物件到目的地 S3 儲存桶(S3 bucket). 然後從來源S3 儲存桶(S3 bucket)中移除資料.
 - C. 每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 儲存桶(S3 bucket).
-- D. 在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積.
+- D. 在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積.
 
 **答案**
 A
@@ -19,7 +19,7 @@ A
 - 其餘選項比較：
 - B：在最接近的區域(Region)中將每個站點的資料上傳到一個S3 儲存桶(S3 bucket). 使用 S3 Cross-Region Replication 複製物件到目的地 S3 儲存桶(S3 bucket). 然後從來源S3 儲存桶(S3 bucket)中移除資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 儲存桶(S3 bucket)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #2
 
@@ -145,7 +145,7 @@ B
 - A. 將訊息儲存到 Amazon Kinesis Data Analytics。 配置消費者應用程式來讀取和處理訊息。
 - B. 在Auto Scaling 群組(Auto Scaling group)中應用對 Amazon EC2 例項的攝入應用,以基於CPU 度量衡的EC2例項數量為尺度.
 - C. 將訊息寫入 Amazon Kinesis Data Streams , 並使用單個分片。 使用 AWS Lambda 函式來預處理訊息,並將其儲存在 Amazon DynamoDB 中. 配置消費者應用程式從DynamoDB讀取處理訊息.
-- D. 將訊息釋出到一個亞馬遜簡易通知服務(Amazon SNS)主題上,並有多個亞馬遜簡易佇列服務(Amazon SQS)訂閱. 配置消費者應用程式處理佇列中的資訊。
+- D. 將訊息釋出到一個Amazon Simple Notification Service (Amazon SNS)主題上,並有多個Amazon Simple Queue Service (Amazon SQS)訂閱. 配置消費者應用程式處理佇列中的資訊。
 
 **答案**
 D
@@ -153,7 +153,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將訊息釋出到一個亞馬遜簡易通知服務(Amazon SNS)主題上,並有多個亞馬遜簡易佇列服務(Amazon SQS)訂閱. 配置消費者應用程式處理佇列中的資訊。**SNS + SQS Fan-out 模式** 是解耦多個消費者的標準 AWS 架構。SNS 主題將訊息廣播給所有訂閱的 SQS 佇列，各消費應用程式獨立地從自己的佇列讀取訊息，實現解耦並可分別擴展。SQS 佇列提供緩衝，處理每秒 10 萬訊息的突發流量。
+- D：將訊息釋出到一個Amazon Simple Notification Service (Amazon SNS)主題上,並有多個Amazon Simple Queue Service (Amazon SQS)訂閱. 配置消費者應用程式處理佇列中的資訊。**SNS + SQS Fan-out 模式** 是解耦多個消費者的標準 AWS 架構。SNS 主題將訊息廣播給所有訂閱的 SQS 佇列，各消費應用程式獨立地從自己的佇列讀取訊息，實現解耦並可分別擴展。SQS 佇列提供緩衝，處理每秒 10 萬訊息的突發流量。
 - 其餘選項比較：
 - A：將訊息儲存到 Amazon Kinesis Data Analytics。 配置消費者應用程式來讀取和處理訊息。Kinesis Data Analytics 是用於對串流資料執行 SQL 分析的服務，並非用於訊息解耦與分發給多個消費者，不適合此架構需求。
 - B：在Auto Scaling 群組(Auto Scaling group)中應用對 Amazon EC2 例項的攝入應用,以基於CPU 度量衡的EC2例項數量為尺度。使用 CPU 指標縮放不能解決解耦的問題，且不能有效處理突發的高峰訊息量，維運複雜度也較高。
@@ -211,8 +211,8 @@ B
 一家公司正在AWS上建立一個電子商務網路應用程式。 應用程式向Amazon API Gateway REST API傳送有關新訂單的資訊進行處理. 公司希望確保訂單按收到順序處理. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用API閘道器整合,在應用程式收到訂單時向一個亞馬遜簡易通知服務(Amazon SNS)主題釋出訊息. 將 AWS Lambda 功能訂閱給主題進行處理.
-- B. 使用API Gateway整合,在應用程式收到訂單時向一個亞馬遜簡易佇列服務(Amazon SQS)FIFO佇列傳送訊息. 配置 SQS FIFO 佇列以觸發 AWS Lambda 函式進行處理.
+- A. 使用API閘道器整合,在應用程式收到訂單時向一個Amazon Simple Notification Service (Amazon SNS)主題釋出訊息. 將 AWS Lambda 功能訂閱給主題進行處理.
+- B. 使用API Gateway整合,在應用程式收到訂單時向一個Amazon Simple Queue Service (Amazon SQS)FIFO佇列傳送訊息. 配置 SQS FIFO 佇列以觸發 AWS Lambda 函式進行處理.
 - C. 使用 API 閘道器授權器在應用程式處理訂單時遮蔽任何請求。
 - D. 使用 API Gateway 整合，在應用程式收到訂單時向 Amazon 簡單佇列服務(Amazon SQS) 標準佇列傳送訊息. 配置 SQS 標準佇列以觸發 AWS Lambda 函式進行處理.
 
@@ -222,9 +222,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用API Gateway整合,在應用程式收到訂單時向一個亞馬遜簡易佇列服務(Amazon SQS)FIFO佇列傳送訊息. 配置 SQS FIFO 佇列以觸發 AWS Lambda 函式進行處理。**SQS FIFO（First-In-First-Out）佇列保證訊息嚴格按照傳送順序被處理**，完全滿足「按收到順序處理訂單」的需求。FIFO 佇列也提供「恰好一次」（Exactly-Once）的訊息投遞，防止重複處理。
+- B：使用API Gateway整合,在應用程式收到訂單時向一個Amazon Simple Queue Service (Amazon SQS)FIFO佇列傳送訊息. 配置 SQS FIFO 佇列以觸發 AWS Lambda 函式進行處理。**SQS FIFO（First-In-First-Out）佇列保證訊息嚴格按照傳送順序被處理**，完全滿足「按收到順序處理訂單」的需求。FIFO 佇列也提供「恰好一次」（Exactly-Once）的訊息投遞，防止重複處理。
 - 其餘選項比較：
-- A：使用API閘道器整合,在應用程式收到訂單時向一個亞馬遜簡易通知服務(Amazon SNS)主題釋出訊息. 將 AWS Lambda 功能訂閱給主題進行處理。**SNS 不保證訊息順序**，訂閱 SNS 的多個 Lambda 函式可能以任意順序收到並處理訊息，無法滿足按序處理訂單的需求。
+- A：使用API閘道器整合,在應用程式收到訂單時向一個Amazon Simple Notification Service (Amazon SNS)主題釋出訊息. 將 AWS Lambda 功能訂閱給主題進行處理。**SNS 不保證訊息順序**，訂閱 SNS 的多個 Lambda 函式可能以任意順序收到並處理訊息，無法滿足按序處理訂單的需求。
 - C：使用 API 閘道器授權器在應用程式處理訂單時遮蔽任何請求 。API Gateway 授權器是用於驗證請求身份的，不能控制訊息處理順序，此選項完全不相關。
 - D：使用 API Gateway 整合，在應用程式收到訂單時向 Amazon 簡單佇列服務(Amazon SQS) 標準佇列傳送訊息. 配置 SQS 標準佇列以觸發 AWS Lambda 函式進行處理。**SQS Standard 標準佇列僅提供「盡力而為」的順序**，不保證嚴格的 FIFO 順序，無法確保訂單按收到順序處理。
 
@@ -237,7 +237,7 @@ B
 - A. 使用AWS Secrets Manager. 開啟自動輪換。
 - B. 使用 AWS Systems Manager 引數儲存器. 開啟自動輪換。
 - C. 建立 Amazon S3 桶以儲存用 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵加密的物件. 將憑證檔案移到 S3 儲存桶(S3 bucket). 將應用程式指向S3 儲存桶(S3 bucket).
-- D. 為每個EC2例項建立加密的亞馬遜彈性塊儲存器(Amazon EBS)磁碟區. 將新的 EBS 磁碟區附加到每個EC2 例項中。 將憑證檔案移到新的EBS 磁碟區中. 將應用程式指向新的 EBS 磁碟區。
+- D. 為每個EC2例項建立加密的Amazon Elastic Block Store (Amazon EBS)磁碟區. 將新的 EBS 磁碟區附加到每個EC2 例項中。 將憑證檔案移到新的EBS 磁碟區中. 將應用程式指向新的 EBS 磁碟區。
 
 **答案**
 A
@@ -249,7 +249,7 @@ A
 - 其餘選項比較：
 - B：使用 AWS Systems Manager 引數儲存器. 開啟自動輪換。**SSM Parameter Store 並不支援 RDS/Aurora 的原生自動輪換功能**，若要實現輪換需要自行撰寫 Lambda 函式來更新參數值並通知資料庫，維運複雜度遠高於 Secrets Manager。
 - C：建立 Amazon S3 桶以儲存用 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵加密的物件. 將憑證檔案移到 S3 儲存桶(S3 bucket). 將應用程式指向S3 儲存桶(S3 bucket)。將憑證存入 S3 需要應用程式修改，且沒有內建的輪換機制，需要自行管理輪換流程，維運複雜度高。
-- D：為每個EC2例項建立加密的亞馬遜彈性塊儲存器(Amazon EBS)磁碟區. 將新的 EBS 磁碟區附加到每個EC2 例項中。 將憑證檔案移到新的EBS 磁碟區中. 將應用程式指向新的 EBS 磁碟區 。EBS 是區塊儲存設備，完全不提供任何憑證管理或輪換功能，此方案徒增複雜度而不解決問題。
+- D：為每個EC2例項建立加密的Amazon Elastic Block Store (Amazon EBS)磁碟區. 將新的 EBS 磁碟區附加到每個EC2 例項中。 將憑證檔案移到新的EBS 磁碟區中. 將應用程式指向新的 EBS 磁碟區 。EBS 是區塊儲存設備，完全不提供任何憑證管理或輪換功能，此方案徒增複雜度而不解決問題。
 
 ## Question #12
 
@@ -441,7 +441,7 @@ D
 ## Question #20
 
 **題目**
-一家公司希望提高自己的能力,把大量生產資料複製到同一個AWS 區域(Region)的試驗環境中. 資料以Amazon EC2 執行個體儲存在亞馬遜彈性塊儲存(Amazon EBS 磁碟區上. 克隆資料的修改不得影響生產環境. 存取此資料的軟體需要持續高的I/O效能. 一個解決方案架構師需要儘可能縮短將生產資料複製到測試環境中所需的時間. 哪種解決辦法能滿足這些要求?
+一家公司希望提高自己的能力,把大量生產資料複製到同一個AWS 區域(Region)的試驗環境中. 資料以Amazon EC2 執行個體儲存在Amazon Elastic Block Store(Amazon EBS 磁碟區上. 克隆資料的修改不得影響生產環境. 存取此資料的軟體需要持續高的I/O效能. 一個解決方案架構師需要儘可能縮短將生產資料複製到測試環境中所需的時間. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立 EBS 生產磁碟區的快照. 在測試環境中將快照恢復到EC2例項儲存量。
@@ -561,7 +561,7 @@ B
 **選項**
 - A. 將 Lambda 函式程式碼重置為執行於 Amazon EC2 例項上的 Apache Tomcat 程式碼。 透過使用本地Java 資料庫(Database) 連線資料庫(database)的驅動程式(JDBC)連線.
 - B. 將平臺從 Aurora 改為Amazon DynamoDB 提供DynamoDB加速器(DAX)叢集. 使用DAX客戶端SDK將現有的DynamoDB API呼叫指向DAX叢集.
-- C. 設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 透過使用亞馬遜簡易通知服務(Amazon SNS)整合Lambda功能.
+- C. 設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 透過使用Amazon Simple Notification Service (Amazon SNS)整合Lambda功能.
 - D. 設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 使用 Amazon 簡單佇列服務( Amazon SQS) 佇列整合 Lambda 函式。
 
 **答案**
@@ -574,7 +574,7 @@ D
 - 其餘選項比較：
 - A：將 Lambda 函式程式碼重置為執行於 Amazon EC2 例項上的 Apache Tomcat 程式碼。 透過使用本地Java 資料庫(Database) 連線資料庫(database)的驅動程式(JDBC)連線。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將平臺從 Aurora 改為Amazon DynamoDB 提供DynamoDB加速器(DAX)叢集. 使用DAX客戶端SDK將現有的DynamoDB API呼叫指向DAX叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 透過使用亞馬遜簡易通知服務(Amazon SNS)整合Lambda功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 透過使用Amazon Simple Notification Service (Amazon SNS)整合Lambda功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #26
 
@@ -929,8 +929,8 @@ A
 **選項**
 - A. 建立 Auto Scaling 群組(Auto Scaling group) , 以便 EC2 例項可以縮放。 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。
 - B. 建立 Amazon AppFlow filow ,在每個SaaS源和S3 儲存桶(S3 bucket)之間傳輸資料. 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。
-- C. 為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 儲存桶(S3 bucket)作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 儲存桶(S3 bucket)完成後傳送事件. 配置一個亞馬遜簡易通知服務(Amazon SNS)話題作為第二條規則的目標.
-- D. 建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 儲存桶(S3 bucket) 完成時, 可將事件傳送到一個亞馬遜簡單通知服務(Amazon SNS) 主題.
+- C. 為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 儲存桶(S3 bucket)作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 儲存桶(S3 bucket)完成後傳送事件. 配置一個Amazon Simple Notification Service (Amazon SNS)話題作為第二條規則的目標.
+- D. 建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 儲存桶(S3 bucket) 完成時, 可將事件傳送到一個Amazon Simple Notification Service (Amazon SNS) 主題.
 
 **答案**
 B
@@ -941,8 +941,8 @@ B
 - B：建立 Amazon AppFlow filow ,在每個SaaS源和S3 儲存桶(S3 bucket)之間傳輸資料. 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS) 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立 Auto Scaling 群組(Auto Scaling group) , 以便 EC2 例項可以縮放。 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 儲存桶(S3 bucket)作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 儲存桶(S3 bucket)完成後傳送事件. 配置一個亞馬遜簡易通知服務(Amazon SNS)話題作為第二條規則的目標。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 儲存桶(S3 bucket) 完成時, 可將事件傳送到一個亞馬遜簡單通知服務(Amazon SNS) 主題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 儲存桶(S3 bucket)作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 儲存桶(S3 bucket)完成後傳送事件. 配置一個Amazon Simple Notification Service (Amazon SNS)話題作為第二條規則的目標。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 儲存桶(S3 bucket) 完成時, 可將事件傳送到一個Amazon Simple Notification Service (Amazon SNS) 主題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #42
 
@@ -1023,7 +1023,7 @@ A,B
 
 **選項**
 - A. 在多個可用區(Availability Zones)中部署Lambda函式.
-- B. 建立一個亞馬遜簡易佇列服務佇列(Amazon SQS),並訂閱到SNS主題.
+- B. 建立一個Amazon SQS 佇列 (Amazon SQS),並訂閱到SNS主題.
 - C. 增加分配給Lambda函式的CPU和記憶體.
 - D. 增加為Lambda函式提供的吞吐量(throughput)。
 - E. 修改 Lambda 函式以從 Amazon 簡單佇列服務( Amazon SQS) 佇列讀取。
@@ -1035,7 +1035,7 @@ B,E
 
 **詳解**
 正確答案是 **B, E**。
-- B：建立一個亞馬遜簡易佇列服務佇列(Amazon SQS),並訂閱到SNS主題。此選項符合題目條件，能有效滿足核心需求。
+- B：建立一個Amazon SQS 佇列 (Amazon SQS),並訂閱到SNS主題。此選項符合題目條件，能有效滿足核心需求。
 - E：修改 Lambda 函式以從 Amazon 簡單佇列服務( Amazon SQS) 佇列讀取 。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：在多個可用區(Availability Zones)中部署Lambda函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -1048,9 +1048,9 @@ B,E
 一家公司有一個為商店提供營銷服務的應用程式. 這些服務是根據商店顧客以前購買的。 儲存透過SFTP向公司上傳交易資料,對資料進行處理和分析,生成新的營銷報價. 一些檔案的大小可以超過200GB. 最近,該公司發現,一些商店上傳了包含個人可識別資訊(PII)的檔案,這些檔案本不該包含在內. 公司希望如果PII再次被共享,管理員會被提醒. 公司也希望實現修復自動化. 解決方案設計師應如何透過 " LEAST " 開發努力滿足這些要求?
 
 **選項**
-- A. 使用Amazon S3桶作為安全轉移點. 使用亞馬遜巡視器掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件.
-- B. 使用Amazon S3桶作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用亞馬遜簡易通知服務(Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
-- C. 在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用亞馬遜簡易通知服務(Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
+- A. 使用Amazon S3桶作為安全轉移點. 使用Amazon Inspector掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件.
+- B. 使用Amazon S3桶作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
+- C. 在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
 - D. 在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Email Service(Amazon SES)觸發向管理員的通知,並觸發S3 生命週期政策(Lifecycle policy),以移除包含PII的肉類.
 
 **答案**
@@ -1059,10 +1059,10 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用Amazon S3桶作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用亞馬遜簡易通知服務(Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon S3桶作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用Amazon S3桶作為安全轉移點. 使用亞馬遜巡視器掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用亞馬遜簡易通知服務(Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon S3桶作為安全轉移點. 使用Amazon Inspector掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Email Service(Amazon SES)觸發向管理員的通知,並觸發S3 生命週期政策(Lifecycle policy),以移除包含PII的肉類。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #47
@@ -1096,8 +1096,8 @@ D
 **選項**
 - A. 將目錄移到 Amazon ElastiCache 用於 Redis.
 - B. 部署一個更大的EC2 執行個體 和更大的案例商店。
-- C. 將目錄從例項商店移至亞馬遜S3 Glacier Deep Archive.
-- D. 將目錄移至亞馬遜彈性檔案系統(Amazon EFS)檔案系統.
+- C. 將目錄從例項商店移至Amazon S3 Glacier Deep Archive.
+- D. 將目錄移至Amazon Elastic File System (Amazon EFS)檔案系統.
 
 **答案**
 D
@@ -1105,11 +1105,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將目錄移至亞馬遜彈性檔案系統(Amazon EFS)檔案系統。**Amazon EFS（Elastic File System）是完全受管的 NFS 共享檔案系統**，資料自動跨多個 AZ 複寫，提供高可用性和高耐久性（11 個 9）。多個 EC2 執行個體可同時掛載同一個 EFS，滿足「高度可用且耐久的儲存」需求。
+- D：將目錄移至Amazon Elastic File System (Amazon EFS)檔案系統。**Amazon EFS（Elastic File System）是完全受管的 NFS 共享檔案系統**，資料自動跨多個 AZ 複寫，提供高可用性和高耐久性（11 個 9）。多個 EC2 執行個體可同時掛載同一個 EFS，滿足「高度可用且耐久的儲存」需求。
 - 其餘選項比較：
 - A：將目錄移到 Amazon ElastiCache 用於 Redis。**ElastiCache 是記憶體內（In-Memory）快取服務，資料不具持久性**。當執行個體重啟或故障時資料會遺失，完全不符合「耐久（durable）」的需求，不適合儲存需要持久保存的目錄資料。
 - B：部署一個更大的EC2 執行個體 和更大的案例商店。EC2 執行個體存放區（Instance Store）是臨時性儲存，當執行個體停止或終止時資料會永久遺失，沒有高可用性，且更大的執行個體增加成本，不解決根本問題。
-- C：將目錄從例項商店移至亞馬遜S3 Glacier Deep Archive。Glacier Deep Archive 是長期冷儲存，取回時間需要 12 小時，完全不適合需要即時存取的網站目錄資料。
+- C：將目錄從例項商店移至Amazon S3 Glacier Deep Archive。Glacier Deep Archive 是長期冷儲存，取回時間需要 12 小時，完全不適合需要即時存取的網站目錄資料。
 
 ## Question #49
 
@@ -1118,7 +1118,7 @@ D
 
 **選項**
 - A. 在Amazon S3 Glacier Instant Retrieval中儲存帶有標記的個人檔案. 查詢標籤從 S3 Glacier Instant Retrieval 檢索檔案。
-- B. 在亞馬遜S3 Intelligent-Tiering儲存個人檔案. 使用 S3 壽命週期政策在一年後將檔案移動到 S3 Glacier Flexible Retrieval。 透過使用Amazon Athena查詢並檢索Amazon S3中的檔案. 透過使用 S3 冰川選擇來查詢和檢索 S3 冰川中的檔案.
+- B. 在Amazon S3 Intelligent-Tiering儲存個人檔案. 使用 S3 壽命週期政策在一年後將檔案移動到 S3 Glacier Flexible Retrieval。 透過使用Amazon Athena查詢並檢索Amazon S3中的檔案. 透過使用 S3 冰川選擇來查詢和檢索 S3 冰川中的檔案.
 - C. 在Amazon S3標準儲存中儲存帶有標籤的單個檔案. 在Amazon S3標準儲存中儲存每個歸檔的搜尋後設資料. 使用 S3 壽命週期政策在一年後將檔案移動到 S3 Glacier Instant Retrieval。 透過搜尋Amazon S3的後設資料查詢並檢索檔案.
 - D. 在Amazon S3標準儲存中儲存個人檔案. 使用 S3 壽命週期政策將檔案移動到一年後的 S3 Glacier Deep Archive。 在Amazon RDS中儲存搜尋後設資料. 查詢來自Amazon RDS的檔案. 從S3 Glacier Deep Archive檢索檔案.
 
@@ -1131,7 +1131,7 @@ C
 - C：在Amazon S3標準儲存中儲存帶有標籤的單個檔案. 在Amazon S3標準儲存中儲存每個歸檔的搜尋後設資料. 使用 S3 壽命週期政策在一年後將檔案移動到 S3 Glacier Instant Retrieval。 透過搜尋Amazon S3的後設資料查詢並檢索檔案。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在Amazon S3 Glacier Instant Retrieval中儲存帶有標記的個人檔案. 查詢標籤從 S3 Glacier Instant Retrieval 檢索檔案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：在亞馬遜S3 Intelligent-Tiering儲存個人檔案. 使用 S3 壽命週期政策在一年後將檔案移動到 S3 Glacier Flexible Retrieval。 透過使用Amazon Athena查詢並檢索Amazon S3中的檔案. 透過使用 S3 冰川選擇來查詢和檢索 S3 冰川中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在Amazon S3 Intelligent-Tiering儲存個人檔案. 使用 S3 壽命週期政策在一年後將檔案移動到 S3 Glacier Flexible Retrieval。 透過使用Amazon Athena查詢並檢索Amazon S3中的檔案. 透過使用 S3 冰川選擇來查詢和檢索 S3 冰川中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在Amazon S3標準儲存中儲存個人檔案. 使用 S3 壽命週期政策將檔案移動到一年後的 S3 Glacier Deep Archive。 在Amazon RDS中儲存搜尋後設資料. 查詢來自Amazon RDS的檔案. 從S3 Glacier Deep Archive檢索檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #50
@@ -1167,7 +1167,7 @@ D
 - B. 使用Amazon Simple電子郵件服務(Amazon SES)格式化資料並透過電子郵件傳送報告.
 - C. 建立 Amazon EventBridge(Amazon CloudWatch Events) 計劃事件,以引用 AWS Glue 任務查詢應用程式的API的資料.
 - D. 建立 Amazon EventBridge(Amazon CloudWatch Events) 計劃事件,以引用 AWS Lambda 函式查詢應用程式的API資料.
-- E. 在Amazon S3中儲存應用程式資料. 建立一個亞馬遜簡易通知服務(Amazon SNS),作為S3事件目的地,透過電子郵件傳送報告.
+- E. 在Amazon S3中儲存應用程式資料. 建立一個Amazon Simple Notification Service (Amazon SNS),作為S3事件目的地,透過電子郵件傳送報告.
 
 **答案**
 D,B
@@ -1181,7 +1181,7 @@ D,B
 - 其餘選項比較：
 - A：配置將資料傳送到 Amazon Kinesis Data Firehose 的應用程式 。Kinesis Data Firehose 是資料串流傳輸服務（傳到 S3/Redshift/OpenSearch），與每日電子郵件報告需求完全無關。
 - C：建立 Amazon EventBridge(Amazon CloudWatch Events) 計劃事件,以引用 AWS Glue 任務查詢應用程式的API的資料。AWS Glue 是 ETL 服務，不是 REST API 查詢工具，且 Glue 任務的啟動時間較長，不適合用於查詢應用程式 API 並發送即時報告。
-- E：在Amazon S3中儲存應用程式資料. 建立一個亞馬遜簡易通知服務(Amazon SNS),作為S3事件目的地,透過電子郵件傳送報告。**Amazon SNS 電子郵件訂閱只能發送純文字訊息**，無法發送 HTML 格式的郵件，不符合題目「易於閱讀的 HTML 格式」的需求。
+- E：在Amazon S3中儲存應用程式資料. 建立一個Amazon Simple Notification Service (Amazon SNS),作為S3事件目的地,透過電子郵件傳送報告。**Amazon SNS 電子郵件訂閱只能發送純文字訊息**，無法發送 HTML 格式的郵件，不符合題目「易於閱讀的 HTML 格式」的需求。
 
 ## Question #52
 
@@ -1189,7 +1189,7 @@ D,B
 一家公司想將它的前提應用程式遷移到AWS. 應用程式生成輸出檔案,大小從數十千兆位元組到數百兆位元組不等. 應用程式資料必須儲存在標準檔案系統結構中. 公司想要一個自動縮放的解決方案. 高可用性,需要最低限度的營運開銷(operational overhead)。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在亞馬遜彈性容器服務(Amazon ECS)上將作為集裝箱執行的應用程式遷移。 使用Amazon S3進行儲存.
+- A. 在Amazon Elastic Container Service (Amazon ECS)上將作為集裝箱執行的應用程式遷移。 使用Amazon S3進行儲存.
 - B. 在Amazon Elastic Kubernetes Service(Amazon EKS)上將應用程式遷移到作為容器執行. 使用Amazon彈性塊儲存器(Amazon EBS)進行儲存.
 - C. 在多AZ Auto Scaling 群組(Auto Scaling group)中將應用程式遷移到Amazon EC2。 使用Amazon彈性檔案系統(Amazon EFS)進行儲存.
 - D. 在多AZ Auto Scaling 群組(Auto Scaling group)中將應用程式遷移到Amazon EC2。 使用Amazon彈性塊儲存器(Amazon EBS)進行儲存.
@@ -1202,7 +1202,7 @@ C
 正確答案是 **C**。
 - C：在多AZ Auto Scaling 群組(Auto Scaling group)中將應用程式遷移到Amazon EC2。 使用Amazon彈性檔案系統(Amazon EFS)進行儲存。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在亞馬遜彈性容器服務(Amazon ECS)上將作為集裝箱執行的應用程式遷移。 使用Amazon S3進行儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在Amazon Elastic Container Service (Amazon ECS)上將作為集裝箱執行的應用程式遷移。 使用Amazon S3進行儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在Amazon Elastic Kubernetes Service(Amazon EKS)上將應用程式遷移到作為容器執行. 使用Amazon彈性塊儲存器(Amazon EBS)進行儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在多AZ Auto Scaling 群組(Auto Scaling group)中將應用程式遷移到Amazon EC2。 使用Amazon彈性塊儲存器(Amazon EBS)進行儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -1238,7 +1238,7 @@ C
 - A. 將所有資料遷移到Amazon S3. 設定IAM認證供使用者存取檔案.
 - B. 建立Amazon S3檔案閘道器. 在現有的 EC2 例項上掛載 S3 檔案閘道器。
 - C. 用多AZ配置的Windows檔案伺服器將檔案共享環境擴充套件至Amazon FSx. 將所有資料遷移到 FSx 用於 Windows 檔案伺服器。
-- D. 將檔案共享環境擴充套件至亞馬遜彈性檔案系統(Amazon EFS),並帶有多AZ配置. 將所有資料遷移到Amazon EFS.
+- D. 將檔案共享環境擴充套件至Amazon Elastic File System (Amazon EFS),並帶有多AZ配置. 將所有資料遷移到Amazon EFS.
 
 **答案**
 C
@@ -1250,7 +1250,7 @@ C
 - 其餘選項比較：
 - A：將所有資料遷移到Amazon S3. 設定IAM認證供使用者存取檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立Amazon S3檔案閘道器. 在現有的 EC2 例項上掛載 S3 檔案閘道器 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將檔案共享環境擴充套件至亞馬遜彈性檔案系統(Amazon EFS),並帶有多AZ配置. 將所有資料遷移到Amazon EFS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將檔案共享環境擴充套件至Amazon Elastic File System (Amazon EFS),並帶有多AZ配置. 將所有資料遷移到Amazon EFS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #55
 
@@ -1328,9 +1328,9 @@ B
 
 **選項**
 - A. 使用 Amazon EC2 例,並在例上安裝 Docker。
-- B. 在Amazon EC2工人節點上使用亞馬遜彈性容器服務(Amazon ECS).
-- C. 在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS).
-- D. 使用亞馬遜彈性容器服務(Amazon ECS)最佳化的亞馬遜機器影象(AMI)的Amazon EC2 執行個體。
+- B. 在Amazon EC2工人節點上使用Amazon Elastic Container Service (Amazon ECS).
+- C. 在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS).
+- D. 使用Amazon Elastic Container Service (Amazon ECS)最佳化的Amazon Machine Image (AMI)的Amazon EC2 執行個體。
 
 **答案**
 C
@@ -1338,11 +1338,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 Amazon EC2 例,並在例上安裝 Docker 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：在Amazon EC2工人節點上使用亞馬遜彈性容器服務(Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜彈性容器服務(Amazon ECS)最佳化的亞馬遜機器影象(AMI)的Amazon EC2 執行個體。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在Amazon EC2工人節點上使用Amazon Elastic Container Service (Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon Elastic Container Service (Amazon ECS)最佳化的Amazon Machine Image (AMI)的Amazon EC2 執行個體。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #59
 
@@ -1606,7 +1606,7 @@ B
 - A. 啟用HTTP在NLB的健康檢查,提供公司應用程式的URL.
 - B. 在 EC2 例項中新增一個 cron 任務, 每分鐘檢查一次本地應用程式的日誌。 如果檢測到 HTTP 錯誤。 應用程式將重新啟動。
 - C. 以應用程式負載平衡器(Application Load Balancer)取代NLB。 透過提供公司應用程式的URL來啟用HTTP健康檢查. 配置自動縮放動作以取代不健康的事件。
-- D. 建立一個亞馬遜雲表警報器,用於監測NLB的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件。
+- D. 建立一個Amazon CloudWatch Alarm,用於監測NLB的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件。
 
 **答案**
 C
@@ -1618,7 +1618,7 @@ C
 - 其餘選項比較：
 - A：啟用HTTP在NLB的健康檢查,提供公司應用程式的URL。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在 EC2 例項中新增一個 cron 任務, 每分鐘檢查一次本地應用程式的日誌。 如果檢測到 HTTP 錯誤。 應用程式將重新啟動。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立一個亞馬遜雲表警報器,用於監測NLB的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立一個Amazon CloudWatch Alarm,用於監測NLB的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #71
 
@@ -1724,7 +1724,7 @@ A,C
 一家公司希望將一個多層次的應用程式從場地移動到AWS雲,以提高應用程式的效能. 應用程式包括透過RESTful服務相互溝通的應用層. 當一個層次超載時,交易就會減少。 解決方案設計師必須設計出解決這些問題的解決方案,並使應用程式現代化. 哪種解決辦法符合這些要求,而最高運作效率高?
 
 **選項**
-- A. 使用Amazon API Gateway並直接交易到AWS Lambda功能作為應用層. 使用亞馬遜簡易佇列服務(Amazon SQS)作為應用程式服務之間的通訊層.
+- A. 使用Amazon API Gateway並直接交易到AWS Lambda功能作為應用層. 使用Amazon Simple Queue Service (Amazon SQS)作為應用程式服務之間的通訊層.
 - B. 使用Amazon CloudWatch 度量衡分析應用程式效能歷史,以確定伺服器在效能故障時的峰值利用率. 增加應用程式伺服器的 Amazon EC2 例項的大小,以滿足峰值要求.
 - C. 使用Amazon簡單通知服務(Amazon SNS)在執行於Amazon EC2的應用程式伺服器之間,在Auto Scaling 群組(Auto Scaling group)中處理訊息. 使用Amazon CloudWatch來監控SNS佇列長度,並根據需要上下縮放.
 - D. 使用Amazon簡單排隊服務(Amazon SQS)在執行於Amazon EC2的應用程式伺服器之間,在Auto Scaling 群組(Auto Scaling group)中處理訊息. 使用Amazon CloudWatch來監視在檢測到通訊故障時的SQS佇列長度和規模.
@@ -1735,7 +1735,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用Amazon API Gateway並直接交易到AWS Lambda功能作為應用層. 使用亞馬遜簡易佇列服務(Amazon SQS)作為應用程式服務之間的通訊層。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：使用Amazon API Gateway並直接交易到AWS Lambda功能作為應用層. 使用Amazon Simple Queue Service (Amazon SQS)作為應用程式服務之間的通訊層。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：使用Amazon CloudWatch 度量衡分析應用程式效能歷史,以確定伺服器在效能故障時的峰值利用率. 增加應用程式伺服器的 Amazon EC2 例項的大小,以滿足峰值要求。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon簡單通知服務(Amazon SNS)在執行於Amazon EC2的應用程式伺服器之間,在Auto Scaling 群組(Auto Scaling group)中處理訊息. 使用Amazon CloudWatch來監控SNS佇列長度,並根據需要上下縮放。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -1836,7 +1836,7 @@ A
 ## Question #80
 
 **題目**
-最近,一家公司與AWS管理服務提供商(MSP)夥伴簽訂了一項合同,要求幫助一項申請遷移倡議。 一個解決方案架構師需要ta與MSP Partner的AWS帳戶共享一個現有的AWS帳戶的亞馬遜機器影象(AMI). AMI由Amazon Elastic Block Store(Amazon EBS)支援,並使用AWSERV007(AWS KMS)客戶管理的金鑰加密EBS 磁碟區快照. 解決方案設計師與MSP合作伙伴的AWS帳戶共享AMI的MOST安全途徑是什麼?.
+最近,一家公司與AWS管理服務提供商(MSP)夥伴簽訂了一項合同,要求幫助一項申請遷移倡議。 一個解決方案架構師需要ta與MSP Partner的AWS帳戶共享一個現有的AWS帳戶的Amazon Machine Image (AMI). AMI由Amazon Elastic Block Store(Amazon EBS)支援,並使用AWSERV007(AWS KMS)客戶管理的金鑰加密EBS 磁碟區快照. 解決方案設計師與MSP合作伙伴的AWS帳戶共享AMI的MOST安全途徑是什麼?.
 
 **選項**
 - A. 將加密的AMI和快照公開. 修改金鑰政策,允許MSP Partner的 AWS 帳戶使用金鑰.
@@ -1862,10 +1862,10 @@ B
 一個解決方案架構師正在為正在AWS上部署的新應用程式設計雲架構. 這一過程應當平行進行,同時根據需要根據待處理的工作數量新增和刪除應用程式節點. 處理器申請為無狀態. 解決方案設計師必須確保應用程式鬆散搭配,並長期儲存工作專案。 架構師應該使用哪種設計?
 
 **選項**
-- A. 建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 CPU 的使用來新增和刪除節點。
-- B. 建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據網路使用情況新增並刪除節點。
-- C. 建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 SQS 佇列中的專案數量新增並刪除節點。
-- D. 建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定Auto Scaling 群組(Auto Scaling group)的縮放政策,根據釋出到SNS主題的資訊數量新增並刪除節點.
+- A. 建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 CPU 的使用來新增和刪除節點。
+- B. 建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據網路使用情況新增並刪除節點。
+- C. 建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 SQS 佇列中的專案數量新增並刪除節點。
+- D. 建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定Auto Scaling 群組(Auto Scaling group)的縮放政策,根據釋出到SNS主題的資訊數量新增並刪除節點.
 
 **答案**
 C
@@ -1873,11 +1873,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 SQS 佇列中的專案數量新增並刪除節點 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 SQS 佇列中的專案數量新增並刪除節點 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 CPU 的使用來新增和刪除節點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據網路使用情況新增並刪除節點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的亞馬遜機器影象(AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定Auto Scaling 群組(Auto Scaling group)的縮放政策,根據釋出到SNS主題的資訊數量新增並刪除節點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據 CPU 的使用來新增和刪除節點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個 Amazon SQS 佇列來儲存需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射配置. 使用發射配置建立Auto Scaling 群組(Auto Scaling group). 設定 Auto Scaling 群組(Auto Scaling group) 的縮放策略, 以便根據網路使用情況新增並刪除節點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立 Amazon SNS 主題,以傳送需要處理的工作。 建立一個包含處理器應用程式的Amazon Machine Image (AMI). 建立使用AMI的發射模板. 使用發射模板建立Auto Scaling 群組(Auto Scaling group). 設定Auto Scaling 群組(Auto Scaling group)的縮放政策,根據釋出到SNS主題的資訊數量新增並刪除節點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #82
 
@@ -1885,8 +1885,8 @@ C
 一個公司在AWS雲中託管其網路應用. 公司配置了彈性負載平衡器,用於使用匯入AWS Certificate Manager(ACM)的憑證. 公司的安全小組必須在每份憑證到期前30天接到通知。 解決方案設計師建議如何滿足這一要求?
 
 **選項**
-- A. 在ACM中新增一條規則,從任何憑證過期前30天開始,每天在亞馬遜簡易通知服務(Amazon SNS)中釋出自定義訊息.
-- B. 建立 AWS Config 規則, 檢查30天內過期的憑證。 配置 Amazon EventBridge(Amazon CloudWatch Events),在AWS Config報告一個不符合要求的資源時,透過亞馬遜簡易通知服務(Amazon SNS)引用自定義提醒.
+- A. 在ACM中新增一條規則,從任何憑證過期前30天開始,每天在Amazon Simple Notification Service (Amazon SNS)中釋出自定義訊息.
+- B. 建立 AWS Config 規則, 檢查30天內過期的憑證。 配置 Amazon EventBridge(Amazon CloudWatch Events),在AWS Config報告一個不符合要求的資源時,透過Amazon Simple Notification Service (Amazon SNS)引用自定義提醒.
 - C. 使用 AWS 信任的顧問檢查將在30天內過期的憑證。 建立 Amazon CloudWatch 提醒,該提醒基於對檢查狀態變化的可信任的顧問衡量標準。 配置提醒, 透過 Amazon 簡單通知服務( Amazon SNS) 傳送自定義提醒。
 - D. 建立一個 Amazon EventBridge(Amazon CloudWatch Events)規則,以檢測任何將在30天內過期的憑證. 配置規則以引用 AWS Lambda 函式。 配置 Lambda 函式以透過 Amazon 簡單通知服務(Amazon SNS)傳送自定義提醒。
 
@@ -1898,8 +1898,8 @@ D
 正確答案是 **D**。
 - D：建立一個 Amazon EventBridge(Amazon CloudWatch Events)規則,以檢測任何將在30天內過期的憑證. 配置規則以引用 AWS Lambda 函式。 配置 Lambda 函式以透過 Amazon 簡單通知服務(Amazon SNS)傳送自定義提醒 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在ACM中新增一條規則,從任何憑證過期前30天開始,每天在亞馬遜簡易通知服務(Amazon SNS)中釋出自定義訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：建立 AWS Config 規則, 檢查30天內過期的憑證。 配置 Amazon EventBridge(Amazon CloudWatch Events),在AWS Config報告一個不符合要求的資源時,透過亞馬遜簡易通知服務(Amazon SNS)引用自定義提醒。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在ACM中新增一條規則,從任何憑證過期前30天開始,每天在Amazon Simple Notification Service (Amazon SNS)中釋出自定義訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立 AWS Config 規則, 檢查30天內過期的憑證。 配置 Amazon EventBridge(Amazon CloudWatch Events),在AWS Config報告一個不符合要求的資源時,透過Amazon Simple Notification Service (Amazon SNS)引用自定義提醒。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 AWS 信任的顧問檢查將在30天內過期的憑證。 建立 Amazon CloudWatch 提醒,該提醒基於對檢查狀態變化的可信任的顧問衡量標準。 配置提醒, 透過 Amazon 簡單通知服務( Amazon SNS) 傳送自定義提醒 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #83
@@ -1957,7 +1957,7 @@ B
 - A. 將上傳的文件儲存在 Amazon S3 桶中,啟用了 S3 版本和 S3 Object Lock。
 - B. 將上傳的文件儲存在 Amazon S3 桶中。 配置一個 S3 生命週期政策(Lifecycle policy) 來定期歸檔文件。
 - C. 將上傳的文件儲存在啟用 S3 版本的 Amazon S3 桶中。 配置 ACL 以限制所有隻讀存取。
-- D. 將上傳的文件儲存在亞馬遜彈性檔案系統(Amazon EFS)捲上. 以只讀模式載入磁碟區來獲取資料。
+- D. 將上傳的文件儲存在Amazon Elastic File System (Amazon EFS)捲上. 以只讀模式載入磁碟區來獲取資料。
 
 **答案**
 A
@@ -1969,7 +1969,7 @@ A
 - 其餘選項比較：
 - B：將上傳的文件儲存在 Amazon S3 桶中。 配置一個 S3 生命週期政策(Lifecycle policy) 來定期歸檔文件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將上傳的文件儲存在啟用 S3 版本的 Amazon S3 桶中。 配置 ACL 以限制所有隻讀存取 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將上傳的文件儲存在亞馬遜彈性檔案系統(Amazon EFS)捲上. 以只讀模式載入磁碟區來獲取資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將上傳的文件儲存在Amazon Elastic File System (Amazon EFS)捲上. 以只讀模式載入磁碟區來獲取資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #86
 
@@ -2003,7 +2003,7 @@ A
 - A. 提供一種Amazon RDS代理,在Lambda函式和資料庫(database)之間。 配置 Lambda 函式連線到 RDS 代理。
 - B. 將Lambda函式的執行時間增加到最大. 在程式碼中建立一個重試機制,將客戶資料儲存在資料庫(database)中.
 - C. 堅持客戶資料到Lambda本地儲存. 配置新的 Lambda 函式掃描本地儲存,將客戶資料儲存到 資料庫(database)。
-- D. 在亞馬遜簡易佇列服務(Amazon SQS)中儲存客戶資料 FIFO佇列. 建立一個新的 Lambda 函式,用於對佇列進行投票,並將客戶資料儲存在 資料庫(database) 中.
+- D. 在Amazon Simple Queue Service (Amazon SQS)中儲存客戶資料 FIFO佇列. 建立一個新的 Lambda 函式,用於對佇列進行投票,並將客戶資料儲存在 資料庫(database) 中.
 
 **答案**
 A
@@ -2015,7 +2015,7 @@ A
 - 其餘選項比較：
 - B：將Lambda函式的執行時間增加到最大. 在程式碼中建立一個重試機制,將客戶資料儲存在資料庫(database)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：堅持客戶資料到Lambda本地儲存. 配置新的 Lambda 函式掃描本地儲存,將客戶資料儲存到 資料庫(database) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在亞馬遜簡易佇列服務(Amazon SQS)中儲存客戶資料 FIFO佇列. 建立一個新的 Lambda 函式,用於對佇列進行投票,並將客戶資料儲存在 資料庫(database) 中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在Amazon Simple Queue Service (Amazon SQS)中儲存客戶資料 FIFO佇列. 建立一個新的 Lambda 函式,用於對佇列進行投票,並將客戶資料儲存在 資料庫(database) 中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #88
 
@@ -2253,7 +2253,7 @@ D
 ## Question #98
 
 **題目**
-一個影象處理公司有一個使用者用來上傳影象的網路應用程式. 應用程式將影象上傳到Amazon S3桶中. 公司設定了S3事件通知,將物件建立事件釋出到亞馬遜簡易佇列服務(Amazon SQS)標準佇列. SQS佇列是AWS Lambda功能的事件源,它處理影象並透過電子郵件將結果傳送給使用者. 使用者報告說,他們正在為每個上傳的影象收到多個電子郵件。 一個解決方案架構師確定,SQS訊息不止一次引用Lambda函式,導致多個電子郵件訊息. 解決方案設計師應該如何用LEAST 營運開銷(operational overhead)解決這個問題?
+一個影象處理公司有一個使用者用來上傳影象的網路應用程式. 應用程式將影象上傳到Amazon S3桶中. 公司設定了S3事件通知,將物件建立事件釋出到Amazon Simple Queue Service (Amazon SQS)標準佇列. SQS佇列是AWS Lambda功能的事件源,它處理影象並透過電子郵件將結果傳送給使用者. 使用者報告說,他們正在為每個上傳的影象收到多個電子郵件。 一個解決方案架構師確定,SQS訊息不止一次引用Lambda函式,導致多個電子郵件訊息. 解決方案設計師應該如何用LEAST 營運開銷(operational overhead)解決這個問題?
 
 **選項**
 - A. 在 SQS 佇列中設定長選票, 將接收Message 等待時間增加到 30 秒。
@@ -2281,7 +2281,7 @@ A
 **選項**
 - A. 建立 AWS Storage Gateway 檔案閘道器。 建立使用所需客戶協議的檔案共享。 連線應用程式伺服器到檔案共享。
 - B. 建立 Amazon EC2 Windows 例項。 安裝和配置例項上的 Windows 檔案共享角色。 連線應用程式伺服器到檔案共享。
-- C. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
+- C. 建立Amazon Elastic File System (Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
 - D. 為 Lustre 檔案系統建立 Amazon FSx。 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
 
 **答案**
@@ -2294,7 +2294,7 @@ D
 - 其餘選項比較：
 - A：建立 AWS Storage Gateway 檔案閘道器。 建立使用所需客戶協議的檔案共享。 連線應用程式伺服器到檔案共享 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 Amazon EC2 Windows 例項。 安裝和配置例項上的 Windows 檔案共享角色。 連線應用程式伺服器到檔案共享 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立Amazon Elastic File System (Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #100
 
@@ -2345,12 +2345,12 @@ A
 ## Question #102
 
 **題目**
-一個公司想將一個professes資料中心遷移到AWS. 資料中心託管一個SFTP伺服器,將其資料儲存在基於NFS的檔案系統中. 伺服器持有需要傳輸的200GB資料. 伺服器必須託管在使用亞馬遜彈性檔案系統(Amazon EFS)檔案系統的Amazon EC2例項上. 一個設計師應該採取何種步驟使這項任務自動化?(選二.
+一個公司想將一個professes資料中心遷移到AWS. 資料中心託管一個SFTP伺服器,將其資料儲存在基於NFS的檔案系統中. 伺服器持有需要傳輸的200GB資料. 伺服器必須託管在使用Amazon Elastic File System (Amazon EFS)檔案系統的Amazon EC2例項上. 一個設計師應該採取何種步驟使這項任務自動化?(選二.
 
 **選項**
 - A. 將 EC2 例項與 EFS 檔案系統一樣推出到相同的 可用區(Availability Zone)。
 - B. 在預設資料中心安裝 AWS 資料同步代理。
-- C. 在EC2中建立二級亞馬遜彈性塊儲存器(Amazon EBS),用於資料。
+- C. 在EC2中建立二級Amazon Elastic Block Store (Amazon EBS),用於資料。
 - D. 手動使用作業系統複製命令將資料推向EC2例項.
 - E. 使用AWS DataSync為premies SFTP伺服器建立合適的位置配置.
 
@@ -2364,7 +2364,7 @@ A,B
 - A：將 EC2 例項與 EFS 檔案系統一樣推出到相同的 可用區(Availability Zone) 。此選項符合題目條件，能有效滿足核心需求。
 - B：在預設資料中心安裝 AWS 資料同步代理 。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- C：在EC2中建立二級亞馬遜彈性塊儲存器(Amazon EBS),用於資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在EC2中建立二級Amazon Elastic Block Store (Amazon EBS),用於資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：手動使用作業系統複製命令將資料推向EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用AWS DataSync為premies SFTP伺服器建立合適的位置配置。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -2492,8 +2492,8 @@ D
 一家公司有一個汽車銷售網站,在Amazon RDS上的資料庫(database)上市. 出售汽車時,需要從網站上刪除上市內容,資料必須傳送到多個目標系統. 設計師應該推薦哪種設計?
 
 **選項**
-- A. 更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到亞馬遜簡易佇列服務(Amazon SQS)佇列供目標消耗.
-- B. 更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列供目標消耗.
+- A. 更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到Amazon Simple Queue Service (Amazon SQS)佇列供目標消耗.
+- B. 更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到Amazon Simple Queue Service (Amazon SQS) FIFO佇列供目標消耗.
 - C. 訂閱一個 RDS 事件通知, 併傳送一個 Amazon 簡單佇列 服務(Amazon SQS) 佇列扇向多個 Amazon 簡單通知服務(Amazon SNS) 主題。 使用AWS Lambda功能來更新目標.
 - D. 訂閱一個 RDS 事件通知, 併傳送一個 Amazon 簡單通知服務( Amazon SNS) 主題扇形到多個 Amazon 簡單佇列服務( Amazon SQS) 佇列。 使用AWS Lambda功能來更新目標.
 
@@ -2505,8 +2505,8 @@ C
 正確答案是 **C**。
 - C：訂閱一個 RDS 事件通知, 併傳送一個 Amazon 簡單佇列 服務(Amazon SQS) 佇列扇向多個 Amazon 簡單通知服務(Amazon SNS) 主題。 使用AWS Lambda功能來更新目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到亞馬遜簡易佇列服務(Amazon SQS)佇列供目標消耗。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列供目標消耗。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到Amazon Simple Queue Service (Amazon SQS)佇列供目標消耗。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：更新 Amazon RDS 上的 資料庫(database) 時,建立 AWS Lambda 函式,將資訊傳送到Amazon Simple Queue Service (Amazon SQS) FIFO佇列供目標消耗。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：訂閱一個 RDS 事件通知, 併傳送一個 Amazon 簡單通知服務( Amazon SNS) 主題扇形到多個 Amazon 簡單佇列服務( Amazon SQS) 佇列。 使用AWS Lambda功能來更新目標。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #109
@@ -2587,7 +2587,7 @@ D
 一家公司在一個處理收到的請求的虛擬伺服器上託管一個集裝箱化的網路應用程式。 請求數量迅速增加。 現場伺服器無法處理更多的請求。 公司希望將應用程式移動到AWS,同時進行最小的程式碼修改和最小的開發努力. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 在亞馬遜彈性容器服務(Amazon ECS)上使用AWS Fargate,使用Service Auto Usization執行集裝箱化網路應用程式. 使用 應用程式負載平衡器(Application Load Balancer) 來分配收到的請求。
+- A. 在Amazon Elastic Container Service (Amazon ECS)上使用AWS Fargate,使用Service Auto Usization執行集裝箱化網路應用程式. 使用 應用程式負載平衡器(Application Load Balancer) 來分配收到的請求。
 - B. 使用兩個 Amazon EC2 例項來託管容器化的網路應用程式。 使用 應用程式負載平衡器(Application Load Balancer) 來分配收到的請求。
 - C. 使用AWS Lambda,並使用新的程式碼,使用支援的語言之一. 建立多個Lambda功能來支援負載. 使用Amazon API Gateway作為Lambda函式的切入點.
 - D. 使用高效能運算(HPC)解決方案,如AWS並行Cluster,建立HPC叢集,可以按適當比例處理收到的請求.
@@ -2598,7 +2598,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：在亞馬遜彈性容器服務(Amazon ECS)上使用AWS Fargate,使用Service Auto Usization執行集裝箱化網路應用程式. 使用 應用程式負載平衡器(Application Load Balancer) 來分配收到的請求 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：在Amazon Elastic Container Service (Amazon ECS)上使用AWS Fargate,使用Service Auto Usization執行集裝箱化網路應用程式. 使用 應用程式負載平衡器(Application Load Balancer) 來分配收到的請求 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：使用兩個 Amazon EC2 例項來託管容器化的網路應用程式。 使用 應用程式負載平衡器(Application Load Balancer) 來分配收到的請求 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用AWS Lambda,並使用新的程式碼,使用支援的語言之一. 建立多個Lambda功能來支援負載. 使用Amazon API Gateway作為Lambda函式的切入點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -2729,8 +2729,8 @@ C
 
 **選項**
 - A. 亞馬遜彈性區塊儲存(Amazon EBS)
-- B. 亞馬遜彈性檔案系統(Amazon EFS)
-- C. Amazon OpenSearch Service(亞馬遜彈性搜尋服務)
+- B. Amazon Elastic File System (Amazon EFS)
+- C. Amazon OpenSearch Service(Amazon OpenSearch Service)
 - D. Amazon S3.
 
 **答案**
@@ -2742,8 +2742,8 @@ D
 - D：Amazon S3。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：亞馬遜彈性檔案系統(Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：Amazon OpenSearch Service(亞馬遜彈性搜尋服務)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：Amazon Elastic File System (Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：Amazon OpenSearch Service(Amazon OpenSearch Service)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #119
 
@@ -2798,7 +2798,7 @@ A
 
 **選項**
 - A. 加密最新的 DB 快照(snapshot) 的副本。 將現有的 DB 例項替換為恢復加密的 快照(snapshot).
-- B. 建立一個新的加密的亞馬遜彈性塊儲存器(Amazon EBS)卷,並將快照複製到其中. 在 DB 例項上啟用 加密(encryption)。
+- B. 建立一個新的加密的Amazon Elastic Block Store (Amazon EBS)卷,並將快照複製到其中. 在 DB 例項上啟用 加密(encryption)。
 - C. 複製快照並啟用 加密(encryption) 使用 AWS Key Management Service(AWS KMS) 將加密的 快照(snapshot) 恢復到現有的 DB 例項。
 - D. 將快照複製到一個使用伺服器側加密(encryption)加密的Amazon S3桶上,並配有AWS Key Management Service(AWS KMS)管理的金鑰(SSE-KMS).
 
@@ -2810,7 +2810,7 @@ A
 正確答案是 **A**。
 - A：加密最新的 DB 快照(snapshot) 的副本。 將現有的 DB 例項替換為恢復加密的 快照(snapshot)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立一個新的加密的亞馬遜彈性塊儲存器(Amazon EBS)卷,並將快照複製到其中. 在 DB 例項上啟用 加密(encryption) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個新的加密的Amazon Elastic Block Store (Amazon EBS)卷,並將快照複製到其中. 在 DB 例項上啟用 加密(encryption) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：複製快照並啟用 加密(encryption) 使用 AWS Key Management Service(AWS KMS) 將加密的 快照(snapshot) 恢復到現有的 DB 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將快照複製到一個使用伺服器側加密(encryption)加密的Amazon S3桶上,並配有AWS Key Management Service(AWS KMS)管理的金鑰(SSE-KMS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -2988,7 +2988,7 @@ A
 - B. 在 Amazon EC2 例項上移動將要託管的網路應用程式。
 - C. 為網路應用內容設定Amazon CloudFront發行版.
 - D. 在網路應用程式和PostgreSQL 資料庫(database)之間設定Amazon ElastiCache.
-- E. 與亞馬遜彈性容器服務公司(Amazon ECS)在AWS Fargate上移動將託管的網路應用程式.
+- E. 與Amazon ECS公司(Amazon ECS)在AWS Fargate上移動將託管的網路應用程式.
 
 **答案**
 A,E
@@ -2998,7 +2998,7 @@ A,E
 **詳解**
 正確答案是 **A, E**。
 - A：將PostgreSQL 資料庫(database)遷移到Amazon Aurora。此選項符合題目條件，能有效滿足核心需求。
-- E：與亞馬遜彈性容器服務公司(Amazon ECS)在AWS Fargate上移動將託管的網路應用程式。此選項符合題目條件，能有效滿足核心需求。
+- E：與Amazon ECS公司(Amazon ECS)在AWS Fargate上移動將託管的網路應用程式。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：在 Amazon EC2 例項上移動將要託管的網路應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：為網路應用內容設定Amazon CloudFront發行版。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -3035,7 +3035,7 @@ B
 **選項**
 - A. 為每個 S3 儲存桶(S3 bucket) 編寫單個政策, 僅允許 CloudFront 存取。
 - B. 建立 IAM 使用者。 給使用者讀取S3 儲存桶(S3 bucket)中物件的許可權. 指派使用者至雲龍.
-- C. 寫一個S3 儲存桶政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 儲存桶(S3 bucket)為亞馬遜資源名稱(ARN).
+- C. 寫一個S3 儲存桶政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 儲存桶(S3 bucket)為Amazon Resource Name (ARN).
 - D. 建立來源存取身份( OAI)。 指定審調局負責雲紋發行. 配置S3 儲存桶(S3 bucket)許可權,以便只有審調處有讀取許可權.
 
 **答案**
@@ -3048,7 +3048,7 @@ D
 - 其餘選項比較：
 - A：為每個 S3 儲存桶(S3 bucket) 編寫單個政策, 僅允許 CloudFront 存取 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 IAM 使用者。 給使用者讀取S3 儲存桶(S3 bucket)中物件的許可權. 指派使用者至雲龍。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：寫一個S3 儲存桶政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 儲存桶(S3 bucket)為亞馬遜資源名稱(ARN)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：寫一個S3 儲存桶政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 儲存桶(S3 bucket)為Amazon Resource Name (ARN)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #132
 
@@ -3217,7 +3217,7 @@ B
 ## Question #139
 
 **題目**
-一個報告小組每天在Amazon S3桶中接收檔案. 報告小組每天手動審查並複製從這個最初的S3 儲存桶(S3 bucket)到一個分析的S3 儲存桶(S3 bucket)的檔案,以便與Amazon QuickSight同時使用. 更多團隊開始向最初的S3 儲存桶(S3 bucket)傳送更多更大尺寸的檔案. 報告小組希望隨著檔案進入最初的S3 儲存桶(S3 bucket),檔案自動移動S3 儲存桶(S3 bucket)分析. 報告組也希望使用AWS Lambda功能在複製的資料上執行模式匹配程式碼. 此外,報告小組希望將資料檔案傳送到亞馬遜SageMaker管道的一條管道. 解決方案設計師應如何用LEAST 營運開銷(operational overhead)滿足這些要求?
+一個報告小組每天在Amazon S3桶中接收檔案. 報告小組每天手動審查並複製從這個最初的S3 儲存桶(S3 bucket)到一個分析的S3 儲存桶(S3 bucket)的檔案,以便與Amazon QuickSight同時使用. 更多團隊開始向最初的S3 儲存桶(S3 bucket)傳送更多更大尺寸的檔案. 報告小組希望隨著檔案進入最初的S3 儲存桶(S3 bucket),檔案自動移動S3 儲存桶(S3 bucket)分析. 報告組也希望使用AWS Lambda功能在複製的資料上執行模式匹配程式碼. 此外,報告小組希望將資料檔案傳送到Amazon SageMaker Pipeline的一條管道. 解決方案設計師應如何用LEAST 營運開銷(operational overhead)滿足這些要求?
 
 **選項**
 - A. 建立 Lambda 函式,將檔案複製到分析 S3 儲存桶(S3 bucket). 為分析建立 S3 事件通知 S3 儲存桶(S3 bucket). 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別.
@@ -3318,7 +3318,7 @@ C
 - A. 在 AWS Lambda 上託管申請. 將應用程式與Amazon API Gateway整合.
 - B. 以 AWS 擴充套件託管應用程式。 將應用程式連線到與AWS Lambda整合的Amazon API Gateway API.
 - C. 在 Amazon EC2 例項上託管應用程式。 在Auto Scaling 群組(Auto Scaling group)中設定以EC2為例的應用程式負載平衡器(Application Load Balancer)作為目標.
-- D. 在亞馬遜彈性容器服務(Amazon ECS)上託管應用程式。 建立以亞馬遜ECS為目標的應用程式負載平衡器(Application Load Balancer).
+- D. 在Amazon Elastic Container Service (Amazon ECS)上託管應用程式。 建立以Amazon ECS為目標的應用程式負載平衡器(Application Load Balancer).
 
 **答案**
 D
@@ -3326,7 +3326,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在亞馬遜彈性容器服務(Amazon ECS)上託管應用程式。 建立以亞馬遜ECS為目標的應用程式負載平衡器(Application Load Balancer)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：在Amazon Elastic Container Service (Amazon ECS)上託管應用程式。 建立以Amazon ECS為目標的應用程式負載平衡器(Application Load Balancer)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在 AWS Lambda 上託管申請. 將應用程式與Amazon API Gateway整合。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：以 AWS 擴充套件託管應用程式。 將應用程式連線到與AWS Lambda整合的Amazon API Gateway API。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -3427,7 +3427,7 @@ B
 ## Question #148
 
 **題目**
-亞馬遜簡易通知服務(Amazon SNS) 接收新資料傳送通知的話題 AWS Lambda 處理和儲存資料的功能 由於網路連通性問題,攝入工作封存偶爾會失敗. 失敗發生時,除非公司手動重新執行該工作,否則相應的資料不會被攝入. 解決方案設計師應如何確保所有通知最終得到處理?
+Amazon Simple Notification Service (Amazon SNS) 接收新資料傳送通知的話題 AWS Lambda 處理和儲存資料的功能 由於網路連通性問題,攝入工作封存偶爾會失敗. 失敗發生時,除非公司手動重新執行該工作,否則相應的資料不會被攝入. 解決方案設計師應如何確保所有通知最終得到處理?
 
 **選項**
 - A. 配置Lambda功能,用於跨多個可用區(Availability Zones)的部署.
@@ -3454,9 +3454,9 @@ D
 
 **選項**
 - A. 建立 Amazon 簡單佇列服務( Amazon SQS) FIFO 佇列以儲存訊息。 設定 AWS Lambda 函式處理佇列中的訊息.
-- B. 建立亞馬遜簡易通知服務(Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 AWS Lambda 函式為訂閱者。
+- B. 建立Amazon Simple Notification Service (Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 AWS Lambda 函式為訂閱者。
 - C. 建立一個 Amazon 簡單佇列服務(Amazon SQS) 標準佇列來儲存訊息。 設定 AWS Lambda 函式,以獨立處理佇列中的訊息.
-- D. 建立亞馬遜簡易通知服務(Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 Amazon 簡單佇列服務( Amazon SQS) 佇列為訂閱者。
+- D. 建立Amazon Simple Notification Service (Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 Amazon 簡單佇列服務( Amazon SQS) 佇列為訂閱者。
 
 **答案**
 A
@@ -3466,9 +3466,9 @@ A
 正確答案是 **A**。
 - A：建立 Amazon 簡單佇列服務( Amazon SQS) FIFO 佇列以儲存訊息。 設定 AWS Lambda 函式處理佇列中的訊息。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立亞馬遜簡易通知服務(Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 AWS Lambda 函式為訂閱者 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立Amazon Simple Notification Service (Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 AWS Lambda 函式為訂閱者 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立一個 Amazon 簡單佇列服務(Amazon SQS) 標準佇列來儲存訊息。 設定 AWS Lambda 函式,以獨立處理佇列中的訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立亞馬遜簡易通知服務(Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 Amazon 簡單佇列服務( Amazon SQS) 佇列為訂閱者 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立Amazon Simple Notification Service (Amazon SNS)主題,以傳送含有有效載荷的通知進行處理。 配置 Amazon 簡單佇列服務( Amazon SQS) 佇列為訂閱者 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #150
 
@@ -3597,7 +3597,7 @@ B
 - A. 使用 AWS 資料同步將 S3 桶連線到網路應用程式.
 - B. 部署 AWS 全球加速器將 S3 桶連線到網路應用程式。
 - C. 部署Amazon CloudFront將S3桶連線到CloudFront邊緣伺服器.
-- D. 使用亞馬遜簡易排隊服務(Amazon SQS)將S3桶連線到網路應用程式.
+- D. 使用Amazon Simple Queue Service (Amazon SQS)將S3桶連線到網路應用程式.
 
 **答案**
 C
@@ -3609,7 +3609,7 @@ C
 - 其餘選項比較：
 - A：使用 AWS 資料同步將 S3 桶連線到網路應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：部署 AWS 全球加速器將 S3 桶連線到網路應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜簡易排隊服務(Amazon SQS)將S3桶連線到網路應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon Simple Queue Service (Amazon SQS)將S3桶連線到網路應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #156
 
@@ -3672,7 +3672,7 @@ B,E
 - A. Amazon CloudFront.
 - B. AWS 全球加速器
 - C. Amazon Route 53.
-- D. 亞馬遜 S3 Transfer Acceleration
+- D. Amazon S3 Transfer Acceleration
 
 **答案**
 A
@@ -3684,7 +3684,7 @@ A
 - 其餘選項比較：
 - B：AWS 全球加速器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：Amazon Route 53。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：亞馬遜 S3 Transfer Acceleration。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：Amazon S3 Transfer Acceleration。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #159
 
@@ -3718,7 +3718,7 @@ C,D
 一家電子商務公司在AWS雲中設有分析應用程式。 該應用程式每月生成約300 MB的資料. 資料以JSON格式儲存. 該公司正在評估一個災難復原(disaster recovery)解決方案,以備份資料. 如果需要,資料必須可用毫秒獲取,資料必須儲存30天。 哪種解決辦法符合這些要求?
 
 **選項**
-- A. Amazon OpenSearch Service(亞馬遜彈性搜尋服務)
+- A. Amazon OpenSearch Service(Amazon OpenSearch Service)
 - B. Amazon S3 冰川
 - C. Amazon S3標準
 - D. 用於 PostgreSQL 的 Amazon RDS
@@ -3731,7 +3731,7 @@ C
 正確答案是 **C**。
 - C：Amazon S3標準。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：Amazon OpenSearch Service(亞馬遜彈性搜尋服務)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：Amazon OpenSearch Service(Amazon OpenSearch Service)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：Amazon S3 冰川。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：用於 PostgreSQL 的 Amazon RDS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -3743,8 +3743,8 @@ C
 **選項**
 - A. 把JSON檔案放進Amazon S3桶裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中.
 - B. 把JSON檔案放進Amazon S3桶裡. 建立一個執行 Python 程式碼的 AWS Lambda 函式,在檔案到達S3 儲存桶(S3 bucket) 時對其進行處理. 將結果儲存在 Amazon Aurora DB 叢集中.
-- C. 將JSON檔案放入亞馬遜彈性塊儲存器(Amazon EBS)卷中. 使用 EBS 多選項特性將磁碟區附加到多個 Amazon EC2 例中. 在 EC2 例項上執行 Python 程式碼來處理文件。 在 Amazon RDS DB 例項中儲存結果。
-- D. 將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在亞馬遜彈性容器服務(Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果。
+- C. 將JSON檔案放入Amazon Elastic Block Store (Amazon EBS)卷中. 使用 EBS 多選項特性將磁碟區附加到多個 Amazon EC2 例中. 在 EC2 例項上執行 Python 程式碼來處理文件。 在 Amazon RDS DB 例項中儲存結果。
+- D. 將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在Amazon Elastic Container Service (Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果。
 
 **答案**
 D
@@ -3752,11 +3752,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在亞馬遜彈性容器服務(Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在Amazon Elastic Container Service (Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：把JSON檔案放進Amazon S3桶裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：把JSON檔案放進Amazon S3桶裡. 建立一個執行 Python 程式碼的 AWS Lambda 函式,在檔案到達S3 儲存桶(S3 bucket) 時對其進行處理. 將結果儲存在 Amazon Aurora DB 叢集中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：將JSON檔案放入亞馬遜彈性塊儲存器(Amazon EBS)卷中. 使用 EBS 多選項特性將磁碟區附加到多個 Amazon EC2 例中. 在 EC2 例項上執行 Python 程式碼來處理文件。 在 Amazon RDS DB 例項中儲存結果 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：將JSON檔案放入Amazon Elastic Block Store (Amazon EBS)卷中. 使用 EBS 多選項特性將磁碟區附加到多個 Amazon EC2 例中. 在 EC2 例項上執行 Python 程式碼來處理文件。 在 Amazon RDS DB 例項中儲存結果 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #162
 
@@ -3766,8 +3766,8 @@ D
 **選項**
 - A. Amazon FSx 用於與Amazon S3整合的Lustre
 - B. Amazon FSx 用於與 Amazon S3 整合的 Windows 檔案伺服器
-- C. Amazon S3 冰川與亞馬遜彈性塊儲存器整合(Amazon EBS)
-- D. Amazon S3桶,裝有與亞馬遜彈性塊儲存器整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積
+- C. Amazon S3 冰川與Amazon Elastic Block Store整合(Amazon EBS)
+- D. Amazon S3桶,裝有與Amazon Elastic Block Store整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積
 
 **答案**
 A
@@ -3778,8 +3778,8 @@ A
 - A：Amazon FSx 用於與Amazon S3整合的Lustre。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：Amazon FSx 用於與 Amazon S3 整合的 Windows 檔案伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：Amazon S3 冰川與亞馬遜彈性塊儲存器整合(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：Amazon S3桶,裝有與亞馬遜彈性塊儲存器整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：Amazon S3 冰川與Amazon Elastic Block Store整合(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：Amazon S3桶,裝有與Amazon Elastic Block Store整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #163
 
@@ -3787,10 +3787,10 @@ A
 一家公司正在房地建造一個集裝箱化的應用程式,並決定將該應用程式移至AWS。 該應用程式在部署後不久將有數千個使用者。 該公司不確定如何管理規模集裝箱的部署。 公司需要將集裝箱化的應用部署在高可用架構中,以儘量減少營運開銷(operational overhead). 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 將集裝箱影象儲存在亞馬遜彈性集裝箱登記庫中。 使用帶有AWS Fargate發射型的亞馬遜彈性容器服務(Amazon ECS)叢集來執行容器. 使用目標跟蹤來根據需求自動進行規模化.
-- B. 將集裝箱影象儲存在亞馬遜彈性集裝箱登記庫中。 使用帶有Amazon EC2發射型的亞馬遜彈性容器服務叢集(Amazon ECS)執行集裝箱. 使用目標跟蹤來根據需求自動進行規模化.
+- A. 將集裝箱影象儲存在Amazon ECR中。 使用帶有AWS Fargate發射型的Amazon Elastic Container Service (Amazon ECS)叢集來執行容器. 使用目標跟蹤來根據需求自動進行規模化.
+- B. 將集裝箱影象儲存在Amazon ECR中。 使用帶有Amazon EC2發射型的Amazon ECS叢集(Amazon ECS)執行集裝箱. 使用目標跟蹤來根據需求自動進行規模化.
 - C. 將容器影象儲存在一個執行在 Amazon EC2 例項上的倉庫中。 執行分佈在多個可用區(Availability Zones)的EC2例項上的容器。 監測Amazon CloudWatch中的平均CPU利用率. 視需要推出新的EC2例項。
-- D. 建立一個包含容器影象的Amazon EC2亞馬遜機器影象(AMI). 在Auto Scaling 群組(Auto Scaling group)中發射EC2例項,跨越多個可用區(Availability Zones). 使用 Amazon CloudWatch 提醒來縮放 EC2 例項, 當平均 CPU 利用率閾值被突破。
+- D. 建立一個包含容器影象的Amazon EC2Amazon Machine Image (AMI). 在Auto Scaling 群組(Auto Scaling group)中發射EC2例項,跨越多個可用區(Availability Zones). 使用 Amazon CloudWatch 提醒來縮放 EC2 例項, 當平均 CPU 利用率閾值被突破。
 
 **答案**
 C
@@ -3800,9 +3800,9 @@ C
 正確答案是 **C**。
 - C：將容器影象儲存在一個執行在 Amazon EC2 例項上的倉庫中。 執行分佈在多個可用區(Availability Zones)的EC2例項上的容器。 監測Amazon CloudWatch中的平均CPU利用率. 視需要推出新的EC2例項。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將集裝箱影象儲存在亞馬遜彈性集裝箱登記庫中。 使用帶有AWS Fargate發射型的亞馬遜彈性容器服務(Amazon ECS)叢集來執行容器. 使用目標跟蹤來根據需求自動進行規模化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將集裝箱影象儲存在亞馬遜彈性集裝箱登記庫中。 使用帶有Amazon EC2發射型的亞馬遜彈性容器服務叢集(Amazon ECS)執行集裝箱. 使用目標跟蹤來根據需求自動進行規模化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立一個包含容器影象的Amazon EC2亞馬遜機器影象(AMI). 在Auto Scaling 群組(Auto Scaling group)中發射EC2例項,跨越多個可用區(Availability Zones). 使用 Amazon CloudWatch 提醒來縮放 EC2 例項, 當平均 CPU 利用率閾值被突破 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將集裝箱影象儲存在Amazon ECR中。 使用帶有AWS Fargate發射型的Amazon Elastic Container Service (Amazon ECS)叢集來執行容器. 使用目標跟蹤來根據需求自動進行規模化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將集裝箱影象儲存在Amazon ECR中。 使用帶有Amazon EC2發射型的Amazon ECS叢集(Amazon ECS)執行集裝箱. 使用目標跟蹤來根據需求自動進行規模化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立一個包含容器影象的Amazon EC2Amazon Machine Image (AMI). 在Auto Scaling 群組(Auto Scaling group)中發射EC2例項,跨越多個可用區(Availability Zones). 使用 Amazon CloudWatch 提醒來縮放 EC2 例項, 當平均 CPU 利用率閾值被突破 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #164
 
@@ -3812,8 +3812,8 @@ C
 **選項**
 - A. 設定一個 Amazon EC2 例項執行一個 Redis 資料庫(database). 配置兩個應用程式以使用例項。 分別儲存,處理和刪除訊息.
 - B. 使用 Amazon Kinesis 資料流接收來自傳送程式的訊息. 將處理應用程式與Kinesis客戶端庫(KCL)整合.
-- C. 將發件人和處理器應用程式與亞馬遜簡易佇列服務(Amazon SQS)佇列整合. 配置一個死字母佇列來收集無法處理的訊息。
-- D. 將處理應用程式訂閱到亞馬遜簡易通知服務(Amazon SNS),以接收處理通知。 整合發件人應用程式以寫入SNS主題.
+- C. 將發件人和處理器應用程式與Amazon Simple Queue Service (Amazon SQS)佇列整合. 配置一個死字母佇列來收集無法處理的訊息。
+- D. 將處理應用程式訂閱到Amazon Simple Notification Service (Amazon SNS),以接收處理通知。 整合發件人應用程式以寫入SNS主題.
 
 **答案**
 C
@@ -3821,11 +3821,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將發件人和處理器應用程式與亞馬遜簡易佇列服務(Amazon SQS)佇列整合. 配置一個死字母佇列來收集無法處理的訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：將發件人和處理器應用程式與Amazon Simple Queue Service (Amazon SQS)佇列整合. 配置一個死字母佇列來收集無法處理的訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：設定一個 Amazon EC2 例項執行一個 Redis 資料庫(database). 配置兩個應用程式以使用例項。 分別儲存,處理和刪除訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 Amazon Kinesis 資料流接收來自傳送程式的訊息. 將處理應用程式與Kinesis客戶端庫(KCL)整合。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將處理應用程式訂閱到亞馬遜簡易通知服務(Amazon SNS),以接收處理通知。 整合發件人應用程式以寫入SNS主題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將處理應用程式訂閱到Amazon Simple Notification Service (Amazon SNS),以接收處理通知。 整合發件人應用程式以寫入SNS主題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #165
 
@@ -3925,7 +3925,7 @@ D
 一家公司擔心其公共網路應用程式由於近期的網路攻擊而安全. 該應用程式使用應用程式負載平衡器(Application Load Balancer)(ALB). 一個解決方案架構師必須降低DDoS攻擊應用程式的風險. 解決方案設計師應如何滿足這一要求?
 
 **選項**
-- A. 在ALB中新增一個亞馬遜督察代理.
+- A. 在ALB中新增一個Amazon Inspector 代理程式.
 - B. 配置Amazon Macie以防止攻擊.
 - C. 啟用 AWS Shield 防襲先進.
 - D. 配置 Amazon GuardDuty 監視 ALB。
@@ -3938,7 +3938,7 @@ C
 正確答案是 **C**。
 - C：啟用 AWS Shield 防襲先進。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在ALB中新增一個亞馬遜督察代理。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在ALB中新增一個Amazon Inspector 代理程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：配置Amazon Macie以防止攻擊。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置 Amazon GuardDuty 監視 ALB 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -4201,11 +4201,11 @@ B,C
 ## Question #181
 
 **題目**
-一個公司有一個遺留的資料處理應用程式,執行在Amazon EC2例項上. 資料按順序處理,但結果順序無關緊要. 該應用程式採用單體架構. 公司為滿足日益增長的需求而擴大應用規模的唯一途徑是擴大案例的規模. 公司開發商決定重寫應用程式,在亞馬遜彈性容器服務(Amazon ECS)上使用微服務架構. 解決方案設計師應該建議微服務機構之間如何溝通?
+一個公司有一個遺留的資料處理應用程式,執行在Amazon EC2例項上. 資料按順序處理,但結果順序無關緊要. 該應用程式採用單體架構. 公司為滿足日益增長的需求而擴大應用規模的唯一途徑是擴大案例的規模. 公司開發商決定重寫應用程式,在Amazon Elastic Container Service (Amazon ECS)上使用微服務架構. 解決方案設計師應該建議微服務機構之間如何溝通?
 
 **選項**
 - A. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 向資料生產者新增程式碼,並將資料傳送給佇列. 新增程式碼到資料消費者中處理佇列中的資料.
-- B. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 向資料製作方新增程式碼,併發布該話題的通知. 在資料消費者中新增程式碼以訂閱該話題.
+- B. 建立一個Amazon Simple Notification Service (Amazon SNS)主題. 向資料製作方新增程式碼,併發布該話題的通知. 在資料消費者中新增程式碼以訂閱該話題.
 - C. 建立 AWS Lambda 函式來傳遞訊息。 向資料製作方新增程式碼,用資料物件呼叫Lambda函式. 在資料消費者中新增程式碼以接收從Lambda函式傳遞的資料物件.
 - D. 建立 Amazon DynamoDB 表格。 啟用 DynamoDB 流。 向資料生產者新增程式碼,將資料插入表格. 在資料消費者中新增程式碼,以使用DynamoDB Streams API來檢測新的表格條目並檢索資料.
 
@@ -4217,7 +4217,7 @@ A
 正確答案是 **A**。
 - A：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 向資料生產者新增程式碼,並將資料傳送給佇列. 新增程式碼到資料消費者中處理佇列中的資料。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 向資料製作方新增程式碼,併發布該話題的通知. 在資料消費者中新增程式碼以訂閱該話題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個Amazon Simple Notification Service (Amazon SNS)主題. 向資料製作方新增程式碼,併發布該話題的通知. 在資料消費者中新增程式碼以訂閱該話題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立 AWS Lambda 函式來傳遞訊息。 向資料製作方新增程式碼,用資料物件呼叫Lambda函式. 在資料消費者中新增程式碼以接收從Lambda函式傳遞的資料物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立 Amazon DynamoDB 表格。 啟用 DynamoDB 流。 向資料生產者新增程式碼,將資料插入表格. 在資料消費者中新增程式碼,以使用DynamoDB Streams API來檢測新的表格條目並檢索資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -4293,12 +4293,12 @@ C
 ## Question #185
 
 **題目**
-一家公司使用亞馬遜ECS執行一個應用程式. 該應用程式建立了原影象的改型版本,然後讓Amazon S3 API呼叫將改型影象儲存在Amazon S3中. 解決方案架構師如何確保申請獲得存取Amazon S3的許可?
+一家公司使用Amazon ECS執行一個應用程式. 該應用程式建立了原影象的改型版本,然後讓Amazon S3 API呼叫將改型影象儲存在Amazon S3中. 解決方案架構師如何確保申請獲得存取Amazon S3的許可?
 
 **選項**
-- A. 更新AWS IAM中的S3角色,允許從亞馬遜ECS讀寫存取,然後重啟容器.
+- A. 更新AWS IAM中的S3角色,允許從Amazon ECS讀寫存取,然後重啟容器.
 - B. 用 S3 許可權建立 IAM 角色, 然後在任務定義中指定該角色為任務RoleArn。
-- C. 建立一個安全群組(security group),允許從亞馬遜ECS存取Amazon S3,並更新ECS叢集使用的發射配置.
+- C. 建立一個安全群組(security group),允許從Amazon ECS存取Amazon S3,並更新ECS叢集使用的發射配置.
 - D. 建立具有 S3 許可權的 IAM 使用者, 並在登入為此帳戶時重新啟動 ECS 叢集的 Amazon EC2 例項。
 
 **答案**
@@ -4309,8 +4309,8 @@ B
 正確答案是 **B**。
 - B：用 S3 許可權建立 IAM 角色, 然後在任務定義中指定該角色為任務RoleArn 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：更新AWS IAM中的S3角色,允許從亞馬遜ECS讀寫存取,然後重啟容器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立一個安全群組(security group),允許從亞馬遜ECS存取Amazon S3,並更新ECS叢集使用的發射配置。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：更新AWS IAM中的S3角色,允許從Amazon ECS讀寫存取,然後重啟容器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立一個安全群組(security group),允許從Amazon ECS存取Amazon S3,並更新ECS叢集使用的發射配置。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立具有 S3 許可權的 IAM 使用者, 並在登入為此帳戶時重新啟動 ECS 叢集的 Amazon EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #186
@@ -4321,7 +4321,7 @@ B
 **選項**
 - A. 在卷閘道器模式下配置 AWS Storage Gateway. 將磁碟區掛載到每個 Windows 例項。
 - B. 為Windows檔案伺服器配置 Amazon FSx. 將 Amazon FSx 檔案系統掛載到每個Windows 例項中.
-- C. 透過使用亞馬遜彈性檔案系統(Amazon EFS)配置一個檔案系統. 將 EFS 檔案系統掛載到每個 Windows 例項。
+- C. 透過使用Amazon Elastic File System (Amazon EFS)配置一個檔案系統. 將 EFS 檔案系統掛載到每個 Windows 例項。
 - D. 配置 Amazon 彈性塊儲存器( Amazon EBS) 磁碟區, 並具有所需的大小。 在磁碟區中附加每個EC2例項。 將卷內的檔案系統掛載到每個 Windows 例項中。
 
 **答案**
@@ -4333,7 +4333,7 @@ B
 - B：為Windows檔案伺服器配置 Amazon FSx. 將 Amazon FSx 檔案系統掛載到每個Windows 例項中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在卷閘道器模式下配置 AWS Storage Gateway. 將磁碟區掛載到每個 Windows 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：透過使用亞馬遜彈性檔案系統(Amazon EFS)配置一個檔案系統. 將 EFS 檔案系統掛載到每個 Windows 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：透過使用Amazon Elastic File System (Amazon EFS)配置一個檔案系統. 將 EFS 檔案系統掛載到每個 Windows 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置 Amazon 彈性塊儲存器( Amazon EBS) 磁碟區, 並具有所需的大小。 在磁碟區中附加每個EC2例項。 將卷內的檔案系統掛載到每個 Windows 例項中 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #187
@@ -4345,8 +4345,8 @@ B
 - A. 在多AZ模式下建立 Amazon RDS DB 例項。
 - B. 在另一個可用區(Availability Zone)中建立 Amazon RDS DB 例項和一個或多個複製件.
 - C. 建立一個基於 Amazon EC2 例項的 Docker 叢集來處理動態應用程式負載。
-- D. 建立一個亞馬遜彈性容器服務(Amazon ECS)叢集,具有Fargate 啟動類型,處理動態應用負載.
-- E. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,其啟動類型為Amazon EC2,處理動態應用負載.
+- D. 建立一個Amazon Elastic Container Service (Amazon ECS)叢集,具有Fargate 啟動類型,處理動態應用負載.
+- E. 建立Amazon Elastic Container Service (Amazon ECS)叢集,其啟動類型為Amazon EC2,處理動態應用負載.
 
 **答案**
 A,D
@@ -4356,11 +4356,11 @@ A,D
 **詳解**
 正確答案是 **A, D**。
 - A：在多AZ模式下建立 Amazon RDS DB 例項 。此選項符合題目條件，能有效滿足核心需求。
-- D：建立一個亞馬遜彈性容器服務(Amazon ECS)叢集,具有Fargate 啟動類型,處理動態應用負載。此選項符合題目條件，能有效滿足核心需求。
+- D：建立一個Amazon Elastic Container Service (Amazon ECS)叢集,具有Fargate 啟動類型,處理動態應用負載。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：在另一個可用區(Availability Zone)中建立 Amazon RDS DB 例項和一個或多個複製件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立一個基於 Amazon EC2 例項的 Docker 叢集來處理動態應用程式負載 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：建立亞馬遜彈性容器服務(Amazon ECS)叢集,其啟動類型為Amazon EC2,處理動態應用負載。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：建立Amazon Elastic Container Service (Amazon ECS)叢集,其啟動類型為Amazon EC2,處理動態應用負載。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #188
 
@@ -4513,9 +4513,9 @@ A
 
 **選項**
 - A. 發射兩個EC2例項,每個例項在不同的可用區(Availability Zone)中在同一AWS 區域(Region)中. 在兩個EC2例項上安裝資料庫(database). 配置 EC2 例項為叢集。 設定資料庫(database) 複寫(replication).
-- B. 在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個亞馬遜機器影象(AMI)來備份資料. 如果發生干擾事件, 使用 AWS CloudFormation 自動提供 EC2 例項。
+- B. 在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個Amazon Machine Image (AMI)來備份資料. 如果發生干擾事件, 使用 AWS CloudFormation 自動提供 EC2 例項。
 - C. 發射兩個EC2 執行個體,每例在不同的AWS 區域(Region). 在兩個EC2例項上安裝資料庫(database). 設定資料庫(database) 複寫(replication). 失敗了資料庫(database)到第二個區域(Region).
-- D. 在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個亞馬遜機器影象(AMI)來備份資料. 如果發生干擾事件,則使用EC2自動回收來恢復例項。
+- D. 在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個Amazon Machine Image (AMI)來備份資料. 如果發生干擾事件,則使用EC2自動回收來恢復例項。
 
 **答案**
 C
@@ -4526,8 +4526,8 @@ C
 - C：發射兩個EC2 執行個體,每例在不同的AWS 區域(Region). 在兩個EC2例項上安裝資料庫(database). 設定資料庫(database) 複寫(replication). 失敗了資料庫(database)到第二個區域(Region)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：發射兩個EC2例項,每個例項在不同的可用區(Availability Zone)中在同一AWS 區域(Region)中. 在兩個EC2例項上安裝資料庫(database). 配置 EC2 例項為叢集。 設定資料庫(database) 複寫(replication)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個亞馬遜機器影象(AMI)來備份資料. 如果發生干擾事件, 使用 AWS CloudFormation 自動提供 EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個亞馬遜機器影象(AMI)來備份資料. 如果發生干擾事件,則使用EC2自動回收來恢復例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個Amazon Machine Image (AMI)來備份資料. 如果發生干擾事件, 使用 AWS CloudFormation 自動提供 EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個Amazon Machine Image (AMI)來備份資料. 如果發生干擾事件,則使用EC2自動回收來恢復例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #195
 
@@ -4535,10 +4535,10 @@ C
 公司訂單系統向Amazon EC2公司傳送客戶請求。 EC2例項處理訂單,然後將訂單儲存在Amazon RDS上的資料庫(database)上. 使用者報告說,系統故障時必須重新處理訂單. 公司希望有彈性的解決方案,在系統中斷時可以自動處理訂單. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 將EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 中。 建立一個Amazon EventBridge(Amazon CloudWatch事件)規則,以鎖定亞馬遜彈性容器服務(Amazon ECS)任務.
+- A. 將EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 中。 建立一個Amazon EventBridge(Amazon CloudWatch事件)規則,以鎖定Amazon Elastic Container Service (Amazon ECS)任務.
 - B. 將 EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 之後的 應用程式負載平衡器(Application Load Balancer)(ALB)。 更新向 ALB 端點傳送訊息的命令系統。
 - C. 將EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 中。 配置命令系統, 將訊息傳送到 Amazon 簡單佇列服務(Amazon SQS) 佇列。 配置 EC2 例項以消耗佇列中的訊息。
-- D. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 建立 AWS Lambda 函式,並訂閱該函式為 SNS 主題. 配置向SNS主題傳送訊息的命令系統. 向 EC2 例項傳送命令,透過使用 AWS Systems Manager 執行命令處理訊息。
+- D. 建立一個Amazon Simple Notification Service (Amazon SNS)主題. 建立 AWS Lambda 函式,並訂閱該函式為 SNS 主題. 配置向SNS主題傳送訊息的命令系統. 向 EC2 例項傳送命令,透過使用 AWS Systems Manager 執行命令處理訊息。
 
 **答案**
 D
@@ -4546,9 +4546,9 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 建立 AWS Lambda 函式,並訂閱該函式為 SNS 主題. 配置向SNS主題傳送訊息的命令系統. 向 EC2 例項傳送命令,透過使用 AWS Systems Manager 執行命令處理訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：建立一個Amazon Simple Notification Service (Amazon SNS)主題. 建立 AWS Lambda 函式,並訂閱該函式為 SNS 主題. 配置向SNS主題傳送訊息的命令系統. 向 EC2 例項傳送命令,透過使用 AWS Systems Manager 執行命令處理訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 中。 建立一個Amazon EventBridge(Amazon CloudWatch事件)規則,以鎖定亞馬遜彈性容器服務(Amazon ECS)任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 中。 建立一個Amazon EventBridge(Amazon CloudWatch事件)規則,以鎖定Amazon Elastic Container Service (Amazon ECS)任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將 EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 之後的 應用程式負載平衡器(Application Load Balancer)(ALB)。 更新向 ALB 端點傳送訊息的命令系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將EC2 例項移動到 Auto Scaling 群組(Auto Scaling group) 中。 配置命令系統, 將訊息傳送到 Amazon 簡單佇列服務(Amazon SQS) 佇列。 配置 EC2 例項以消耗佇列中的訊息 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -4583,7 +4583,7 @@ D
 **選項**
 - A. 用執行.NET Core的 AWS Lambda 函式將應用程式重構為無伺服器.
 - B. 在多AZ部署中與.NET平臺重置AWS Elastic Beanstalk中的應用程式.
-- C. 與亞馬遜Linux Amazon Machine Image(AMI)一起在Amazon EC2上執行的應用程式重新設定平臺.
+- C. 與Amazon Linux Amazon Machine Image(AMI)一起在Amazon EC2上執行的應用程式重新設定平臺.
 - D. 使用AWS 資料庫(Database) 遷移服務(AWS DS)在多AZ部署中從Oracle 資料庫(database)遷移到Amazon DynamoDB.
 - E. 使用AWS 資料庫(Database) 遷移服務(AWS DS)在多AZ部署中從Oracle 資料庫(database)遷移到Amazon RDS上的Oracle.
 
@@ -4598,7 +4598,7 @@ B,D
 - D：使用AWS 資料庫(Database) 遷移服務(AWS DS)在多AZ部署中從Oracle 資料庫(database)遷移到Amazon DynamoDB。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：用執行.NET Core的 AWS Lambda 函式將應用程式重構為無伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：與亞馬遜Linux Amazon Machine Image(AMI)一起在Amazon EC2上執行的應用程式重新設定平臺。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：與Amazon Linux Amazon Machine Image(AMI)一起在Amazon EC2上執行的應用程式重新設定平臺。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用AWS 資料庫(Database) 遷移服務(AWS DS)在多AZ部署中從Oracle 資料庫(database)遷移到Amazon RDS上的Oracle。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #198
@@ -4607,7 +4607,7 @@ B,D
 一家公司在一個前提資料中心的Kubernetes叢集上執行一個集裝箱化的應用程式。 該公司正在使用MongoDB 資料庫(database)進行資料儲存. 公司希望將其中一些環境遷移到AWS,但此時無法更改程式碼或部署方法. 公司需要一個解決方案,將營運開銷(operational overhead)最小化. 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 使用亞馬遜彈性容器服務(Amazon ECS),使用Amazon EC2工人節點進行計算,使用EC2上的MongoDB進行資料儲存.
+- A. 使用Amazon Elastic Container Service (Amazon ECS),使用Amazon EC2工人節點進行計算,使用EC2上的MongoDB進行資料儲存.
 - B. 使用帶有 AWS Fargate 的 Amazon 彈性容器服務(Amazon ECS)進行計算,使用 Amazon DynamoDB 進行資料儲存
 - C. 使用Amazon Elastic Kubernetes Service(Amazon EKS)與Amazon EC2工人節點進行計算,使用Amazon DynamoDB進行資料儲存.
 - D. 使用Amazon Elastic Kubernetes Service(Amazon EKS)與AWS Fargate進行計算,使用Amazon DocumentDB(與MongoDB相容)進行資料儲存.
@@ -4620,7 +4620,7 @@ D
 正確答案是 **D**。
 - D：使用Amazon Elastic Kubernetes Service(Amazon EKS)與AWS Fargate進行計算,使用Amazon DocumentDB(與MongoDB相容)進行資料儲存。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜彈性容器服務(Amazon ECS),使用Amazon EC2工人節點進行計算,使用EC2上的MongoDB進行資料儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Elastic Container Service (Amazon ECS),使用Amazon EC2工人節點進行計算,使用EC2上的MongoDB進行資料儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用帶有 AWS Fargate 的 Amazon 彈性容器服務(Amazon ECS)進行計算,使用 Amazon DynamoDB 進行資料儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon Elastic Kubernetes Service(Amazon EKS)與Amazon EC2工人節點進行計算,使用Amazon DynamoDB進行資料儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -4650,7 +4650,7 @@ C
 ## Question #200
 
 **題目**
-一個公司在AWS上託管其應用程式. 公司使用亞馬遜·科尼託管理使用者. 當使用者登入到應用程式時,應用程式透過使用Amazon API Gateway託管的REST API從Amazon DynamoDB獲取所需的資料. 公司希望有一個AWS管理的解決方案,控制對REST API的獲取,以減少開發努力. 哪個解決方案能以最少的營運開銷達成這些要求？
+一個公司在AWS上託管其應用程式. 公司使用Amazon Cognito管理使用者. 當使用者登入到應用程式時,應用程式透過使用Amazon API Gateway託管的REST API從Amazon DynamoDB獲取所需的資料. 公司希望有一個AWS管理的解決方案,控制對REST API的獲取,以減少開發努力. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 配置 AWS Lambda 函式成為 API Gateway 中的授權者,以驗證哪個使用者提出請求.
@@ -4677,9 +4677,9 @@ A
 
 **選項**
 - A. 建立 AmazonConnect 聯絡方式來傳送短訊息。 使用AWS Lambda處理響應.
-- B. 構建亞馬遜平點之旅. 配置 Amazon Pinpoint 將事件傳送到 Amazon Kinesis 資料流進行分析和存檔.
-- C. 使用亞馬遜簡易佇列服務(Amazon SQS)來分發短訊息. 使用AWS Lambda處理響應.
-- D. 建立亞馬遜簡易通知服務(Amazon SNS) FIFO主題. 將 Amazon Kinesis 資料流訂閱到 SNS 專題,以供分析和存檔.
+- B. 構建Amazon Pinpoint. 配置 Amazon Pinpoint 將事件傳送到 Amazon Kinesis 資料流進行分析和存檔.
+- C. 使用Amazon Simple Queue Service (Amazon SQS)來分發短訊息. 使用AWS Lambda處理響應.
+- D. 建立Amazon Simple Notification Service (Amazon SNS) FIFO主題. 將 Amazon Kinesis 資料流訂閱到 SNS 專題,以供分析和存檔.
 
 **答案**
 A
@@ -4689,9 +4689,9 @@ A
 正確答案是 **A**。
 - A：建立 AmazonConnect 聯絡方式來傳送短訊息。 使用AWS Lambda處理響應。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：構建亞馬遜平點之旅. 配置 Amazon Pinpoint 將事件傳送到 Amazon Kinesis 資料流進行分析和存檔。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜簡易佇列服務(Amazon SQS)來分發短訊息. 使用AWS Lambda處理響應。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立亞馬遜簡易通知服務(Amazon SNS) FIFO主題. 將 Amazon Kinesis 資料流訂閱到 SNS 專題,以供分析和存檔。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：構建Amazon Pinpoint. 配置 Amazon Pinpoint 將事件傳送到 Amazon Kinesis 資料流進行分析和存檔。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Simple Queue Service (Amazon SQS)來分發短訊息. 使用AWS Lambda處理響應。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立Amazon Simple Notification Service (Amazon SNS) FIFO主題. 將 Amazon Kinesis 資料流訂閱到 SNS 專題,以供分析和存檔。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #202
 
@@ -4719,7 +4719,7 @@ B
 ## Question #203
 
 **題目**
-金融公司的客戶要求透過傳送簡訊與金融顧問預約。 在 Amazon EC2 例項上執行的網路應用程式接受預約請求. 簡訊透過網路應用程式釋出到一個亞馬遜簡易佇列服務(Amazon SQS)佇列. 執行在EC2例項上的另一個應用程式然後向客戶傳送會議邀請和會議確認電子郵件資訊. 在成功安排之後,該應用程式將會議資訊儲存在Amazon DynamoDB 資料庫(database)中。 隨著公司的擴大,顧客報告說他們的會議邀請書需要更長的時間才能到達. 一個解決方案設計師應該建議什麼來解決這個問題?
+金融公司的客戶要求透過傳送簡訊與金融顧問預約。 在 Amazon EC2 例項上執行的網路應用程式接受預約請求. 簡訊透過網路應用程式釋出到一個Amazon Simple Queue Service (Amazon SQS)佇列. 執行在EC2例項上的另一個應用程式然後向客戶傳送會議邀請和會議確認電子郵件資訊. 在成功安排之後,該應用程式將會議資訊儲存在Amazon DynamoDB 資料庫(database)中。 隨著公司的擴大,顧客報告說他們的會議邀請書需要更長的時間才能到達. 一個解決方案設計師應該建議什麼來解決這個問題?
 
 **選項**
 - A. 在DynamoDB 資料庫(database)前增加一個DynamoDB加速器(DAX)叢集.
@@ -4788,13 +4788,13 @@ C
 ## Question #206
 
 **題目**
-一家公司希望管理亞馬遜機器影象(AMI). 該公司目前將AMI複製到同一家AWS 區域(Region)公司,在那裡建立了AMI. 公司需要設計一個應用程式來捕捉AWS API呼叫,並在Amazon EC2 CreateImage API操作在公司帳戶內呼叫時發出警報. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司希望管理Amazon Machine Image (AMI). 該公司目前將AMI複製到同一家AWS 區域(Region)公司,在那裡建立了AMI. 公司需要設計一個應用程式來捕捉AWS API呼叫,並在Amazon EC2 CreateImage API操作在公司帳戶內呼叫時發出警報. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 建立 AWS Lambda 函式以查詢 AWS CloudTrail 日誌,並在檢測到 CreateImage API 呼叫時發出警告.
 - B. 配置 AWS CloudTrail 使用 Amazon 簡單通知服務(Amazon SNS) , 當更新日誌傳送到 Amazon S3 時會發生. 使用 Amazon Athena 建立一個新表格,並在檢測到API呼叫時查詢CreateImage.
-- C. 為 CreateImage API 呼叫建立 Amazon EventBridge(Amazon CloudWatch Events)規則. 配置目標為亞馬遜簡單通知服務(Amazon SNS),以便在檢測到Creatimage API呼叫時發出警報.
-- D. 配置一個亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列作為AWS CloudTrail日誌的目標. 建立一個 AWS Lambda 函式,在檢測到一個 Creatimage API 呼叫時向一個 Amazon 簡單通知服務(Amazon SNS) 發出警報.
+- C. 為 CreateImage API 呼叫建立 Amazon EventBridge(Amazon CloudWatch Events)規則. 配置目標為Amazon Simple Notification Service (Amazon SNS),以便在檢測到Creatimage API呼叫時發出警報.
+- D. 配置一個Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為AWS CloudTrail日誌的目標. 建立一個 AWS Lambda 函式,在檢測到一個 Creatimage API 呼叫時向一個 Amazon 簡單通知服務(Amazon SNS) 發出警報.
 
 **答案**
 D
@@ -4802,11 +4802,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：配置一個亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列作為AWS CloudTrail日誌的目標. 建立一個 AWS Lambda 函式,在檢測到一個 Creatimage API 呼叫時向一個 Amazon 簡單通知服務(Amazon SNS) 發出警報。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：配置一個Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為AWS CloudTrail日誌的目標. 建立一個 AWS Lambda 函式,在檢測到一個 Creatimage API 呼叫時向一個 Amazon 簡單通知服務(Amazon SNS) 發出警報。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立 AWS Lambda 函式以查詢 AWS CloudTrail 日誌,並在檢測到 CreateImage API 呼叫時發出警告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：配置 AWS CloudTrail 使用 Amazon 簡單通知服務(Amazon SNS) , 當更新日誌傳送到 Amazon S3 時會發生. 使用 Amazon Athena 建立一個新表格,並在檢測到API呼叫時查詢CreateImage。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：為 CreateImage API 呼叫建立 Amazon EventBridge(Amazon CloudWatch Events)規則. 配置目標為亞馬遜簡單通知服務(Amazon SNS),以便在檢測到Creatimage API呼叫時發出警報。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：為 CreateImage API 呼叫建立 Amazon EventBridge(Amazon CloudWatch Events)規則. 配置目標為Amazon Simple Notification Service (Amazon SNS),以便在檢測到Creatimage API呼叫時發出警報。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #207
 
@@ -4817,7 +4817,7 @@ D
 - A. 在 API 閘道器上新增節流, 並設定伺服器側節流限制。
 - B. 使用DynamoDB加速器(DAX)和Lambda來緩衝寫給DynamoDB.
 - C. 在 DynamoDB 為表格建立一個帶有使用者請求的二級索引。
-- D. 使用亞馬遜簡易排隊服務(Amazon SQS)佇列和Lambda來緩衝寫給DynamoDB.
+- D. 使用Amazon Simple Queue Service (Amazon SQS)佇列和Lambda來緩衝寫給DynamoDB.
 
 **答案**
 D
@@ -4825,7 +4825,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用亞馬遜簡易排隊服務(Amazon SQS)佇列和Lambda來緩衝寫給DynamoDB。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：使用Amazon Simple Queue Service (Amazon SQS)佇列和Lambda來緩衝寫給DynamoDB。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在 API 閘道器上新增節流, 並設定伺服器側節流限制 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用DynamoDB加速器(DAX)和Lambda來緩衝寫給DynamoDB。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -4885,8 +4885,8 @@ A
 **選項**
 - A. 使用 Amazon CloudWatch 度量衡來監視自動縮放組中每個例項的CPU. 根據工作高峰值配置每個Auto Scaling 群組(Auto Scaling group)的最低容量.
 - B. 使用 Amazon CloudWatch 度量衡來監視自動縮放組中每個例項的CPU. 配置一個 Cloud Watch 提醒以引用 Amazon 簡單通知服務( Amazon SNS) 主題, 該主題可按要求建立額外的自動縮放組。
-- C. 提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組。
-- D. 提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據每個例項的積壓計算建立一個衡量標準。 基於此引數的自動縮放組。
+- C. 提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組。
+- D. 提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據每個例項的積壓計算建立一個衡量標準。 基於此引數的自動縮放組。
 
 **答案**
 C
@@ -4894,16 +4894,16 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 Amazon CloudWatch 度量衡來監視自動縮放組中每個例項的CPU. 根據工作高峰值配置每個Auto Scaling 群組(Auto Scaling group)的最低容量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 Amazon CloudWatch 度量衡來監視自動縮放組中每個例項的CPU. 配置一個 Cloud Watch 提醒以引用 Amazon 簡單通知服務( Amazon SNS) 主題, 該主題可按要求建立額外的自動縮放組 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據每個例項的積壓計算建立一個衡量標準。 基於此引數的自動縮放組 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據每個例項的積壓計算建立一個衡量標準。 基於此引數的自動縮放組 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #211
 
 **題目**
-一家公司擁有多種生產應用. 其中一個應用程式包括來自Amazon EC2,AWS Lambda,Amazon RDS,亞馬遜簡易通知服務(Amazon SNS)和亞馬遜簡易佇列服務(AWS多個區域)的資源. 所有公司資源都標有"應用程式"的標籤名稱和與每個應用程式對應的值。 解決方案設計師必須提供最快的解決方案,以識別所有標記的元件。 哪種解決辦法符合這些要求?
+一家公司擁有多種生產應用. 其中一個應用程式包括來自Amazon EC2,AWS Lambda,Amazon RDS,Amazon Simple Notification Service (Amazon SNS)和Amazon Simple Queue Service(AWS多個區域)的資源. 所有公司資源都標有"應用程式"的標籤名稱和與每個應用程式對應的值。 解決方案設計師必須提供最快的解決方案,以識別所有標記的元件。 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 使用AWS CloudTrail生成一個帶有應用程式標記的資源列表.
@@ -5119,7 +5119,7 @@ D
 - A. AWS Glue 任務
 - B. AWS Lambda 函式
 - C. 在Amazon Elastic Kubernetes Service(Amazon EKS)主辦的集裝箱化服務
-- D. Amazon EC2在亞馬遜ECS提供集裝箱服務
+- D. Amazon EC2在Amazon ECS提供集裝箱服務
 
 **答案**
 B
@@ -5131,16 +5131,16 @@ B
 - 其餘選項比較：
 - A：AWS Glue 任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在Amazon Elastic Kubernetes Service(Amazon EKS)主辦的集裝箱化服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：Amazon EC2在亞馬遜ECS提供集裝箱服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：Amazon EC2在Amazon ECS提供集裝箱服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #221
 
 **題目**
-一家公司在亞馬遜Linux EC2的一組例項上執行一個應用程式. 出於合規(compliance)的原因,公司必須保留所有應用日誌檔案7年. 日誌檔案將透過必須能夠同時存取所有檔案的報告工具進行分析。 哪些儲存解決方案符合這些要求?
+一家公司在Amazon Linux EC2的一組例項上執行一個應用程式. 出於合規(compliance)的原因,公司必須保留所有應用日誌檔案7年. 日誌檔案將透過必須能夠同時存取所有檔案的報告工具進行分析。 哪些儲存解決方案符合這些要求?
 
 **選項**
 - A. 亞馬遜彈性區塊儲存(Amazon EBS)
-- B. 亞馬遜彈性檔案系統(Amazon EFS)
+- B. Amazon Elastic File System (Amazon EFS)
 - C. Amazon EC2 例項商店
 - D. Amazon S3.
 
@@ -5153,7 +5153,7 @@ D
 - D：Amazon S3。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：亞馬遜彈性檔案系統(Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：Amazon Elastic File System (Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：Amazon EC2 例項商店。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #222
@@ -5182,7 +5182,7 @@ A
 ## Question #223
 
 **題目**
-一家公司已部署一個Java Spring Boot應用程式,作為在亞馬遜精英庫伯涅茨服務(Amazon EKS)上執行於私人子網的 Pod. 該應用程式需要將資料寫入一個Amazon DynamoDB表格. 解決方案設計師必須確保應用程式能夠與DynamoDB表互動,而不會將流量暴露在網際網路上. 設計師應採取哪些步驟來實現這一目標?(選二.
+一家公司已部署一個Java Spring Boot應用程式,作為在Amazon Elastic Kubernetes Service (Amazon EKS)上執行於私人子網的 Pod. 該應用程式需要將資料寫入一個Amazon DynamoDB表格. 解決方案設計師必須確保應用程式能夠與DynamoDB表互動,而不會將流量暴露在網際網路上. 設計師應採取哪些步驟來實現這一目標?(選二.
 
 **選項**
 - A. 附加一個具有足夠許可權的IAM角色到EKS sock.
@@ -5263,7 +5263,7 @@ A
 - A. 使用AWS Glue處理Amazon S3中的原始資料.
 - B. 使用 Amazon Route 53 來連線不同的 EC2 例項。
 - C. 增加更多EC2例項,以適應越來越多的資料輸入。
-- D. 將原始資料傳送到亞馬遜簡易佇列服務(Amazon SQS). 使用 EC2 例項處理資料。
+- D. 將原始資料傳送到Amazon Simple Queue Service (Amazon SQS). 使用 EC2 例項處理資料。
 - E. 使用Amazon API Gateway將原始資料傳送到Amazon Kinesis資料流. 配置 Amazon Kinesis Data Firehose 以資料流為源向 Amazon S3 傳送資料.
 
 **答案**
@@ -5278,7 +5278,7 @@ A,E
 - 其餘選項比較：
 - B：使用 Amazon Route 53 來連線不同的 EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：增加更多EC2例項,以適應越來越多的資料輸入。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將原始資料傳送到亞馬遜簡易佇列服務(Amazon SQS). 使用 EC2 例項處理資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將原始資料傳送到Amazon Simple Queue Service (Amazon SQS). 使用 EC2 例項處理資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #227
 
@@ -5447,7 +5447,7 @@ A,B
 ## Question #234
 
 **題目**
-一家公司正在建設一個新的基於網路的客戶關係管理應用程式. 該應用程式將使用亞馬遜彈性塊儲存(Amazon EBS)所支援的幾個Amazon EC2 執行個體,其後方為應用程式負載平衡器(Application Load Balancer)(ALB)卷. 該應用程式還將使用Amazon Aurora 資料庫(database). 應用程式的所有資料必須在休息和過境時加密。 哪種解決辦法能滿足這些要求?
+一家公司正在建設一個新的基於網路的客戶關係管理應用程式. 該應用程式將使用Amazon Elastic Block Store (Amazon EBS)所支援的幾個Amazon EC2 執行個體,其後方為應用程式負載平衡器(Application Load Balancer)(ALB)卷. 該應用程式還將使用Amazon Aurora 資料庫(database). 應用程式的所有資料必須在休息和過境時加密。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用ALB上的AWS Key Management Service(AWS KMS)憑證加密過境資料. 使用AWS Certificate Manager(ACM)加密EBS 磁碟區和休息時的Aurora 資料庫(database)儲存.
@@ -5683,7 +5683,7 @@ C
 - A. 將資料庫(database)移動到Amazon RDS,並啟用自動備份. 在同一可用區(Availability Zone)中手動推出另一個EC2例項. 在可用區(Availability Zone)中配置一個應用程式負載平衡器(Application Load Balancer),並將這兩個例項設定為目標.
 - B. 將 資料庫(database) 遷移到一個 Amazon Aurora 例項,其讀取的複製品與現有的 EC2 例項相同。 在同一可用區(Availability Zone)中,手動推出另一個EC2例項. 配置一個應用程式負載平衡器(Application Load Balancer),並將兩個EC2例項設定為目標.
 - C. 將資料庫(database)移動到Amazon Aurora,在另一個可用區(Availability Zone)中帶有讀取的複製品. 從 EC2 例項建立一個 Amazon 機器影象( AMI)。 在兩個可用區(Availability Zones)中配置一個應用程式負載平衡器(Application Load Balancer). 附加一個Auto Scaling 群組(Auto Scaling group),使用AMI橫跨兩個可用區(Availability Zones).
-- D. 將 資料庫(database) 移動到單獨的 EC2 例項,並將備份排程到 Amazon S3。 從最初的EC2例項建立一個亞馬遜機器影象(AMI). 在兩個可用區(Availability Zones)中配置一個應用程式負載平衡器(Application Load Balancer). 附加一個Auto Scaling 群組(Auto Scaling group),使用AMI橫跨兩個可用區(Availability Zones).
+- D. 將 資料庫(database) 移動到單獨的 EC2 例項,並將備份排程到 Amazon S3。 從最初的EC2例項建立一個Amazon Machine Image (AMI). 在兩個可用區(Availability Zones)中配置一個應用程式負載平衡器(Application Load Balancer). 附加一個Auto Scaling 群組(Auto Scaling group),使用AMI橫跨兩個可用區(Availability Zones).
 
 **答案**
 C
@@ -5695,7 +5695,7 @@ C
 - 其餘選項比較：
 - A：將資料庫(database)移動到Amazon RDS,並啟用自動備份. 在同一可用區(Availability Zone)中手動推出另一個EC2例項. 在可用區(Availability Zone)中配置一個應用程式負載平衡器(Application Load Balancer),並將這兩個例項設定為目標。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將 資料庫(database) 遷移到一個 Amazon Aurora 例項,其讀取的複製品與現有的 EC2 例項相同。 在同一可用區(Availability Zone)中,手動推出另一個EC2例項. 配置一個應用程式負載平衡器(Application Load Balancer),並將兩個EC2例項設定為目標。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將 資料庫(database) 移動到單獨的 EC2 例項,並將備份排程到 Amazon S3。 從最初的EC2例項建立一個亞馬遜機器影象(AMI). 在兩個可用區(Availability Zones)中配置一個應用程式負載平衡器(Application Load Balancer). 附加一個Auto Scaling 群組(Auto Scaling group),使用AMI橫跨兩個可用區(Availability Zones)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將 資料庫(database) 移動到單獨的 EC2 例項,並將備份排程到 Amazon S3。 從最初的EC2例項建立一個Amazon Machine Image (AMI). 在兩個可用區(Availability Zones)中配置一個應用程式負載平衡器(Application Load Balancer). 附加一個Auto Scaling 群組(Auto Scaling group),使用AMI橫跨兩個可用區(Availability Zones)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #245
 
@@ -5778,7 +5778,7 @@ A,C
 - A. 建立例項副本。 把所有例項都放在應用程式負載平衡器(Application Load Balancer)後面。
 - B. 為 Amazon S3 建立 S3 VPC 端點(VPC endpoint). 更新軟體以引用終點。
 - C. 停止EC2例項。 將例項型別修改為具有更強大的CPU和更多記憶體的例項型別. 重新啟動例項。
-- D. 向亞馬遜簡易佇列服務(Amazon SQS)傳送路由請求。 根據佇列大小配置 EC2 Auto Scaling 群組(Auto Scaling group)。 更新從佇列讀取的軟體。
+- D. 向Amazon Simple Queue Service (Amazon SQS)傳送路由請求。 根據佇列大小配置 EC2 Auto Scaling 群組(Auto Scaling group)。 更新從佇列讀取的軟體。
 
 **答案**
 D
@@ -5786,7 +5786,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：向亞馬遜簡易佇列服務(Amazon SQS)傳送路由請求。 根據佇列大小配置 EC2 Auto Scaling 群組(Auto Scaling group)。 更新從佇列讀取的軟體 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：向Amazon Simple Queue Service (Amazon SQS)傳送路由請求。 根據佇列大小配置 EC2 Auto Scaling 群組(Auto Scaling group)。 更新從佇列讀取的軟體 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立例項副本。 把所有例項都放在應用程式負載平衡器(Application Load Balancer)後面。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：為 Amazon S3 建立 S3 VPC 端點(VPC endpoint). 更新軟體以引用終點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -5867,9 +5867,9 @@ B
 一個解決方案架構師需要設計一個儲存客戶端案例檔案的系統. 這些檔案是公司的核心資產,是重要的。 檔案數量會隨時間而增加. 檔案必須同時從執行於 Amazon EC2 例項的多個應用程式伺服器上存取. 解決方案必須有內在冗餘. 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 亞馬遜彈性檔案系統(Amazon EFS)
+- A. Amazon Elastic File System (Amazon EFS)
 - B. 亞馬遜彈性區塊儲存(Amazon EBS)
-- C. 亞馬遜 S3 Glacier Deep Archive
+- C. Amazon S3 Glacier Deep Archive
 - D. AWS Backup 保管庫
 
 **答案**
@@ -5878,10 +5878,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：亞馬遜彈性檔案系統(Amazon EFS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：Amazon Elastic File System (Amazon EFS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：亞馬遜 S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：Amazon S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：AWS Backup 保管庫。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #253
@@ -5938,8 +5938,8 @@ B
 **選項**
 - A. 配置網路應用程式向Amazon Kinesis Data Firehose傳送命令訊息. 設定支付服務以獲取 Kinesis Data Firehose 的資訊並處理訂單。
 - B. 在 AWS CloudTrail 中建立一個規則,以引用基於已登入的應用程式路徑請求的 AWS Lambda 函式. 使用Lambda查詢資料庫(database),呼叫支付服務,並在訂單中傳遞資訊.
-- C. 在資料庫(database)中儲存順序. 向亞馬遜簡易通知服務(Amazon SNS)傳送包含訂單號的資訊. 設定支付服務以對 Amazon SNS 進行投票,檢索訊息,並處理訂單.
-- D. 在資料庫(database)中儲存順序. 傳送一個包含命令號的資訊到一個亞馬遜簡易佇列服務(Amazon SQS)FIFO佇列. 設定支付服務以獲取訊息並處理訂單。 從佇列中刪除訊息。
+- C. 在資料庫(database)中儲存順序. 向Amazon Simple Notification Service (Amazon SNS)傳送包含訂單號的資訊. 設定支付服務以對 Amazon SNS 進行投票,檢索訊息,並處理訂單.
+- D. 在資料庫(database)中儲存順序. 傳送一個包含命令號的資訊到一個Amazon Simple Queue Service (Amazon SQS)FIFO佇列. 設定支付服務以獲取訊息並處理訂單。 從佇列中刪除訊息。
 
 **答案**
 D
@@ -5947,11 +5947,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在資料庫(database)中儲存順序. 傳送一個包含命令號的資訊到一個亞馬遜簡易佇列服務(Amazon SQS)FIFO佇列. 設定支付服務以獲取訊息並處理訂單。 從佇列中刪除訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：在資料庫(database)中儲存順序. 傳送一個包含命令號的資訊到一個Amazon Simple Queue Service (Amazon SQS)FIFO佇列. 設定支付服務以獲取訊息並處理訂單。 從佇列中刪除訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：配置網路應用程式向Amazon Kinesis Data Firehose傳送命令訊息. 設定支付服務以獲取 Kinesis Data Firehose 的資訊並處理訂單 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在 AWS CloudTrail 中建立一個規則,以引用基於已登入的應用程式路徑請求的 AWS Lambda 函式. 使用Lambda查詢資料庫(database),呼叫支付服務,並在訂單中傳遞資訊。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在資料庫(database)中儲存順序. 向亞馬遜簡易通知服務(Amazon SNS)傳送包含訂單號的資訊. 設定支付服務以對 Amazon SNS 進行投票,檢索訊息,並處理訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在資料庫(database)中儲存順序. 向Amazon Simple Notification Service (Amazon SNS)傳送包含訂單號的資訊. 設定支付服務以對 Amazon SNS 進行投票,檢索訊息,並處理訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #256
 
@@ -6126,10 +6126,10 @@ A
 一家公司正在建立一個由若干微服務組成的應用程式。 公司決定使用集裝箱技術在AWS上部署其軟體. 公司需要一個解決方案,最大限度地減少維護和規模化的持續努力. 該公司無法管理額外的基礎設施。 一個設計師應採取何種綜合行動來滿足這些要求?(選二.
 
 **選項**
-- A. 部署亞馬遜彈性容器服務組群。
+- A. 部署Amazon ECS組群。
 - B. 在跨越多個可用區(Availability Zones)的Amazon EC2情況下部署Kubernetes控制飛機.
-- C. 部署亞馬遜彈性容器服務(Amazon ECS),發射型為Amazon EC2。 指定一個大於或等於2的預期任務數量。
-- D. 部署亞馬遜彈性容器服務(Amazon ECS),啟動類型為 Fargate。 指定一個大於或等於2的預期任務數量。
+- C. 部署Amazon Elastic Container Service (Amazon ECS),發射型為Amazon EC2。 指定一個大於或等於2的預期任務數量。
+- D. 部署Amazon Elastic Container Service (Amazon ECS),啟動類型為 Fargate。 指定一個大於或等於2的預期任務數量。
 - E. 在跨越多個可用區(Availability Zones)的Amazon EC2 執行個體中部署Kubernetes工人節點。 建立一個配置,為每個微服務指定兩個或兩個以上的複製件。
 
 **答案**
@@ -6139,11 +6139,11 @@ A,D
 
 **詳解**
 正確答案是 **A, D**。
-- A：部署亞馬遜彈性容器服務組群。此選項符合題目條件，能有效滿足核心需求。
-- D：部署亞馬遜彈性容器服務(Amazon ECS),啟動類型為 Fargate。 指定一個大於或等於2的預期任務數量。此選項符合題目條件，能有效滿足核心需求。
+- A：部署Amazon ECS組群。此選項符合題目條件，能有效滿足核心需求。
+- D：部署Amazon Elastic Container Service (Amazon ECS),啟動類型為 Fargate。 指定一個大於或等於2的預期任務數量。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：在跨越多個可用區(Availability Zones)的Amazon EC2情況下部署Kubernetes控制飛機。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：部署亞馬遜彈性容器服務(Amazon ECS),發射型為Amazon EC2。 指定一個大於或等於2的預期任務數量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：部署Amazon Elastic Container Service (Amazon ECS),發射型為Amazon EC2。 指定一個大於或等於2的預期任務數量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：在跨越多個可用區(Availability Zones)的Amazon EC2 執行個體中部署Kubernetes工人節點。 建立一個配置,為每個微服務指定兩個或兩個以上的複製件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #264
@@ -6451,13 +6451,13 @@ A,C
 ## Question #277
 
 **題目**
-一家公司提供線上服務,釋出影片內容並進行轉碼,供任何移動平臺使用. 應用架構使用亞馬遜彈性檔案系統(Amazon EFS)標準來收集和儲存影片,以便多個Amazon EC2 Linux例項可以存取影片內容進行處理. 隨著服務受歡迎程度逐漸提高,儲存成本也變得太昂貴. 哪種儲存解決方案最符合成本效益?
+一家公司提供線上服務,釋出影片內容並進行轉碼,供任何移動平臺使用. 應用架構使用Amazon Elastic File System (Amazon EFS)標準來收集和儲存影片,以便多個Amazon EC2 Linux例項可以存取影片內容進行處理. 隨著服務受歡迎程度逐漸提高,儲存成本也變得太昂貴. 哪種儲存解決方案最符合成本效益?
 
 **選項**
 - A. 使用AWS Storage Gateway檔案儲存和處理影片內容.
 - B. 使用 AWS Storage Gateway 的捲來儲存和處理影片內容.
 - C. 使用Amazon EFS儲存影片內容. 處理完成後,將檔案轉移到Amazon Elastic Block Store(Amazon EBS).
-- D. 使用Amazon S3儲存影片內容. 將檔案暫時移到連線在伺服器上的亞馬遜彈性塊儲存器(Amazon EBS)中進行處理。
+- D. 使用Amazon S3儲存影片內容. 將檔案暫時移到連線在伺服器上的Amazon Elastic Block Store (Amazon EBS)中進行處理。
 
 **答案**
 A
@@ -6469,7 +6469,7 @@ A
 - 其餘選項比較：
 - B：使用 AWS Storage Gateway 的捲來儲存和處理影片內容。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon EFS儲存影片內容. 處理完成後,將檔案轉移到Amazon Elastic Block Store(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用Amazon S3儲存影片內容. 將檔案暫時移到連線在伺服器上的亞馬遜彈性塊儲存器(Amazon EBS)中進行處理。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon S3儲存影片內容. 將檔案暫時移到連線在伺服器上的Amazon Elastic Block Store (Amazon EBS)中進行處理。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #278
 
@@ -6504,7 +6504,7 @@ C,D
 
 **選項**
 - A. 建立一個AWS Backup計劃,在每月的第一天支援DynamomDB的桌子. 指定一個生命週期政策(lifecycle policy),在6個月後將備份(backup)轉換為冷藏. 將每一備份(backup)的留存期定為7年。
-- B. 在每月的第一天建立一個DynamoDB按需的DynamoDB表格備份(backup). 6個月後,備份(backup)向亞馬遜S3 Glacier Flexible Retrieval過渡. 建立 S3 生命週期政策(Lifecycle policy) 來刪除超過 7 年的備份。
+- B. 在每月的第一天建立一個DynamoDB按需的DynamoDB表格備份(backup). 6個月後,備份(backup)向Amazon S3 Glacier Flexible Retrieval過渡. 建立 S3 生命週期政策(Lifecycle policy) 來刪除超過 7 年的備份。
 - C. 使用AWS SDK來開發一個指令碼,以建立DynamoDB表的點播備份(backup). 設定Amazon EventBridge規則,每月第一天執行劇本. 建立第二個指令碼,在每月第二天執行,將超過6個月的DynamomDB備份過渡到冷儲存,並刪除超過7年的備份.
 - D. 使用AWS CLI建立DynamomDB表的點播備份(backup). 設定一條Amazon EventBridge規則,在每月的第一天以cron表示式執行命令. 在命令中指定在6個月後將備份轉換為冷儲存,並在7年後刪除備份。
 
@@ -6514,7 +6514,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在每月的第一天建立一個DynamoDB按需的DynamoDB表格備份(backup). 6個月後,備份(backup)向亞馬遜S3 Glacier Flexible Retrieval過渡. 建立 S3 生命週期政策(Lifecycle policy) 來刪除超過 7 年的備份 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：在每月的第一天建立一個DynamoDB按需的DynamoDB表格備份(backup). 6個月後,備份(backup)向Amazon S3 Glacier Flexible Retrieval過渡. 建立 S3 生命週期政策(Lifecycle policy) 來刪除超過 7 年的備份 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立一個AWS Backup計劃,在每月的第一天支援DynamomDB的桌子. 指定一個生命週期政策(lifecycle policy),在6個月後將備份(backup)轉換為冷藏. 將每一備份(backup)的留存期定為7年。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用AWS SDK來開發一個指令碼,以建立DynamoDB表的點播備份(backup). 設定Amazon EventBridge規則,每月第一天執行劇本. 建立第二個指令碼,在每月第二天執行,將超過6個月的DynamomDB備份過渡到冷儲存,並刪除超過7年的備份。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -6596,7 +6596,7 @@ C
 
 **選項**
 - A. 將兩個應用都遷移到AWS Lambda. 建立一個 Amazon S3 桶,以便在應用程式之間交換資料.
-- B. 將這兩種應用都遷移到亞馬遜彈性容器服務公司(Amazon ECS)。 配置 Amazon FSx 檔案閘道器進行儲存.
+- B. 將這兩種應用都遷移到Amazon ECS公司(Amazon ECS)。 配置 Amazon FSx 檔案閘道器進行儲存.
 - C. 將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon 簡單佇列服務(Amazon SQS)在應用程式之間交換資料.
 - D. 將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon FSx 用於 NetApp ONTAP 儲存。
 
@@ -6609,7 +6609,7 @@ D
 - D：將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon FSx 用於 NetApp ONTAP 儲存 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將兩個應用都遷移到AWS Lambda. 建立一個 Amazon S3 桶,以便在應用程式之間交換資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將這兩種應用都遷移到亞馬遜彈性容器服務公司(Amazon ECS)。 配置 Amazon FSx 檔案閘道器進行儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將這兩種應用都遷移到Amazon ECS公司(Amazon ECS)。 配置 Amazon FSx 檔案閘道器進行儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon 簡單佇列服務(Amazon SQS)在應用程式之間交換資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #284
@@ -6641,7 +6641,7 @@ B
 一個公司透過使用Amazon S3託管其靜態網站. 公司希望在其網頁上新增聯絡表. 聯絡表將有動態伺服器側元件供使用者輸入自己的名字,電子郵件地址,電話號碼,以及使用者訊息. 該公司預計每月的現場存取不到100次。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 在亞馬遜彈性容器服務(Amazon ECS)中主機為動態聯絡表頁. 建立亞馬遜簡易電子郵件服務(Amazon SES),以連線到任何第三方電子郵件提供者.
+- A. 在Amazon Elastic Container Service (Amazon ECS)中主機為動態聯絡表頁. 建立Amazon Simple Email Service (Amazon SES),以連線到任何第三方電子郵件提供者.
 - B. 建立一個帶有AWS Lambda後端的Amazon API Gateway端點,呼叫 Amazon SES 發送電子郵件.
 - C. 透過部署Amazon Lightsail,將靜態網頁轉換為動態. 使用客戶端指令碼構建聯絡人表單. 將窗體與Amazon WorkMail整合.
 - D. 建立 t2.micro Amazon EC2 例項。 部署一個 LAMP(Linux, Apache, MySQL, PHP/Perl/ Python) 堆疊來託管網頁。 使用客戶端指令碼構建聯絡人表單. 將窗體與Amazon WorkMail整合.
@@ -6654,7 +6654,7 @@ B
 正確答案是 **B**。
 - B：建立一個帶有AWS Lambda後端的Amazon API Gateway端點,呼叫 Amazon SES 發送電子郵件。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在亞馬遜彈性容器服務(Amazon ECS)中主機為動態聯絡表頁. 建立亞馬遜簡易電子郵件服務(Amazon SES),以連線到任何第三方電子郵件提供者。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在Amazon Elastic Container Service (Amazon ECS)中主機為動態聯絡表頁. 建立Amazon Simple Email Service (Amazon SES),以連線到任何第三方電子郵件提供者。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：透過部署Amazon Lightsail,將靜態網頁轉換為動態. 使用客戶端指令碼構建聯絡人表單. 將窗體與Amazon WorkMail整合。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立 t2.micro Amazon EC2 例項。 部署一個 LAMP(Linux, Apache, MySQL, PHP/Perl/ Python) 堆疊來託管網頁。 使用客戶端指令碼構建聯絡人表單. 將窗體與Amazon WorkMail整合。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -6712,7 +6712,7 @@ B
 **選項**
 - A. 建立一個可存取網路伺服器的Amazon S3標準桶.
 - B. 配置一個 Amazon CloudFront 分散式,以 Amazon S3 桶作為來源.
-- C. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 在所有網路伺服器上掛載 EFS 檔案系統。
+- C. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 在所有網路伺服器上掛載 EFS 檔案系統。
 - D. 配置通用 SSD(gp3) Amazon Elastic Block Store(Amazon EBS) 磁碟區. 將 EBS 捲上載到所有網路伺服器。
 
 **答案**
@@ -6724,7 +6724,7 @@ A
 - A：建立一個可存取網路伺服器的Amazon S3標準桶。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：配置一個 Amazon CloudFront 分散式,以 Amazon S3 桶作為來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 在所有網路伺服器上掛載 EFS 檔案系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立Amazon Elastic File System (Amazon EFS)檔案系統. 在所有網路伺服器上掛載 EFS 檔案系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置通用 SSD(gp3) Amazon Elastic Block Store(Amazon EBS) 磁碟區. 將 EBS 捲上載到所有網路伺服器 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #289
@@ -7059,7 +7059,7 @@ A
 ## Question #303
 
 **題目**
-一家公司正在啟動在亞馬遜彈性容器服務叢集(Amazon ECS)上部署的新應用程式,並正在使用Fargate發射型進行ECS任務。 該公司是監控(monitoring) CPU和記憶體使用,因為它期望在應用程式啟動時能有很高的流量. 然而,公司希望在利用率下降時降低成本. 一個解決方案設計師應該推薦什麼?
+一家公司正在啟動在Amazon ECS叢集(Amazon ECS)上部署的新應用程式,並正在使用Fargate發射型進行ECS任務。 該公司是監控(monitoring) CPU和記憶體使用,因為它期望在應用程式啟動時能有很高的流量. 然而,公司希望在利用率下降時降低成本. 一個解決方案設計師應該推薦什麼?
 
 **選項**
 - A. 使用 Amazon EC2 自動縮放以根據先前的流量模式在特定時期進行縮放.
@@ -7250,8 +7250,8 @@ B
 
 **選項**
 - A. 基於引用型別建立多個 Amazon Kinesis 資料流. 配置網路應用程式,將訊息傳送給適當的資料流。 配置每個後端組的應用程式伺服器,以使用 Kinesis 客戶端庫(KCL) 從自己的資料流中集合訊息.
-- B. 為每個引用型別建立 AWS Lambda 函式和一個亞馬遜簡單通知服務(Amazon SNS)主題. 訂閱 Lambda 函式為與之相關的 SNS 主題. 配置用於釋出 SNS 相關主題引用請求的應用程式。
-- C. 建立單一的亞馬遜簡單通知服務(Amazon SNS)主題. 訂閱亞馬遜簡單佇列服務(Amazon SQS) SNS主題的佇列. 配置 SNS 訊息過濾, 以根據引用型別釋出訊息到合適的 SQS 佇列。 配置每個後端應用程式伺服器以使用自己的SQS佇列.
+- B. 為每個引用型別建立 AWS Lambda 函式和一個Amazon Simple Notification Service (Amazon SNS)主題. 訂閱 Lambda 函式為與之相關的 SNS 主題. 配置用於釋出 SNS 相關主題引用請求的應用程式。
+- C. 建立單一的Amazon Simple Notification Service (Amazon SNS)主題. 訂閱Amazon Simple Queue Service (Amazon SQS) SNS主題的佇列. 配置 SNS 訊息過濾, 以根據引用型別釋出訊息到合適的 SQS 佇列。 配置每個後端應用程式伺服器以使用自己的SQS佇列.
 - D. 基於引文型別建立多個Amazon Kinesis Data Firehose送電流,將資料流送至AWSERV008叢集. 配置應用程式以傳送訊息到合適的傳送流。 配置每個後端組的應用程式伺服器,以搜尋OpenSearch Service發來的訊息並相應處理.
 
 **答案**
@@ -7263,13 +7263,13 @@ D
 - D：基於引文型別建立多個Amazon Kinesis Data Firehose送電流,將資料流送至AWSERV008叢集. 配置應用程式以傳送訊息到合適的傳送流。 配置每個後端組的應用程式伺服器,以搜尋OpenSearch Service發來的訊息並相應處理。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：基於引用型別建立多個 Amazon Kinesis 資料流. 配置網路應用程式,將訊息傳送給適當的資料流。 配置每個後端組的應用程式伺服器,以使用 Kinesis 客戶端庫(KCL) 從自己的資料流中集合訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：為每個引用型別建立 AWS Lambda 函式和一個亞馬遜簡單通知服務(Amazon SNS)主題. 訂閱 Lambda 函式為與之相關的 SNS 主題. 配置用於釋出 SNS 相關主題引用請求的應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立單一的亞馬遜簡單通知服務(Amazon SNS)主題. 訂閱亞馬遜簡單佇列服務(Amazon SQS) SNS主題的佇列. 配置 SNS 訊息過濾, 以根據引用型別釋出訊息到合適的 SQS 佇列。 配置每個後端應用程式伺服器以使用自己的SQS佇列。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：為每個引用型別建立 AWS Lambda 函式和一個Amazon Simple Notification Service (Amazon SNS)主題. 訂閱 Lambda 函式為與之相關的 SNS 主題. 配置用於釋出 SNS 相關主題引用請求的應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立單一的Amazon Simple Notification Service (Amazon SNS)主題. 訂閱Amazon Simple Queue Service (Amazon SQS) SNS主題的佇列. 配置 SNS 訊息過濾, 以根據引用型別釋出訊息到合適的 SQS 佇列。 配置每個後端應用程式伺服器以使用自己的SQS佇列。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #312
 
 **題目**
-一家公司有一個執行在幾個Amazon EC2例項上的應用程式。 每個EC2例項都有多個亞馬遜彈性塊儲存器(Amazon EBS)的資料卷附在其上. 應用程式的EC2 例項配置和資料需要夜間備份。 該應用程式還需要在不同的AWS 區域(Region)中可回收. 哪種解決辦法能以業務效率高的方式滿足這些要求?
+一家公司有一個執行在幾個Amazon EC2例項上的應用程式。 每個EC2例項都有多個Amazon Elastic Block Store (Amazon EBS)的資料卷附在其上. 應用程式的EC2 例項配置和資料需要夜間備份。 該應用程式還需要在不同的AWS 區域(Region)中可回收. 哪種解決辦法能以業務效率高的方式滿足這些要求?
 
 **選項**
 - A. 寫一個 AWS Lambda 函式,將應用程式的 EBS 磁碟區的夜快照排程,並將快照複製到不同的 區域(Region)。
@@ -7343,8 +7343,8 @@ B
 **選項**
 - A. 部署AWS Shield,掃描EC2的弱點。 建立 AWS Lambda 函式,將任何結果登入到 AWS CloudTrail。
 - B. 部署 Amazon Macie 和 AWS Lambda 功能,掃描 EC2 例項以識別脆弱性。 把發現記錄到AWS CloudTrail。
-- C. 啟動亞馬遜衛視 向EC2事件部署警衛人員。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果.
-- D. 啟動亞馬遜探長 將亞馬遜巡視員部署到EC2區。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果.
+- C. 啟動Amazon GuardDuty 向EC2事件部署警衛人員。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果.
+- D. 啟動Amazon Inspector 將Amazon Inspector部署到EC2區。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果.
 
 **答案**
 C
@@ -7352,16 +7352,16 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：啟動亞馬遜衛視 向EC2事件部署警衛人員。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：啟動Amazon GuardDuty 向EC2事件部署警衛人員。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：部署AWS Shield,掃描EC2的弱點。 建立 AWS Lambda 函式,將任何結果登入到 AWS CloudTrail 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：部署 Amazon Macie 和 AWS Lambda 功能,掃描 EC2 例項以識別脆弱性。 把發現記錄到AWS CloudTrail。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：啟動亞馬遜探長 將亞馬遜巡視員部署到EC2區。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：啟動Amazon Inspector 將Amazon Inspector部署到EC2區。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #316
 
 **題目**
-一家公司使用Amazon EC2例項執行一個指令碼,在亞馬遜簡易排隊服務(Amazon SQS)佇列中對訊息進行投票和處理. 公司希望降低運營成本,同時保持其處理越來越多的資訊的能力,這些資訊被新增到佇列中. 解決方案設計師建議如何滿足這些要求?
+一家公司使用Amazon EC2例項執行一個指令碼,在Amazon Simple Queue Service (Amazon SQS)佇列中對訊息進行投票和處理. 公司希望降低運營成本,同時保持其處理越來越多的資訊的能力,這些資訊被新增到佇列中. 解決方案設計師建議如何滿足這些要求?
 
 **選項**
 - A. 增加EC2例項的大小以更快地處理訊息。
@@ -7462,7 +7462,7 @@ B
 - A. 將資料釋出到Amazon Kinesis資料流,使用Kinesis資料分析器查詢資料.
 - B. 以Amazon Redshift為目的地,向Amazon Kinesis Data Firehose釋出資料. 使用Amazon Redshift查詢資料.
 - C. 將攝入的資料儲存在EC2例項商店中. 將資料釋出給以Amazon S3為目的地的Amazon Kinesis Data Firehose. 使用Amazon Athena查詢資料.
-- D. 將吸收的資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. 將資料釋出給 Amazon ElastiCache for Redis. 訂閱 Redis 頻道查詢資料。
+- D. 將吸收的資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 將資料釋出給 Amazon ElastiCache for Redis. 訂閱 Redis 頻道查詢資料。
 
 **答案**
 A
@@ -7474,7 +7474,7 @@ A
 - 其餘選項比較：
 - B：以Amazon Redshift為目的地,向Amazon Kinesis Data Firehose釋出資料. 使用Amazon Redshift查詢資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將攝入的資料儲存在EC2例項商店中. 將資料釋出給以Amazon S3為目的地的Amazon Kinesis Data Firehose. 使用Amazon Athena查詢資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將吸收的資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. 將資料釋出給 Amazon ElastiCache for Redis. 訂閱 Redis 頻道查詢資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將吸收的資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 將資料釋出給 Amazon ElastiCache for Redis. 訂閱 Redis 頻道查詢資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #321
 
@@ -7508,7 +7508,7 @@ D
 - A. 寫入自定義的 AWS Lambda 函式生成縮圖並提醒使用者. 使用影象上傳程序作為事件源來引用 Lambda 函式.
 - B. 建立 AWS 步函式工作模式。 配置 Step 函式處理應用程式級之間的管絃, 當縮圖生成完成時提醒使用者。
 - C. 建立 Amazon 簡單佇列服務( Amazon SQS) 訊息佇列。 當影象被上傳時, 在 SQS 佇列上放置一個訊息, 用於縮圖生成。 透過一個應用程式訊息提醒使用者, 影象已經收到。
-- D. 建立亞馬遜簡易通知服務(Amazon SNS)通知主題和訂閱. 在影象上傳完成後使用一個應用程式的訂閱生成縮圖。 在縮圖生成完成後, 使用第二個訂閱方式來獲取使用者的移動應用程式。
+- D. 建立Amazon Simple Notification Service (Amazon SNS)通知主題和訂閱. 在影象上傳完成後使用一個應用程式的訂閱生成縮圖。 在縮圖生成完成後, 使用第二個訂閱方式來獲取使用者的移動應用程式。
 
 **答案**
 C
@@ -7520,7 +7520,7 @@ C
 - 其餘選項比較：
 - A：寫入自定義的 AWS Lambda 函式生成縮圖並提醒使用者. 使用影象上傳程序作為事件源來引用 Lambda 函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 AWS 步函式工作模式。 配置 Step 函式處理應用程式級之間的管絃, 當縮圖生成完成時提醒使用者 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立亞馬遜簡易通知服務(Amazon SNS)通知主題和訂閱. 在影象上傳完成後使用一個應用程式的訂閱生成縮圖。 在縮圖生成完成後, 使用第二個訂閱方式來獲取使用者的移動應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立Amazon Simple Notification Service (Amazon SNS)通知主題和訂閱. 在影象上傳完成後使用一個應用程式的訂閱生成縮圖。 在縮圖生成完成後, 使用第二個訂閱方式來獲取使用者的移動應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #323
 
@@ -7672,7 +7672,7 @@ D
 - A. 設定 Amazon Macie 掃描 EC2 例項,以瞭解軟體的脆弱性. 在每個EC2例項上設定 cron 任務, 在常規的日程中補齊例項。
 - B. 在帳戶裡開啟Amazon GuardDuty 配置 GuardDuty 掃描 EC2 例項,以瞭解軟體的脆弱性。 設定 AWS Systems Manager 會話管理器,以便在常規排程中補丁EC2例項。
 - C. 設定 Amazon Detective 掃描 EC2 例項以瞭解軟體的脆弱性. 設定一個 Amazon EventBridge 計劃規則,以便在常規的日程中補補 EC2 例項。
-- D. 開啟帳戶裡的亞馬遜探長 配置 Amazon 檢查器掃描 EC2 例項, 以識別軟體的弱點。 設定 AWS Systems Manager 補丁管理器,以便在常規的日程中補丁 EC2 例項。
+- D. 開啟帳戶裡的Amazon Inspector 配置 Amazon 檢查器掃描 EC2 例項, 以識別軟體的弱點。 設定 AWS Systems Manager 補丁管理器,以便在常規的日程中補丁 EC2 例項。
 
 **答案**
 D
@@ -7680,7 +7680,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：開啟帳戶裡的亞馬遜探長 配置 Amazon 檢查器掃描 EC2 例項, 以識別軟體的弱點。 設定 AWS Systems Manager 補丁管理器,以便在常規的日程中補丁 EC2 例項 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：開啟帳戶裡的Amazon Inspector 配置 Amazon 檢查器掃描 EC2 例項, 以識別軟體的弱點。 設定 AWS Systems Manager 補丁管理器,以便在常規的日程中補丁 EC2 例項 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：設定 Amazon Macie 掃描 EC2 例項,以瞭解軟體的脆弱性. 在每個EC2例項上設定 cron 任務, 在常規的日程中補齊例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在帳戶裡開啟Amazon GuardDuty 配置 GuardDuty 掃描 EC2 例項,以瞭解軟體的脆弱性。 設定 AWS Systems Manager 會話管理器,以便在常規排程中補丁EC2例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -7718,7 +7718,7 @@ C
 - A. 使用AWS Snowball.
 - B. 使用 AWS 資料同步。
 - C. 使用安全的VPN連線.
-- D. 使用亞馬遜 S3 Transfer Acceleration.
+- D. 使用Amazon S3 Transfer Acceleration.
 
 **答案**
 A
@@ -7730,7 +7730,7 @@ A
 - 其餘選項比較：
 - B：使用 AWS 資料同步 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用安全的VPN連線。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜 S3 Transfer Acceleration。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon S3 Transfer Acceleration。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #332
 
@@ -7804,12 +7804,12 @@ B
 ## Question #335
 
 **題目**
-一家公司的需求突然增加。 公司需要從亞馬遜機器影象(AMI)中提供大型的Amazon EC2例項. 例項將以Auto Scaling 群組(Auto Scaling group)執行。 該公司需要一個解決方案,提供最低初始化延遲(latency)以滿足需求. 哪種解決辦法符合這些要求?
+一家公司的需求突然增加。 公司需要從Amazon Machine Image (AMI)中提供大型的Amazon EC2例項. 例項將以Auto Scaling 群組(Auto Scaling group)執行。 該公司需要一個解決方案,提供最低初始化延遲(latency)以滿足需求. 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 使用 aws ec2 寄存影象命令從 快照(snapshot) 建立 AMI。 在Auto Scaling 群組(Auto Scaling group)中使用AWS Step函式來替換AMI.
 - B. 啟用 Amazon 彈性塊儲存器( Amazon EBS) 快速 快照(snapshot) 在 快照(snapshot) 上恢復。 透過使用快照(snapshot)提供AMI. 將Auto Scaling 群組(Auto Scaling group)中的AMI替換為新的AMI.
-- C. 在亞馬遜資料生命週期管理器(Amazon DLM)中啟用AMI建立並定義生命週期規則. 在 Auto Scaling 群組(Auto Scaling group) 中建立修改 AMI 的 AWS Lambda 函式。
+- C. 在Amazon Data Lifecycle Manager(Amazon DLM)中啟用AMI建立並定義生命週期規則. 在 Auto Scaling 群組(Auto Scaling group) 中建立修改 AMI 的 AWS Lambda 函式。
 - D. 使用Amazon EventBridge來引用提供AMI的AWS Backup生命週期政策. 配置 Auto Scaling 群組(Auto Scaling group) 容量限制,作為 EventBridge 中的事件源.
 
 **答案**
@@ -7818,7 +7818,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在亞馬遜資料生命週期管理器(Amazon DLM)中啟用AMI建立並定義生命週期規則. 在 Auto Scaling 群組(Auto Scaling group) 中建立修改 AMI 的 AWS Lambda 函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：在Amazon Data Lifecycle Manager(Amazon DLM)中啟用AMI建立並定義生命週期規則. 在 Auto Scaling 群組(Auto Scaling group) 中建立修改 AMI 的 AWS Lambda 函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 aws ec2 寄存影象命令從 快照(snapshot) 建立 AMI。 在Auto Scaling 群組(Auto Scaling group)中使用AWS Step函式來替換AMI。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：啟用 Amazon 彈性塊儲存器( Amazon EBS) 快速 快照(snapshot) 在 快照(snapshot) 上恢復。 透過使用快照(snapshot)提供AMI. 將Auto Scaling 群組(Auto Scaling group)中的AMI替換為新的AMI。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -7832,7 +7832,7 @@ C
 **選項**
 - A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天.
 - B. 在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼.
-- C. 在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
+- C. 在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
 - D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
 
 **答案**
@@ -7844,7 +7844,7 @@ A
 - A：建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #337
@@ -8011,13 +8011,13 @@ B
 ## Question #344
 
 **題目**
-一家公司有一個Java應用程式,使用亞馬遜簡易佇列服務(Amazon SQS)來解析訊息. 應用程式無法解析大小大於 256 KB 的訊息。 公司希望實施一個解決方案,讓應用程式有能力解析高達50 MB的資訊. FEWEST修改程式碼後,哪一種解決方案能滿足這些要求?
+一家公司有一個Java應用程式,使用Amazon Simple Queue Service (Amazon SQS)來解析訊息. 應用程式無法解析大小大於 256 KB 的訊息。 公司希望實施一個解決方案,讓應用程式有能力解析高達50 MB的資訊. FEWEST修改程式碼後,哪一種解決方案能滿足這些要求?
 
 **選項**
 - A. 使用 Java 的 Amazon SQS 擴充套件客戶端庫,以託管大於 256 KB 在 Amazon S3 中的訊息.
 - B. 使用Amazon EventBridge從應用程式傳送大訊息,而不是Amazon SQS.
 - C. 更改Amazon SQS中的限制,處理大於256 KB的訊息.
-- D. 在亞馬遜彈性檔案系統(Amazon EFS)中儲存大於256KB的訊息. 配置 Amazon SQS 在訊息中引用此位置。
+- D. 在Amazon Elastic File System (Amazon EFS)中儲存大於256KB的訊息. 配置 Amazon SQS 在訊息中引用此位置。
 
 **答案**
 A
@@ -8029,7 +8029,7 @@ A
 - 其餘選項比較：
 - B：使用Amazon EventBridge從應用程式傳送大訊息,而不是Amazon SQS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：更改Amazon SQS中的限制,處理大於256 KB的訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在亞馬遜彈性檔案系統(Amazon EFS)中儲存大於256KB的訊息. 配置 Amazon SQS 在訊息中引用此位置 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在Amazon Elastic File System (Amazon EFS)中儲存大於256KB的訊息. 配置 Amazon SQS 在訊息中引用此位置 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #345
 
@@ -8221,12 +8221,12 @@ B
 ## Question #353
 
 **題目**
-一家公司在一個單一的可用區(Availability Zone)中,在Amazon EC2例項上託管一個三級網路應用程式. 網路應用程式使用一個在EC2例項上託管的自控MySQL 資料庫(database),將資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. MySQL 資料庫(database)目前使用1 TB Productioned IOPS SSD(io2) EBS磁碟區. 公司預計流量為1000 IOPS, 公司希望儘量減少任何干擾,穩定效能,降低成本,同時保留將IOPS增加一倍的能力. 公司希望將資料庫(database)級移動到一個完全管理的解決辦法,這種解決辦法非常可用,並且能容忍錯誤。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司在一個單一的可用區(Availability Zone)中,在Amazon EC2例項上託管一個三級網路應用程式. 網路應用程式使用一個在EC2例項上託管的自控MySQL 資料庫(database),將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. MySQL 資料庫(database)目前使用1 TB Productioned IOPS SSD(io2) EBS磁碟區. 公司預計流量為1000 IOPS, 公司希望儘量減少任何干擾,穩定效能,降低成本,同時保留將IOPS增加一倍的能力. 公司希望將資料庫(database)級移動到一個完全管理的解決辦法,這種解決辦法非常可用,並且能容忍錯誤。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 為 MySQL DB 例項使用一個多AZ 部署 Amazon RDS,並帶有io2 Block Express EBS 磁碟區.
 - B. 為 MySQL DB 例項使用一個多AZ 部署 Amazon RDS,其通用 SSD(gp2) EBS 磁碟區。
-- C. 使用亞馬遜S3 Intelligent-Tiering存取級.
+- C. 使用Amazon S3 Intelligent-Tiering存取級.
 - D. 使用兩個大型的EC2例項以主動被動模式託管資料庫(database).
 
 **答案**
@@ -8238,7 +8238,7 @@ B
 - B：為 MySQL DB 例項使用一個多AZ 部署 Amazon RDS,其通用 SSD(gp2) EBS 磁碟區。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：為 MySQL DB 例項使用一個多AZ 部署 Amazon RDS,並帶有io2 Block Express EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜S3 Intelligent-Tiering存取級。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon S3 Intelligent-Tiering存取級。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用兩個大型的EC2例項以主動被動模式託管資料庫(database)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #354
@@ -8271,7 +8271,7 @@ B
 
 **選項**
 - A. 使用帶有功能縮放的AWS Lambda.
-- B. 使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS).
+- B. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS).
 - C. 使用帶有 AWS 自動縮放的 Amazon Lightsail。
 - D. 在Amazon EC2上使用AWS批次.
 
@@ -8283,7 +8283,7 @@ A
 正確答案是 **A**。
 - A：使用帶有功能縮放的AWS Lambda。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用帶有 AWS 自動縮放的 Amazon Lightsail 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在Amazon EC2上使用AWS批次。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -8318,7 +8318,7 @@ B
 **選項**
 - A. 在Amazon S3上儲存靜態檔案. 使用 Amazon CloudFront 在邊緣快取物件.
 - B. 在Amazon S3上儲存靜態檔案. 使用 Amazon ElastiCache 在邊緣快取物件.
-- C. 在亞馬遜彈性檔案系統(Amazon EFS)上儲存伺服器側碼. 在每個EC2例項上掛載 EFS 卷以共享檔案。
+- C. 在Amazon Elastic File System (Amazon EFS)上儲存伺服器側碼. 在每個EC2例項上掛載 EFS 卷以共享檔案。
 - D. 為Windows檔案伺服器在Amazon FSx上儲存伺服器側碼. 在每個 EC2 例項上掛載用於 Windows 檔案伺服器卷的 FSx 以共享檔案。
 - E. 將伺服器側碼儲存在通用SSD(gp2) Amazon Elastic Block Store(Amazon EBS) 捲上. 在每個 EC2 例項上掛載 EBS 磁碟區以共享檔案。
 
@@ -8333,7 +8333,7 @@ A,D
 - D：為Windows檔案伺服器在Amazon FSx上儲存伺服器側碼. 在每個 EC2 例項上掛載用於 Windows 檔案伺服器卷的 FSx 以共享檔案 。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：在Amazon S3上儲存靜態檔案. 使用 Amazon ElastiCache 在邊緣快取物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在亞馬遜彈性檔案系統(Amazon EFS)上儲存伺服器側碼. 在每個EC2例項上掛載 EFS 卷以共享檔案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在Amazon Elastic File System (Amazon EFS)上儲存伺服器側碼. 在每個EC2例項上掛載 EFS 卷以共享檔案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：將伺服器側碼儲存在通用SSD(gp2) Amazon Elastic Block Store(Amazon EBS) 捲上. 在每個 EC2 例項上掛載 EBS 磁碟區以共享檔案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #358
@@ -8438,7 +8438,7 @@ B
 - B. 將訊息寫入 Amazon Kinesis 資料流, 以付款ID作為分割槽鍵。
 - C. 將訊息寫入一個 Amazon ElastiCache 的 Memcached 叢集, 以支付 ID 作為金鑰。
 - D. 將訊息寫入 Amazon 簡單佇列服務( Amazon SQS) 佇列。 設定訊息屬性以使用支付ID.
-- E. 將訊息寫入亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列. 設定訊息組以使用支付ID。
+- E. 將訊息寫入Amazon Simple Queue Service (Amazon SQS) FIFO佇列. 設定訊息組以使用支付ID。
 
 **答案**
 B,D
@@ -8452,7 +8452,7 @@ B,D
 - 其餘選項比較：
 - A：將訊息寫入 Amazon DynamoDB 表格, 以支付ID作為分割槽鍵 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將訊息寫入一個 Amazon ElastiCache 的 Memcached 叢集, 以支付 ID 作為金鑰 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：將訊息寫入亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列. 設定訊息組以使用支付ID 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：將訊息寫入Amazon Simple Queue Service (Amazon SQS) FIFO佇列. 設定訊息組以使用支付ID 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #363
 
@@ -8461,9 +8461,9 @@ B,D
 
 **選項**
 - A. Amazon EventBridge 活動匯流排
-- B. 亞馬遜簡易通知服務(Amazon SNS) FIFO主題
-- C. 亞馬遜簡易通知服務(Amazon SNS)標準主題
-- D. 亞馬遜簡易佇列服務( Amazon SQS) FIFO 佇列
+- B. Amazon Simple Notification Service (Amazon SNS) FIFO主題
+- C. Amazon Simple Notification Service (Amazon SNS)標準主題
+- D. Amazon Simple Queue Service( Amazon SQS) FIFO 佇列
 
 **答案**
 B
@@ -8471,16 +8471,16 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：亞馬遜簡易通知服務(Amazon SNS) FIFO主題。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：Amazon Simple Notification Service (Amazon SNS) FIFO主題。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：Amazon EventBridge 活動匯流排。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：亞馬遜簡易通知服務(Amazon SNS)標準主題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：亞馬遜簡易佇列服務( Amazon SQS) FIFO 佇列。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：Amazon Simple Notification Service (Amazon SNS)標準主題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：Amazon Simple Queue Service( Amazon SQS) FIFO 佇列。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #364
 
 **題目**
-一家醫院正在設計一種新的應用程式,收集病人的症狀。 醫院決定在建築中使用亞馬遜簡易佇列服務(Amazon SQS)和亞馬遜簡易通知服務(Amazon SNS). 一名解決方案設計師正在審查基礎設施設計。 資料必須在休息和過境時加密。 只有經授權的醫院人員才能查閱資料。 設計師應採取哪些步驟來滿足這些要求?(選二.
+一家醫院正在設計一種新的應用程式,收集病人的症狀。 醫院決定在建築中使用Amazon Simple Queue Service (Amazon SQS)和Amazon Simple Notification Service (Amazon SNS). 一名解決方案設計師正在審查基礎設施設計。 資料必須在休息和過境時加密。 只有經授權的醫院人員才能查閱資料。 設計師應採取哪些步驟來滿足這些要求?(選二.
 
 **選項**
 - A. 在SQS元件上開啟伺服器側加密(encryption). 更新預設金鑰政策, 將金鑰的使用限制在一組授權的主機上。
@@ -8644,7 +8644,7 @@ C
 ## Question #371
 
 **題目**
-一家公司需要建立一個亞馬遜彈性Kubernetes Service(Amazon EKS)叢集,以託管一個數位媒體流媒體應用. EKS叢集將使用由Amazon Elastic Block Store(Amazon EBS)卷支援的管理節點組進行儲存. 公司必須使用儲存在AWS Key Management Service(AWS KMS)的客戶管理金鑰加密所有休息資料. 哪些行動與LEAST 營運開銷(operational overhead)將滿足這一要求?(選二.
+一家公司需要建立一個Amazon Elastic Kubernetes Service Service(Amazon EKS)叢集,以託管一個數位媒體流媒體應用. EKS叢集將使用由Amazon Elastic Block Store(Amazon EBS)卷支援的管理節點組進行儲存. 公司必須使用儲存在AWS Key Management Service(AWS KMS)的客戶管理金鑰加密所有休息資料. 哪些行動與LEAST 營運開銷(operational overhead)將滿足這一要求?(選二.
 
 **選項**
 - A. 使用 Kubernetes 外掛,使用客戶管理的金鑰來進行資料 加密(encryption)。
@@ -8880,7 +8880,7 @@ A
 一家公司託管一個三級網路應用程式,其中包括一個PostgreSQL 資料庫(database). 資料庫(database)從文件中儲存後設資料. 公司搜尋後設資料以獲取公司每月在一份報告中審查的檔案。 檔案存放於Amazon S3. 檔案通常只寫過一次,但經常更新。 報告過程需要幾個小時,使用關係查詢。 報告程式不得阻止任何檔案修改或增加新的檔案。 解決方案設計師需要實施一個解決方案,以加快報告程序。 應用程式碼的LEAST修改金額將滿足這些要求的哪個解決方案?
 
 **選項**
-- A. 設定新的亞馬遜文件DB(與MongoDB相容)叢集,包含一個讀的複製品. 縮放讀取的複製件生成報告。
+- A. 設定新的Amazon DocumentDB(與MongoDB相容)叢集,包含一個讀的複製品. 縮放讀取的複製件生成報告。
 - B. 設定一個新的Amazon Aurora PostgreSQL DB叢集,其中包括一個Aurora複製品. 向Aurora複製公司提出詢問,以生成報告。
 - C. 為 PostgreSQL 多AZ DB 例項設定新的 Amazon RDS。 配置報告模組,查詢二級RDS節點,使報告模組不影響主節點.
 - D. 設定一個新的 Amazon DynamoDB 表格來儲存文件. 使用固定的寫能力支援新文件條目. 自動縮放支援報告的讀取能力。
@@ -8893,7 +8893,7 @@ D
 正確答案是 **D**。
 - D：設定一個新的 Amazon DynamoDB 表格來儲存文件. 使用固定的寫能力支援新文件條目. 自動縮放支援報告的讀取能力。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：設定新的亞馬遜文件DB(與MongoDB相容)叢集,包含一個讀的複製品. 縮放讀取的複製件生成報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：設定新的Amazon DocumentDB(與MongoDB相容)叢集,包含一個讀的複製品. 縮放讀取的複製件生成報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：設定一個新的Amazon Aurora PostgreSQL DB叢集,其中包括一個Aurora複製品. 向Aurora複製公司提出詢問,以生成報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：為 PostgreSQL 多AZ DB 例項設定新的 Amazon RDS。 配置報告模組,查詢二級RDS節點,使報告模組不影響主節點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -8951,8 +8951,8 @@ A
 **選項**
 - A. 使用Amazon S3標準儲存級. 建立一個 S3 生命週期政策(Lifecycle policy),將不經常存取的資料移動到 S3 Glacier.
 - B. 使用Amazon S3標準儲存級. 建立一個S3 生命週期政策(Lifecycle policy),將不頻繁存取的資料移動到S3標準-不頻繁存取(S3 Standard-IA).
-- C. 使用亞馬遜彈性檔案系統(Amazon EFS)標準儲存級. 建立生命週期管理政策,將不經常存取的資料轉移到EFS標準-不經常存取(EFS Standard-IA).
-- D. 使用亞馬遜彈性檔案系統(Amazon EFS)一區儲存級. 制定生命週期管理政策,將不經常存取的資料移動到EFS One Zone-Creative Access(EFS One Zone-IA).
+- C. 使用Amazon Elastic File System (Amazon EFS)標準儲存級. 建立生命週期管理政策,將不經常存取的資料轉移到EFS標準-不經常存取(EFS Standard-IA).
+- D. 使用Amazon Elastic File System (Amazon EFS)一區儲存級. 制定生命週期管理政策,將不經常存取的資料移動到EFS One Zone-Creative Access(EFS One Zone-IA).
 
 **答案**
 B
@@ -8963,8 +8963,8 @@ B
 - B：使用Amazon S3標準儲存級. 建立一個S3 生命週期政策(Lifecycle policy),將不頻繁存取的資料移動到S3標準-不頻繁存取(S3 Standard-IA)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用Amazon S3標準儲存級. 建立一個 S3 生命週期政策(Lifecycle policy),將不經常存取的資料移動到 S3 Glacier。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜彈性檔案系統(Amazon EFS)標準儲存級. 建立生命週期管理政策,將不經常存取的資料轉移到EFS標準-不經常存取(EFS Standard-IA)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜彈性檔案系統(Amazon EFS)一區儲存級. 制定生命週期管理政策,將不經常存取的資料移動到EFS One Zone-Creative Access(EFS One Zone-IA)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Elastic File System (Amazon EFS)標準儲存級. 建立生命週期管理政策,將不經常存取的資料轉移到EFS標準-不經常存取(EFS Standard-IA)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon Elastic File System (Amazon EFS)一區儲存級. 制定生命週期管理政策,將不經常存取的資料移動到EFS One Zone-Creative Access(EFS One Zone-IA)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #385
 
@@ -9118,8 +9118,8 @@ B,D
 **選項**
 - A. 拍攝Amazon Elastic Block Store(Amazon EBS)卷的EC2 執行個體和每2小時資料庫(database)的快照,以滿足RPO.
 - B. 配置一個 快照(snapshot) 生命週期政策(lifecycle policy) 來拍攝 Amazon Elastic Block Store(Amazon EBS) 的快照. 啟用Amazon RDS中的自動備份以滿足RPO.
-- C. 保留最新的網路和應用級的亞馬遜機器影象(AMI). 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO.
-- D. 每2小時拍攝亞馬遜彈性塊儲存(Amazon EBS)的EC2卷。 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO.
+- C. 保留最新的網路和應用級的Amazon Machine Image (AMI). 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO.
+- D. 每2小時拍攝Amazon Elastic Block Store (Amazon EBS)的EC2卷。 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO.
 
 **答案**
 D
@@ -9127,11 +9127,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：每2小時拍攝亞馬遜彈性塊儲存(Amazon EBS)的EC2卷。 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：每2小時拍攝Amazon Elastic Block Store (Amazon EBS)的EC2卷。 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：拍攝Amazon Elastic Block Store(Amazon EBS)卷的EC2 執行個體和每2小時資料庫(database)的快照,以滿足RPO。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：配置一個 快照(snapshot) 生命週期政策(lifecycle policy) 來拍攝 Amazon Elastic Block Store(Amazon EBS) 的快照. 啟用Amazon RDS中的自動備份以滿足RPO。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：保留最新的網路和應用級的亞馬遜機器影象(AMI). 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：保留最新的網路和應用級的Amazon Machine Image (AMI). 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #392
 
@@ -9163,7 +9163,7 @@ A
 
 **選項**
 - A. 使用 Amazon Kinesis 影片流處理音訊檔案。 使用 AWS Lambda 函式掃描已知的 PII 模式.
-- B. 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能開始一個亞馬遜Textract任務來分析通話錄音.
+- B. 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能開始一個Amazon Textract任務來分析通話錄音.
 - C. 配置 Amazon 轉錄工作, 並開啟 PII 編輯功能。 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能來開始抄錄工作. 將輸出儲存在單獨的S3 儲存桶(S3 bucket)中.
 - D. 建立 Amazon Connect 聯絡符, 接收已開啟的音訊檔案。 嵌入一個 AWS Lambda 函式掃描已知的 PII 模式. 使用 Amazon EventBridge 在音訊檔案上傳到S3 儲存桶(S3 bucket) 時啟動聯絡方式。
 
@@ -9176,7 +9176,7 @@ C
 - C：配置 Amazon 轉錄工作, 並開啟 PII 編輯功能。 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能來開始抄錄工作. 將輸出儲存在單獨的S3 儲存桶(S3 bucket)中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 Amazon Kinesis 影片流處理音訊檔案。 使用 AWS Lambda 函式掃描已知的 PII 模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能開始一個亞馬遜Textract任務來分析通話錄音。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能開始一個Amazon Textract任務來分析通話錄音。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立 Amazon Connect 聯絡符, 接收已開啟的音訊檔案。 嵌入一個 AWS Lambda 函式掃描已知的 PII 模式. 使用 Amazon EventBridge 在音訊檔案上傳到S3 儲存桶(S3 bucket) 時啟動聯絡方式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #394
@@ -9208,8 +9208,8 @@ C
 一名IAM使用者在上週的一次生產部署中,對公司帳戶中的AWS資源進行了幾次配置修改. 一位解決方案架構師得知,一對安全群組(security group)規則沒有按照預期配置. 解決方案架構師想要確認哪個IAM使用者負責做出修改. 解決方案設計師應該使用何種服務來找到想要的資訊?
 
 **選項**
-- A. 亞馬遜衛視
-- B. 亞馬遜檢查員
+- A. Amazon GuardDuty
+- B. Amazon Inspector
 - C. AWS CloudTrail.
 - D. AWS Config 阿富汗
 
@@ -9219,9 +9219,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：亞馬遜檢查員。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：Amazon Inspector。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：亞馬遜衛視。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：Amazon GuardDuty。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：AWS CloudTrail。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：AWS Config 阿富汗。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -9256,8 +9256,8 @@ A
 **選項**
 - A. 建立具有 Amazon EventBridge 通知的 AWS Lambda 函式. 將事件Bridge事件安排在每天執行一次.
 - B. 建立 AWS Lambda 函式。 建立 Amazon API Gateway HTTP API,並將API與函式整合. 建立 Amazon EventBridge 計劃事件,該事件可以呼叫 API 並引用函式。
-- C. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,具有AWS Fargate發射型. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務。
-- D. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,其啟動類型為Amazon EC2,Auto Scaling 群組(Auto Scaling group)至少有一個EC2例項. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務。
+- C. 建立Amazon Elastic Container Service (Amazon ECS)叢集,具有AWS Fargate發射型. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務。
+- D. 建立Amazon Elastic Container Service (Amazon ECS)叢集,其啟動類型為Amazon EC2,Auto Scaling 群組(Auto Scaling group)至少有一個EC2例項. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務。
 
 **答案**
 C
@@ -9265,11 +9265,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立亞馬遜彈性容器服務(Amazon ECS)叢集,具有AWS Fargate發射型. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：建立Amazon Elastic Container Service (Amazon ECS)叢集,具有AWS Fargate發射型. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立具有 Amazon EventBridge 通知的 AWS Lambda 函式. 將事件Bridge事件安排在每天執行一次。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 AWS Lambda 函式。 建立 Amazon API Gateway HTTP API,並將API與函式整合. 建立 Amazon EventBridge 計劃事件,該事件可以呼叫 API 並引用函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立亞馬遜彈性容器服務(Amazon ECS)叢集,其啟動類型為Amazon EC2,Auto Scaling 群組(Auto Scaling group)至少有一個EC2例項. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立Amazon Elastic Container Service (Amazon ECS)叢集,其啟動類型為Amazon EC2,Auto Scaling 群組(Auto Scaling group)至少有一個EC2例項. 建立 Amazon EventBridge 計劃活動, 啟動叢集上的ECS任務來執行此任務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #398
 
@@ -9324,8 +9324,8 @@ B
 
 **選項**
 - A. 使用 DynamoDB 交易將新事件資料寫入表格。 配置交易通知內部團隊。
-- B. 讓當前應用程式向四個亞馬遜簡易通知服務(Amazon SNS)主題釋出訊息. 讓每個團隊都認同一個話題
-- C. 在桌面上啟用 Amazon DynamoDB 流。 使用觸發器寫入一個單一的亞馬遜簡易通知服務(Amazon SNS),各團隊可以訂閱.
+- B. 讓當前應用程式向四個Amazon Simple Notification Service (Amazon SNS)主題釋出訊息. 讓每個團隊都認同一個話題
+- C. 在桌面上啟用 Amazon DynamoDB 流。 使用觸發器寫入一個單一的Amazon Simple Notification Service (Amazon SNS),各團隊可以訂閱.
 - D. 在每個記錄中新增自定義屬性到 fiag 新項中。 寫一個 cron 任務, 每分鐘掃描表格中的新專案, 並通知 Amazon 簡單佇列服務( Amazon SQS) 佇列, 各隊可以訂閱。
 
 **答案**
@@ -9334,10 +9334,10 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在桌面上啟用 Amazon DynamoDB 流。 使用觸發器寫入一個單一的亞馬遜簡易通知服務(Amazon SNS),各團隊可以訂閱。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：在桌面上啟用 Amazon DynamoDB 流。 使用觸發器寫入一個單一的Amazon Simple Notification Service (Amazon SNS),各團隊可以訂閱。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 DynamoDB 交易將新事件資料寫入表格。 配置交易通知內部團隊 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：讓當前應用程式向四個亞馬遜簡易通知服務(Amazon SNS)主題釋出訊息. 讓每個團隊都認同一個話題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：讓當前應用程式向四個Amazon Simple Notification Service (Amazon SNS)主題釋出訊息. 讓每個團隊都認同一個話題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在每個記錄中新增自定義屬性到 fiag 新項中。 寫一個 cron 任務, 每分鐘掃描表格中的新專案, 並通知 Amazon 簡單佇列服務( Amazon SQS) 佇列, 各隊可以訂閱 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #401
@@ -9492,7 +9492,7 @@ C,D
 **選項**
 - A. 建立一個 AWS 資料同步任務,將資料作為可掛載的檔案系統共享. 將檔案系統掛載到應用程式伺服器。
 - B. 建立 AWS Storage Gateway 檔案閘道器。 建立使用所需客戶協議的檔案共享。 連線應用程式伺服器到檔案共享。
-- C. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
+- C. 建立Amazon Elastic File System (Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
 - D. 為 Lustre 檔案系統建立 Amazon FSx。 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
 
 **答案**
@@ -9501,7 +9501,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：建立Amazon Elastic File System (Amazon EFS)檔案系統,並配置支援Lustre. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立一個 AWS 資料同步任務,將資料作為可掛載的檔案系統共享. 將檔案系統掛載到應用程式伺服器 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 AWS Storage Gateway 檔案閘道器。 建立使用所需客戶協議的檔案共享。 連線應用程式伺服器到檔案共享 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -9514,9 +9514,9 @@ C
 
 **選項**
 - A. 配置 Amazon Route 53 故障路由策略。 在兩個區域各設立一個網路負載平衡器(Network Load Balancer)(NLB)。 配置 NLB 以引用 AWS Lambda 函式來處理資料。
-- B. 使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(NLB)。 建立亞馬遜彈性容器服務(Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標.
-- C. 使用 AWS 全球加速器。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB)作為終點. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料.
-- D. 配置 Amazon Route 53 故障路由策略。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB). 建立亞馬遜彈性容器服務(Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料.
+- B. 使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(NLB)。 建立Amazon Elastic Container Service (Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標.
+- C. 使用 AWS 全球加速器。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB)作為終點. 建立Amazon Elastic Container Service (Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在Amazon ECS中處理資料.
+- D. 配置 Amazon Route 53 故障路由策略。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB). 建立Amazon Elastic Container Service (Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在Amazon ECS中處理資料.
 
 **答案**
 B
@@ -9524,11 +9524,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(NLB)。 建立亞馬遜彈性容器服務(Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(NLB)。 建立Amazon Elastic Container Service (Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：配置 Amazon Route 53 故障路由策略。 在兩個區域各設立一個網路負載平衡器(Network Load Balancer)(NLB)。 配置 NLB 以引用 AWS Lambda 函式來處理資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用 AWS 全球加速器。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB)作為終點. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：配置 Amazon Route 53 故障路由策略。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB). 建立亞馬遜彈性容器服務(Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用 AWS 全球加速器。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB)作為終點. 建立Amazon Elastic Container Service (Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在Amazon ECS中處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：配置 Amazon Route 53 故障路由策略。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB). 建立Amazon Elastic Container Service (Amazon ECS)叢集,採用Fargate 啟動類型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在Amazon ECS中處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #409
 
@@ -9539,7 +9539,7 @@ B
 - A. 將檔案共享遷移到 Amazon RDS。
 - B. 將檔案共享移到 AWS Storage Gateway。
 - C. 為 Windows 檔案伺服器將檔案共享遷移到 Amazon FSx。
-- D. 將檔案共享遷移到亞馬遜彈性檔案系統(Amazon EFS).
+- D. 將檔案共享遷移到Amazon Elastic File System (Amazon EFS).
 
 **答案**
 A
@@ -9551,7 +9551,7 @@ A
 - 其餘選項比較：
 - B：將檔案共享移到 AWS Storage Gateway 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：為 Windows 檔案伺服器將檔案共享遷移到 Amazon FSx 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將檔案共享遷移到亞馬遜彈性檔案系統(Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將檔案共享遷移到Amazon Elastic File System (Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #410
 
@@ -9819,7 +9819,7 @@ A
 
 **選項**
 - A. 建立加密的Amazon Elastic Block Store(Amazon EBS)磁碟區. 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將 EBS 磁碟區附加到 SFTP 服務端點. 允許使用者存取SFTP服務.
-- B. 建立加密的亞馬遜彈性檔案系統(Amazon EFS)卷. 建立具有彈性IP地址的AWS Transfer Family SFTP服務,並建立具有網際網路上網功能的VPC 端點(VPC endpoint). 在端點上附加一個只允許信任的IP地址的安全群組(security group). 將 EFS 磁碟區附加到 SFTP 服務端點。 允許使用者存取SFTP服務.
+- B. 建立加密的Amazon Elastic File System (Amazon EFS)卷. 建立具有彈性IP地址的AWS Transfer Family SFTP服務,並建立具有網際網路上網功能的VPC 端點(VPC endpoint). 在端點上附加一個只允許信任的IP地址的安全群組(security group). 將 EFS 磁碟區附加到 SFTP 服務端點。 允許使用者存取SFTP服務.
 - C. 建立預設 加密(encryption) 的 Amazon S3 桶。 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務.
 - D. 建立 Amazon S3 桶, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務.
 
@@ -9832,7 +9832,7 @@ C
 - C：建立預設 加密(encryption) 的 Amazon S3 桶。 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立加密的Amazon Elastic Block Store(Amazon EBS)磁碟區. 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將 EBS 磁碟區附加到 SFTP 服務端點. 允許使用者存取SFTP服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：建立加密的亞馬遜彈性檔案系統(Amazon EFS)卷. 建立具有彈性IP地址的AWS Transfer Family SFTP服務,並建立具有網際網路上網功能的VPC 端點(VPC endpoint). 在端點上附加一個只允許信任的IP地址的安全群組(security group). 將 EFS 磁碟區附加到 SFTP 服務端點。 允許使用者存取SFTP服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立加密的Amazon Elastic File System (Amazon EFS)卷. 建立具有彈性IP地址的AWS Transfer Family SFTP服務,並建立具有網際網路上網功能的VPC 端點(VPC endpoint). 在端點上附加一個只允許信任的IP地址的安全群組(security group). 將 EFS 磁碟區附加到 SFTP 服務端點。 允許使用者存取SFTP服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立 Amazon S3 桶, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #422
@@ -9842,9 +9842,9 @@ C
 
 **選項**
 - A. 將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將模型作為AWS Lambda功能,由NLB援引。
-- B. 將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將模型作為亞馬遜彈性容器服務(Amazon ECS)服務,從亞馬遜簡易佇列服務(Amazon SQS)佇列讀取。 根據 SQS 佇列大小,使用 AWS App Mesh 來縮放 ECS 叢集的例項。
+- B. 將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將模型作為Amazon Elastic Container Service (Amazon ECS)服務,從Amazon Simple Queue Service (Amazon SQS)佇列讀取。 根據 SQS 佇列大小,使用 AWS App Mesh 來縮放 ECS 叢集的例項。
 - C. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為 SQS 事件所引用的 AWS Lambda 函式應用。 根據 SQS 佇列大小,使用 AWS 自動縮放來增加 Lambda 函式的 vCPU 數量。
-- D. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為從佇列讀取的亞馬遜彈性容器服務(Amazon ECS)服務。 在亞馬遜ECS上啟用 AWS 自動縮放, 用於基於佇列大小的服務叢集和副本。
+- D. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為從佇列讀取的Amazon Elastic Container Service (Amazon ECS)服務。 在Amazon ECS上啟用 AWS 自動縮放, 用於基於佇列大小的服務叢集和副本。
 
 **答案**
 D
@@ -9852,10 +9852,10 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為從佇列讀取的亞馬遜彈性容器服務(Amazon ECS)服務。 在亞馬遜ECS上啟用 AWS 自動縮放, 用於基於佇列大小的服務叢集和副本 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為從佇列讀取的Amazon Elastic Container Service (Amazon ECS)服務。 在Amazon ECS上啟用 AWS 自動縮放, 用於基於佇列大小的服務叢集和副本 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將模型作為AWS Lambda功能,由NLB援引。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將模型作為亞馬遜彈性容器服務(Amazon ECS)服務,從亞馬遜簡易佇列服務(Amazon SQS)佇列讀取。 根據 SQS 佇列大小,使用 AWS App Mesh 來縮放 ECS 叢集的例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將模型作為Amazon Elastic Container Service (Amazon ECS)服務,從Amazon Simple Queue Service (Amazon SQS)佇列讀取。 根據 SQS 佇列大小,使用 AWS App Mesh 來縮放 ECS 叢集的例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為 SQS 事件所引用的 AWS Lambda 函式應用。 根據 SQS 佇列大小,使用 AWS 自動縮放來增加 Lambda 函式的 vCPU 數量 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #423
@@ -9867,7 +9867,7 @@ D
 - A. 作用
 - B. 組
 - C. 組織
-- D. 亞馬遜彈性容器服務(Amazon ECS)資源
+- D. Amazon Elastic Container Service (Amazon ECS)資源
 - E. Amazon EC2 資源
 
 **答案**
@@ -9881,7 +9881,7 @@ A,B
 - B：組。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - C：組織。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：亞馬遜彈性容器服務(Amazon ECS)資源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：Amazon Elastic Container Service (Amazon ECS)資源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：Amazon EC2 資源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #424
@@ -9910,7 +9910,7 @@ B
 ## Question #425
 
 **題目**
-一家公司使用高容量的區塊儲存能力來管理其房地的工作量。 公司日高峰投入和產出交易每秒不超過15,000 IOPS. 公司希望將工作量遷移到Amazon EC2,並提供獨立於儲存容量的磁碟效能. 亞馬遜彈性塊儲存器(Amazon EBS)的容量型別將以符合成本效益的方式滿足這些要求?
+一家公司使用高容量的區塊儲存能力來管理其房地的工作量。 公司日高峰投入和產出交易每秒不超過15,000 IOPS. 公司希望將工作量遷移到Amazon EC2,並提供獨立於儲存容量的磁碟效能. Amazon Elastic Block Store (Amazon EBS)的容量型別將以符合成本效益的方式滿足這些要求?
 
 **選項**
 - A. GP2 磁碟區型別
@@ -10080,7 +10080,7 @@ B
 - A. 使用AWS Glue來建立ML變換以構建和訓練模型. 使用Amazon OpenSearch Service視覺化資料.
 - B. 使用Amazon SageMaker來構建和訓練模型. 使用Amazon QuickSight視覺化資料.
 - C. 使用從AWS Marketplace預建的ML Amazon機器影象(AMI)來構建和訓練模型. 使用Amazon OpenSearch Service視覺化資料.
-- D. 使用亞馬遜快速視(Amazon QuickSight)透過使用計算場構建和訓練模型. 使用Amazon QuickSight視覺化資料.
+- D. 使用Amazon QuickSight透過使用計算場構建和訓練模型. 使用Amazon QuickSight視覺化資料.
 
 **答案**
 B
@@ -10092,7 +10092,7 @@ B
 - 其餘選項比較：
 - A：使用AWS Glue來建立ML變換以構建和訓練模型. 使用Amazon OpenSearch Service視覺化資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用從AWS Marketplace預建的ML Amazon機器影象(AMI)來構建和訓練模型. 使用Amazon OpenSearch Service視覺化資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜快速視(Amazon QuickSight)透過使用計算場構建和訓練模型. 使用Amazon QuickSight視覺化資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon QuickSight透過使用計算場構建和訓練模型. 使用Amazon QuickSight視覺化資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #433
 
@@ -10192,10 +10192,10 @@ A
 一家公司在應用程式負載平衡器(Application Load Balancer)(ALB)之後的Amazon EC2 執行個體中經營一個電子商務網站。 該網站正面臨與來自非法外部系統的高要求率以及IP地址變化有關的效能問題。 安全小組擔心DDoS可能攻擊網站. 公司必須以對合法使用者影響最小的方式阻止非法收到的請求。 一個解決方案設計師應該推薦什麼?
 
 **選項**
-- A. 部署亞馬遜巡視員,並把它與ALB聯絡起來。
+- A. 部署Amazon Inspector,並把它與ALB聯絡起來。
 - B. 部署AWS WAF,將其與ALB聯絡起來,並配置一個限速規則.
 - C. 向與ALB相關的網路ACL部署規則,以阻斷進入的流量.
-- D. 部署亞馬遜衛戍區,並在配置衛戍區時啟用限速保護.
+- D. 部署Amazon GuardDuty,並在配置衛戍區時啟用限速保護.
 
 **答案**
 B
@@ -10205,9 +10205,9 @@ B
 正確答案是 **B**。
 - B：部署AWS WAF,將其與ALB聯絡起來,並配置一個限速規則。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：部署亞馬遜巡視員,並把它與ALB聯絡起來。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：部署Amazon Inspector,並把它與ALB聯絡起來。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：向與ALB相關的網路ACL部署規則,以阻斷進入的流量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：部署亞馬遜衛戍區,並在配置衛戍區時啟用限速保護。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：部署Amazon GuardDuty,並在配置衛戍區時啟用限速保護。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #438
 
@@ -10473,7 +10473,7 @@ C
 **選項**
 - A. 將資料庫(database)遷移到Amazon RDS用於甲骨文. 以雲服務取代第三方特性。
 - B. 將 資料庫(database) 修改為 Amazon RDS Oracle 自定義。 自定義資料庫(database)設定以支援第三方特性.
-- C. 為甲骨文將資料庫(database)遷移到Amazon EC2亞馬遜機器影象(AMI). 自定義資料庫(database)設定,支援第三方特性.
+- C. 為甲骨文將資料庫(database)遷移到Amazon EC2Amazon Machine Image (AMI). 自定義資料庫(database)設定,支援第三方特性.
 - D. 將資料庫(database)修改為Amazon RDS用於PostgreSQL,方法是重寫應用程式程式碼以消除對甲骨文APEX的依賴.
 
 **答案**
@@ -10482,7 +10482,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：為甲骨文將資料庫(database)遷移到Amazon EC2亞馬遜機器影象(AMI). 自定義資料庫(database)設定,支援第三方特性。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：為甲骨文將資料庫(database)遷移到Amazon EC2Amazon Machine Image (AMI). 自定義資料庫(database)設定,支援第三方特性。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將資料庫(database)遷移到Amazon RDS用於甲骨文. 以雲服務取代第三方特性。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將 資料庫(database) 修改為 Amazon RDS Oracle 自定義。 自定義資料庫(database)設定以支援第三方特性。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -10518,12 +10518,12 @@ A,C,F
 ## Question #451
 
 **題目**
-一家公司正在將其應用程式和資料庫遷移到AWS雲。 該公司將使用亞馬遜彈性容器服務公司(Amazon ECS)、AWS Direct Connect和Amazon RDS。 哪些活動將由公司的業務團隊管理?(選三.
+一家公司正在將其應用程式和資料庫遷移到AWS雲。 該公司將使用Amazon ECS公司(Amazon ECS)、AWS Direct Connect和Amazon RDS。 哪些活動將由公司的業務團隊管理?(選三.
 
 **選項**
 - A. Amazon RDS基礎設施層、作業系統和平臺的管理
 - B. 建立 Amazon RDS DB 例項並配置預定的維護視窗
-- C. 為監控(monitoring)配置亞馬遜ECS的其他軟體元件,補丁管理、日誌管理和主機入侵探測
+- C. 為監控(monitoring)配置Amazon ECS的其他軟體元件,補丁管理、日誌管理和主機入侵探測
 - D. 為Amazon RDS的所有小型和主要資料庫(database)版本安裝補丁
 - E. 確保資料中心Amazon RDS基礎設施的實物安全
 - F. 加密(Encryption) 透過直接連線過境的資料
@@ -10536,7 +10536,7 @@ B,C,F
 **詳解**
 正確答案是 **B, C**。
 - B：建立 Amazon RDS DB 例項並配置預定的維護視窗。此選項符合題目條件，能有效滿足核心需求。
-- C：為監控(monitoring)配置亞馬遜ECS的其他軟體元件,補丁管理、日誌管理和主機入侵探測。此選項符合題目條件，能有效滿足核心需求。
+- C：為監控(monitoring)配置Amazon ECS的其他軟體元件,補丁管理、日誌管理和主機入侵探測。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：Amazon RDS基礎設施層、作業系統和平臺的管理。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：為Amazon RDS的所有小型和主要資料庫(database)版本安裝補丁。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -10550,7 +10550,7 @@ B,C,F
 **選項**
 - A. 使用AWS App2Container(A2C)將任務容器化. 在 AWS Fargate 上執行 Amazon 彈性容器服務(Amazon ECS)的任務,任務為 0.5 虛擬 CPU(vCPU)和 1 GB 記憶體.
 - B. 將程式碼複製到具有1GB記憶體的AWS Lambda函式中. 建立一個 Amazon EventBridge 計劃規則,每小時執行程式碼.
-- C. 使用AWS App2Container(A2C)將任務容器化. 在現有的亞馬遜機器影象(AMI)中安裝容器. 確保任務完成時時刻表停止容器。
+- C. 使用AWS App2Container(A2C)將任務容器化. 在現有的Amazon Machine Image (AMI)中安裝容器. 確保任務完成時時刻表停止容器。
 - D. 配置現有的時間表, 以在任務完成時停止 EC2 例項, 在下一個任務開始時重新啟動 EC2 例項。
 
 **答案**
@@ -10562,7 +10562,7 @@ B
 - B：將程式碼複製到具有1GB記憶體的AWS Lambda函式中. 建立一個 Amazon EventBridge 計劃規則,每小時執行程式碼。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用AWS App2Container(A2C)將任務容器化. 在 AWS Fargate 上執行 Amazon 彈性容器服務(Amazon ECS)的任務,任務為 0.5 虛擬 CPU(vCPU)和 1 GB 記憶體。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用AWS App2Container(A2C)將任務容器化. 在現有的亞馬遜機器影象(AMI)中安裝容器. 確保任務完成時時刻表停止容器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用AWS App2Container(A2C)將任務容器化. 在現有的Amazon Machine Image (AMI)中安裝容器. 確保任務完成時時刻表停止容器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置現有的時間表, 以在任務完成時停止 EC2 例項, 在下一個任務開始時重新啟動 EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #453
@@ -10572,7 +10572,7 @@ B
 
 **選項**
 - A. 使用AWS Backup來建立備份(backup)金庫,在治理模式下設有金庫鎖. 建立所需的備份(backup)計劃.
-- B. 使用亞馬遜資料生命週期管理器建立所需的自動快照(snapshot)政策.
+- B. 使用Amazon Data Lifecycle Manager建立所需的自動快照(snapshot)政策.
 - C. 使用 Amazon S3 檔案閘道器建立備份(backup). 配置相應的 S3 生命週期管理。
 - D. 使用AWS Backup來建立備份(backup)金庫,該金庫以合規(compliance)模式設有金庫鎖. 建立所需的備份(backup)計劃.
 
@@ -10584,7 +10584,7 @@ A
 正確答案是 **A**。
 - A：使用AWS Backup來建立備份(backup)金庫,在治理模式下設有金庫鎖. 建立所需的備份(backup)計劃。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用亞馬遜資料生命週期管理器建立所需的自動快照(snapshot)政策。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用Amazon Data Lifecycle Manager建立所需的自動快照(snapshot)政策。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 Amazon S3 檔案閘道器建立備份(backup). 配置相應的 S3 生命週期管理 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用AWS Backup來建立備份(backup)金庫,該金庫以合規(compliance)模式設有金庫鎖. 建立所需的備份(backup)計劃。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -10668,7 +10668,7 @@ C
 
 **選項**
 - A. 使用 AWS 資料同步來傳輸資料. 為 IDP 認證建立 AWS Lambda 功能.
-- B. 使用Amazon AppFlow fiows傳輸資料. 建立亞馬遜彈性容器服務(Amazon ECS)任務,用於IDP認證.
+- B. 使用Amazon AppFlow fiows傳輸資料. 建立Amazon Elastic Container Service (Amazon ECS)任務,用於IDP認證.
 - C. 使用 AWS 傳輸家族來傳輸資料. 為 IDP 認證建立 AWS Lambda 功能.
 - D. 使用AWS Storage Gateway傳輸資料. 為 IDP 認證建立 Amazon Cognito 身份池。
 
@@ -10681,7 +10681,7 @@ C
 - C：使用 AWS 傳輸家族來傳輸資料. 為 IDP 認證建立 AWS Lambda 功能。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 AWS 資料同步來傳輸資料. 為 IDP 認證建立 AWS Lambda 功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：使用Amazon AppFlow fiows傳輸資料. 建立亞馬遜彈性容器服務(Amazon ECS)任務,用於IDP認證。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用Amazon AppFlow fiows傳輸資料. 建立Amazon Elastic Container Service (Amazon ECS)任務,用於IDP認證。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用AWS Storage Gateway傳輸資料. 為 IDP 認證建立 Amazon Cognito 身份池 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #458
@@ -10785,9 +10785,9 @@ A
 一個公司有一個處理客戶訂單的應用程式. 該公司在Amazon EC2例項上託管應用程式,將訂單儲存到Amazon Aurora 資料庫(database)上. 有時交通量大,工作量不夠快。 解決方案設計師應該怎麼做才能儘快將訂單可靠地寫給資料庫(database)?
 
 **選項**
-- A. 交通量大時增加EC2 執行個體的例數. 向亞馬遜簡易通知服務(Amazon SNS)寫訂單. 將資料庫(database)端點訂閱到SNS話題.
+- A. 交通量大時增加EC2 執行個體的例數. 向Amazon Simple Notification Service (Amazon SNS)寫訂單. 將資料庫(database)端點訂閱到SNS話題.
 - B. 將命令寫入 Amazon 簡單佇列服務( Amazon SQS) 佇列。 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2例項從SQS佇列和處理命令讀入資料庫(database).
-- C. 向亞馬遜簡易通知服務(Amazon SNS)寫訂單. 訂閱SNS主題的資料庫(database)端點. 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2例項從SNS話題讀取.
+- C. 向Amazon Simple Notification Service (Amazon SNS)寫訂單. 訂閱SNS主題的資料庫(database)端點. 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2例項從SNS話題讀取.
 - D. 當 EC2 例項達到 CPU 閾值限制時, 將命令寫入 Amazon 簡單佇列服務( Amazon SQS) 佇列。 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2的預定縮放,從SQS佇列和處理命令讀入資料庫(database).
 
 **答案**
@@ -10798,8 +10798,8 @@ B
 正確答案是 **B**。
 - B：將命令寫入 Amazon 簡單佇列服務( Amazon SQS) 佇列。 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2例項從SQS佇列和處理命令讀入資料庫(database)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：交通量大時增加EC2 執行個體的例數. 向亞馬遜簡易通知服務(Amazon SNS)寫訂單. 將資料庫(database)端點訂閱到SNS話題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：向亞馬遜簡易通知服務(Amazon SNS)寫訂單. 訂閱SNS主題的資料庫(database)端點. 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2例項從SNS話題讀取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：交通量大時增加EC2 執行個體的例數. 向Amazon Simple Notification Service (Amazon SNS)寫訂單. 將資料庫(database)端點訂閱到SNS話題。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：向Amazon Simple Notification Service (Amazon SNS)寫訂單. 訂閱SNS主題的資料庫(database)端點. 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2例項從SNS話題讀取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：當 EC2 例項達到 CPU 閾值限制時, 將命令寫入 Amazon 簡單佇列服務( Amazon SQS) 佇列。 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中使用EC2的預定縮放,從SQS佇列和處理命令讀入資料庫(database)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #463
@@ -10923,10 +10923,10 @@ B
 一家公司正在開發一個微服務應用程式,為客戶提供搜尋目錄。 公司必須使用REST APIs向使用者展示應用程式的前端. REST API必須存取公司在私人VPC子網的容器中託管的後端服務. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用Amazon API Gateway設計一個WebSocket API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取亞馬遜ECS.
-- B. 使用Amazon API Gateway設計一個REST API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取亞馬遜ECS.
-- C. 使用Amazon API Gateway設計一個WebSocket API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS。
-- D. 使用Amazon API Gateway設計一個REST API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS。
+- A. 使用Amazon API Gateway設計一個WebSocket API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取Amazon ECS.
+- B. 使用Amazon API Gateway設計一個REST API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取Amazon ECS.
+- C. 使用Amazon API Gateway設計一個WebSocket API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS。
+- D. 使用Amazon API Gateway設計一個REST API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS。
 
 **答案**
 B
@@ -10934,11 +10934,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用Amazon API Gateway設計一個REST API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取亞馬遜ECS。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon API Gateway設計一個REST API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取Amazon ECS。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用Amazon API Gateway設計一個WebSocket API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取亞馬遜ECS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用Amazon API Gateway設計一個WebSocket API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用Amazon API Gateway設計一個REST API. 在亞馬遜彈性容器服務公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon API Gateway設計一個WebSocket API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為API Gateway建立私人VPC連結以存取Amazon ECS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon API Gateway設計一個WebSocket API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon API Gateway設計一個REST API. 在Amazon ECS公司(Amazon ECS)以私營子網託管應用程式。 為 API Gateway 建立 安全群組(security group) 存取 Amazon ECS 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #469
 
@@ -11081,12 +11081,12 @@ C
 ## Question #475
 
 **題目**
-一家公司正在設計一個集裝箱化應用軟體,將使用亞馬遜彈性容器服務公司(Amazon ECS)。 應用程式需要存取一個具有高度耐用性的共享檔案系統,並且可以回收資料到另一個AWS 區域(Region),回收點目標(RPO)為8小時. 檔案系統需要在區域(Region)內提供每個可用區(Availability Zone)的掛載目標m. 一個解決方案架構師希望使用AWS Backup來管理複寫(replication)到另一個區域(Region). 哪種解決辦法能滿足這些要求?
+一家公司正在設計一個集裝箱化應用軟體,將使用Amazon ECS公司(Amazon ECS)。 應用程式需要存取一個具有高度耐用性的共享檔案系統,並且可以回收資料到另一個AWS 區域(Region),回收點目標(RPO)為8小時. 檔案系統需要在區域(Region)內提供每個可用區(Availability Zone)的掛載目標m. 一個解決方案架構師希望使用AWS Backup來管理複寫(replication)到另一個區域(Region). 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. Amazon FSx 用於多AZ部署的 Windows 檔案伺服器
 - B. Amazon FSx,用於部署多AZ的NetApp ONTAP
-- C. 亞馬遜彈性檔案系統(Amazon EFS),包含標準儲存類
+- C. Amazon Elastic File System (Amazon EFS),包含標準儲存類
 - D. 用於 OpenZFS 的 Amazon FSx
 
 **答案**
@@ -11095,7 +11095,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：亞馬遜彈性檔案系統(Amazon EFS),包含標準儲存類。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：Amazon Elastic File System (Amazon EFS),包含標準儲存類。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：Amazon FSx 用於多AZ部署的 Windows 檔案伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：Amazon FSx,用於部署多AZ的NetApp ONTAP。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -11316,8 +11316,8 @@ B
 **選項**
 - A. 基於任務的容器影象建立 AWS Lambda 函式。 配置 Amazon EventBridge 每10分鐘引用此函式。
 - B. 使用 AWS 批次來建立一個使用 AWS Fargate 資源的工作. 配置每10分鐘執行的工作時間安排。
-- C. 在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS)來執行這項工作. 根據任務的容器影象建立任務, 每10分鐘執行一次。
-- D. 在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS)來執行這項工作. 根據任務的容器影象建立獨立的任務。 使用Windows任務排程器每10分鐘執行工作.
+- C. 在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS)來執行這項工作. 根據任務的容器影象建立任務, 每10分鐘執行一次。
+- D. 在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS)來執行這項工作. 根據任務的容器影象建立獨立的任務。 使用Windows任務排程器每10分鐘執行工作.
 
 **答案**
 A
@@ -11328,8 +11328,8 @@ A
 - A：基於任務的容器影象建立 AWS Lambda 函式。 配置 Amazon EventBridge 每10分鐘引用此函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：使用 AWS 批次來建立一個使用 AWS Fargate 資源的工作. 配置每10分鐘執行的工作時間安排 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS)來執行這項工作. 根據任務的容器影象建立任務, 每10分鐘執行一次 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS)來執行這項工作. 根據任務的容器影象建立獨立的任務。 使用Windows任務排程器每10分鐘執行工作。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS)來執行這項工作. 根據任務的容器影象建立任務, 每10分鐘執行一次 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS)來執行這項工作. 根據任務的容器影象建立獨立的任務。 使用Windows任務排程器每10分鐘執行工作。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #484
 
@@ -11338,7 +11338,7 @@ A
 
 **選項**
 - A. 在 AWS Organizations 建立新組織,所有功能都開啟. 在組織中建立新的AWS帳戶.
-- B. 建立亞馬遜·科尼託身份池. 配置 AWS IAM 身份識別中心(AWS Single Sign-On)接受亞馬遜Cognitto認證.
+- B. 建立Amazon Cognito身份池. 配置 AWS IAM 身份識別中心(AWS Single Sign-On)接受Amazon Cognito 身份驗證.
 - C. 配置服務控制策略(SCP)來管理AWS帳戶. 在AWS目錄服務中加入AWS IAM身份中心(AWS Single Sign-On).
 - D. 在AWS Organizations建立新組織. 配置組織認證機制直接使用 AWS 目錄服務.
 - E. 在組織內設立AWS IAM身份中心(AWS Single Sign-On). 配置IAM身份中心,並將其與公司的企業目錄服務整合.
@@ -11353,7 +11353,7 @@ A,E
 - A：在 AWS Organizations 建立新組織,所有功能都開啟. 在組織中建立新的AWS帳戶。此選項符合題目條件，能有效滿足核心需求。
 - E：在組織內設立AWS IAM身份中心(AWS Single Sign-On). 配置IAM身份中心,並將其與公司的企業目錄服務整合。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- B：建立亞馬遜·科尼託身份池. 配置 AWS IAM 身份識別中心(AWS Single Sign-On)接受亞馬遜Cognitto認證。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立Amazon Cognito身份池. 配置 AWS IAM 身份識別中心(AWS Single Sign-On)接受Amazon Cognito 身份驗證。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：配置服務控制策略(SCP)來管理AWS帳戶. 在AWS目錄服務中加入AWS IAM身份中心(AWS Single Sign-On)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在AWS Organizations建立新組織. 配置組織認證機制直接使用 AWS 目錄服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -11386,8 +11386,8 @@ C
 一家公司正在AWS上建立一個三級應用程式. 簡報層將提供一個靜態網站 邏輯級是一個容器化的應用. 這個應用程式將把資料儲存在一個關聯的資料庫(database)中. 公司希望簡化部署,降低運營成本. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用Amazon S3主機靜態內容. 使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集.
-- B. 使用Amazon CloudFront主機靜態內容. 使用帶有Amazon EC2的亞馬遜彈性容器服務(Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集.
+- A. 使用Amazon S3主機靜態內容. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集.
+- B. 使用Amazon CloudFront主機靜態內容. 使用帶有Amazon EC2的Amazon Elastic Container Service (Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集.
 - C. 使用Amazon S3主機靜態內容. 使用帶有AWS Fargate的Amazon Elastic Kubernetes Service(Amazon EKS)來進行功率計算. 為資料庫(database)使用一個管理的Amazon RDS叢集.
 - D. 使用 Amazon EC2 保留例項以託管靜態內容。 使用帶有Amazon EC2的Amazon Elastic Kubernetes Service(Amazon EKS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集.
 
@@ -11397,9 +11397,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用Amazon S3主機靜態內容. 使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：使用Amazon S3主機靜態內容. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用Amazon CloudFront主機靜態內容. 使用帶有Amazon EC2的亞馬遜彈性容器服務(Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用Amazon CloudFront主機靜態內容. 使用帶有Amazon EC2的Amazon Elastic Container Service (Amazon ECS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon S3主機靜態內容. 使用帶有AWS Fargate的Amazon Elastic Kubernetes Service(Amazon EKS)來進行功率計算. 為資料庫(database)使用一個管理的Amazon RDS叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 Amazon EC2 保留例項以託管靜態內容。 使用帶有Amazon EC2的Amazon Elastic Kubernetes Service(Amazon EKS)進行計算功率. 為資料庫(database)使用一個管理的Amazon RDS叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -11410,9 +11410,9 @@ A
 
 **選項**
 - A. Amazon FSx 多AZ部署
-- B. 亞馬遜彈性塊儲存器(Amazon EBS)
-- C. 亞馬遜彈性檔案系統(Amazon EFS),包含多個掛載目標
-- D. 亞馬遜彈性檔案系統(Amazon EFS),單掛載目標和多個接入點
+- B. Amazon Elastic Block Store (Amazon EBS)
+- C. Amazon Elastic File System (Amazon EFS),包含多個掛載目標
+- D. Amazon Elastic File System (Amazon EFS),單掛載目標和多個接入點
 
 **答案**
 C
@@ -11420,11 +11420,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：亞馬遜彈性檔案系統(Amazon EFS),包含多個掛載目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：Amazon Elastic File System (Amazon EFS),包含多個掛載目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：Amazon FSx 多AZ部署。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：亞馬遜彈性塊儲存器(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：亞馬遜彈性檔案系統(Amazon EFS),單掛載目標和多個接入點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：Amazon Elastic Block Store (Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：Amazon Elastic File System (Amazon EFS),單掛載目標和多個接入點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #488
 
@@ -11452,12 +11452,12 @@ C
 ## Question #489
 
 **題目**
-一家電子商務公司在AWS雲中執行一個應用程式,該應用程式與前提倉庫解決方案整合. 公司使用亞馬遜簡易通知服務(Amazon SNS)將訂單訊息傳送到一個promise的HTTPS端點,這樣倉庫應用程式就可以處理訂單. 本地資料中心團隊發現一些訂單訊息沒有收到. 解決方案架構師需要保留未傳送的資訊,並分析資訊長達14天. 在LEAST的開發努力下,哪一種解決辦法能滿足這些要求?
+一家電子商務公司在AWS雲中執行一個應用程式,該應用程式與前提倉庫解決方案整合. 公司使用Amazon Simple Notification Service (Amazon SNS)將訂單訊息傳送到一個promise的HTTPS端點,這樣倉庫應用程式就可以處理訂單. 本地資料中心團隊發現一些訂單訊息沒有收到. 解決方案架構師需要保留未傳送的資訊,並分析資訊長達14天. 在LEAST的開發努力下,哪一種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 Amazon SNS 死字母佇列,該佇列有 Amazon Kinesis 資料流目標,保留期為14天.
-- B. 新增一個亞馬遜簡易佇列服務(Amazon SQS)佇列,應用程式和Amazon SNS之間的保留期為14天.
-- C. 配置 Amazon SNS 死字母佇列,該佇列具有亞馬遜簡易佇列服務(Amazon SQS)的目標,保留期為14天.
+- B. 新增一個Amazon Simple Queue Service (Amazon SQS)佇列,應用程式和Amazon SNS之間的保留期為14天.
+- C. 配置 Amazon SNS 死字母佇列,該佇列具有Amazon Simple Queue Service (Amazon SQS)的目標,保留期為14天.
 - D. 配置 Amazon SNS 死字母佇列,該佇列具有一個Amazon DynamoDB目標,TTL屬性設定,保留期為14天.
 
 **答案**
@@ -11466,10 +11466,10 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：配置 Amazon SNS 死字母佇列,該佇列具有亞馬遜簡易佇列服務(Amazon SQS)的目標,保留期為14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：配置 Amazon SNS 死字母佇列,該佇列具有Amazon Simple Queue Service (Amazon SQS)的目標,保留期為14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：配置 Amazon SNS 死字母佇列,該佇列有 Amazon Kinesis 資料流目標,保留期為14天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：新增一個亞馬遜簡易佇列服務(Amazon SQS)佇列,應用程式和Amazon SNS之間的保留期為14天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：新增一個Amazon Simple Queue Service (Amazon SQS)佇列,應用程式和Amazon SNS之間的保留期為14天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置 Amazon SNS 死字母佇列,該佇列具有一個Amazon DynamoDB目標,TTL屬性設定,保留期為14天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #490
@@ -11501,10 +11501,10 @@ B
 一個解決方案架構師正在設計一個同步應用程式,處理銀行信用卡資料驗證請求。 申請必須安全,並且能夠至少處理一次每項請求。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 使用 AWS Lambda 事件源對映. 將亞馬遜簡易佇列服務(Amazon SQS)標準佇列設定為事件源. 使用AWS Key Management Service(SSE-KMS)用於加密(encryption). 新增kms:解密Lambda執行角色許可權.
-- B. 使用 AWS Lambda 事件源對映. 使用亞馬遜簡易排隊服務(Amazon SQS) FIFO佇列作為事件源. 使用 SQS 管理的 加密(encryption) 金鑰(SSE-SQS)用於 加密(encryption)。 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權。
-- C. 使用 AWS Lambda 事件源對映. 將亞馬遜簡易佇列服務(Amazon SQS)FIFO佇列設定為事件源. 使用 AWS KMS 金鑰(SSE-KMS). 新增kms:解密Lambda執行角色許可權.
-- D. 使用 AWS Lambda 事件源對映. 將亞馬遜簡易佇列服務(Amazon SQS)標準佇列設定為事件源. 為加密(encryption)使用 AWS KMS 金鑰(SSE-KMS). 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權。
+- A. 使用 AWS Lambda 事件源對映. 將Amazon Simple Queue Service (Amazon SQS)標準佇列設定為事件源. 使用AWS Key Management Service(SSE-KMS)用於加密(encryption). 新增kms:解密Lambda執行角色許可權.
+- B. 使用 AWS Lambda 事件源對映. 使用Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為事件源. 使用 SQS 管理的 加密(encryption) 金鑰(SSE-SQS)用於 加密(encryption)。 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權。
+- C. 使用 AWS Lambda 事件源對映. 將Amazon Simple Queue Service (Amazon SQS)FIFO佇列設定為事件源. 使用 AWS KMS 金鑰(SSE-KMS). 新增kms:解密Lambda執行角色許可權.
+- D. 使用 AWS Lambda 事件源對映. 將Amazon Simple Queue Service (Amazon SQS)標準佇列設定為事件源. 為加密(encryption)使用 AWS KMS 金鑰(SSE-KMS). 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權。
 
 **答案**
 A
@@ -11512,11 +11512,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用 AWS Lambda 事件源對映. 將亞馬遜簡易佇列服務(Amazon SQS)標準佇列設定為事件源. 使用AWS Key Management Service(SSE-KMS)用於加密(encryption). 新增kms:解密Lambda執行角色許可權。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：使用 AWS Lambda 事件源對映. 將Amazon Simple Queue Service (Amazon SQS)標準佇列設定為事件源. 使用AWS Key Management Service(SSE-KMS)用於加密(encryption). 新增kms:解密Lambda執行角色許可權。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用 AWS Lambda 事件源對映. 使用亞馬遜簡易排隊服務(Amazon SQS) FIFO佇列作為事件源. 使用 SQS 管理的 加密(encryption) 金鑰(SSE-SQS)用於 加密(encryption)。 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用 AWS Lambda 事件源對映. 將亞馬遜簡易佇列服務(Amazon SQS)FIFO佇列設定為事件源. 使用 AWS KMS 金鑰(SSE-KMS). 新增kms:解密Lambda執行角色許可權。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用 AWS Lambda 事件源對映. 將亞馬遜簡易佇列服務(Amazon SQS)標準佇列設定為事件源. 為加密(encryption)使用 AWS KMS 金鑰(SSE-KMS). 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用 AWS Lambda 事件源對映. 使用Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為事件源. 使用 SQS 管理的 加密(encryption) 金鑰(SSE-SQS)用於 加密(encryption)。 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用 AWS Lambda 事件源對映. 將Amazon Simple Queue Service (Amazon SQS)FIFO佇列設定為事件源. 使用 AWS KMS 金鑰(SSE-KMS). 新增kms:解密Lambda執行角色許可權。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用 AWS Lambda 事件源對映. 將Amazon Simple Queue Service (Amazon SQS)標準佇列設定為事件源. 為加密(encryption)使用 AWS KMS 金鑰(SSE-KMS). 為 Lambda 函式新增 加密(encryption) 金鑰引用許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #492
 
@@ -11548,7 +11548,7 @@ B
 
 **選項**
 - A. 使用Amazon Comprehend將錄音翻譯成英語.
-- B. 使用亞馬遜萊克斯建立書面情緒分析報告.
+- B. 使用Amazon Lex建立書面情緒分析報告.
 - C. 使用Amazon Polly將錄音轉換成文字.
 - D. 使用Amazon Translax將任何語言的錄音轉換成文字.
 - E. 使用Amazon Translate將任何語言的文字翻譯為英語.
@@ -11565,7 +11565,7 @@ D,E,F
 - E：使用Amazon Translate將任何語言的文字翻譯為英語。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：使用Amazon Comprehend將錄音翻譯成英語。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：使用亞馬遜萊克斯建立書面情緒分析報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用Amazon Lex建立書面情緒分析報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon Polly將錄音轉換成文字。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #494
@@ -11766,7 +11766,7 @@ A
 **選項**
 - A. 將網站影象移動到安裝在每個 EC2 例項上的 Amazon S3 桶中
 - B. 透過使用來自初級EC2例項的 NFS 共享共享網站影象. 在其它EC2 例項上掛載此共享。
-- C. 將網站影象移動到每個EC2例項上掛載的亞馬遜彈性檔案系統(Amazon EFS)上.
+- C. 將網站影象移動到每個EC2例項上掛載的Amazon Elastic File System (Amazon EFS)上.
 - D. 從現有的 EC2 例項建立一個 Amazon 機器影象( AMI)。 使用AMI作為Auto Scaling 群組(Auto Scaling group)的一部分,提供應用程式負載平衡器(Application Load Balancer)背後的新例項. 配置 Auto Scaling 群組(Auto Scaling group) 以保持至少兩個例項。 為網站配置 AWS 全球加速器
 - E. 從現有的 EC2 例項建立一個 Amazon 機器影象( AMI)。 使用AMI作為Auto Scaling 群組(Auto Scaling group)的一部分,提供應用程式負載平衡器(Application Load Balancer)背後的新例項. 配置 Auto Scaling 群組(Auto Scaling group) 以保持至少兩個例項。 為網站配置 Amazon CloudFront 發行版。
 
@@ -11782,7 +11782,7 @@ D,E
 - 其餘選項比較：
 - A：將網站影象移動到安裝在每個 EC2 例項上的 Amazon S3 桶中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：透過使用來自初級EC2例項的 NFS 共享共享網站影象. 在其它EC2 例項上掛載此共享 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：將網站影象移動到每個EC2例項上掛載的亞馬遜彈性檔案系統(Amazon EFS)上。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：將網站影象移動到每個EC2例項上掛載的Amazon Elastic File System (Amazon EFS)上。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #503
 
@@ -11862,7 +11862,7 @@ C
 - A. 從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3桶裡
 - B. 提供AWS Storage Gateway檔案閘道器. 從使用者瀏覽器直接上傳檔案到檔案閘道器.
 - C. 在應用程式中生成 Amazon S3 預先簽名的 URL。 從使用者瀏覽器直接上傳檔案到S3 儲存桶(S3 bucket).
-- D. 提供亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統.
+- D. 提供Amazon Elastic File System (Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統.
 
 **答案**
 C
@@ -11874,7 +11874,7 @@ C
 - 其餘選項比較：
 - A：從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3桶裡。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：提供AWS Storage Gateway檔案閘道器. 從使用者瀏覽器直接上傳檔案到檔案閘道器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：提供亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：提供Amazon Elastic File System (Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #507
 
@@ -11905,8 +11905,8 @@ B
 一家公司將多個微軟Windows伺服器的工作量遷移到Amazon EC2 執行個體,執行於我們西-1 區域(Region). 公司手動支撐工作量,根據需要打造形象. 萬一我們西-1區域(Region)發生自然災害,公司希望迅速恢復西-2區域(Region)的工作量. 公司希望EC2案的資料損失不超過24小時. 公司還希望將EC2例項的任何備份自動化. 哪些解決辦法將滿足這些要求?(選二.
 
 **選項**
-- A. 建立Amazon EC2後置的亞馬遜機器影象(AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 按要求複製影象。
-- B. 建立Amazon EC2後置的亞馬遜機器影象(AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 配置複製到西-2 區域(Region).
+- A. 建立Amazon EC2後置的Amazon Machine Image (AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 按要求複製影象。
+- B. 建立Amazon EC2後置的Amazon Machine Image (AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 配置複製到西-2 區域(Region).
 - C. 使用 AWS Backup 建立 備份(backup) 的西-1和西-2金庫. 基於標記值為EC2例項建立一個備份(backup)計劃. 建立一個 AWS Lambda 函式,作為預定任務執行,將 備份(backup) 資料複製到我們-West-2.
 - D. 使用 AWS Backup 建立 備份(backup) 保險庫。 使用AWS Backup為EC2例項建立基於標記值的備份(backup)計劃. 定義副本的目的地為 us-west-2。 請指定每天執行兩次的 備份(backup) 時間表。
 - E. 使用 AWS Backup 建立 備份(backup) 保險庫。 使用AWS Backup為EC2例項建立基於標記值的備份(backup)計劃. 指定每天執行兩次的備份(backup)時間表。 向西二區索取
@@ -11918,10 +11918,10 @@ B,C
 
 **詳解**
 正確答案是 **B, C**。
-- B：建立Amazon EC2後置的亞馬遜機器影象(AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 配置複製到西-2 區域(Region)。此選項符合題目條件，能有效滿足核心需求。
+- B：建立Amazon EC2後置的Amazon Machine Image (AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 配置複製到西-2 區域(Region)。此選項符合題目條件，能有效滿足核心需求。
 - C：使用 AWS Backup 建立 備份(backup) 的西-1和西-2金庫. 基於標記值為EC2例項建立一個備份(backup)計劃. 建立一個 AWS Lambda 函式,作為預定任務執行,將 備份(backup) 資料複製到我們-West-2。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- A：建立Amazon EC2後置的亞馬遜機器影象(AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 按要求複製影象 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立Amazon EC2後置的Amazon Machine Image (AMI)生命週期政策(lifecycle policy),以基於標記建立備份(backup). 安排備份(backup)每天執行兩次. 按要求複製影象 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWS Backup 建立 備份(backup) 保險庫。 使用AWS Backup為EC2例項建立基於標記值的備份(backup)計劃. 定義副本的目的地為 us-west-2。 請指定每天執行兩次的 備份(backup) 時間表 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用 AWS Backup 建立 備份(backup) 保險庫。 使用AWS Backup為EC2例項建立基於標記值的備份(backup)計劃. 指定每天執行兩次的備份(backup)時間表。 向西二區索取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -12026,7 +12026,7 @@ A
 - A. 建立一個以 Amazon S3 託管的靜態網站,該網站引用 AWS Lambda 功能來調整影象大小,並將影象儲存在 Amazon S3 桶中.
 - B. 建立一個在 Amazon CloudFront 中託管的靜態網站,以引用 AWS Step 函式來調整影象大小,並將影象儲存在 Amazon RDS 資料庫(database) 中.
 - C. 在執行於 Amazon EC2 例項的網路伺服器上建立一個動態網站。 配置一個執行在 EC2 例項上的程序,以調整影象大小並將影象儲存在 Amazon S3 桶中.
-- D. 在自動縮放的亞馬遜彈性容器服務(Amazon ECS)叢集上建立一個動態網站,在亞馬遜簡易排隊服務(Amazon SQS)中建立一個大小調整的工作. 設定一個在 Amazon EC2 例項上執行的影象恢復程式, 以處理更改大小的工作。
+- D. 在自動縮放的Amazon Elastic Container Service (Amazon ECS)叢集上建立一個動態網站,在Amazon Simple Queue Service (Amazon SQS)中建立一個大小調整的工作. 設定一個在 Amazon EC2 例項上執行的影象恢復程式, 以處理更改大小的工作。
 
 **答案**
 A
@@ -12038,7 +12038,7 @@ A
 - 其餘選項比較：
 - B：建立一個在 Amazon CloudFront 中託管的靜態網站,以引用 AWS Step 函式來調整影象大小,並將影象儲存在 Amazon RDS 資料庫(database) 中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在執行於 Amazon EC2 例項的網路伺服器上建立一個動態網站。 配置一個執行在 EC2 例項上的程序,以調整影象大小並將影象儲存在 Amazon S3 桶中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在自動縮放的亞馬遜彈性容器服務(Amazon ECS)叢集上建立一個動態網站,在亞馬遜簡易排隊服務(Amazon SQS)中建立一個大小調整的工作. 設定一個在 Amazon EC2 例項上執行的影象恢復程式, 以處理更改大小的工作 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在自動縮放的Amazon Elastic Container Service (Amazon ECS)叢集上建立一個動態網站,在Amazon Simple Queue Service (Amazon SQS)中建立一個大小調整的工作. 設定一個在 Amazon EC2 例項上執行的影象恢復程式, 以處理更改大小的工作 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #514
 
@@ -12046,7 +12046,7 @@ A
 一家公司正在Amazon EC2 執行個體中執行一個微服務應用程式。 公司希望將該應用程式遷移到一個為可擴展性(scalability)的Amazon Elastic Kubernetes Service(Amazon EKS)叢集. 公司必須配置Amazon EKS控制平面,端點私人存取設定為真,端點公共存取設定為假,以維護安全合規(compliance). 公司還必須將資料平面放入私人子網. 然而,公司收到了錯誤通知,因為節點不能加入叢集. 哪個解決方案可以讓節點加入叢集?
 
 **選項**
-- A. 在AWS身份和存取管理(IAM)中給予亞馬遜EKSNODERole IAM角色所需的許可.
+- A. 在AWS身份和存取管理(IAM)中給予Amazon EKSNODERole IAM角色所需的許可.
 - B. 建立介面 VPC 端點,允許節點存取控制平面.
 - C. 在公共子網中重建節點. 限制EC2節點的安全小組.
 - D. 允許在節點的安全群組(security group)中外運.
@@ -12059,7 +12059,7 @@ B
 正確答案是 **B**。
 - B：建立介面 VPC 端點,允許節點存取控制平面。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在AWS身份和存取管理(IAM)中給予亞馬遜EKSNODERole IAM角色所需的許可。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在AWS身份和存取管理(IAM)中給予Amazon EKSNODERole IAM角色所需的許可。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在公共子網中重建節點. 限制EC2節點的安全小組。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：允許在節點的安全群組(security group)中外運。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -12096,7 +12096,7 @@ B,C,E
 一家公司為客戶提供API介面,以便客戶可以檢索其財務資訊. 公司預計當年使用高峰期會收到更多請求。 公司要求API以較低的延遲(latency)響應,以確保客戶滿意. 公司需要為API提供計算主機. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用應用程式負載平衡器(Application Load Balancer)和亞馬遜彈性容器服務公司。
+- A. 使用應用程式負載平衡器(Application Load Balancer)和Amazon ECS公司。
 - B. 使用 Amazon API Gateway 和 AWS Lambda 函式,並附帶提供貨幣.
 - C. 使用應用程式負載平衡器(Application Load Balancer)和Amazon Elastic Kubernetes Service(Amazon EKS)叢集.
 - D. 使用帶有保留貨幣的Amazon API Gateway和AWS Lambda函式.
@@ -12109,7 +12109,7 @@ B
 正確答案是 **B**。
 - B：使用 Amazon API Gateway 和 AWS Lambda 函式,並附帶提供貨幣。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用應用程式負載平衡器(Application Load Balancer)和亞馬遜彈性容器服務公司。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用應用程式負載平衡器(Application Load Balancer)和Amazon ECS公司。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用應用程式負載平衡器(Application Load Balancer)和Amazon Elastic Kubernetes Service(Amazon EKS)叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用帶有保留貨幣的Amazon API Gateway和AWS Lambda函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -12231,13 +12231,13 @@ C
 ## Question #522
 
 **題目**
-一家公司透過使用Amazon Elastic Kubernetes Service(Amazon EKS)執行集裝箱應用. 公司的工作量在一天之內並不一致. 公司希望亞馬遜EKS根據工作量進行規模化進出. 哪些步驟與 " LEAST 營運開銷(operational overhead) " 組合可滿足這些要求?(選二.
+一家公司透過使用Amazon Elastic Kubernetes Service(Amazon EKS)執行集裝箱應用. 公司的工作量在一天之內並不一致. 公司希望Amazon EKS根據工作量進行規模化進出. 哪些步驟與 " LEAST 營運開銷(operational overhead) " 組合可滿足這些要求?(選二.
 
 **選項**
 - A. 使用 AWS Lambda 函式來調整EKS叢集的大小.
 - B. 使用 Kubernetes Metrics 伺服器來啟用水平Pod自動縮放.
 - C. 使用Kubernetes叢集自動縮放器來管理叢集中的節點數.
-- D. 使用Amazon API Gateway並連線到亞馬遜EKS.
+- D. 使用Amazon API Gateway並連線到Amazon EKS.
 - E. 使用AWS App Mesh觀察網路活動.
 
 **答案**
@@ -12251,7 +12251,7 @@ B,C
 - C：使用Kubernetes叢集自動縮放器來管理叢集中的節點數。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：使用 AWS Lambda 函式來調整EKS叢集的大小。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用Amazon API Gateway並連線到亞馬遜EKS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon API Gateway並連線到Amazon EKS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用AWS App Mesh觀察網路活動。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #523
@@ -12377,7 +12377,7 @@ B
 **選項**
 - A. 使用執行 FTP 伺服器的 Amazon EC2 例項,將收到的檔案作為物件儲存在 Amazon S3 Glacier Flexible Retrieval. 在 AWS 批次中配置工作佇列。 使用 Amazon EventBridge 規則引用任務來從 S3 Glacier Flexible Retrieval 夜處理物件. 任務處理物件後刪除物件。
 - B. 使用執行 FTP 伺服器的 Amazon EC2 例項,將收到的檔案儲存在 Amazon Elastic Block Store(Amazon EBS) 磁碟區上. 在 AWS 批次中配置工作佇列。 使用 Amazon EventBridge 規則引用任務從 EBS 磁碟區中夜處理檔案. 任務處理檔案後刪除檔案。
-- C. 使用 AWS Transfer Family 建立 FTP 伺服器,將收到的檔案儲存在亞馬遜彈性塊儲存器(Amazon EBS)的磁碟區上. 在 AWS 批次中配置工作佇列。 在每個檔案到達時使用 Amazon S3 事件通知以引用 AWS 批次中的任務。 任務處理檔案後刪除檔案。
+- C. 使用 AWS Transfer Family 建立 FTP 伺服器,將收到的檔案儲存在Amazon Elastic Block Store (Amazon EBS)的磁碟區上. 在 AWS 批次中配置工作佇列。 在每個檔案到達時使用 Amazon S3 事件通知以引用 AWS 批次中的任務。 任務處理檔案後刪除檔案。
 - D. 使用AWS Transfer Family建立一個FTP伺服器,以Amazon S3 Standard儲存收到的檔案. 建立一個 AWS Lambda 函式來處理檔案,並在檔案處理完畢後將其刪除. 使用 S3 事件通知在檔案到達時引用 Lambda 函式。
 
 **答案**
@@ -12389,7 +12389,7 @@ B
 - B：使用執行 FTP 伺服器的 Amazon EC2 例項,將收到的檔案儲存在 Amazon Elastic Block Store(Amazon EBS) 磁碟區上. 在 AWS 批次中配置工作佇列。 使用 Amazon EventBridge 規則引用任務從 EBS 磁碟區中夜處理檔案. 任務處理檔案後刪除檔案 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用執行 FTP 伺服器的 Amazon EC2 例項,將收到的檔案作為物件儲存在 Amazon S3 Glacier Flexible Retrieval. 在 AWS 批次中配置工作佇列。 使用 Amazon EventBridge 規則引用任務來從 S3 Glacier Flexible Retrieval 夜處理物件. 任務處理物件後刪除物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用 AWS Transfer Family 建立 FTP 伺服器,將收到的檔案儲存在亞馬遜彈性塊儲存器(Amazon EBS)的磁碟區上. 在 AWS 批次中配置工作佇列。 在每個檔案到達時使用 Amazon S3 事件通知以引用 AWS 批次中的任務。 任務處理檔案後刪除檔案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用 AWS Transfer Family 建立 FTP 伺服器,將收到的檔案儲存在Amazon Elastic Block Store (Amazon EBS)的磁碟區上. 在 AWS 批次中配置工作佇列。 在每個檔案到達時使用 Amazon S3 事件通知以引用 AWS 批次中的任務。 任務處理檔案後刪除檔案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用AWS Transfer Family建立一個FTP伺服器,以Amazon S3 Standard儲存收到的檔案. 建立一個 AWS Lambda 函式來處理檔案,並在檔案處理完畢後將其刪除. 使用 S3 事件通知在檔案到達時引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #529
@@ -12446,7 +12446,7 @@ D
 **選項**
 - A. 為 Lambda 函式建立函式 URL。 向第三方提供 Lambda 函式 URL 用於 Webhook。
 - B. 在Lambda函式前部署一個應用程式負載平衡器(Application Load Balancer)(ALB). 向第三方提供 ALB URL 用於網頁瀏覽。
-- C. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 將此主題附加於 Lambda 函式。 向第三方提供 SNS 主題的公開主機名, 用於 Webhook。
+- C. 建立一個Amazon Simple Notification Service (Amazon SNS)主題. 將此主題附加於 Lambda 函式。 向第三方提供 SNS 主題的公開主機名, 用於 Webhook。
 - D. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列附加到 Lambda 函式中。 為 Webhook 提供 SQS 佇列的公開主機名給第三方。
 
 **答案**
@@ -12458,7 +12458,7 @@ B
 - B：在Lambda函式前部署一個應用程式負載平衡器(Application Load Balancer)(ALB). 向第三方提供 ALB URL 用於網頁瀏覽 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：為 Lambda 函式建立函式 URL。 向第三方提供 Lambda 函式 URL 用於 Webhook 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 將此主題附加於 Lambda 函式。 向第三方提供 SNS 主題的公開主機名, 用於 Webhook 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立一個Amazon Simple Notification Service (Amazon SNS)主題. 將此主題附加於 Lambda 函式。 向第三方提供 SNS 主題的公開主機名, 用於 Webhook 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列附加到 Lambda 函式中。 為 Webhook 提供 SQS 佇列的公開主機名給第三方 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #532
@@ -12494,10 +12494,10 @@ C,F,D
 一家公司在Amazon S3儲存資料. 根據規定,資料不得包含個人識別資訊(PII)。 該公司最近發現,S3桶有一些含有PII的物體. 公司需要自動檢測S3桶中的PII,並通知公司的安全團隊. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用亞馬遜梅西. 建立 Amazon EventBridge 規則,從 Macie 發現中過濾敏感資料事件型別,並向安全團隊傳送亞馬遜簡易通知服務(Amazon SNS)通知.
-- B. 使用亞馬遜衛視Duty. 建立 Amazon EventBridge 規則,從 GuardDuty 發現中過濾 CRITICAL 事件型別,並向安全團隊傳送亞馬遜簡易通知服務(Amazon SNS)通知.
-- C. 使用亞馬遜梅西. 建立 Amazon EventBridge 規則,從 Macie 發現過濾敏感資料:S3 Object/Personal 事件型別,並向安全團隊傳送Amazon Simple Quue Service(Amazon SQS)通知.
-- D. 使用亞馬遜衛視Duty. 建立一個 Amazon EventBridge 規則,從 GuardDuty 的發現過濾 CRITICAL 事件型別,並向安全小組傳送Amazon 簡單佇列服務(Amazon SQS)通知.
+- A. 使用Amazon Macie. 建立 Amazon EventBridge 規則,從 Macie 發現中過濾敏感資料事件型別,並向安全團隊傳送Amazon Simple Notification Service (Amazon SNS)通知.
+- B. 使用Amazon GuardDuty. 建立 Amazon EventBridge 規則,從 GuardDuty 發現中過濾 CRITICAL 事件型別,並向安全團隊傳送Amazon Simple Notification Service (Amazon SNS)通知.
+- C. 使用Amazon Macie. 建立 Amazon EventBridge 規則,從 Macie 發現過濾敏感資料:S3 Object/Personal 事件型別,並向安全團隊傳送Amazon Simple Quue Service(Amazon SQS)通知.
+- D. 使用Amazon GuardDuty. 建立一個 Amazon EventBridge 規則,從 GuardDuty 的發現過濾 CRITICAL 事件型別,並向安全小組傳送Amazon 簡單佇列服務(Amazon SQS)通知.
 
 **答案**
 C
@@ -12505,11 +12505,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：使用亞馬遜梅西. 建立 Amazon EventBridge 規則,從 Macie 發現過濾敏感資料:S3 Object/Personal 事件型別,並向安全團隊傳送Amazon Simple Quue Service(Amazon SQS)通知。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：使用Amazon Macie. 建立 Amazon EventBridge 規則,從 Macie 發現過濾敏感資料:S3 Object/Personal 事件型別,並向安全團隊傳送Amazon Simple Quue Service(Amazon SQS)通知。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜梅西. 建立 Amazon EventBridge 規則,從 Macie 發現中過濾敏感資料事件型別,並向安全團隊傳送亞馬遜簡易通知服務(Amazon SNS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：使用亞馬遜衛視Duty. 建立 Amazon EventBridge 規則,從 GuardDuty 發現中過濾 CRITICAL 事件型別,並向安全團隊傳送亞馬遜簡易通知服務(Amazon SNS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜衛視Duty. 建立一個 Amazon EventBridge 規則,從 GuardDuty 的發現過濾 CRITICAL 事件型別,並向安全小組傳送Amazon 簡單佇列服務(Amazon SQS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Macie. 建立 Amazon EventBridge 規則,從 Macie 發現中過濾敏感資料事件型別,並向安全團隊傳送Amazon Simple Notification Service (Amazon SNS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用Amazon GuardDuty. 建立 Amazon EventBridge 規則,從 GuardDuty 發現中過濾 CRITICAL 事件型別,並向安全團隊傳送Amazon Simple Notification Service (Amazon SNS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon GuardDuty. 建立一個 Amazon EventBridge 規則,從 GuardDuty 的發現過濾 CRITICAL 事件型別,並向安全小組傳送Amazon 簡單佇列服務(Amazon SQS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #534
 
@@ -12537,12 +12537,12 @@ B
 ## Question #535
 
 **題目**
-一家公司正在建造一個亞馬遜智慧Kubernetes服務(Amazon EKS)叢集,以應付其工作量。 所有儲存在亞馬遜EKS中的秘密都必須加密在Kubernetes等金鑰價值商店中. 哪種解決辦法能滿足這些要求?
+一家公司正在建造一個Amazon Elastic Kubernetes Service (Amazon EKS)叢集,以應付其工作量。 所有儲存在Amazon EKS中的秘密都必須加密在Kubernetes等金鑰價值商店中. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 使用AWS Secrets Manager來管理,旋轉,並儲存亞馬遜EKS的所有秘密.
-- B. 建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 在亞馬遜EKS叢集上啟用亞馬遜EKS KMS秘密加密(encryption).
-- C. 以預設選項建立 Amazon EKS 叢集。 使用亞馬遜彈性塊儲存器(Amazon EBS)容器儲存介面(CSI)驅動器作為載入.
+- A. 建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 使用AWS Secrets Manager來管理,旋轉,並儲存Amazon EKS的所有秘密.
+- B. 建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 在Amazon EKS叢集上啟用Amazon EKS KMS秘密加密(encryption).
+- C. 以預設選項建立 Amazon EKS 叢集。 使用Amazon Elastic Block Store (Amazon EBS)容器儲存介面(CSI)驅動器作為載入.
 - D. 建立一個新的 AWS Key Management Service(AWS KMS) 金鑰,其別名/aws/eb的別名. 為帳戶啟用預設的 Amazon 彈性塊儲存( Amazon EBS) 卷 加密(encryption)。
 
 **答案**
@@ -12553,9 +12553,9 @@ D
 正確答案是 **D**。
 - D：建立一個新的 AWS Key Management Service(AWS KMS) 金鑰,其別名/aws/eb的別名. 為帳戶啟用預設的 Amazon 彈性塊儲存( Amazon EBS) 卷 加密(encryption) 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 使用AWS Secrets Manager來管理,旋轉,並儲存亞馬遜EKS的所有秘密。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 在亞馬遜EKS叢集上啟用亞馬遜EKS KMS秘密加密(encryption)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：以預設選項建立 Amazon EKS 叢集。 使用亞馬遜彈性塊儲存器(Amazon EBS)容器儲存介面(CSI)驅動器作為載入。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 使用AWS Secrets Manager來管理,旋轉,並儲存Amazon EKS的所有秘密。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個新的 AWS Key Management Service(AWS KMS) 金鑰. 在Amazon EKS叢集上啟用Amazon EKS KMS秘密加密(encryption)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：以預設選項建立 Amazon EKS 叢集。 使用Amazon Elastic Block Store (Amazon EBS)容器儲存介面(CSI)驅動器作為載入。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #536
 
@@ -12679,7 +12679,7 @@ D
 
 **選項**
 - A. 建立 AWS Lambda 功能,從 Amazon DynamoDB 獲取使用者資訊. 建立 Amazon API Gateway 端點以接受 RESTful API. 將API的呼叫傳送給Lambda函式.
-- B. 在應用程式負載平衡器(Application Load Balancer)後建立亞馬遜彈性容器服務(Amazon ECS)服務,從Amazon RDS獲取使用者資訊. 建立 Amazon API Gateway 端點以接受 RESTful API. 將API的呼叫傳送給Lambda函式.
+- B. 在應用程式負載平衡器(Application Load Balancer)後建立Amazon Elastic Container Service (Amazon ECS)服務,從Amazon RDS獲取使用者資訊. 建立 Amazon API Gateway 端點以接受 RESTful API. 將API的呼叫傳送給Lambda函式.
 - C. 建立Amazon Cognitto使用者池,以認證使用者.
 - D. 建立Amazon Cognito身份池,以認證使用者.
 - E. 使用AWS Amplify服務前端的網頁內容有HTML,CSS和JS. 使用整合的Amazon CloudFront配置.
@@ -12696,7 +12696,7 @@ A,C,E
 - C：建立Amazon Cognitto使用者池,以認證使用者。此選項符合題目條件，能有效滿足核心需求。
 - E：使用AWS Amplify服務前端的網頁內容有HTML,CSS和JS. 使用整合的Amazon CloudFront配置。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- B：在應用程式負載平衡器(Application Load Balancer)後建立亞馬遜彈性容器服務(Amazon ECS)服務,從Amazon RDS獲取使用者資訊. 建立 Amazon API Gateway 端點以接受 RESTful API. 將API的呼叫傳送給Lambda函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在應用程式負載平衡器(Application Load Balancer)後建立Amazon Elastic Container Service (Amazon ECS)服務,從Amazon RDS獲取使用者資訊. 建立 Amazon API Gateway 端點以接受 RESTful API. 將API的呼叫傳送給Lambda函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立Amazon Cognito身份池,以認證使用者。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #542
@@ -13007,7 +13007,7 @@ C
 ## Question #555
 
 **題目**
-一家公司在一個具有公共和私人子網的VPC中執行一個應用程式. VPC跨越多個可用區(Availability Zones). 該應用程式執行在私人子網的Amazon EC2 執行個體上. 該應用程式使用亞馬遜簡易佇列服務(Amazon SQS)佇列. 一個解決方案架構師需要設計一個安全解決方案,在EC2例項和SQS佇列之間建立連線. 哪種解決辦法能滿足這些要求?
+一家公司在一個具有公共和私人子網的VPC中執行一個應用程式. VPC跨越多個可用區(Availability Zones). 該應用程式執行在私人子網的Amazon EC2 執行個體上. 該應用程式使用Amazon Simple Queue Service (Amazon SQS)佇列. 一個解決方案架構師需要設計一個安全解決方案,在EC2例項和SQS佇列之間建立連線. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為Amazon SQS實施介面VPC 端點(VPC endpoint). 配置使用私有子網的終點。 在端點外加一個安全群組(security group),它有一個入境進入規則,允許來自位於私人子網的EC2例項的流量.
@@ -13223,7 +13223,7 @@ B
 一家公司正在建立一個電子商務應用程式,需要儲存敏感的客戶資訊。 公司需要給予客戶在網站上完成購買交易的能力. 公司還需要確保敏感的客戶資料得到保護,甚至不受資料庫(database)管理員的保護. 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 將敏感資料儲存在亞馬遜彈性塊儲存(Amazon EBS)的體積中. 使用EBS 加密(encryption)加密資料. 使用IAM例項角色來限制存取.
+- A. 將敏感資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 使用EBS 加密(encryption)加密資料. 使用IAM例項角色來限制存取.
 - B. 為MySQL在Amazon RDS中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)客戶端-加密(encryption)加密資料.
 - C. 在Amazon S3中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)伺服器側加密(encryption)加密資料. 使用S3 儲存桶(S3 bucket)政策限制存取.
 - D. 為Windows Server在Amazon FSx中儲存敏感資料. 在應用程式伺服器上掛載檔案共享。 使用Windows檔案許可權限制存取.
@@ -13236,7 +13236,7 @@ B
 正確答案是 **B**。
 - B：為MySQL在Amazon RDS中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)客戶端-加密(encryption)加密資料。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將敏感資料儲存在亞馬遜彈性塊儲存(Amazon EBS)的體積中. 使用EBS 加密(encryption)加密資料. 使用IAM例項角色來限制存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將敏感資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 使用EBS 加密(encryption)加密資料. 使用IAM例項角色來限制存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在Amazon S3中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)伺服器側加密(encryption)加密資料. 使用S3 儲存桶(S3 bucket)政策限制存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：為Windows Server在Amazon FSx中儲存敏感資料. 在應用程式伺服器上掛載檔案共享。 使用Windows檔案許可權限制存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -13270,7 +13270,7 @@ C
 
 **選項**
 - A. 建立 Amazon S3 桶. 允許從 VPC 中的所有 EC2 例項存取。
-- B. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 從每個EC2例項中掛載 EFS 檔案系統。
+- B. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 從每個EC2例項中掛載 EFS 檔案系統。
 - C. 在一個備註的IOPS SSD(io2) Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在所有 EC2 例項中附加 EBS 磁碟區。
 - D. 在每個EC2例項上附加的Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在不同的EC2例項中同步 EBS 磁碟區.
 
@@ -13282,7 +13282,7 @@ A
 正確答案是 **A**。
 - A：建立 Amazon S3 桶. 允許從 VPC 中的所有 EC2 例項存取 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 從每個EC2例項中掛載 EFS 檔案系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立Amazon Elastic File System (Amazon EFS)檔案系統. 從每個EC2例項中掛載 EFS 檔案系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在一個備註的IOPS SSD(io2) Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在所有 EC2 例項中附加 EBS 磁碟區 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在每個EC2例項上附加的Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在不同的EC2例項中同步 EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -13295,7 +13295,7 @@ A
 - A. 使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並將資料儲存在Amazon DynamoDB表中.
 - B. 使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用 Amazon S3 桶儲存已處理的資料.
 - C. 使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並在Amazon EC2例項上將資料儲存在Microsoft SQL Server Express 資料庫(database)中.
-- D. 使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用亞馬遜彈性檔案系統(Amazon EFS)共享檔案系統來儲存已處理的資料.
+- D. 使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用Amazon Elastic File System (Amazon EFS)共享檔案系統來儲存已處理的資料.
 
 **答案**
 A
@@ -13307,7 +13307,7 @@ A
 - 其餘選項比較：
 - B：使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用 Amazon S3 桶儲存已處理的資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並在Amazon EC2例項上將資料儲存在Microsoft SQL Server Express 資料庫(database)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用亞馬遜彈性檔案系統(Amazon EFS)共享檔案系統來儲存已處理的資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用Amazon Elastic File System (Amazon EFS)共享檔案系統來儲存已處理的資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #568
 
@@ -13339,7 +13339,7 @@ Amazon EventBridge規則針對第三方API. 第三方API沒有收到任何來電
 
 **選項**
 - A. 在 AWS/Events 名稱空間中檢查 Amazon CloudWatch 中的度量衡。
-- B. 審查亞馬遜簡易佇列服務(Amazon SQS)中的事件死字佇列.
+- B. 審查Amazon Simple Queue Service (Amazon SQS)中的事件死字佇列.
 - C. 請檢查aWSERV0012中的事件.
 - D. 請檢查access-date=中的日期值(幫助) AWS CloudTrail中事件線索.
 
@@ -13351,7 +13351,7 @@ A
 正確答案是 **A**。
 - A：在 AWS/Events 名稱空間中檢查 Amazon CloudWatch 中的度量衡 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：審查亞馬遜簡易佇列服務(Amazon SQS)中的事件死字佇列。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：審查Amazon Simple Queue Service (Amazon SQS)中的事件死字佇列。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：請檢查aWSERV0012中的事件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：請檢查access-date=中的日期值(幫助) AWS CloudTrail中事件線索。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -13592,7 +13592,7 @@ C
 
 **選項**
 - A. 配置帶有 Amazon EC2 例項的 Auto Scaling 群組(Auto Scaling group)。 為Lustre檔案系統使用Amazon FSx來執行應用程式.
-- B. 在 Amazon EC2 例項中託管申請。 使用一個亞馬遜彈性塊儲存器(Amazon EBS)GP2捲來執行應用程式.
+- B. 在 Amazon EC2 例項中託管申請。 使用一個Amazon Elastic Block Store (Amazon EBS)GP2捲來執行應用程式.
 - C. 配置帶有 Amazon EC2 例項的 Auto Scaling 群組(Auto Scaling group)。 使用Amazon FSx用於OpenZFS檔案系統執行應用程式.
 - D. 在 Amazon EC2 例項中託管申請。 使用一個Amazon彈性塊儲存器(Amazon EBS)GP3磁碟區來執行應用程式.
 
@@ -13602,7 +13602,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在 Amazon EC2 例項中託管申請。 使用一個亞馬遜彈性塊儲存器(Amazon EBS)GP2捲來執行應用程式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：在 Amazon EC2 例項中託管申請。 使用一個Amazon Elastic Block Store (Amazon EBS)GP2捲來執行應用程式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：配置帶有 Amazon EC2 例項的 Auto Scaling 群組(Auto Scaling group)。 為Lustre檔案系統使用Amazon FSx來執行應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：配置帶有 Amazon EC2 例項的 Auto Scaling 群組(Auto Scaling group)。 使用Amazon FSx用於OpenZFS檔案系統執行應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -13662,7 +13662,7 @@ A
 **選項**
 - A. 從現場的磁帶讀取資料 在本地的 NFS 儲存中預置資料。 使用AWS DataSync將資料遷移到Amazon S3 Glacier Flexible Retrieval.
 - B. 使用promise 備份(backup)應用程式從磁帶中讀取資料,直接寫入Amazon S3 Glacier Deep Archive.
-- C. 訂購多個具有磁帶閘道器的AWS Snowball裝置. 複製物理磁帶到雪球的虛擬磁帶. 向AWS運送雪球裝置. 建立一個生命週期政策(lifecycle policy),將磁帶移動到亞馬遜S3 Glacier Deep Archive.
+- C. 訂購多個具有磁帶閘道器的AWS Snowball裝置. 複製物理磁帶到雪球的虛擬磁帶. 向AWS運送雪球裝置. 建立一個生命週期政策(lifecycle policy),將磁帶移動到Amazon S3 Glacier Deep Archive.
 - D. 配置磁帶閘道器。 在 AWS 雲中建立虛擬磁帶. 使用備份(backup)軟體將物理磁帶複製到虛擬磁帶.
 
 **答案**
@@ -13671,7 +13671,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：訂購多個具有磁帶閘道器的AWS Snowball裝置. 複製物理磁帶到雪球的虛擬磁帶. 向AWS運送雪球裝置. 建立一個生命週期政策(lifecycle policy),將磁帶移動到亞馬遜S3 Glacier Deep Archive。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：訂購多個具有磁帶閘道器的AWS Snowball裝置. 複製物理磁帶到雪球的虛擬磁帶. 向AWS運送雪球裝置. 建立一個生命週期政策(lifecycle policy),將磁帶移動到Amazon S3 Glacier Deep Archive。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：從現場的磁帶讀取資料 在本地的 NFS 儲存中預置資料。 使用AWS DataSync將資料遷移到Amazon S3 Glacier Flexible Retrieval。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用promise 備份(backup)應用程式從磁帶中讀取資料,直接寫入Amazon S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -13847,7 +13847,7 @@ A
 - A. 使用 AWS 負載平衡器(Load Balancer) 控制器提供 網路負載平衡器(Network Load Balancer).
 - B. 使用 AWS 負載平衡器(Load Balancer) 控制器提供 應用程式負載平衡器(Application Load Balancer).
 - C. 使用 AWS Lambda 函式將請求連線到 Amazon EKS.
-- D. 使用Amazon API Gateway將請求連線到亞馬遜EKS.
+- D. 使用Amazon API Gateway將請求連線到Amazon EKS.
 
 **答案**
 C
@@ -13859,7 +13859,7 @@ C
 - 其餘選項比較：
 - A：使用 AWS 負載平衡器(Load Balancer) 控制器提供 網路負載平衡器(Network Load Balancer)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 AWS 負載平衡器(Load Balancer) 控制器提供 應用程式負載平衡器(Application Load Balancer)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用Amazon API Gateway將請求連線到亞馬遜EKS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon API Gateway將請求連線到Amazon EKS。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #592
 
@@ -14029,7 +14029,7 @@ C,E,F
 ## Question #599
 
 **題目**
-一家公司希望使用亞馬遜彈性容器服務(Amazon ECS)叢集和Amazon RDS DB例項來構建和執行支付處理應用程式. 該公司將在其前提資料中心執行該應用程式,用於合規(compliance)目的. 一個解決方案架構師希望將AWS Outposts作為解決方案的一部分. 解決方案架構師正與公司的運營團隊合作,共同構建應用程式. 哪些活動是公司業務團隊的責任?(選三.
+一家公司希望使用Amazon Elastic Container Service (Amazon ECS)叢集和Amazon RDS DB例項來構建和執行支付處理應用程式. 該公司將在其前提資料中心執行該應用程式,用於合規(compliance)目的. 一個解決方案架構師希望將AWS Outposts作為解決方案的一部分. 解決方案架構師正與公司的運營團隊合作,共同構建應用程式. 哪些活動是公司業務團隊的責任?(選三.
 
 **選項**
 - A. 向外站架提供彈性電源和網路連線
@@ -14037,7 +14037,7 @@ C,E,F
 - C. 資料中心環境的實物安全和出入控制
 - D. 提供外站基礎設施,包括電力供應、伺服器和外站架內的聯網裝置
 - E. 外站部分的實際維修
-- F. 為亞馬遜ECS叢集提供額外能力,以減輕伺服器故障和維護事件
+- F. 為Amazon ECS叢集提供額外能力,以減輕伺服器故障和維護事件
 
 **答案**
 A,C,E
@@ -14102,13 +14102,13 @@ B
 ## Question #602
 
 **題目**
-一家公司的基礎設施包括數百個使用亞馬遜彈性塊儲存器(Amazon EBS)的Amazon EC2例項. 解決方案設計師必須確保每個EC2例項在災難後都能恢復. 解決方案設計師應如何以大量努力滿足這一要求?
+一家公司的基礎設施包括數百個使用Amazon Elastic Block Store (Amazon EBS)的Amazon EC2例項. 解決方案設計師必須確保每個EC2例項在災難後都能恢復. 解決方案設計師應如何以大量努力滿足這一要求?
 
 **選項**
 - A. 取一個快照(snapshot)的EBS儲存器,該儲存器與每個EC2例項相連. 建立一個AWS CloudFormation模板,從EBS儲存中啟動新的EC2例項.
 - B. 取一個快照(snapshot)的EBS儲存器,該儲存器與每個EC2例項相連. 使用AWS Elastic Beanstalk根據EC2模板設定環境,並附加EBS儲存器.
 - C. 使用AWS Backup為整個EC2例項組制定備份(backup)計劃. 使用 AWS Backup API 或 AWS CLI 來加速多個 EC2 例項的恢復程序.
-- D. 建立 AWS Lambda 函式,以獲取每個EC2例項所附帶的EBS儲存器的快照(snapshot)並複製亞馬遜機器影象(AMI). 建立另一個 Lambda 函式,用複製的 AMI 來進行恢復,並附加 EBS 儲存.
+- D. 建立 AWS Lambda 函式,以獲取每個EC2例項所附帶的EBS儲存器的快照(snapshot)並複製Amazon Machine Image (AMI). 建立另一個 Lambda 函式,用複製的 AMI 來進行恢復,並附加 EBS 儲存.
 
 **答案**
 C
@@ -14120,7 +14120,7 @@ C
 - 其餘選項比較：
 - A：取一個快照(snapshot)的EBS儲存器,該儲存器與每個EC2例項相連. 建立一個AWS CloudFormation模板,從EBS儲存中啟動新的EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：取一個快照(snapshot)的EBS儲存器,該儲存器與每個EC2例項相連. 使用AWS Elastic Beanstalk根據EC2模板設定環境,並附加EBS儲存器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立 AWS Lambda 函式,以獲取每個EC2例項所附帶的EBS儲存器的快照(snapshot)並複製亞馬遜機器影象(AMI). 建立另一個 Lambda 函式,用複製的 AMI 來進行恢復,並附加 EBS 儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立 AWS Lambda 函式,以獲取每個EC2例項所附帶的EBS儲存器的快照(snapshot)並複製Amazon Machine Image (AMI). 建立另一個 Lambda 函式,用複製的 AMI 來進行恢復,並附加 EBS 儲存。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #603
 
@@ -14314,8 +14314,8 @@ B
 **選項**
 - A. 使用 Amazon Kinesis 資料流來吸收資料. 使用 AWS Lambda 函式處理資料。
 - B. 在現有應用程式之上使用 Amazon API Gateway。 為第三方供應商制定配額限制的使用計劃。
-- C. 使用亞馬遜簡易通知服務(Amazon SNS)來攝取資料. 將EC2 執行個體放在Auto Scaling 群組(Auto Scaling group)後面。
-- D. 將應用程式重新包裝為容器。 使用亞馬遜彈性容器服務(Amazon ECS),使用使用Auto Scaling 群組(Auto Scaling group)的EC2啟動類型部署該應用程式。
+- C. 使用Amazon Simple Notification Service (Amazon SNS)來攝取資料. 將EC2 執行個體放在Auto Scaling 群組(Auto Scaling group)後面。
+- D. 將應用程式重新包裝為容器。 使用Amazon Elastic Container Service (Amazon ECS),使用使用Auto Scaling 群組(Auto Scaling group)的EC2啟動類型部署該應用程式。
 
 **答案**
 A
@@ -14326,8 +14326,8 @@ A
 - A：使用 Amazon Kinesis 資料流來吸收資料. 使用 AWS Lambda 函式處理資料 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在現有應用程式之上使用 Amazon API Gateway。 為第三方供應商制定配額限制的使用計劃。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜簡易通知服務(Amazon SNS)來攝取資料. 將EC2 執行個體放在Auto Scaling 群組(Auto Scaling group)後面。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將應用程式重新包裝為容器。 使用亞馬遜彈性容器服務(Amazon ECS),使用使用Auto Scaling 群組(Auto Scaling group)的EC2啟動類型部署該應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Simple Notification Service (Amazon SNS)來攝取資料. 將EC2 執行個體放在Auto Scaling 群組(Auto Scaling group)後面。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將應用程式重新包裝為容器。 使用Amazon Elastic Container Service (Amazon ECS),使用使用Auto Scaling 群組(Auto Scaling group)的EC2啟動類型部署該應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #612
 
@@ -14428,7 +14428,7 @@ C
 
 **選項**
 - A. 配置 Amazon Macie 監控結果並向 AWS Config 報告.
-- B. 配置亞馬遜巡視器,以監控結果並向AWS CloudTrail報告.
+- B. 配置Amazon Inspector,以監控結果並向AWS CloudTrail報告.
 - C. 配置 Amazon GuardDuty 監控結果並向 AWS 安全樞紐報告.
 - D. 配置AWS Config,以監控結果並向Amazon EventBridge報告.
 
@@ -14440,7 +14440,7 @@ A
 正確答案是 **A**。
 - A：配置 Amazon Macie 監控結果並向 AWS Config 報告。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：配置亞馬遜巡視器,以監控結果並向AWS CloudTrail報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：配置Amazon Inspector,以監控結果並向AWS CloudTrail報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：配置 Amazon GuardDuty 監控結果並向 AWS 安全樞紐報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置AWS Config,以監控結果並向Amazon EventBridge報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -14451,7 +14451,7 @@ A
 
 **選項**
 - A. 為 Lustre 檔案系統建立 Amazon FSx。
-- B. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統.
+- B. 建立Amazon Elastic File System (Amazon EFS)檔案系統.
 - C. 建立 Amazon S3 桶接收資料.
 - D. 手動使用作業系統複製命令將資料推向AWS目的地.
 - E. 在預設資料中心安裝 AWS 資料同步代理。 使用預設位置和 AWS 之間的資料同步任務。
@@ -14464,7 +14464,7 @@ A,B
 **詳解**
 正確答案是 **A, B**。
 - A：為 Lustre 檔案系統建立 Amazon FSx 。此選項符合題目條件，能有效滿足核心需求。
-- B：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統。此選項符合題目條件，能有效滿足核心需求。
+- B：建立Amazon Elastic File System (Amazon EFS)檔案系統。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - C：建立 Amazon S3 桶接收資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：手動使用作業系統複製命令將資料推向AWS目的地。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -14502,7 +14502,7 @@ C
 - A. 建立禁止更改 CloudTrail 的 IAM 政策(IAM policy)。 並附在根使用者上。
 - B. 在 CloudTrail 在開發者帳戶內建立新的線索, 並啟用組織線索選項。
 - C. 建立服務控制政策(SCP),禁止更改CloudTrail,並附上開發商帳戶.
-- D. 為 CloudTrail 建立一個服務連結的角色,其政策條件只允許從管理帳戶中的亞馬遜資源名稱(ARN)進行更改.
+- D. 為 CloudTrail 建立一個服務連結的角色,其政策條件只允許從管理帳戶中的Amazon Resource Name (ARN)進行更改.
 
 **答案**
 C
@@ -14514,7 +14514,7 @@ C
 - 其餘選項比較：
 - A：建立禁止更改 CloudTrail 的 IAM 政策(IAM policy)。 並附在根使用者上。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在 CloudTrail 在開發者帳戶內建立新的線索, 並啟用組織線索選項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：為 CloudTrail 建立一個服務連結的角色,其政策條件只允許從管理帳戶中的亞馬遜資源名稱(ARN)進行更改。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：為 CloudTrail 建立一個服務連結的角色,其政策條件只允許從管理帳戶中的Amazon Resource Name (ARN)進行更改。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #620
 
@@ -14524,8 +14524,8 @@ C
 **選項**
 - A. 例項儲存量
 - B. Amazon ElastiCache 用於模擬叢集
-- C. 提供 IOPS SSD 亞馬遜彈性塊儲存器(Amazon EBS)
-- D. 吞吐量(Throughput) 最佳化HDD 亞馬遜彈性塊儲存器(Amazon EBS) 體積
+- C. 提供 IOPS SSD Amazon Elastic Block Store (Amazon EBS)
+- D. 吞吐量(Throughput) 最佳化HDD Amazon Elastic Block Store (Amazon EBS) 體積
 
 **答案**
 C
@@ -14533,11 +14533,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：提供 IOPS SSD 亞馬遜彈性塊儲存器(Amazon EBS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：提供 IOPS SSD Amazon Elastic Block Store (Amazon EBS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：例項儲存量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：Amazon ElastiCache 用於模擬叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：吞吐量(Throughput) 最佳化HDD 亞馬遜彈性塊儲存器(Amazon EBS) 體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：吞吐量(Throughput) 最佳化HDD Amazon Elastic Block Store (Amazon EBS) 體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #621
 
@@ -14757,8 +14757,8 @@ D
 **選項**
 - A. 建立一個在 Amazon EC2 保留例項上本地執行的指令碼, 由 cron 任務觸發。
 - B. 建立一個由 Amazon EventBridge 計劃事件觸發的 AWS Lambda 函式.
-- C. 使用亞馬遜彈性容器服務(Amazon ECS) 遠門任務,由Amazon EventBridge計劃活動引發.
-- D. 使用在 Amazon EC2 上執行的亞馬遜彈性容器服務(Amazon ECS)任務,由 Amazon EventBridge 計劃事件觸發.
+- C. 使用Amazon Elastic Container Service (Amazon ECS) 遠門任務,由Amazon EventBridge計劃活動引發.
+- D. 使用在 Amazon EC2 上執行的Amazon Elastic Container Service (Amazon ECS)任務,由 Amazon EventBridge 計劃事件觸發.
 
 **答案**
 C
@@ -14766,11 +14766,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：使用亞馬遜彈性容器服務(Amazon ECS) 遠門任務,由Amazon EventBridge計劃活動引發。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：使用Amazon Elastic Container Service (Amazon ECS) 遠門任務,由Amazon EventBridge計劃活動引發。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立一個在 Amazon EC2 保留例項上本地執行的指令碼, 由 cron 任務觸發 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立一個由 Amazon EventBridge 計劃事件觸發的 AWS Lambda 函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用在 Amazon EC2 上執行的亞馬遜彈性容器服務(Amazon ECS)任務,由 Amazon EventBridge 計劃事件觸發。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用在 Amazon EC2 上執行的Amazon Elastic Container Service (Amazon ECS)任務,由 Amazon EventBridge 計劃事件觸發。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #631
 
@@ -14778,8 +14778,8 @@ C
 一家社交媒體公司希望將自己的資料庫(database)使用者簡介,關係和互動儲存在AWS雲中. 公司需要一個應用程式來監控資料庫(database)中的任何變化. 應用程式需要分析資料實體之間的關係,並向使用者提出建議。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用亞馬遜海王星儲存資訊. 使用 Amazon Kinesis 資料流處理 資料庫(database) 中的更改.
-- B. 使用亞馬遜海王星儲存資訊. 使用海王星流處理資料庫(database)中的變化.
+- A. 使用Amazon Neptune儲存資訊. 使用 Amazon Kinesis 資料流處理 資料庫(database) 中的更改.
+- B. 使用Amazon Neptune儲存資訊. 使用海王星流處理資料庫(database)中的變化.
 - C. 使用Amazon Quantum Ledger 資料庫(Database)(Amazon QLDB)儲存資訊. 使用 Amazon Kinesis 資料流處理 資料庫(database).
 - D. 使用Amazon Quantum Ledger 資料庫(Database)(Amazon QLDB)儲存資訊. 使用海王星流處理資料庫(database)中的變化.
 
@@ -14789,9 +14789,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用亞馬遜海王星儲存資訊. 使用海王星流處理資料庫(database)中的變化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon Neptune儲存資訊. 使用海王星流處理資料庫(database)中的變化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜海王星儲存資訊. 使用 Amazon Kinesis 資料流處理 資料庫(database) 中的更改。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Neptune儲存資訊. 使用 Amazon Kinesis 資料流處理 資料庫(database) 中的更改。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon Quantum Ledger 資料庫(Database)(Amazon QLDB)儲存資訊. 使用 Amazon Kinesis 資料流處理 資料庫(database)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用Amazon Quantum Ledger 資料庫(Database)(Amazon QLDB)儲存資訊. 使用海王星流處理資料庫(database)中的變化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -14802,8 +14802,8 @@ B
 
 **選項**
 - A. 在Amazon S3冰川中儲存資料. 更新 S3 Glacier 金庫政策, 允許存取應用程式例項。
-- B. 將資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. 在應用程式例項上掛載 EBS 磁碟區。
-- C. 資料儲存在亞馬遜彈性檔案系統(Amazon EFS)的檔案系統中. 在應用程式例項上掛載檔案系統。
+- B. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 在應用程式例項上掛載 EBS 磁碟區。
+- C. 資料儲存在Amazon Elastic File System (Amazon EFS)的檔案系統中. 在應用程式例項上掛載檔案系統。
 - D. 將資料儲存在Amazon Elastic Block Store(Amazon EBS)中,提供了應用例項之間共享的IOPS量。
 
 **答案**
@@ -14812,10 +14812,10 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：資料儲存在亞馬遜彈性檔案系統(Amazon EFS)的檔案系統中. 在應用程式例項上掛載檔案系統 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：資料儲存在Amazon Elastic File System (Amazon EFS)的檔案系統中. 在應用程式例項上掛載檔案系統 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在Amazon S3冰川中儲存資料. 更新 S3 Glacier 金庫政策, 允許存取應用程式例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將資料儲存在亞馬遜彈性塊儲存器(Amazon EBS)的體積中. 在應用程式例項上掛載 EBS 磁碟區 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 在應用程式例項上掛載 EBS 磁碟區 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將資料儲存在Amazon Elastic Block Store(Amazon EBS)中,提供了應用例項之間共享的IOPS量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #633
@@ -14873,7 +14873,7 @@ C
 - A. 建立 AWS Lambda 函式將資料複製到 Amazon S3 桶中. 將S3 儲存桶(S3 bucket)複製到二級區域(Region).
 - B. 透過使用AWS Backup為ONTAP卷建立備份(backup)FSx. 將卷子複製到二級區域(Region). 從 備份(backup) 為 ONTAP 例項建立新的 FSx。
 - C. 在二級 區域(Region) 為 ONTAP 例項建立 FSx。 使用NetApp SnapMirror來複制主要區域(Region)到次要區域(Region)的資料.
-- D. 建立亞馬遜彈性檔案系統(Amazon EFS)卷. 將當前資料移到磁碟區中。 將磁碟區複製到二級區域(Region).
+- D. 建立Amazon Elastic File System (Amazon EFS)卷. 將當前資料移到磁碟區中。 將磁碟區複製到二級區域(Region).
 
 **答案**
 C
@@ -14885,12 +14885,12 @@ C
 - 其餘選項比較：
 - A：建立 AWS Lambda 函式將資料複製到 Amazon S3 桶中. 將S3 儲存桶(S3 bucket)複製到二級區域(Region)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：透過使用AWS Backup為ONTAP卷建立備份(backup)FSx. 將卷子複製到二級區域(Region). 從 備份(backup) 為 ONTAP 例項建立新的 FSx 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立亞馬遜彈性檔案系統(Amazon EFS)卷. 將當前資料移到磁碟區中。 將磁碟區複製到二級區域(Region)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立Amazon Elastic File System (Amazon EFS)卷. 將當前資料移到磁碟區中。 將磁碟區複製到二級區域(Region)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #636
 
 **題目**
-一個開發團隊正在建立基於事件的應用程式,使用AWS Lambda功能. 當檔案被新增到 Amazon S3 桶中時, 將會生成事件。 開發團隊目前將亞馬遜簡易通知服務(Amazon SNS)配置為來自Amazon S3的事件目標. 一個解決方案設計師應該做些什麼來以可擴充套件的方式處理來自Amazon S3的事件?
+一個開發團隊正在建立基於事件的應用程式,使用AWS Lambda功能. 當檔案被新增到 Amazon S3 桶中時, 將會生成事件。 開發團隊目前將Amazon Simple Notification Service (Amazon SNS)配置為來自Amazon S3的事件目標. 一個解決方案設計師應該做些什麼來以可擴充套件的方式處理來自Amazon S3的事件?
 
 **選項**
 - A. 在Amazon Elastic Construction Services(Amazon ECS)中,
@@ -15132,7 +15132,7 @@ B
 一個解決方案架構師需要在AWS雲中託管高效能運算工作量(HPC). 工作量將涉及數百個Amazon EC2 執行個體,需要並行使用共享檔案系統,以便能夠對大型資料集進行分散式處理。 資料集將同時用於多個例項。 工作量要求在1毫秒內進入延遲(latency)。 處理完成後,工程師將需要進入資料集進行人工後處理. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用亞馬遜彈性檔案系統(Amazon EFS)作為共享檔案系統. 從Amazon EFS存取資料集.
+- A. 使用Amazon Elastic File System (Amazon EFS)作為共享檔案系統. 從Amazon EFS存取資料集.
 - B. 掛載一個 Amazon S3 桶作為共享檔案系統. 從S3 儲存桶(S3 bucket)直接進行後處理.
 - C. 使用Amazon FSx作為Lustre共享檔案系統. 將檔案系統連結到一個Amazon S3桶進行後處理.
 - D. 配置 AWS 資源存取管理器以共享一個 Amazon S3 桶,從而可以掛載到所有處理和後處理的場合.
@@ -15145,7 +15145,7 @@ C
 正確答案是 **C**。
 - C：使用Amazon FSx作為Lustre共享檔案系統. 將檔案系統連結到一個Amazon S3桶進行後處理。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜彈性檔案系統(Amazon EFS)作為共享檔案系統. 從Amazon EFS存取資料集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Elastic File System (Amazon EFS)作為共享檔案系統. 從Amazon EFS存取資料集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：掛載一個 Amazon S3 桶作為共享檔案系統. 從S3 儲存桶(S3 bucket)直接進行後處理。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置 AWS 資源存取管理器以共享一個 Amazon S3 桶,從而可以掛載到所有處理和後處理的場合。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -15180,8 +15180,8 @@ A
 **選項**
 - A. 使用Amazon FSx用於Lustre抓取檔案系統.
 - B. 使用Amazon FSx用於Lustre持久檔案系統.
-- C. 使用亞馬遜彈性檔案系統(Amazon EFS),使用Bursting 吞吐量(Throughput)模式.
-- D. 使用亞馬遜彈性檔案系統(Amazon EFS),採用提供吞吐量(Throughput)模式.
+- C. 使用Amazon Elastic File System (Amazon EFS),使用Bursting 吞吐量(Throughput)模式.
+- D. 使用Amazon Elastic File System (Amazon EFS),採用提供吞吐量(Throughput)模式.
 
 **答案**
 B
@@ -15192,8 +15192,8 @@ B
 - B：使用Amazon FSx用於Lustre持久檔案系統。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用Amazon FSx用於Lustre抓取檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜彈性檔案系統(Amazon EFS),使用Bursting 吞吐量(Throughput)模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用亞馬遜彈性檔案系統(Amazon EFS),採用提供吞吐量(Throughput)模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Elastic File System (Amazon EFS),使用Bursting 吞吐量(Throughput)模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用Amazon Elastic File System (Amazon EFS),採用提供吞吐量(Throughput)模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #649
 
@@ -15319,7 +15319,7 @@ B
 - A. 使用 AWS 彈性 Beanstalk 託管靜態內容和 PHP 應用程式。 配置 Elastic Beanstalk 將其 EC2 例項應用到公共子網中。 指定一個公共IP地址.
 - B. 使用AWS Lambda託管靜態內容和PHP應用程式. 使用 Amazon API Gateway REST API來代理 Lambda 函式的請求. 設定 API 閘道器 CORS 配置以響應域名。 配置 Amazon ElastiCache 供 Redis 處理會話資訊。
 - C. 保留EC2例項上的後端程式碼. 為已啟用多AZ的 Redis 叢集建立 Amazon ElastiCache。 在叢集模式下配置 Redis 叢集的 ElastiCache。 將前端資源複製到Amazon S3. 配置後端程式碼以引用 EC2 例項。
-- D. 配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 儲存桶(S3 bucket),該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為亞馬遜彈性容器服務(Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache。
+- D. 配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 儲存桶(S3 bucket),該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為Amazon Elastic Container Service (Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache。
 
 **答案**
 D
@@ -15327,7 +15327,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 儲存桶(S3 bucket),該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為亞馬遜彈性容器服務(Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 儲存桶(S3 bucket),該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為Amazon Elastic Container Service (Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 AWS 彈性 Beanstalk 託管靜態內容和 PHP 應用程式。 配置 Elastic Beanstalk 將其 EC2 例項應用到公共子網中。 指定一個公共IP地址。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用AWS Lambda託管靜態內容和PHP應用程式. 使用 Amazon API Gateway REST API來代理 Lambda 函式的請求. 設定 API 閘道器 CORS 配置以響應域名。 配置 Amazon ElastiCache 供 Redis 處理會話資訊 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -15365,8 +15365,8 @@ C,E
 一家公司經營一個網站,儲存歷史事件的影象. 網站使用者需要有能力根據影象中的事件發生年份搜尋和檢視影象. 平均來說,使用者每年只請求每個影象一次或兩次. 公司希望有一個高度可用的解決方案來儲存和向使用者交付影象. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 將影象儲存在亞馬遜彈性塊儲存(Amazon EBS)中. 使用執行於Amazon EC2的網路伺服器.
-- B. 在亞馬遜彈性檔案系統中儲存影象(Amazon EFS). 使用執行於Amazon EC2的網路伺服器.
+- A. 將影象儲存在Amazon Elastic Block Store (Amazon EBS)中. 使用執行於Amazon EC2的網路伺服器.
+- B. 在Amazon Elastic File System中儲存影象(Amazon EFS). 使用執行於Amazon EC2的網路伺服器.
 - C. 在Amazon S3標準中儲存影象. 使用S3標準透過使用靜態網站直接傳送影象.
 - D. 將影象儲存在 Amazon S3 標準-不頻繁存取（S3 Standard-IA）中. 使用S3 Standard-IA透過使用靜態網站直接傳送影象.
 
@@ -15378,8 +15378,8 @@ C
 正確答案是 **C**。
 - C：在Amazon S3標準中儲存影象. 使用S3標準透過使用靜態網站直接傳送影象。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將影象儲存在亞馬遜彈性塊儲存(Amazon EBS)中. 使用執行於Amazon EC2的網路伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：在亞馬遜彈性檔案系統中儲存影象(Amazon EFS). 使用執行於Amazon EC2的網路伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將影象儲存在Amazon Elastic Block Store (Amazon EBS)中. 使用執行於Amazon EC2的網路伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在Amazon Elastic File System中儲存影象(Amazon EFS). 使用執行於Amazon EC2的網路伺服器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將影象儲存在 Amazon S3 標準-不頻繁存取（S3 Standard-IA）中. 使用S3 Standard-IA透過使用靜態網站直接傳送影象。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #657
@@ -15509,7 +15509,7 @@ B
 - A. 在Amazon CloudWatch Logs中使用日誌來監控Amazon EBS的儲存利用率. 使用 Amazon EBS 彈性卷以減少EBS 磁碟區的大小.
 - B. 使用自定義指令碼來監視空間使用。 使用 Amazon EBS 彈性卷以減少EBS 磁碟區的大小.
 - C. 刪除所有過期和未使用的快照以減少快照(snapshot)成本.
-- D. 刪除所有非必要的快照。 使用亞馬遜資料生命週期管理器根據公司的快照(snapshot)政策要求建立和管理快照.
+- D. 刪除所有非必要的快照。 使用Amazon Data Lifecycle Manager根據公司的快照(snapshot)政策要求建立和管理快照.
 
 **答案**
 D
@@ -15517,7 +15517,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：刪除所有非必要的快照。 使用亞馬遜資料生命週期管理器根據公司的快照(snapshot)政策要求建立和管理快照。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：刪除所有非必要的快照。 使用Amazon Data Lifecycle Manager根據公司的快照(snapshot)政策要求建立和管理快照。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在Amazon CloudWatch Logs中使用日誌來監控Amazon EBS的儲存利用率. 使用 Amazon EBS 彈性卷以減少EBS 磁碟區的大小。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用自定義指令碼來監視空間使用。 使用 Amazon EBS 彈性卷以減少EBS 磁碟區的大小。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -15526,7 +15526,7 @@ D
 ## Question #663
 
 **題目**
-一家公司正在開發關於AWS的新應用程式。 該應用程式包括一個亞馬遜彈性容器服務(Amazon ECS)叢集,一個包含應用程式資產的Amazon S3桶,以及一個包含應用程式資料集的MySQL 資料庫(database)的Amazon RDS. 資料集包含敏感資訊. 公司希望確保只有ECS叢集才能存取MySQL 資料庫(database)的RDS中的資料和S3 儲存桶(S3 bucket)中的資料. 哪種解決辦法能滿足這些要求?
+一家公司正在開發關於AWS的新應用程式。 該應用程式包括一個Amazon Elastic Container Service (Amazon ECS)叢集,一個包含應用程式資產的Amazon S3桶,以及一個包含應用程式資料集的MySQL 資料庫(database)的Amazon RDS. 資料集包含敏感資訊. 公司希望確保只有ECS叢集才能存取MySQL 資料庫(database)的RDS中的資料和S3 儲存桶(S3 bucket)中的資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立一個新的 AWS Key Management Service(AWS KMS) 客戶端管理金鑰,為 MySQL 資料庫(database) 加密 S3 儲存桶(S3 bucket) 和 RDS. 確保 KMS 關鍵政策包括加密和解密ECS任務執行角色的許可權.
@@ -15927,7 +15927,7 @@ C,E,F
 ## Question #680
 
 **題目**
-一個解決方案架構師需要將檔案從一個Amazon S3桶複製到一個亞馬遜彈性檔案系統(Amazon EFS)和一個S3 儲存桶(S3 bucket). 檔案必須連續複製。 新的檔案被一致地新增到原來的S3 儲存桶(S3 bucket)中. 複製的檔案只有在原始檔更改時才會被覆蓋. 哪個解決方案能以最少的營運開銷達成這些要求？
+一個解決方案架構師需要將檔案從一個Amazon S3桶複製到一個Amazon Elastic File System (Amazon EFS)和一個S3 儲存桶(S3 bucket). 檔案必須連續複製。 新的檔案被一致地新增到原來的S3 儲存桶(S3 bucket)中. 複製的檔案只有在原始檔更改時才會被覆蓋. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立AWS資料同步位置. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立任務. 設定傳輸模式只傳輸已更改的資料。
@@ -15950,7 +15950,7 @@ D
 ## Question #681
 
 **題目**
-一家公司使用Amazon EC2 執行個體並儲存有關亞馬遜彈性塊儲存(Amazon EBS)卷的資料. 公司必須透過使用AWS Key Management Service(AWS KMS)確保所有資料在休息時加密. 公司必須能夠控制加密(encryption)鍵的旋轉. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司使用Amazon EC2 執行個體並儲存有關Amazon Elastic Block Store (Amazon EBS)卷的資料. 公司必須透過使用AWS Key Management Service(AWS KMS)確保所有資料在休息時加密. 公司必須能夠控制加密(encryption)鍵的旋轉. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 建立客戶管理金鑰。 使用金鑰加密 EBS 磁碟區。
@@ -15977,7 +15977,7 @@ C
 
 **選項**
 - A. 使用一個IAM 政策(IAM policy),允許使用者只建立加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Config和AWS Systems Manager自動檢測和補救未加密的EBS 磁碟區.
-- B. 使用AWS Key Management Service(AWS KMS)管理加密的亞馬遜彈性塊儲存器(Amazon EBS)卷的存取許可權. 使用AWS Lambda和Amazon EventBridge自動檢測和補救未加密的EBS 磁碟區.
+- B. 使用AWS Key Management Service(AWS KMS)管理加密的Amazon Elastic Block Store (Amazon EBS)卷的存取許可權. 使用AWS Lambda和Amazon EventBridge自動檢測和補救未加密的EBS 磁碟區.
 - C. 使用Amazon Macie檢測未加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Systems Manager自動化規則自動加密已有和新的EBS 磁碟區.
 - D. 使用Amazon檢查器檢測未加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Systems Manager自動化規則自動加密已有和新的EBS 磁碟區.
 
@@ -15987,7 +15987,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用AWS Key Management Service(AWS KMS)管理加密的亞馬遜彈性塊儲存器(Amazon EBS)卷的存取許可權. 使用AWS Lambda和Amazon EventBridge自動檢測和補救未加密的EBS 磁碟區。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用AWS Key Management Service(AWS KMS)管理加密的Amazon Elastic Block Store (Amazon EBS)卷的存取許可權. 使用AWS Lambda和Amazon EventBridge自動檢測和補救未加密的EBS 磁碟區。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用一個IAM 政策(IAM policy),允許使用者只建立加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Config和AWS Systems Manager自動檢測和補救未加密的EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon Macie檢測未加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Systems Manager自動化規則自動加密已有和新的EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -16097,8 +16097,8 @@ D
 - A. 部署Amazon SageMaker模型。 為推斷建立 SageMaker 端點。
 - B. 使用Amazon SageMaker透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個模型.
 - C. 配置一個 AWS Lambda 函式,其功能URL使用亞馬遜 SageMaker 端點來根據輸入建立預測.
-- D. 配置一個 AWS Lambda 函式,其功能URL使用亞馬遜預測器根據輸入來建立預測.
-- E. 透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個亞馬遜福塞卡斯預測器.
+- D. 配置一個 AWS Lambda 函式,其功能URL使用Amazon Forecast 預測器根據輸入來建立預測.
+- E. 透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個Amazon Forecast 預測器.
 
 **答案**
 C,D
@@ -16108,11 +16108,11 @@ C,D
 **詳解**
 正確答案是 **C, D**。
 - C：配置一個 AWS Lambda 函式,其功能URL使用亞馬遜 SageMaker 端點來根據輸入建立預測。此選項符合題目條件，能有效滿足核心需求。
-- D：配置一個 AWS Lambda 函式,其功能URL使用亞馬遜預測器根據輸入來建立預測。此選項符合題目條件，能有效滿足核心需求。
+- D：配置一個 AWS Lambda 函式,其功能URL使用Amazon Forecast 預測器根據輸入來建立預測。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：部署Amazon SageMaker模型。 為推斷建立 SageMaker 端點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用Amazon SageMaker透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個模型。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個亞馬遜福塞卡斯預測器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個Amazon Forecast 預測器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #688
 
@@ -16140,7 +16140,7 @@ B
 ## Question #689
 
 **題目**
-一家公司希望將其亞馬遜彈性塊儲存器(Amazon EBS)卷加密(encryption)策略標準化. 公司還希望將操作量產加密(encryption)檢查所需的成本和配置努力降到最低. 哪種解決辦法能滿足這些要求?
+一家公司希望將其Amazon Elastic Block Store (Amazon EBS)卷加密(encryption)策略標準化. 公司還希望將操作量產加密(encryption)檢查所需的成本和配置努力降到最低. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 寫API的電話來描述EBS 磁碟區,確認EBS 磁碟區是加密的. 使用Amazon EventBridge來安排一個AWS Lambda功能來執行API呼叫.
@@ -16193,8 +16193,8 @@ A,C
 
 **選項**
 - A. 使用AWS Storage Gateway Volume Gateway Internet Small 計算機系統介面(iSCSI)塊儲存器,這些儲存器被安裝到單個EC2例項中.
-- B. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 在單個EC2例項上掛載 EFS 檔案系統。
-- C. 建立共享的亞馬遜彈性塊儲存器(Amazon EBS)磁碟區. 在單個EC2例項上掛載 EBS 磁碟區。
+- B. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 在單個EC2例項上掛載 EFS 檔案系統。
+- C. 建立共享的Amazon Elastic Block Store (Amazon EBS)磁碟區. 在單個EC2例項上掛載 EBS 磁碟區。
 - D. 使用AWS DataSync在Auto Scaling 群組(Auto Scaling group)中實現EC2主機之間的資料連續同步.
 - E. 建立 Amazon S3 桶儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容.
 
@@ -16208,8 +16208,8 @@ A,D
 - A：使用AWS Storage Gateway Volume Gateway Internet Small 計算機系統介面(iSCSI)塊儲存器,這些儲存器被安裝到單個EC2例項中。此選項符合題目條件，能有效滿足核心需求。
 - D：使用AWS DataSync在Auto Scaling 群組(Auto Scaling group)中實現EC2主機之間的資料連續同步。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- B：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 在單個EC2例項上掛載 EFS 檔案系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立共享的亞馬遜彈性塊儲存器(Amazon EBS)磁碟區. 在單個EC2例項上掛載 EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立Amazon Elastic File System (Amazon EFS)檔案系統. 在單個EC2例項上掛載 EFS 檔案系統 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立共享的Amazon Elastic Block Store (Amazon EBS)磁碟區. 在單個EC2例項上掛載 EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：建立 Amazon S3 桶儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #692
@@ -16284,12 +16284,12 @@ B
 ## Question #695
 
 **題目**
-一家公司正在建立一個基於微服務的應用程式,將部署在亞馬遜精英庫伯涅茨服務(Amazon EKS)上。 微服務會互相影響. 公司希望確保該應用程式能夠被觀察到,以識別未來的業績問題. 哪種解決辦法能滿足這些要求?
+一家公司正在建立一個基於微服務的應用程式,將部署在Amazon Elastic Kubernetes Service (Amazon EKS)上。 微服務會互相影響. 公司希望確保該應用程式能夠被觀察到,以識別未來的業績問題. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置使用 Amazon ElastiCache 的應用程式,以減少傳送給微服務的請求數量.
 - B. 配置 Amazon CloudWatch 容器透視器,從EKS叢集中收集度量衡. 配置 AWS X-Ray 以追蹤微服務之間的請求.
-- C. 配置 AWS CloudTrail 來審查 API 呼叫. 構建亞馬遜快速視儀表板,觀測微服務互動.
+- C. 配置 AWS CloudTrail 來審查 API 呼叫. 構建Amazon QuickSight 儀表板,觀測微服務互動.
 - D. 使用 AWS 信任顧問來理解應用程式的效能.
 
 **答案**
@@ -16301,7 +16301,7 @@ A
 - A：配置使用 Amazon ElastiCache 的應用程式,以減少傳送給微服務的請求數量。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：配置 Amazon CloudWatch 容器透視器,從EKS叢集中收集度量衡. 配置 AWS X-Ray 以追蹤微服務之間的請求。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：配置 AWS CloudTrail 來審查 API 呼叫. 構建亞馬遜快速視儀表板,觀測微服務互動。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：配置 AWS CloudTrail 來審查 API 呼叫. 構建Amazon QuickSight 儀表板,觀測微服務互動。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWS 信任顧問來理解應用程式的效能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #696
@@ -16353,13 +16353,13 @@ D
 ## Question #698
 
 **題目**
-一家公司正在向亞馬遜智慧Kubernetes Service(Amazon EKS)部署一個新的應用程式,其中有一個AWS Fargate叢集. 應用程式需要儲存資料永續性的解決方案. 解決辦法必須非常可行,而且有過失。 解決辦法也必須在多個應用容器之間共享。 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司正在向Amazon Elastic Kubernetes Service Service(Amazon EKS)部署一個新的應用程式,其中有一個AWS Fargate叢集. 應用程式需要儲存資料永續性的解決方案. 解決辦法必須非常可行,而且有過失。 解決辦法也必須在多個應用容器之間共享。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 在同一可用區(Availability Zones)中建立Amazon Elastic Block Store(Amazon EBS)卷,放置EKS工人節點. 在 EKS 叢集上的儲存類物件中註冊卷。 使用 EBS 多選項在容器之間共享資料.
-- B. 建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 對所有容器使用相同的檔案系統。
-- C. 建立一個亞馬遜彈性塊儲存器(Amazon EBS)磁碟區. 在 EKS 叢集上的儲存類物件中註冊磁碟區。 對所有容器使用相同的容量。
-- D. 在相同的可用區(Availability Zones)中建立亞馬遜彈性檔案系統(Amazon EFS),將EKS工人節點放置在其中. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 建立一個 AWS Lambda 函式,在檔案系統之間同步資料.
+- B. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 對所有容器使用相同的檔案系統。
+- C. 建立一個Amazon Elastic Block Store (Amazon EBS)磁碟區. 在 EKS 叢集上的儲存類物件中註冊磁碟區。 對所有容器使用相同的容量。
+- D. 在相同的可用區(Availability Zones)中建立Amazon Elastic File System (Amazon EFS),將EKS工人節點放置在其中. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 建立一個 AWS Lambda 函式,在檔案系統之間同步資料.
 
 **答案**
 A
@@ -16369,9 +16369,9 @@ A
 正確答案是 **A**。
 - A：在同一可用區(Availability Zones)中建立Amazon Elastic Block Store(Amazon EBS)卷,放置EKS工人節點. 在 EKS 叢集上的儲存類物件中註冊卷。 使用 EBS 多選項在容器之間共享資料。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 對所有容器使用相同的檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立一個亞馬遜彈性塊儲存器(Amazon EBS)磁碟區. 在 EKS 叢集上的儲存類物件中註冊磁碟區。 對所有容器使用相同的容量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在相同的可用區(Availability Zones)中建立亞馬遜彈性檔案系統(Amazon EFS),將EKS工人節點放置在其中. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 建立一個 AWS Lambda 函式,在檔案系統之間同步資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立Amazon Elastic File System (Amazon EFS)檔案系統. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 對所有容器使用相同的檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立一個Amazon Elastic Block Store (Amazon EBS)磁碟區. 在 EKS 叢集上的儲存類物件中註冊磁碟區。 對所有容器使用相同的容量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在相同的可用區(Availability Zones)中建立Amazon Elastic File System (Amazon EFS),將EKS工人節點放置在其中. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 建立一個 AWS Lambda 函式,在檔案系統之間同步資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #699
 
@@ -16380,9 +16380,9 @@ A
 
 **選項**
 - A. 使用Amazon Elastic Kubernetes Service(Amazon EKS),並設有自控節點. 在 Amazon EC2 例項中建立一個 Amazon 彈性塊儲存器( Amazon EBS)。 使用EBS體積作為容器中掛載的永續性體積.
-- B. 使用亞馬遜彈性容器服務(Amazon ECS),具有AWS Fargate發射型. 建立亞馬遜彈性檔案系統(Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積.
-- C. 使用亞馬遜彈性容器服務(Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 桶. 將S3 儲存桶(S3 bucket)標註為安裝在容器中的持久儲存量。
-- D. 使用帶有Amazon EC2發射型的亞馬遜彈性容器服務(Amazon ECS). 建立亞馬遜彈性檔案系統(Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積.
+- B. 使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積.
+- C. 使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 桶. 將S3 儲存桶(S3 bucket)標註為安裝在容器中的持久儲存量。
+- D. 使用帶有Amazon EC2發射型的Amazon Elastic Container Service (Amazon ECS). 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積.
 
 **答案**
 B
@@ -16390,11 +16390,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用亞馬遜彈性容器服務(Amazon ECS),具有AWS Fargate發射型. 建立亞馬遜彈性檔案系統(Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用Amazon Elastic Kubernetes Service(Amazon EKS),並設有自控節點. 在 Amazon EC2 例項中建立一個 Amazon 彈性塊儲存器( Amazon EBS)。 使用EBS體積作為容器中掛載的永續性體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜彈性容器服務(Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 桶. 將S3 儲存桶(S3 bucket)標註為安裝在容器中的持久儲存量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用帶有Amazon EC2發射型的亞馬遜彈性容器服務(Amazon ECS). 建立亞馬遜彈性檔案系統(Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 桶. 將S3 儲存桶(S3 bucket)標註為安裝在容器中的持久儲存量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用帶有Amazon EC2發射型的Amazon Elastic Container Service (Amazon ECS). 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #700
 
@@ -16429,7 +16429,7 @@ B,C
 
 **選項**
 - A. 啟用 ALB 上的 AWS WAF 網路 ACL, 並配置規則以阻斷來自未知來源的流量。
-- B. 訂閱亞馬遜督察. 與AWS DDoS響應團隊(DRT)接觸,將緩解控制整合到服務中.
+- B. 訂閱Amazon Inspector. 與AWS DDoS響應團隊(DRT)接觸,將緩解控制整合到服務中.
 - C. 訂閱至AWS Shield高階. 與AWS DDoS響應團隊(DRT)接觸,將緩解控制整合到服務中.
 - D. 為應用程式建立 Amazon CloudFront 分佈,並將 ALB 設定為來源。 啟用關於發行的 AWS WAF 網頁 ACL, 並配置規則以阻斷來自未知來源的流量
 
@@ -16439,7 +16439,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：訂閱亞馬遜督察. 與AWS DDoS響應團隊(DRT)接觸,將緩解控制整合到服務中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：訂閱Amazon Inspector. 與AWS DDoS響應團隊(DRT)接觸,將緩解控制整合到服務中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：啟用 ALB 上的 AWS WAF 網路 ACL, 並配置規則以阻斷來自未知來源的流量 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：訂閱至AWS Shield高階. 與AWS DDoS響應團隊(DRT)接觸,將緩解控制整合到服務中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -16453,7 +16453,7 @@ B
 **選項**
 - A. 建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 配置 AWS Storage Gateway 檔案閘道器使用 S3 儲存桶(S3 bucket). 從 HPC 叢集例項存取檔案閘道器。
 - B. 建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 為Lustre檔案系統配置一個Amazon FSx,並將其與S3 儲存桶(S3 bucket)整合. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。
-- C. 建立一個Amazon S3桶和一個亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 將資料匯入S3 儲存桶(S3 bucket). 將S3 儲存桶(S3 bucket)的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統.
+- C. 建立一個Amazon S3桶和一個Amazon Elastic File System (Amazon EFS)檔案系統. 將資料匯入S3 儲存桶(S3 bucket). 將S3 儲存桶(S3 bucket)的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統.
 - D. 為 Lustre 檔案系統建立 Amazon FSx。 直接將資料匯入FSx用於Lustre檔案系統. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。
 
 **答案**
@@ -16462,7 +16462,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立一個Amazon S3桶和一個亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 將資料匯入S3 儲存桶(S3 bucket). 將S3 儲存桶(S3 bucket)的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：建立一個Amazon S3桶和一個Amazon Elastic File System (Amazon EFS)檔案系統. 將資料匯入S3 儲存桶(S3 bucket). 將S3 儲存桶(S3 bucket)的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 配置 AWS Storage Gateway 檔案閘道器使用 S3 儲存桶(S3 bucket). 從 HPC 叢集例項存取檔案閘道器 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 為Lustre檔案系統配置一個Amazon FSx,並將其與S3 儲存桶(S3 bucket)整合. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -16711,7 +16711,7 @@ C
 
 **選項**
 - A. 在Amazon DynamoDB中儲存照片. 開啟 DynamoDB 加速器( DAX) 以快取經常檢視的專案。
-- B. 在亞馬遜S3 Intelligent-Tiering儲存類中儲存照片. 將照片後設資料及其S3位置儲存在DynamoDB.
+- B. 在Amazon S3 Intelligent-Tiering儲存類中儲存照片. 將照片後設資料及其S3位置儲存在DynamoDB.
 - C. 在Amazon S3標準儲存類中儲存照片. 設定一個S3 生命週期政策(Lifecycle policy),將超過30天的照片移動到S3標準-不頻繁存取(S3 Standard-IA)儲存類. 使用物件標記來跟蹤後設資料。
 - D. 在Amazon S3冰川儲存類中儲存照片. 設定一個S3 生命週期政策(Lifecycle policy),將超過30天的照片移動到S3 Glacier Deep Archive儲存類. 將照片後設資料及其S3位置儲存在 Amazon OpenSearch Service.
 
@@ -16724,7 +16724,7 @@ D
 - D：在Amazon S3冰川儲存類中儲存照片. 設定一個S3 生命週期政策(Lifecycle policy),將超過30天的照片移動到S3 Glacier Deep Archive儲存類. 將照片後設資料及其S3位置儲存在 Amazon OpenSearch Service。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在Amazon DynamoDB中儲存照片. 開啟 DynamoDB 加速器( DAX) 以快取經常檢視的專案 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：在亞馬遜S3 Intelligent-Tiering儲存類中儲存照片. 將照片後設資料及其S3位置儲存在DynamoDB。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在Amazon S3 Intelligent-Tiering儲存類中儲存照片. 將照片後設資料及其S3位置儲存在DynamoDB。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在Amazon S3標準儲存類中儲存照片. 設定一個S3 生命週期政策(Lifecycle policy),將超過30天的照片移動到S3標準-不頻繁存取(S3 Standard-IA)儲存類. 使用物件標記來跟蹤後設資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #714
@@ -16776,7 +16776,7 @@ B
 ## Question #716
 
 **題目**
-一家公司在AWS上執行實時資料攝入解決方案. 該解決方案包括最新版本的亞馬遜管理流用於Apache Kafka(Amazon MSK). 該解決方案被部署在三個可用區(Availability Zones)的私人子網中的VPC中. 解決方案設計師需要重新設計資料攝入解決方案,以便在因特網上公開提供。 過境資料也必須加密。 哪種辦法能滿足這些要求?
+一家公司在AWS上執行實時資料攝入解決方案. 該解決方案包括最新版本的Amazon Managed Streaming (Amazon MSK)用於Apache Kafka(Amazon MSK). 該解決方案被部署在三個可用區(Availability Zones)的私人子網中的VPC中. 解決方案設計師需要重新設計資料攝入解決方案,以便在因特網上公開提供。 過境資料也必須加密。 哪種辦法能滿足這些要求?
 
 **選項**
 - A. 在現有的VPC中配置公共子網. 在公共子網中部署一個MSK叢集. 更新 MSK 叢集安全設定,以允許相互的 TLS 認證。
@@ -16803,8 +16803,8 @@ C
 
 **選項**
 - A. 在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 網際網路化伺服器. 使用Amazon S3儲存器. 建立 AWS Lambda 函式處理命令檔案。 使用 S3 事件通知傳送 s3: ObjectCreated: * 事件到 Lambda 函式。
-- B. 在一個 可用區(Availability Zone) 中建立 AWS Transfer Family SFTP 網際網路化伺服器. 使用亞馬遜彈性檔案系統(Amazon EFS)儲存. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式。
-- C. 在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用亞馬遜彈性檔案系統(Amazon EFS)儲存. 建立 AWS Step 函式狀態機器處理命令檔案。 使用 Amazon EventBridge 排程器來引用狀態機器來定期檢查 Amazon EFS 命令檔案.
+- B. 在一個 可用區(Availability Zone) 中建立 AWS Transfer Family SFTP 網際網路化伺服器. 使用Amazon Elastic File System (Amazon EFS)儲存. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式。
+- C. 在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用Amazon Elastic File System (Amazon EFS)儲存. 建立 AWS Step 函式狀態機器處理命令檔案。 使用 Amazon EventBridge 排程器來引用狀態機器來定期檢查 Amazon EFS 命令檔案.
 - D. 在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用Amazon S3儲存器. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式。
 
 **答案**
@@ -16815,8 +16815,8 @@ A
 正確答案是 **A**。
 - A：在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 網際網路化伺服器. 使用Amazon S3儲存器. 建立 AWS Lambda 函式處理命令檔案。 使用 S3 事件通知傳送 s3: ObjectCreated: * 事件到 Lambda 函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：在一個 可用區(Availability Zone) 中建立 AWS Transfer Family SFTP 網際網路化伺服器. 使用亞馬遜彈性檔案系統(Amazon EFS)儲存. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用亞馬遜彈性檔案系統(Amazon EFS)儲存. 建立 AWS Step 函式狀態機器處理命令檔案。 使用 Amazon EventBridge 排程器來引用狀態機器來定期檢查 Amazon EFS 命令檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在一個 可用區(Availability Zone) 中建立 AWS Transfer Family SFTP 網際網路化伺服器. 使用Amazon Elastic File System (Amazon EFS)儲存. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用Amazon Elastic File System (Amazon EFS)儲存. 建立 AWS Step 函式狀態機器處理命令檔案。 使用 Amazon EventBridge 排程器來引用狀態機器來定期檢查 Amazon EFS 命令檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用Amazon S3儲存器. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #718
@@ -16873,7 +16873,7 @@ C
 **選項**
 - A. 在 AWS Lambda 上執行應用程式作為單函式,並使用最大供給的貨幣.
 - B. 在Amazon EC2 Spot 執行個體上執行應用程式,作為帶有Spot Fleet預設分配策略的微服務.
-- C. 在亞馬遜彈性容器服務(Amazon ECS)上執行應用,作為帶有服務自動縮放的微服務.
+- C. 在Amazon Elastic Container Service (Amazon ECS)上執行應用,作為帶有服務自動縮放的微服務.
 - D. 在AWS Elastic Beanstalk上執行應用程式作為單一的應用環境,並採用全機部署策略.
 
 **答案**
@@ -16885,7 +16885,7 @@ B
 - B：在Amazon EC2 Spot 執行個體上執行應用程式,作為帶有Spot Fleet預設分配策略的微服務。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在 AWS Lambda 上執行應用程式作為單函式,並使用最大供給的貨幣。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在亞馬遜彈性容器服務(Amazon ECS)上執行應用,作為帶有服務自動縮放的微服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在Amazon Elastic Container Service (Amazon ECS)上執行應用,作為帶有服務自動縮放的微服務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在AWS Elastic Beanstalk上執行應用程式作為單一的應用環境,並採用全機部署策略。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #721
@@ -16986,7 +16986,7 @@ B
 一家公司每月在Amazon S3標準儲存中維持約300TB. S3物件的大小一般在50GB左右,並經常被全球應用的多段上傳所取代. S3物體的數量和大小保持不變,但公司的S3儲存成本每月都在增加. 在這種情況下,解決方案設計師應如何降低成本?
 
 **選項**
-- A. 從多段上傳到亞馬遜 S3 Transfer Acceleration.
+- A. 從多段上傳到Amazon S3 Transfer Acceleration.
 - B. 啟用一個刪除不完整多段上傳的 S3 生命週期政策(Lifecycle policy)。
 - C. 配置 S3 目錄, 防止物件被太快存檔。
 - D. 配置Amazon CloudFront以減少儲存在Amazon S3中的物件數量.
@@ -16997,7 +16997,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：從多段上傳到亞馬遜 S3 Transfer Acceleration。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：從多段上傳到Amazon S3 Transfer Acceleration。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：啟用一個刪除不完整多段上傳的 S3 生命週期政策(Lifecycle policy) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：配置 S3 目錄, 防止物件被太快存檔 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -17218,8 +17218,8 @@ D
 **選項**
 - A. 按下分數更新到Amazon Kinesis Data Streams. 用 AWS Lambda 處理 Kinesis 資料流中的更新。 在Amazon DynamoDB中儲存處理過的更新.
 - B. 按下分數更新到Amazon Kinesis Data Streams. 用為自動縮放設定的 Amazon EC2 例項處理更新。 在 Amazon Redshift 中儲存處理過的更新.
-- C. 將分數更新推向一個亞馬遜簡易通知服務(Amazon SNS)話題. 向 SNS 主題訂閱一個 AWS Lambda 函式來處理更新. 將處理過的更新儲存在執行於Amazon EC2上的SQL 資料庫(database)中.
-- D. 按下分數更新到亞馬遜簡易佇列服務佇列(Amazon SQS). 使用帶有 Auto 縮放的 Amazon EC2 例項來處理 SQS 佇列中的更新。 將處理過的更新儲存在 Amazon RDS 多AZ DB 例項中。
+- C. 將分數更新推向一個Amazon Simple Notification Service (Amazon SNS)話題. 向 SNS 主題訂閱一個 AWS Lambda 函式來處理更新. 將處理過的更新儲存在執行於Amazon EC2上的SQL 資料庫(database)中.
+- D. 按下分數更新到Amazon SQS 佇列 (Amazon SQS). 使用帶有 Auto 縮放的 Amazon EC2 例項來處理 SQS 佇列中的更新。 將處理過的更新儲存在 Amazon RDS 多AZ DB 例項中。
 
 **答案**
 C
@@ -17227,11 +17227,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將分數更新推向一個亞馬遜簡易通知服務(Amazon SNS)話題. 向 SNS 主題訂閱一個 AWS Lambda 函式來處理更新. 將處理過的更新儲存在執行於Amazon EC2上的SQL 資料庫(database)中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：將分數更新推向一個Amazon Simple Notification Service (Amazon SNS)話題. 向 SNS 主題訂閱一個 AWS Lambda 函式來處理更新. 將處理過的更新儲存在執行於Amazon EC2上的SQL 資料庫(database)中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：按下分數更新到Amazon Kinesis Data Streams. 用 AWS Lambda 處理 Kinesis 資料流中的更新。 在Amazon DynamoDB中儲存處理過的更新。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：按下分數更新到Amazon Kinesis Data Streams. 用為自動縮放設定的 Amazon EC2 例項處理更新。 在 Amazon Redshift 中儲存處理過的更新。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：按下分數更新到亞馬遜簡易佇列服務佇列(Amazon SQS). 使用帶有 Auto 縮放的 Amazon EC2 例項來處理 SQS 佇列中的更新。 將處理過的更新儲存在 Amazon RDS 多AZ DB 例項中 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：按下分數更新到Amazon SQS 佇列 (Amazon SQS). 使用帶有 Auto 縮放的 Amazon EC2 例項來處理 SQS 佇列中的更新。 將處理過的更新儲存在 Amazon RDS 多AZ DB 例項中 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #736
 
@@ -17265,8 +17265,8 @@ B
 - A. 配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置從我們東-2 S3 儲存桶(S3 bucket)到Ap-東南-1 S3 儲存桶(S3 bucket)的單向複寫(replication).
 - B. 配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置單向複寫(replication)從eu-west - 2 S3 儲存桶(S3 bucket)到AP-東南-1 S3 儲存桶(S3 bucket).
 - C. 在所有三個大區的S3桶中配置雙向(雙向)複寫(replication)。
-- D. 建立 S3 Multi-Region Access Point. 修改應用程式,以使用多區域(Region)存取點的亞馬遜資源名稱(ARN)進行影片流. 不修改影片上傳應用程式。
-- E. 建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的亞馬遜資源名稱(ARN)進行影片流和上傳.
+- D. 建立 S3 Multi-Region Access Point. 修改應用程式,以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流. 不修改影片上傳應用程式。
+- E. 建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流和上傳.
 
 **答案**
 A,B
@@ -17279,8 +17279,8 @@ A,B
 - B：配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置單向複寫(replication)從eu-west - 2 S3 儲存桶(S3 bucket)到AP-東南-1 S3 儲存桶(S3 bucket)。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - C：在所有三個大區的S3桶中配置雙向(雙向)複寫(replication)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立 S3 Multi-Region Access Point. 修改應用程式,以使用多區域(Region)存取點的亞馬遜資源名稱(ARN)進行影片流. 不修改影片上傳應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的亞馬遜資源名稱(ARN)進行影片流和上傳。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立 S3 Multi-Region Access Point. 修改應用程式,以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流. 不修改影片上傳應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流和上傳。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #738
 
@@ -17311,10 +17311,10 @@ A
 一個公司正在建立一個使用無伺服器架構的新應用程式. 該架構將包括一個Amazon API Gateway REST API和AWS Lambda功能來管理收到的請求. 公司希望新增一個服務,可以將API Gateway REST API收到的資訊傳送到多個目標Lambda功能中進行處理. 服務必須提供訊息過濾,使目標Lambda函式能夠只接收到功能所需的訊息. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 將API Gateway REST API的請求傳送給一個亞馬遜簡易通知服務(Amazon SNS)主題. 訂閱 Amazon 簡單佇列服務(Amazon SQS) 佇列到 SNS 主題. 配置目標 Lambda 函式以檢視不同的 SQS 佇列。
+- A. 將API Gateway REST API的請求傳送給一個Amazon Simple Notification Service (Amazon SNS)主題. 訂閱 Amazon 簡單佇列服務(Amazon SQS) 佇列到 SNS 主題. 配置目標 Lambda 函式以檢視不同的 SQS 佇列。
 - B. 將API Gateway REST API的請求傳送到Amazon EventBridge. 配置 EventBridge 以引用目標 Lambda 函式。
-- C. 將API Gateway REST API的請求傳送到亞馬遜管理流為Apache Kafka(Amazon MSK). 配置 Amazon MSK 以釋出訊息給目標 Lambda 函式.
-- D. 將API Gateway REST API的請求傳送到多個亞馬遜簡易佇列服務(Amazon SQS)佇列. 配置目標 Lambda 函式以檢視不同的 SQS 佇列。
+- C. 將API Gateway REST API的請求傳送到Amazon Managed Streaming (Amazon MSK)為Apache Kafka(Amazon MSK). 配置 Amazon MSK 以釋出訊息給目標 Lambda 函式.
+- D. 將API Gateway REST API的請求傳送到多個Amazon Simple Queue Service (Amazon SQS)佇列. 配置目標 Lambda 函式以檢視不同的 SQS 佇列。
 
 **答案**
 D
@@ -17322,11 +17322,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將API Gateway REST API的請求傳送到多個亞馬遜簡易佇列服務(Amazon SQS)佇列. 配置目標 Lambda 函式以檢視不同的 SQS 佇列 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：將API Gateway REST API的請求傳送到多個Amazon Simple Queue Service (Amazon SQS)佇列. 配置目標 Lambda 函式以檢視不同的 SQS 佇列 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將API Gateway REST API的請求傳送給一個亞馬遜簡易通知服務(Amazon SNS)主題. 訂閱 Amazon 簡單佇列服務(Amazon SQS) 佇列到 SNS 主題. 配置目標 Lambda 函式以檢視不同的 SQS 佇列 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將API Gateway REST API的請求傳送給一個Amazon Simple Notification Service (Amazon SNS)主題. 訂閱 Amazon 簡單佇列服務(Amazon SQS) 佇列到 SNS 主題. 配置目標 Lambda 函式以檢視不同的 SQS 佇列 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將API Gateway REST API的請求傳送到Amazon EventBridge. 配置 EventBridge 以引用目標 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：將API Gateway REST API的請求傳送到亞馬遜管理流為Apache Kafka(Amazon MSK). 配置 Amazon MSK 以釋出訊息給目標 Lambda 函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：將API Gateway REST API的請求傳送到Amazon Managed Streaming (Amazon MSK)為Apache Kafka(Amazon MSK). 配置 Amazon MSK 以釋出訊息給目標 Lambda 函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #740
 
@@ -17476,7 +17476,7 @@ A
 - B. 將EC2例項分組到單獨的帳戶中。
 - C. 在叢集放置組中執行EC2 執行個體.
 - D. 在每個EC2例項中附加多個彈性網路介面.
-- E. 使用亞馬遜彈性塊儲存器(Amazon EBS)最佳化例項型別.
+- E. 使用Amazon Elastic Block Store (Amazon EBS)最佳化例項型別.
 
 **答案**
 B,E
@@ -17486,7 +17486,7 @@ B,E
 **詳解**
 正確答案是 **B, E**。
 - B：將EC2例項分組到單獨的帳戶中。此選項符合題目條件，能有效滿足核心需求。
-- E：使用亞馬遜彈性塊儲存器(Amazon EBS)最佳化例項型別。此選項符合題目條件，能有效滿足核心需求。
+- E：使用Amazon Elastic Block Store (Amazon EBS)最佳化例項型別。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：啟用並配置每個EC2例項上增強的網路。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在叢集放置組中執行EC2 執行個體。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -17615,8 +17615,8 @@ C
 **選項**
 - A. 架構中的計算層使用AWS Lambda.
 - B. 對架構中的計算層使用 Amazon EC2 例項。
-- C. 使用亞馬遜簡易通知服務(Amazon SNS)作為計算層之間的通訊元件.
-- D. 使用亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列作為計算層之間的通訊元件.
+- C. 使用Amazon Simple Notification Service (Amazon SNS)作為計算層之間的通訊元件.
+- D. 使用Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為計算層之間的通訊元件.
 - E. 使用基於Amazon Elastic Kubernetes Services(Amazon EKS)的容器,用於架構中的計算層.
 
 **答案**
@@ -17627,10 +17627,10 @@ A,D
 **詳解**
 正確答案是 **A, D**。
 - A：架構中的計算層使用AWS Lambda。此選項符合題目條件，能有效滿足核心需求。
-- D：使用亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列作為計算層之間的通訊元件。此選項符合題目條件，能有效滿足核心需求。
+- D：使用Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為計算層之間的通訊元件。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：對架構中的計算層使用 Amazon EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜簡易通知服務(Amazon SNS)作為計算層之間的通訊元件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Simple Notification Service (Amazon SNS)作為計算層之間的通訊元件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用基於Amazon Elastic Kubernetes Services(Amazon EKS)的容器,用於架構中的計算層。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #753
@@ -17640,8 +17640,8 @@ A,D
 
 **選項**
 - A. 為 SFTP 部署 AWS 傳輸和 Amazon 彈性檔案系統(Amazon EFS) 檔案系統進行儲存. 在Auto Scaling 群組(Auto Scaling group)中使用一個Amazon EC2例項,並有預定的縮放政策來執行批次操作.
-- B. 部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用一個亞馬遜彈性塊儲存器(Amazon EBS)的容量進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。
-- C. 部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用亞馬遜彈性檔案系統(Amazon EFS)檔案系統進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。
+- B. 部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用一個Amazon Elastic Block Store (Amazon EBS)的容量進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。
+- C. 部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用Amazon Elastic File System (Amazon EFS)檔案系統進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。
 - D. 部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 桶儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作.
 
 **答案**
@@ -17650,10 +17650,10 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用一個亞馬遜彈性塊儲存器(Amazon EBS)的容量進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用一個Amazon Elastic Block Store (Amazon EBS)的容量進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：為 SFTP 部署 AWS 傳輸和 Amazon 彈性檔案系統(Amazon EFS) 檔案系統進行儲存. 在Auto Scaling 群組(Auto Scaling group)中使用一個Amazon EC2例項,並有預定的縮放政策來執行批次操作。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用亞馬遜彈性檔案系統(Amazon EFS)檔案系統進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用Amazon Elastic File System (Amazon EFS)檔案系統進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 桶儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #754
@@ -17734,7 +17734,7 @@ D
 - A. 啟用EC2 例項的終止保護。
 - B. 為多AZ部署配置EC2例項.
 - C. 建立 Amazon CloudWatch 提醒,以便在失敗時恢復EC2 例項。
-- D. 以兩個使用RAID配置進行儲存冗餘的亞馬遜彈性塊儲存器(Amazon EBS)啟動EC2例項.
+- D. 以兩個使用RAID配置進行儲存冗餘的Amazon Elastic Block Store (Amazon EBS)啟動EC2例項.
 
 **答案**
 A
@@ -17746,7 +17746,7 @@ A
 - 其餘選項比較：
 - B：為多AZ部署配置EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立 Amazon CloudWatch 提醒,以便在失敗時恢復EC2 例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：以兩個使用RAID配置進行儲存冗餘的亞馬遜彈性塊儲存器(Amazon EBS)啟動EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：以兩個使用RAID配置進行儲存冗餘的Amazon Elastic Block Store (Amazon EBS)啟動EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #758
 
@@ -17754,7 +17754,7 @@ A
 一家公司希望將其集裝箱化的應用工作量部署在三個可用區(Availability Zones)的VPC上。 公司需要一種在可用區(Availability Zones)上可以大量使用的解決方案. 解決辦法必須對應用程式進行最小程度的修改。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用亞馬遜彈性容器服務(Amazon ECS). 配置 Amazon ECS 服務自動縮放以使用目標跟蹤縮放. 設定最小容量為3. 設定任務佈置策略型別以 可用區(Availability Zone) 屬性展開。
+- A. 使用Amazon Elastic Container Service (Amazon ECS). 配置 Amazon ECS 服務自動縮放以使用目標跟蹤縮放. 設定最小容量為3. 設定任務佈置策略型別以 可用區(Availability Zone) 屬性展開。
 - B. 使用Amazon Elastic Kubernetes Service(Amazon EKS) 自行管理的節點. 配置應用程式自動縮放以使用目標跟蹤縮放。 設定最小容量為3.
 - C. 使用 Amazon EC2 保留例項。 在分散式安置組中推出三個EC2 執行個體. 配置 Auto Scaling 群組(Auto Scaling group) 以使用目標跟蹤縮放。 設定最小容量為3.
 - D. 使用 AWS Lambda 函式. 配置 Lambda 函式以連線到 VPC。 配置應用程式自動縮放以使用 Lambda 作為可縮放的目標。 設定最小容量為3.
@@ -17767,7 +17767,7 @@ B
 正確答案是 **B**。
 - B：使用Amazon Elastic Kubernetes Service(Amazon EKS) 自行管理的節點. 配置應用程式自動縮放以使用目標跟蹤縮放。 設定最小容量為3。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜彈性容器服務(Amazon ECS). 配置 Amazon ECS 服務自動縮放以使用目標跟蹤縮放. 設定最小容量為3. 設定任務佈置策略型別以 可用區(Availability Zone) 屬性展開 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Elastic Container Service (Amazon ECS). 配置 Amazon ECS 服務自動縮放以使用目標跟蹤縮放. 設定最小容量為3. 設定任務佈置策略型別以 可用區(Availability Zone) 屬性展開 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 Amazon EC2 保留例項。 在分散式安置組中推出三個EC2 執行個體. 配置 Auto Scaling 群組(Auto Scaling group) 以使用目標跟蹤縮放。 設定最小容量為3。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWS Lambda 函式. 配置 Lambda 函式以連線到 VPC。 配置應用程式自動縮放以使用 Lambda 作為可縮放的目標。 設定最小容量為3。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -17801,9 +17801,9 @@ A
 
 **選項**
 - A. 建立 AWS Lambda 函式,使用帶有 Amazon S3 掛載容量的 Docker 容器影象,其空間超過 50 GB。
-- B. 建立一個AWS Lambda功能,使用帶有亞馬遜彈性塊儲存器(Amazon EBS)的多克容器影象,容量超過50GB的空間.
-- C. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,使用AWS Fargate發射型. 為帶有亞馬遜彈性檔案系統的容器影象建立任務定義(Amazon EFS)卷. 建立帶有任務定義的服務。
-- D. 建立亞馬遜彈性容器服務(Amazon ECS)叢集,使用Amazon EC2發射型,其AVSERV0050容量超過50GB的空間. 為容器影象建立任務定義。 建立帶有任務定義的服務。
+- B. 建立一個AWS Lambda功能,使用帶有Amazon Elastic Block Store (Amazon EBS)的多克容器影象,容量超過50GB的空間.
+- C. 建立Amazon Elastic Container Service (Amazon ECS)叢集,使用AWS Fargate發射型. 為帶有Amazon Elastic File System的容器影象建立任務定義(Amazon EFS)卷. 建立帶有任務定義的服務。
+- D. 建立Amazon Elastic Container Service (Amazon ECS)叢集,使用Amazon EC2發射型,其AVSERV0050容量超過50GB的空間. 為容器影象建立任務定義。 建立帶有任務定義的服務。
 
 **答案**
 B
@@ -17811,11 +17811,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立一個AWS Lambda功能,使用帶有亞馬遜彈性塊儲存器(Amazon EBS)的多克容器影象,容量超過50GB的空間。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：建立一個AWS Lambda功能,使用帶有Amazon Elastic Block Store (Amazon EBS)的多克容器影象,容量超過50GB的空間。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：建立 AWS Lambda 函式,使用帶有 Amazon S3 掛載容量的 Docker 容器影象,其空間超過 50 GB 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立亞馬遜彈性容器服務(Amazon ECS)叢集,使用AWS Fargate發射型. 為帶有亞馬遜彈性檔案系統的容器影象建立任務定義(Amazon EFS)卷. 建立帶有任務定義的服務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立亞馬遜彈性容器服務(Amazon ECS)叢集,使用Amazon EC2發射型,其AVSERV0050容量超過50GB的空間. 為容器影象建立任務定義。 建立帶有任務定義的服務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立Amazon Elastic Container Service (Amazon ECS)叢集,使用AWS Fargate發射型. 為帶有Amazon Elastic File System的容器影象建立任務定義(Amazon EFS)卷. 建立帶有任務定義的服務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立Amazon Elastic Container Service (Amazon ECS)叢集,使用Amazon EC2發射型,其AVSERV0050容量超過50GB的空間. 為容器影象建立任務定義。 建立帶有任務定義的服務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #761
 
@@ -17843,7 +17843,7 @@ C
 ## Question #762
 
 **題目**
-一家公司將多個亞馬遜機器影象儲存在一個AWS帳戶中,以啟動其Amazon EC2 執行個體. AMI包含公司運營所必需的關鍵資料和配置. 公司希望實施一個能迅速高效地恢復意外刪除的AMIs的解決方案. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司將多個Amazon Machine Image儲存在一個AWS帳戶中,以啟動其Amazon EC2 執行個體. AMI包含公司運營所必需的關鍵資料和配置. 公司希望實施一個能迅速高效地恢復意外刪除的AMIs的解決方案. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 建立Amazon Elastic Block Store(Amazon EBS) AMIs的快照. 將快照儲存在單獨的 AWS 帳戶中。
@@ -17912,13 +17912,13 @@ A
 ## Question #765
 
 **題目**
-一個開發團隊正與另一家公司合作建立綜合產品. 另一家公司需要存取開發團隊帳戶中包含的亞馬遜簡易佇列服務(Amazon SQS)佇列. 另一家公司想在不放棄自己帳戶許可權的情況下對佇列進行投票. 一個解決方案架構設計師應該如何提供對 SQS 佇列的存取?
+一個開發團隊正與另一家公司合作建立綜合產品. 另一家公司需要存取開發團隊帳戶中包含的Amazon Simple Queue Service (Amazon SQS)佇列. 另一家公司想在不放棄自己帳戶許可權的情況下對佇列進行投票. 一個解決方案架構設計師應該如何提供對 SQS 佇列的存取?
 
 **選項**
 - A. 建立一個執行個體設定檔(instance profile),提供另一家公司對SQS佇列的存取.
 - B. 建立一個IAM 政策(IAM policy),提供另一家公司對SQS佇列的存取.
 - C. 建立 SQS 存取策略,為另一家公司提供對 SQS 佇列的存取.
-- D. 建立一個亞馬遜簡易通知服務(Amazon SNS)存取政策,為另一家公司提供對SQS佇列的存取.
+- D. 建立一個Amazon Simple Notification Service (Amazon SNS)存取政策,為另一家公司提供對SQS佇列的存取.
 
 **答案**
 A
@@ -17930,12 +17930,12 @@ A
 - 其餘選項比較：
 - B：建立一個IAM 政策(IAM policy),提供另一家公司對SQS佇列的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立 SQS 存取策略,為另一家公司提供對 SQS 佇列的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立一個亞馬遜簡易通知服務(Amazon SNS)存取政策,為另一家公司提供對SQS佇列的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立一個Amazon Simple Notification Service (Amazon SNS)存取政策,為另一家公司提供對SQS佇列的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #766
 
 **題目**
-一個公司的開發者希望有一個安全的方法,在公司執行最新版本亞馬遜Linux的Amazon EC2例項上獲得SSH存取. 開發商在公司辦公室遠端工作。 公司希望將AWS服務作為解決方案的一部分. EC2 執行個體以VPC的私人子網為主機,並透過部署在公共子網中的NAT閘道器接入網際網路. 一個解決方案設計師應該做什麼才能以成本效益高的方式滿足這些要求?
+一個公司的開發者希望有一個安全的方法,在公司執行最新版本Amazon Linux的Amazon EC2例項上獲得SSH存取. 開發商在公司辦公室遠端工作。 公司希望將AWS服務作為解決方案的一部分. EC2 執行個體以VPC的私人子網為主機,並透過部署在公共子網中的NAT閘道器接入網際網路. 一個解決方案設計師應該做什麼才能以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 與 EC2 例項在同一子網建立 bastion 主機。 授予開發者 ec2: CreateVpnConnection IAM 許可權. 安裝 EC2 例項連線, 以便開發者可以連線到 EC2 例項。
@@ -17964,7 +17964,7 @@ B
 - A. 執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 桶中.
 - B. 部署AWS Storage Gateway檔案閘道器,以Amazon S3桶作為目標儲存. 將資料遷移到儲存閘道器的電器。
 - C. 部署一個AWS Storage Gateway卷閘道器,以一個Amazon S3桶作為目標儲存器的快取卷. 將資料遷移到儲存閘道器的電器。
-- D. 配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個亞馬遜彈性檔案系統(Amazon EFS)的檔案系統.
+- D. 配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個Amazon Elastic File System (Amazon EFS)的檔案系統.
 
 **答案**
 B
@@ -17976,7 +17976,7 @@ B
 - 其餘選項比較：
 - A：執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 桶中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：部署一個AWS Storage Gateway卷閘道器,以一個Amazon S3桶作為目標儲存器的快取卷. 將資料遷移到儲存閘道器的電器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個亞馬遜彈性檔案系統(Amazon EFS)的檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個Amazon Elastic File System (Amazon EFS)的檔案系統。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #768
 
@@ -18076,10 +18076,10 @@ D
 一家公司用Docker容器建造了一個應用程式,需要在AWS雲執行該應用程式. 公司希望使用管理服務託管應用程式. 解決辦法必須根據對單個集裝箱服務的需求適當擴大。 解決方案也不得導致增加營運開銷(operational overhead)或管理基礎設施。 哪些解決辦法能滿足這些要求?(選二.
 
 **選項**
-- A. 使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS).
+- A. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS).
 - B. 與 AWS Fargate 一同使用 Amazon Elastic Kubernetes Service(Amazon EKS).
 - C. 提供Amazon API Gateway API。 連線API到AWS Lambda執行容器.
-- D. 使用帶有Amazon EC2工人節點的亞馬遜彈性容器服務(Amazon ECS).
+- D. 使用帶有Amazon EC2工人節點的Amazon Elastic Container Service (Amazon ECS).
 - E. 使用帶有Amazon EC2工人節點的Amazon Elastic Kubernetes Service(Amazon EKS).
 
 **答案**
@@ -18089,11 +18089,11 @@ A,C
 
 **詳解**
 正確答案是 **A, C**。
-- A：使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS)。此選項符合題目條件，能有效滿足核心需求。
+- A：使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)。此選項符合題目條件，能有效滿足核心需求。
 - C：提供Amazon API Gateway API。 連線API到AWS Lambda執行容器。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：與 AWS Fargate 一同使用 Amazon Elastic Kubernetes Service(Amazon EKS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用帶有Amazon EC2工人節點的亞馬遜彈性容器服務(Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用帶有Amazon EC2工人節點的Amazon Elastic Container Service (Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用帶有Amazon EC2工人節點的Amazon Elastic Kubernetes Service(Amazon EKS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #773
@@ -18105,7 +18105,7 @@ A,C
 - A. 建立一個Auto Scaling 群組(Auto Scaling group),規模足以處理高峰流量負載. 停止一半的 Amazon EC2 例。 配置 Auto Scaling 群組(Auto Scaling group) 以在流量增加時使用已停止的例來縮放。
 - B. 為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)型機車的最低尺寸,使其可以處理高流量而無需擴大.
 - C. 使用Amazon CloudFront和Amazon ElastiCache來快取以Auto Scaling 群組(Auto Scaling group)設定為源的動態內容. 配置 Auto Scaling 群組(Auto Scaling group) 並配置 CloudFront 和 ElastiCache 所需的例項。 快取滿員後縮放。
-- D. 配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的亞馬遜機器影象(AMI)開始新的例項.
+- D. 配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的Amazon Machine Image (AMI)開始新的例項.
 
 **答案**
 A
@@ -18117,7 +18117,7 @@ A
 - 其餘選項比較：
 - B：為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)型機車的最低尺寸,使其可以處理高流量而無需擴大。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon CloudFront和Amazon ElastiCache來快取以Auto Scaling 群組(Auto Scaling group)設定為源的動態內容. 配置 Auto Scaling 群組(Auto Scaling group) 並配置 CloudFront 和 ElastiCache 所需的例項。 快取滿員後縮放 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的亞馬遜機器影象(AMI)開始新的例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的Amazon Machine Image (AMI)開始新的例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #774
 
@@ -18126,7 +18126,7 @@ A
 
 **選項**
 - A. 寫一個 AWS Lambda 指令碼,用於監視安全小組的SSH 開啟 0.0.0.0/0 地址,並在每次找到時建立一個通知.
-- B. 啟用限制Ssh AWS Config管理規則,並在建立不符合規則時生成亞馬遜簡單通知服務(Amazon SNS)通知.
+- B. 啟用限制Ssh AWS Config管理規則,並在建立不符合規則時生成Amazon Simple Notification Service (Amazon SNS)通知.
 - C. 建立IAM角色,授權全球開放安全團體和網路ACL. 建立一個Amazon簡單通知服務(Amazon SNS)主題,每次由使用者承擔角色時生成通知.
 - D. 配置服務控制政策(SCP),防止非行政使用者建立或編輯安全組. 當使用者請求需要管理員許可權的規則時,在售票系統中建立一個通知.
 
@@ -18139,13 +18139,13 @@ C
 - C：建立IAM角色,授權全球開放安全團體和網路ACL. 建立一個Amazon簡單通知服務(Amazon SNS)主題,每次由使用者承擔角色時生成通知。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：寫一個 AWS Lambda 指令碼,用於監視安全小組的SSH 開啟 0.0.0.0/0 地址,並在每次找到時建立一個通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：啟用限制Ssh AWS Config管理規則,並在建立不符合規則時生成亞馬遜簡單通知服務(Amazon SNS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：啟用限制Ssh AWS Config管理規則,並在建立不符合規則時生成Amazon Simple Notification Service (Amazon SNS)通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置服務控制政策(SCP),防止非行政使用者建立或編輯安全組. 當使用者請求需要管理員許可權的規則時,在售票系統中建立一個通知。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #775
 
 **題目**
-使用帶有Amazon EC2工人節點的Amazon Elastic Kubernetes Service(Amazon EKS). 一個連在AWS帳戶中部署了應用程式. 應用程式包括執行在AWS Lambda和亞馬遜彈性庫伯涅茨服務(Amazon EKS)上的微服務. 一個單獨的團隊支援每個微服務. 公司擁有多個AWS帳戶,希望為每個團隊提供自己的微服務帳戶. 一個解決方案架構師需要設計一個解決方案,在HTTPS(443號港)上提供服務對服務通訊. 解決方案還必須為發現服務提供一個服務登記處。 LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+使用帶有Amazon EC2工人節點的Amazon Elastic Kubernetes Service(Amazon EKS). 一個連在AWS帳戶中部署了應用程式. 應用程式包括執行在AWS Lambda和Amazon Elastic Kubernetes Service (Amazon EKS)上的微服務. 一個單獨的團隊支援每個微服務. 公司擁有多個AWS帳戶,希望為每個團隊提供自己的微服務帳戶. 一個解決方案架構師需要設計一個解決方案,在HTTPS(443號港)上提供服務對服務通訊. 解決方案還必須為發現服務提供一個服務登記處。 LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 建立檢查VPC. 部署AWS網路防火牆(Firewall)防火牆(firewall),用於檢查VPC. 將檢查VPC附加到一個新的中轉閘道器. 途徑VPC至VPC的交通前往檢查VPC. 應用防火牆(firewall)規則只允許HTTPS通訊.
@@ -18195,10 +18195,10 @@ D
 
 **選項**
 - A. 將開發團隊的OU Amazon資源名稱(ARN)加入AMIs的發射許可列表.
-- B. 將根亞馬遜資源名稱(ARN)新增到AMIs的啟動許可權列表中.
+- B. 將根Amazon Resource Name (ARN)新增到AMIs的啟動許可權列表中.
 - C. 更新關鍵策略,允許開發團隊的OU使用用於解密快照的AWS KMS金鑰.
 - D. 將開發團隊帳戶Amazon資源名稱(ARN)加入AMIs的發射許可列表.
-- E. 重新建立 AWS KMS 金鑰。 新增一個關鍵政策,允許根亞馬遜資源名稱(ARN)的組織使用 AWS KMS 金鑰.
+- E. 重新建立 AWS KMS 金鑰。 新增一個關鍵政策,允許根Amazon Resource Name (ARN)的組織使用 AWS KMS 金鑰.
 
 **答案**
 B,C
@@ -18207,12 +18207,12 @@ B,C
 
 **詳解**
 正確答案是 **B, C**。
-- B：將根亞馬遜資源名稱(ARN)新增到AMIs的啟動許可權列表中。此選項符合題目條件，能有效滿足核心需求。
+- B：將根Amazon Resource Name (ARN)新增到AMIs的啟動許可權列表中。此選項符合題目條件，能有效滿足核心需求。
 - C：更新關鍵策略,允許開發團隊的OU使用用於解密快照的AWS KMS金鑰。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：將開發團隊的OU Amazon資源名稱(ARN)加入AMIs的發射許可列表。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將開發團隊帳戶Amazon資源名稱(ARN)加入AMIs的發射許可列表。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：重新建立 AWS KMS 金鑰。 新增一個關鍵政策,允許根亞馬遜資源名稱(ARN)的組織使用 AWS KMS 金鑰。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：重新建立 AWS KMS 金鑰。 新增一個關鍵政策,允許根Amazon Resource Name (ARN)的組織使用 AWS KMS 金鑰。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #778
 
@@ -18240,7 +18240,7 @@ C
 ## Question #779
 
 **題目**
-一家公司有一個亞馬遜彈性檔案系統(Amazon EFS)檔案系統,包含一個參考資料集. 該公司在Amazon EC2例項上有需要讀取資料集的應用程式. 然而,應用程式不能改變資料集。 公司希望使用IAM 存取控制(access control)來阻止應用程式能夠修改或刪除資料集. 哪種解決辦法能滿足這些要求?
+一家公司有一個Amazon Elastic File System (Amazon EFS)檔案系統,包含一個參考資料集. 該公司在Amazon EC2例項上有需要讀取資料集的應用程式. 然而,應用程式不能改變資料集。 公司希望使用IAM 存取控制(access control)來阻止應用程式能夠修改或刪除資料集. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 從 EC2 例項中以只讀模式掛載 EFS 檔案系統。
@@ -18336,9 +18336,9 @@ B
 
 **選項**
 - A. 將應用程式的記錄複製到 Amazon Redshift 叢集。
-- B. 將應用中的記錄複製到亞馬遜海王星叢集中.
-- C. 將應用中的記錄複製到亞馬遜時間流資料庫(database).
-- D. 將應用程式的記錄複製到一個亞馬遜量子Ledger 資料庫(Database)(Amazon QLDB)分類賬中.
+- B. 將應用中的記錄複製到Amazon Neptune叢集中.
+- C. 將應用中的記錄複製到Amazon Timestream資料庫(database).
+- D. 將應用程式的記錄複製到一個Amazon QLDB 資料庫(Database)(Amazon QLDB)分類賬中.
 
 **答案**
 D
@@ -18346,11 +18346,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將應用程式的記錄複製到一個亞馬遜量子Ledger 資料庫(Database)(Amazon QLDB)分類賬中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：將應用程式的記錄複製到一個Amazon QLDB 資料庫(Database)(Amazon QLDB)分類賬中。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將應用程式的記錄複製到 Amazon Redshift 叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將應用中的記錄複製到亞馬遜海王星叢集中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：將應用中的記錄複製到亞馬遜時間流資料庫(database)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將應用中的記錄複製到Amazon Neptune叢集中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：將應用中的記錄複製到Amazon Timestream資料庫(database)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #784
 
@@ -18593,7 +18593,7 @@ D
 **選項**
 - A. 透過使用Amazon EC2 On-Demand Incents執行程式. 建立 Amazon EventBridge 規則,以便在要求報告時啟動 EC2 例項。 每月最後一週連續執行EC2例項.
 - B. 在AWS Lambda中執行程式. 建立 Amazon EventBridge 規則, 當需要報告時執行 Lambda 函式。
-- C. 在亞馬遜彈性容器服務(Amazon ECS)中執行程式. 將 Amazon ECS 設定為在需要報告時執行程式。
+- C. 在Amazon Elastic Container Service (Amazon ECS)中執行程式. 將 Amazon ECS 設定為在需要報告時執行程式。
 - D. 透過使用Amazon EC2 Spot 執行個體執行程式. 建立一條 Amazon EventBndge 規則,以便在要求報告時啟動 EC2 例項。 每月最後一週連續執行EC2例項.
 
 **答案**
@@ -18605,7 +18605,7 @@ B
 - B：在AWS Lambda中執行程式. 建立 Amazon EventBridge 規則, 當需要報告時執行 Lambda 函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：透過使用Amazon EC2 On-Demand Incents執行程式. 建立 Amazon EventBridge 規則,以便在要求報告時啟動 EC2 例項。 每月最後一週連續執行EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在亞馬遜彈性容器服務(Amazon ECS)中執行程式. 將 Amazon ECS 設定為在需要報告時執行程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在Amazon Elastic Container Service (Amazon ECS)中執行程式. 將 Amazon ECS 設定為在需要報告時執行程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：透過使用Amazon EC2 Spot 執行個體執行程式. 建立一條 Amazon EventBndge 規則,以便在要求報告時啟動 EC2 例項。 每月最後一週連續執行EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #795
@@ -18641,9 +18641,9 @@ B,D
 
 **選項**
 - A. 使用 Amazon SageMaker 自動駕駛程式建立和部署一個模型。 建立網路應用程式在新照片上傳時引用的實時端點。
-- B. 建立一個AWS Lambda功能,使用亞馬遜識別來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式。
+- B. 建立一個AWS Lambda功能,使用Amazon Rekognition來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式。
 - C. 建立一個Amazon CloudFront功能,使用Amazon Comprehend來檢測不想要的內容. 將該功能與網路應用程式關聯.
-- D. 建立一個AWS Lambda功能,使用亞馬遜識別影片來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式。
+- D. 建立一個AWS Lambda功能,使用Amazon Rekognition Video來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式。
 
 **答案**
 B
@@ -18651,11 +18651,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立一個AWS Lambda功能,使用亞馬遜識別來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：建立一個AWS Lambda功能,使用Amazon Rekognition來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 Amazon SageMaker 自動駕駛程式建立和部署一個模型。 建立網路應用程式在新照片上傳時引用的實時端點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立一個Amazon CloudFront功能,使用Amazon Comprehend來檢測不想要的內容. 將該功能與網路應用程式關聯。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立一個AWS Lambda功能,使用亞馬遜識別影片來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立一個AWS Lambda功能,使用Amazon Rekognition Video來檢測不想要的內容. 建立 Lambda 函式 URL,網路應用程式在上傳新照片時引用該函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #797
 
@@ -18686,8 +18686,8 @@ B
 一家社交媒體公司正在為使用者建立獎勵程式網站. 公司在使用者建立影片並將其上傳到網站時給使用者點. 使用者從公司的親信夥伴處贖回其分數,以換取禮物或折扣. 一個獨特的ID識別使用者. 合夥人使用此ID來驗證使用者獲得獎勵的資格. 當公司給使用者點時,合作伙伴希望透過HTTP端點收到使用者ID通知. 每天有數百個供應商有興趣成為親善夥伴。 公司希望設計一個架構,讓網站能夠快速以可擴充套件的方式新增合作伙伴. 哪些解決辦法將滿足這些要求?
 
 **選項**
-- A. 建立一個亞馬遜時間流資料庫(database),以保留一個親子夥伴列表. 執行 AWS Lambda 函式讀取列表。 配置 Lambda 函式,在公司給使用者點數時向每個合夥人傳送使用者ID.
-- B. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 選擇一個端點協議。 訂閱該議題的夥伴。 當公司給使用者點數時,將使用者ID釋出到話題中.
+- A. 建立一個Amazon Timestream資料庫(database),以保留一個親子夥伴列表. 執行 AWS Lambda 函式讀取列表。 配置 Lambda 函式,在公司給使用者點數時向每個合夥人傳送使用者ID.
+- B. 建立一個Amazon Simple Notification Service (Amazon SNS)主題. 選擇一個端點協議。 訂閱該議題的夥伴。 當公司給使用者點數時,將使用者ID釋出到話題中.
 - C. 建立 AWS 步驟函式狀態機器。 為每個親生伴侶建立任務. 當公司給使用者點數時,將使用使用者ID作為輸入的狀態機器注入.
 - D. 在 Amazon Kinesis 資料流中建立資料流. 實施生產者和消費者應用。 在資料流中儲存親子夥伴列表. 當公司給予使用者點數時傳送使用者ID.
 
@@ -18697,9 +18697,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個亞馬遜時間流資料庫(database),以保留一個親子夥伴列表. 執行 AWS Lambda 函式讀取列表。 配置 Lambda 函式,在公司給使用者點數時向每個合夥人傳送使用者ID。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：建立一個Amazon Timestream資料庫(database),以保留一個親子夥伴列表. 執行 AWS Lambda 函式讀取列表。 配置 Lambda 函式,在公司給使用者點數時向每個合夥人傳送使用者ID。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 選擇一個端點協議。 訂閱該議題的夥伴。 當公司給使用者點數時,將使用者ID釋出到話題中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個Amazon Simple Notification Service (Amazon SNS)主題. 選擇一個端點協議。 訂閱該議題的夥伴。 當公司給使用者點數時,將使用者ID釋出到話題中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立 AWS 步驟函式狀態機器。 為每個親生伴侶建立任務. 當公司給使用者點數時,將使用使用者ID作為輸入的狀態機器注入。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在 Amazon Kinesis 資料流中建立資料流. 實施生產者和消費者應用。 在資料流中儲存親子夥伴列表. 當公司給予使用者點數時傳送使用者ID。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -18710,7 +18710,7 @@ A
 
 **選項**
 - A. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱. 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中.
-- B. 在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用亞馬遜預測來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中。
+- B. 在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon Forecast 來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中。
 - C. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 儲存桶(S3 bucket) 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中.
 - D. 當 Put Object 請求發生時,使用 Amazon EventBridge 規則引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon SageMaker來分析物件並提取成分名稱. 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中。
 
@@ -18723,13 +18723,13 @@ D
 - D：當 Put Object 請求發生時,使用 Amazon EventBridge 規則引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon SageMaker來分析物件並提取成分名稱. 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱. 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用亞馬遜預測來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon Forecast 來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 儲存桶(S3 bucket) 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #800
 
 **題目**
-一個公司需要建立一個AWS Lambda功能,該功能將在公司初級AWS帳戶中的VPC中執行. Lambda功能需要存取公司在一個亞馬遜彈性檔案系統(Amazon EFS)中儲存的檔案. EFS檔案系統位於一個二級AWS帳戶. 由於公司向檔案系統新增檔案,解決方案必須縮放以滿足需求. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一個公司需要建立一個AWS Lambda功能,該功能將在公司初級AWS帳戶中的VPC中執行. Lambda功能需要存取公司在一個Amazon Elastic File System (Amazon EFS)中儲存的檔案. EFS檔案系統位於一個二級AWS帳戶. 由於公司向檔案系統新增檔案,解決方案必須縮放以滿足需求. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 在主帳戶中建立一個新的 EFS 檔案系統。 使用AWS DataSync將原始EFS檔案系統的內容複製到新的EFS檔案系統.
@@ -18781,7 +18781,7 @@ A
 - A. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列與 Amazon EventBridge 規則整合,以接收移動裝置的付款通知。 配置規則以驗證付款通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)任何地方部署後端應用程式. 建立獨立的叢集。
 - B. 建立 Amazon API Gateway API. 將 API 與 AWS Step 函式狀態機整合,以接收移動裝置的付款通知。 啟動國家機器驗證支付通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)上部署後端應用程式. 配置帶有自控節點的EKS叢集.
 - C. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列與 Amazon EventBridge 規則整合,以接收移動裝置的付款通知。 配置規則以驗證付款通知,並將通知傳送給後端應用程式。 在Amazon EC2 Spot 執行個體上部署後端應用程式. 配置帶有預設配置策略的 Spot Fleet。
-- D. 建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在亞馬遜彈性容器服務(Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 發射型別.
+- D. 建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 發射型別.
 
 **答案**
 C
@@ -18793,7 +18793,7 @@ C
 - 其餘選項比較：
 - A：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列與 Amazon EventBridge 規則整合,以接收移動裝置的付款通知。 配置規則以驗證付款通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)任何地方部署後端應用程式. 建立獨立的叢集 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 Amazon API Gateway API. 將 API 與 AWS Step 函式狀態機整合,以接收移動裝置的付款通知。 啟動國家機器驗證支付通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)上部署後端應用程式. 配置帶有自控節點的EKS叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在亞馬遜彈性容器服務(Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 發射型別。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 發射型別。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #803
 
@@ -18872,8 +18872,8 @@ B
 **選項**
 - A. 設立AWS Storage Gateway卷閘道器. 使用Amazon S3 生命週期政策(Lifecycle policy)將資料轉換到適當的儲存類.
 - B. 建立AWS Storage Gateway Amazon S3檔案閘道器. 使用Amazon S3 生命週期政策(Lifecycle policy)將資料轉換到適當的儲存類.
-- C. 使用亞馬遜彈性檔案系統(Amazon EFS)標準-不經常存取(Standard-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。
-- D. 使用亞馬遜彈性檔案系統(Amazon EFS) One Zone-不經常存取(One Zone-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。
+- C. 使用Amazon Elastic File System (Amazon EFS)標準-不經常存取(Standard-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。
+- D. 使用Amazon Elastic File System (Amazon EFS) One Zone-不經常存取(One Zone-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。
 
 **答案**
 D
@@ -18881,11 +18881,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用亞馬遜彈性檔案系統(Amazon EFS) One Zone-不經常存取(One Zone-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：使用Amazon Elastic File System (Amazon EFS) One Zone-不經常存取(One Zone-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：設立AWS Storage Gateway卷閘道器. 使用Amazon S3 生命週期政策(Lifecycle policy)將資料轉換到適當的儲存類。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立AWS Storage Gateway Amazon S3檔案閘道器. 使用Amazon S3 生命週期政策(Lifecycle policy)將資料轉換到適當的儲存類。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜彈性檔案系統(Amazon EFS)標準-不經常存取(Standard-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Elastic File System (Amazon EFS)標準-不經常存取(Standard-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #807
 
@@ -18913,12 +18913,12 @@ C
 ## Question #808
 
 **題目**
-一家公司負責亞馬遜彈性容器服務公司的工作量。 ECS任務定義使用的容器影象需要掃描,以瞭解常見脆弱性和接觸。 新的容器影象也需要掃描。 隨著EWEST對工作量的改變,哪一種解決辦法能滿足這些要求?
+一家公司負責Amazon ECS公司的工作量。 ECS任務定義使用的容器影象需要掃描,以瞭解常見脆弱性和接觸。 新的容器影象也需要掃描。 隨著EWEST對工作量的改變,哪一種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用亞馬遜彈性容器註冊(Amazon ECR)作為私人影象儲存庫來儲存容器影象. 為 ECR 基本掃描指定按鍵過濾器的掃描。
+- A. 使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存庫來儲存容器影象. 為 ECR 基本掃描指定按鍵過濾器的掃描。
 - B. 在Amazon S3桶中儲存容器影象. 使用Amazon Macie掃描影象. 使用 S3 事件通知啟動 Macie 掃描, 用於 s3: ObjectCreated 的每次事件 : 設定事件型別。
-- C. 向Amazon Elastic Kubernetes Service(Amazon EKS)部署工作量。 使用亞馬遜彈性容器註冊(Amazon ECR)作為私人影象儲存器. 為 ECR 增強的掃描指定按壓過濾器的掃描。
+- C. 向Amazon Elastic Kubernetes Service(Amazon EKS)部署工作量。 使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存器. 為 ECR 增強的掃描指定按壓過濾器的掃描。
 - D. 將容器影象儲存在已啟用版本的 Amazon S3 桶中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描。
 
 **答案**
@@ -18927,9 +18927,9 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：向Amazon Elastic Kubernetes Service(Amazon EKS)部署工作量。 使用亞馬遜彈性容器註冊(Amazon ECR)作為私人影象儲存器. 為 ECR 增強的掃描指定按壓過濾器的掃描。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：向Amazon Elastic Kubernetes Service(Amazon EKS)部署工作量。 使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存器. 為 ECR 增強的掃描指定按壓過濾器的掃描。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜彈性容器註冊(Amazon ECR)作為私人影象儲存庫來儲存容器影象. 為 ECR 基本掃描指定按鍵過濾器的掃描。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存庫來儲存容器影象. 為 ECR 基本掃描指定按鍵過濾器的掃描。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在Amazon S3桶中儲存容器影象. 使用Amazon Macie掃描影象. 使用 S3 事件通知啟動 Macie 掃描, 用於 s3: ObjectCreated 的每次事件 : 設定事件型別 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將容器影象儲存在已啟用版本的 Amazon S3 桶中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -18982,13 +18982,13 @@ A
 ## Question #811
 
 **題目**
-一家公司希望將亞馬遜管理Grafana作為其視覺化工具. 公司希望將來自其Amazon RDS資料庫(database)的資料視覺化為一個資料來源. 公司需要安全的解決辦法, 哪種解決辦法能滿足這些要求?
+一家公司希望將Amazon Managed Grafana作為其視覺化工具. 公司希望將來自其Amazon RDS資料庫(database)的資料視覺化為一個資料來源. 公司需要安全的解決辦法, 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個沒有VPC的亞馬遜管理Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為亞馬遜管理Grafana的資料來源.
-- B. 在VPC中建立亞馬遜管理Grafana工作空間. 為 RDS 資料庫(database) 建立私人端點。 配置私人端點作為亞馬遜管理Grafana的資料來源.
-- C. 建立一個沒有VPCreate的亞馬遜管理Grafana工作空間AWS私人Link端點,建立亞馬遜管理Grafana和Amazon RDS之間的連線. 將Amazon RDS設定為亞馬遜管理Grafana的資料來源.
-- D. 在VPC中建立亞馬遜管理Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為亞馬遜管理Grafana的資料來源.
+- A. 建立一個沒有VPC的Amazon Managed Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為Amazon Managed Grafana的資料來源.
+- B. 在VPC中建立Amazon Managed Grafana工作空間. 為 RDS 資料庫(database) 建立私人端點。 配置私人端點作為Amazon Managed Grafana的資料來源.
+- C. 建立一個沒有VPCreate的Amazon Managed Grafana工作空間AWS私人Link端點,建立Amazon Managed Grafana和Amazon RDS之間的連線. 將Amazon RDS設定為Amazon Managed Grafana的資料來源.
+- D. 在VPC中建立Amazon Managed Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為Amazon Managed Grafana的資料來源.
 
 **答案**
 B
@@ -18996,11 +18996,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在VPC中建立亞馬遜管理Grafana工作空間. 為 RDS 資料庫(database) 建立私人端點。 配置私人端點作為亞馬遜管理Grafana的資料來源。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：在VPC中建立Amazon Managed Grafana工作空間. 為 RDS 資料庫(database) 建立私人端點。 配置私人端點作為Amazon Managed Grafana的資料來源。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立一個沒有VPC的亞馬遜管理Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為亞馬遜管理Grafana的資料來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立一個沒有VPCreate的亞馬遜管理Grafana工作空間AWS私人Link端點,建立亞馬遜管理Grafana和Amazon RDS之間的連線. 將Amazon RDS設定為亞馬遜管理Grafana的資料來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在VPC中建立亞馬遜管理Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為亞馬遜管理Grafana的資料來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立一個沒有VPC的Amazon Managed Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為Amazon Managed Grafana的資料來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立一個沒有VPCreate的Amazon Managed Grafana工作空間AWS私人Link端點,建立Amazon Managed Grafana和Amazon RDS之間的連線. 將Amazon RDS設定為Amazon Managed Grafana的資料來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在VPC中建立Amazon Managed Grafana工作空間. 為 RDS 資料庫(database) 建立公共終點。 配置公共端點作為Amazon Managed Grafana的資料來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #812
 
@@ -19054,7 +19054,7 @@ C
 一家公司在該公司資料中心的Kubernetes叢集上執行一個集裝箱應用程式. 應用程式使用高階訊息排隊協議(AMQP)與訊息佇列進行通訊. 資料中心的規模無法迅速滿足公司不斷擴大的業務需求. 公司希望將工作量轉移到AWS. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 將集裝箱應用轉移到亞馬遜彈性容器服務公司(Amazon ECS)。 使用 Amazon 簡單佇列服務(Amazon SQS)來檢索訊息.
+- A. 將集裝箱應用轉移到Amazon ECS公司(Amazon ECS)。 使用 Amazon 簡單佇列服務(Amazon SQS)來檢索訊息.
 - B. 將容器應用遷移到Amazon Elastic Kubernetes Service(Amazon EKS). 使用 Amazon MQ 檢索訊息。
 - C. 使用大量可用的 Amazon EC2 例項來執行應用程式。 使用 Amazon MQ 檢索訊息。
 - D. 使用 AWS Lambda 函式執行應用程式. 使用 Amazon 簡單佇列服務(Amazon SQS)來檢索訊息.
@@ -19065,7 +19065,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將集裝箱應用轉移到亞馬遜彈性容器服務公司(Amazon ECS)。 使用 Amazon 簡單佇列服務(Amazon SQS)來檢索訊息。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：將集裝箱應用轉移到Amazon ECS公司(Amazon ECS)。 使用 Amazon 簡單佇列服務(Amazon SQS)來檢索訊息。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：將容器應用遷移到Amazon Elastic Kubernetes Service(Amazon EKS). 使用 Amazon MQ 檢索訊息 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用大量可用的 Amazon EC2 例項來執行應用程式。 使用 Amazon MQ 檢索訊息 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -19125,7 +19125,7 @@ B
 **選項**
 - A. 向Amazon Athena提供所提取的見解以供分析。 在Amazon S3桶中儲存所提取的洞察力和分析.
 - B. 在Amazon DynamoDB表格中儲存所提取的見解. 使用Amazon SageMaker來建立情感模型.
-- C. 向亞馬遜康普雷亨德提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 桶。
+- C. 向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 桶。
 - D. 在Amazon S3 儲存桶中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料.
 
 **答案**
@@ -19137,7 +19137,7 @@ B
 - B：在Amazon DynamoDB表格中儲存所提取的見解. 使用Amazon SageMaker來建立情感模型。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：向Amazon Athena提供所提取的見解以供分析。 在Amazon S3桶中儲存所提取的洞察力和分析。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：向亞馬遜康普雷亨德提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 桶。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 桶。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在Amazon S3 儲存桶中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #818
@@ -19169,7 +19169,7 @@ A
 一家公司的應用程式正在接收來自多個資料來源的資料。 資料的規模各不相同,預計隨著時間的推移還會增加。 目前最大尺寸為700KB. 隨著資料來源的增加,資料量和資料規模繼續增加。 公司決定將Amazon DynamoDB作為該應用的主要資料庫(database). 一個解決方案架構師需要找出一個能處理大資料大小的解決方案. 哪種解決辦法能以業務效率高的方式滿足這些要求?
 
 **選項**
-- A. 建立一個 AWS Lambda 函式來過濾超過 DynatomDB 專案大小限制的資料. 將更大的資料儲存在亞馬遜文件DB(與MongoDB相容)資料庫(database)中.
+- A. 建立一個 AWS Lambda 函式來過濾超過 DynatomDB 專案大小限制的資料. 將更大的資料儲存在Amazon DocumentDB(與MongoDB相容)資料庫(database)中.
 - B. 將大資料作為物件儲存在 Amazon S3 桶中。 在 DynamoDB 表格中,建立一個具有指向資料 S3 URL 屬性的專案.
 - C. 將所有輸入的大資料分割為擁有相同分割槽金鑰的專案集合. 使用 BatchWrite 專案 API 操作,將資料寫入單個操作中的 DynamoDB 表格。
 - D. 建立一個 AWS Lambda 函式,使用 gzip 壓縮來壓縮大物件,因為它們被寫入一個 DynamoDB 表.
@@ -19182,7 +19182,7 @@ D
 正確答案是 **D**。
 - D：建立一個 AWS Lambda 函式,使用 gzip 壓縮來壓縮大物件,因為它們被寫入一個 DynamoDB 表。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立一個 AWS Lambda 函式來過濾超過 DynatomDB 專案大小限制的資料. 將更大的資料儲存在亞馬遜文件DB(與MongoDB相容)資料庫(database)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立一個 AWS Lambda 函式來過濾超過 DynatomDB 專案大小限制的資料. 將更大的資料儲存在Amazon DocumentDB(與MongoDB相容)資料庫(database)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將大資料作為物件儲存在 Amazon S3 桶中。 在 DynamoDB 表格中,建立一個具有指向資料 S3 URL 屬性的專案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將所有輸入的大資料分割為擁有相同分割槽金鑰的專案集合. 使用 BatchWrite 專案 API 操作,將資料寫入單個操作中的 DynamoDB 表格 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -19193,7 +19193,7 @@ D
 
 **選項**
 - A. 為 cron 任務建立容器影象。 使用 Amazon EventBridge 排程器來建立經常性排程. 以 AWS Lambda 函式執行 cron 任務。
-- B. 為 cron 任務建立容器影象。 在亞馬遜彈性容器服務(Amazon ECS)上使用 AWS 批次,並附帶一個排程政策來執行 cron 任務.
+- B. 為 cron 任務建立容器影象。 在Amazon Elastic Container Service (Amazon ECS)上使用 AWS 批次,並附帶一個排程政策來執行 cron 任務.
 - C. 為 cron 任務建立容器影象。 使用 Amazon EventBridge 排程器來建立經常性排程. 執行 AWS Fargate 上的 cron 任務。
 - D. 為 cron 任務建立容器影象。 在 AWS Step 函式中建立工作fiow, 使用 Wait 狀態在特定時間執行 cron 任務。 使用執行任務動作執行 AWS Fargate 上的 cron 任務。
 
@@ -19206,7 +19206,7 @@ C
 - C：為 cron 任務建立容器影象。 使用 Amazon EventBridge 排程器來建立經常性排程. 執行 AWS Fargate 上的 cron 任務 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：為 cron 任務建立容器影象。 使用 Amazon EventBridge 排程器來建立經常性排程. 以 AWS Lambda 函式執行 cron 任務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：為 cron 任務建立容器影象。 在亞馬遜彈性容器服務(Amazon ECS)上使用 AWS 批次,並附帶一個排程政策來執行 cron 任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：為 cron 任務建立容器影象。 在Amazon Elastic Container Service (Amazon ECS)上使用 AWS 批次,並附帶一個排程政策來執行 cron 任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：為 cron 任務建立容器影象。 在 AWS Step 函式中建立工作fiow, 使用 Wait 狀態在特定時間執行 cron 任務。 使用執行任務動作執行 AWS Fargate 上的 cron 任務 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #821
@@ -19235,7 +19235,7 @@ C
 ## Question #822
 
 **題目**
-一家公司最近將其應用程式遷移到AWS。 該應用程式執行在Amazon EC2 Linux例項上,在Auto Scaling 群組(Auto Scaling group)中跨越多個可用區(Availability Zones). 應用程式將資料儲存在使用EFS標準-不頻繁存取儲存的亞馬遜彈性檔案系統(Amazon EFS)中. 應用程式索引了公司的文件。 該索引儲存於Amazon RDS 資料庫(database). 公司需要透過一些應用和服務變化來最佳化儲存成本. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司最近將其應用程式遷移到AWS。 該應用程式執行在Amazon EC2 Linux例項上,在Auto Scaling 群組(Auto Scaling group)中跨越多個可用區(Availability Zones). 應用程式將資料儲存在使用EFS標準-不頻繁存取儲存的Amazon Elastic File System (Amazon EFS)中. 應用程式索引了公司的文件。 該索引儲存於Amazon RDS 資料庫(database). 公司需要透過一些應用和服務變化來最佳化儲存成本. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 建立一個Amazon S3 儲存桶,該水桶使用智慧-輪胎生命週期政策(lifecycle policy). 將所有檔案複製到 S3 儲存桶(S3 bucket)。 更新應用程式以使用Amazon S3 API來儲存和檢索檔案.
@@ -19376,7 +19376,7 @@ C
 一家在AWS運營的金融服務公司設計了符合行業標準的安保控制. 行業標準包括國家標準和技術研究所和支付卡行業資料安全標準。 公司第三方審計人員需要證明設計出的監控措施已經實施,執行正常. 該公司在AWS Organizations的單一組織中擁有數百個AWS帳戶. 公司需要監控各帳戶控制的現狀. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 指定一個帳戶為亞馬遜檢查員從各組織管理帳戶中委派的管理人帳戶。 將檢查員與各組織整合,發現和掃描所有AWS帳戶的資源。 啟用NIST和PCI DSS的監察行業標準。
+- A. 指定一個帳戶為Amazon Inspector從各組織管理帳戶中委派的管理人帳戶。 將檢查員與各組織整合,發現和掃描所有AWS帳戶的資源。 啟用NIST和PCI DSS的監察行業標準。
 - B. 從各組織管理帳戶中指定一個帳戶為亞馬遜衛士代管帳戶。 在指定的GuardDuty管理員帳戶中,使GuardDuty能夠保護所有成員帳戶. 啟用NIST和PCIDS的GuardDuty行業標準.
 - C. 在組織管理帳戶中配置AWS CloudTrail組織線索。 指定一個帳戶為合規(compliance)帳戶。 在合規(compliance)帳戶中為NIST和PCIDS啟用CloudTrail安全標準.
 - D. 從各組織管理帳戶指定一個帳戶為AWS安全中心授權管理人帳戶。 在指定的安全中心管理員帳戶中,啟用所有成員帳戶的安全中心。 啟用NIST和PCI DSS的安全中心標準.
@@ -19389,7 +19389,7 @@ D
 正確答案是 **D**。
 - D：從各組織管理帳戶指定一個帳戶為AWS安全中心授權管理人帳戶。 在指定的安全中心管理員帳戶中,啟用所有成員帳戶的安全中心。 啟用NIST和PCI DSS的安全中心標準。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：指定一個帳戶為亞馬遜檢查員從各組織管理帳戶中委派的管理人帳戶。 將檢查員與各組織整合,發現和掃描所有AWS帳戶的資源。 啟用NIST和PCI DSS的監察行業標準。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：指定一個帳戶為Amazon Inspector從各組織管理帳戶中委派的管理人帳戶。 將檢查員與各組織整合,發現和掃描所有AWS帳戶的資源。 啟用NIST和PCI DSS的監察行業標準。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：從各組織管理帳戶中指定一個帳戶為亞馬遜衛士代管帳戶。 在指定的GuardDuty管理員帳戶中,使GuardDuty能夠保護所有成員帳戶. 啟用NIST和PCIDS的GuardDuty行業標準。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在組織管理帳戶中配置AWS CloudTrail組織線索。 指定一個帳戶為合規(compliance)帳戶。 在合規(compliance)帳戶中為NIST和PCIDS啟用CloudTrail安全標準。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -19423,7 +19423,7 @@ A
 
 **選項**
 - A. 使用Amazon S3桶儲存資料集. 使用 Amazon Athena 執行 SQL JOIN 查詢以查詢連線。
-- B. 使用亞馬遜海王星來儲存帶有邊緣和頂點的資料集. 查詢資料查詢連線。
+- B. 使用Amazon Neptune來儲存帶有邊緣和頂點的資料集. 查詢資料查詢連線。
 - C. 使用Amazon S3桶儲存資料集. 使用Amazon QuickSight視覺化連線.
 - D. 使用Amazon RDS儲存多表的資料集. 執行 SQL JOIN 查詢以查詢連線。
 
@@ -19433,7 +19433,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用亞馬遜海王星來儲存帶有邊緣和頂點的資料集. 查詢資料查詢連線 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon Neptune來儲存帶有邊緣和頂點的資料集. 查詢資料查詢連線 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用Amazon S3桶儲存資料集. 使用 Amazon Athena 執行 SQL JOIN 查詢以查詢連線 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon S3桶儲存資料集. 使用Amazon QuickSight視覺化連線。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -19491,8 +19491,8 @@ C
 一家公司正在設計一個事件驅動的訂單處理系統. 每個命令在命令建立後需要多個驗證步驟. 一個像樣的 AWS Lambda 函式執行每個驗證步驟. 每個驗證步驟獨立於其他驗證步驟. 單個驗證步驟只需要命令事件資訊的子集. 公司希望確保每個驗證步驟Lambda函式只能從功能所需要的訂單事件獲取資訊. 訂單處理系統的各個組成部分應鬆散地組合在一起,以適應未來的業務變化。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 為每個驗證步驟建立亞馬遜簡易佇列服務(Amazon SQS)佇列. 建立一個新的 Lambda 函式,將命令資料轉換為每個驗證步驟所需的格式,並將訊息釋出到相應的SQS佇列. 訂閱每個驗證步驟 Lambda 函式為相應的 SQS 佇列。
-- B. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 將驗證步驟 Lambda 函式訂閱到 SNS 主題. 使用訊息正文過濾,只向每個已訂閱的Lambda函式傳送所需的資料.
+- A. 為每個驗證步驟建立Amazon Simple Queue Service (Amazon SQS)佇列. 建立一個新的 Lambda 函式,將命令資料轉換為每個驗證步驟所需的格式,並將訊息釋出到相應的SQS佇列. 訂閱每個驗證步驟 Lambda 函式為相應的 SQS 佇列。
+- B. 建立一個Amazon Simple Notification Service (Amazon SNS)主題. 將驗證步驟 Lambda 函式訂閱到 SNS 主題. 使用訊息正文過濾,只向每個已訂閱的Lambda函式傳送所需的資料.
 - C. 建立 Amazon EventBridge 事件匯流排。 為每個驗證步驟建立事件規則。 配置輸入變壓器,只向每個目標驗證步驟Lambda函式傳送所需的資料.
 - D. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 建立一個新的 Lambda 函式來訂閱 SQS 佇列,並將命令資料轉換為每個驗證步驟所需的格式. 使用新的 Lambda 函式在單獨的執行緒上平行執行同步引用驗證步驟 Lambda 函式.
 
@@ -19504,8 +19504,8 @@ C
 正確答案是 **C**。
 - C：建立 Amazon EventBridge 事件匯流排。 為每個驗證步驟建立事件規則。 配置輸入變壓器,只向每個目標驗證步驟Lambda函式傳送所需的資料。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：為每個驗證步驟建立亞馬遜簡易佇列服務(Amazon SQS)佇列. 建立一個新的 Lambda 函式,將命令資料轉換為每個驗證步驟所需的格式,並將訊息釋出到相應的SQS佇列. 訂閱每個驗證步驟 Lambda 函式為相應的 SQS 佇列 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：建立一個亞馬遜簡單通知服務(Amazon SNS)主題. 將驗證步驟 Lambda 函式訂閱到 SNS 主題. 使用訊息正文過濾,只向每個已訂閱的Lambda函式傳送所需的資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：為每個驗證步驟建立Amazon Simple Queue Service (Amazon SQS)佇列. 建立一個新的 Lambda 函式,將命令資料轉換為每個驗證步驟所需的格式,並將訊息釋出到相應的SQS佇列. 訂閱每個驗證步驟 Lambda 函式為相應的 SQS 佇列 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個Amazon Simple Notification Service (Amazon SNS)主題. 將驗證步驟 Lambda 函式訂閱到 SNS 主題. 使用訊息正文過濾,只向每個已訂閱的Lambda函式傳送所需的資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 建立一個新的 Lambda 函式來訂閱 SQS 佇列,並將命令資料轉換為每個驗證步驟所需的格式. 使用新的 Lambda 函式在單獨的執行緒上平行執行同步引用驗證步驟 Lambda 函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #834
@@ -19672,10 +19672,10 @@ A
 ## Question #841
 
 **題目**
-一家公司使用Amazon EC2 執行個體和亞馬遜彈性板塊商店(Amazon EBS)來執行其自行管理的資料庫(database). 公司擁有350TB的資料分佈在EBS所有卷. 公司每天拍攝EBS快照,並將快照儲存1個月. 每日變動率為EBS 磁碟區的5%. 由於新的規定,公司需要將每月的快照儲存7年. 公司需要改變其備份(backup)戰略,以遵守新的條例,並確保以最低限度的行政努力獲得資料。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司使用Amazon EC2 執行個體和Amazon Elastic Block Store (Amazon EBS)來執行其自行管理的資料庫(database). 公司擁有350TB的資料分佈在EBS所有卷. 公司每天拍攝EBS快照,並將快照儲存1個月. 每日變動率為EBS 磁碟區的5%. 由於新的規定,公司需要將每月的快照儲存7年. 公司需要改變其備份(backup)戰略,以遵守新的條例,並確保以最低限度的行政努力獲得資料。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)複製到亞馬遜S3 Glacier Deep Archive,保留期為7年.
+- A. 將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)複製到Amazon S3 Glacier Deep Archive,保留期為7年.
 - B. 繼續現行EBS 快照(snapshot)政策. 新增政策將月度快照(snapshot)移動至Amazon EBS Snapshots Archive,保留期為7年.
 - C. 將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)在標準等級中保留7年. 使用遞增快照.
 - D. 將每日快照(snapshot)保留在EBS 快照(snapshot)標準等級. 使用EBS直接API每月拍攝所有EBS 磁碟區的快照. 將快照存放在Amazon S3 儲存桶中,在不頻繁存取層中儲存7年.
@@ -19686,7 +19686,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)複製到亞馬遜S3 Glacier Deep Archive,保留期為7年。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)複製到Amazon S3 Glacier Deep Archive,保留期為7年。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：繼續現行EBS 快照(snapshot)政策. 新增政策將月度快照(snapshot)移動至Amazon EBS Snapshots Archive,保留期為7年。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)在標準等級中保留7年. 使用遞增快照。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -19695,7 +19695,7 @@ A
 ## Question #842
 
 **題目**
-一家公司執行一個應用程式,在亞馬遜彈性檔案系統(Amazon EFS)上儲存持續資料的若干Amazon EC2例項。 公司需要透過使用AWS管理服務解決方案將資料複製到另一個AWS 區域(Region). 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司執行一個應用程式,在Amazon Elastic File System (Amazon EFS)上儲存持續資料的若干Amazon EC2例項。 公司需要透過使用AWS管理服務解決方案將資料複製到另一個AWS 區域(Region). 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 使用EFS-to-EFS 備份(backup)解決方案將資料複製到另一個區域(Region)中的EFS檔案系統.
@@ -19744,7 +19744,7 @@ C
 一家公司擁有一個promession業務應用程式,每天生成數百個檔案. 這些檔案被儲存在SMB檔案共享上,需要低水平的延遲(latency)連線到應用程式伺服器. 新公司政策規定所有應用程式生成的檔案必須複製到AWS. 已有 VPN 連線到 AWS。 應用程式開發團隊沒有時間進行必要的程式碼修改,將應用程式移動到AWS. 一個解決方案架構師應該建議哪個服務允許應用程式將檔案複製到AWS?
 
 **選項**
-- A. 亞馬遜彈性檔案系統(Amazon EFS)
+- A. Amazon Elastic File System (Amazon EFS)
 - B. Windows 檔案伺服器的 Amazon FSx
 - C. AWS Snowball.
 - D. AWS Storage Gateway.
@@ -19757,7 +19757,7 @@ D
 正確答案是 **D**。
 - D：AWS Storage Gateway。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：亞馬遜彈性檔案系統(Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：Amazon Elastic File System (Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：Windows 檔案伺服器的 Amazon FSx。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：AWS Snowball。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -19883,7 +19883,7 @@ B
 
 **選項**
 - A. 使用Amazon RDS儲存資料. 使用SQL查詢資料以識別安全風險.
-- B. 使用亞馬遜海王星儲存資料. 使用SPARQL查詢資料以識別安全風險.
+- B. 使用Amazon Neptune儲存資料. 使用SPARQL查詢資料以識別安全風險.
 - C. 使用Amazon Redshift儲存資料. 使用SQL查詢資料以識別安全風險.
 - D. 使用Amazon DynamoDB儲存資料. 使用PartiQL查詢資料以識別安全風險.
 
@@ -19893,7 +19893,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用亞馬遜海王星儲存資料. 使用SPARQL查詢資料以識別安全風險。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon Neptune儲存資料. 使用SPARQL查詢資料以識別安全風險。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用Amazon RDS儲存資料. 使用SQL查詢資料以識別安全風險。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon Redshift儲存資料. 使用SQL查詢資料以識別安全風險。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -19929,9 +19929,9 @@ C
 
 **選項**
 - A. 更新Auto Scaling 群組(Auto Scaling group)生命週期政策(lifecycle policy)中的EC2使用者資料,從最近啟動的EC2例項複製網站資產. 配置 ALB 僅在最新的 EC2 例項中更改網站資產。
-- B. 將網站資產複製到一個亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 配置每個 EC2 例項以在本地掛載 EFS 檔案系統。 配置網站託管應用程式以引用儲存在EFS檔案系統中的網站資產.
+- B. 將網站資產複製到一個Amazon Elastic File System (Amazon EFS)檔案系統. 配置每個 EC2 例項以在本地掛載 EFS 檔案系統。 配置網站託管應用程式以引用儲存在EFS檔案系統中的網站資產.
 - C. 將網站資產複製到 Amazon S3 桶。 確保每個EC2例項將網站資產從S3 儲存桶(S3 bucket)下載到所附的Amazon Elastic Block Store(Amazon EBS)卷. 每小時執行一次 S3 同步命令以保持檔案的更新.
-- D. 以網站資產恢復一個亞馬遜彈性塊商店(Amazon EBS 快照(snapshot)). 當啟動新的EC2例項時,將EBS 快照(snapshot)作為次要的EBS 磁碟區附後. 配置網站託管應用程式,以引用儲存在二級EBS 磁碟區中的網站資產.
+- D. 以網站資產恢復一個Amazon Elastic Block Store(Amazon EBS 快照(snapshot)). 當啟動新的EC2例項時,將EBS 快照(snapshot)作為次要的EBS 磁碟區附後. 配置網站託管應用程式,以引用儲存在二級EBS 磁碟區中的網站資產.
 
 **答案**
 B
@@ -19939,11 +19939,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：將網站資產複製到一個亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 配置每個 EC2 例項以在本地掛載 EFS 檔案系統。 配置網站託管應用程式以引用儲存在EFS檔案系統中的網站資產。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：將網站資產複製到一個Amazon Elastic File System (Amazon EFS)檔案系統. 配置每個 EC2 例項以在本地掛載 EFS 檔案系統。 配置網站託管應用程式以引用儲存在EFS檔案系統中的網站資產。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：更新Auto Scaling 群組(Auto Scaling group)生命週期政策(lifecycle policy)中的EC2使用者資料,從最近啟動的EC2例項複製網站資產. 配置 ALB 僅在最新的 EC2 例項中更改網站資產 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將網站資產複製到 Amazon S3 桶。 確保每個EC2例項將網站資產從S3 儲存桶(S3 bucket)下載到所附的Amazon Elastic Block Store(Amazon EBS)卷. 每小時執行一次 S3 同步命令以保持檔案的更新。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：以網站資產恢復一個亞馬遜彈性塊商店(Amazon EBS 快照(snapshot)). 當啟動新的EC2例項時,將EBS 快照(snapshot)作為次要的EBS 磁碟區附後. 配置網站託管應用程式,以引用儲存在二級EBS 磁碟區中的網站資產。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：以網站資產恢復一個Amazon Elastic Block Store(Amazon EBS 快照(snapshot)). 當啟動新的EC2例項時,將EBS 快照(snapshot)作為次要的EBS 磁碟區附後. 配置網站託管應用程式,以引用儲存在二級EBS 磁碟區中的網站資產。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #853
 
@@ -19953,7 +19953,7 @@ B
 **選項**
 - A. 使用Amazon GuardDuty進行威脅檢測. 配置 Amazon EventBridge 用於過濾 GuardDuty 發現,並引用 AWS Lambda 函式來調整 AWS WAF 規則.
 - B. 使用 AWS 防火牆(Firewall) 管理器進行威脅檢測. 配置 Amazon EventBridge 用於過濾 防火牆(Firewall) 管理器發現,並引用 AWS Lambda 函式來調整 AWS WAF 網路ACL.
-- C. 使用亞馬遜巡視器進行威脅檢測,並更新AWS WAF規則. 建立 VPC 網路 ACL(network ACL) 以限制對網路應用程式的存取.
+- C. 使用Amazon Inspector進行威脅檢測,並更新AWS WAF規則. 建立 VPC 網路 ACL(network ACL) 以限制對網路應用程式的存取.
 - D. 使用Amazon Macie進行威脅檢測,並更新AWS WAF規則. 建立 VPC 網路 ACL(network ACL) 以限制對網路應用程式的存取.
 
 **答案**
@@ -19965,7 +19965,7 @@ A
 - A：使用Amazon GuardDuty進行威脅檢測. 配置 Amazon EventBridge 用於過濾 GuardDuty 發現,並引用 AWS Lambda 函式來調整 AWS WAF 規則。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：使用 AWS 防火牆(Firewall) 管理器進行威脅檢測. 配置 Amazon EventBridge 用於過濾 防火牆(Firewall) 管理器發現,並引用 AWS Lambda 函式來調整 AWS WAF 網路ACL。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用亞馬遜巡視器進行威脅檢測,並更新AWS WAF規則. 建立 VPC 網路 ACL(network ACL) 以限制對網路應用程式的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Inspector進行威脅檢測,並更新AWS WAF規則. 建立 VPC 網路 ACL(network ACL) 以限制對網路應用程式的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用Amazon Macie進行威脅檢測,並更新AWS WAF規則. 建立 VPC 網路 ACL(network ACL) 以限制對網路應用程式的存取。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #854
@@ -20141,7 +20141,7 @@ C
 - A. 為 MySQL DB 例項提供 Amazon RDS , 並配置 IOPS SSD 儲存。 透過使用Amazon CloudWatch來監視寫入操作度量. 必要時調整所提供的綜合業務政策。
 - B. 為具有通用SSD儲存功能的 MySQL DB 例項提供 Amazon RDS。 在 DB 例項前放置 Amazon ElastiCache 叢集。 配置用於查詢 ElastiCache 的應用程式。
 - C. 提供 Amazon 文件DB(帶有 MongoDB 相容性) 例項, 記憶體最佳化例項型別。 監測Amazon CloudWatch的效能相關問題. 必要時更改例項類。
-- D. 以通用效能模式提供亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 監控Amazon CloudWatch為IOPS瓶頸. 必要時改為提供吞吐量(Throughput)效能模式.
+- D. 以通用效能模式提供Amazon Elastic File System (Amazon EFS)檔案系統. 監控Amazon CloudWatch為IOPS瓶頸. 必要時改為提供吞吐量(Throughput)效能模式.
 
 **答案**
 A
@@ -20153,7 +20153,7 @@ A
 - 其餘選項比較：
 - B：為具有通用SSD儲存功能的 MySQL DB 例項提供 Amazon RDS。 在 DB 例項前放置 Amazon ElastiCache 叢集。 配置用於查詢 ElastiCache 的應用程式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：提供 Amazon 文件DB(帶有 MongoDB 相容性) 例項, 記憶體最佳化例項型別。 監測Amazon CloudWatch的效能相關問題. 必要時更改例項類 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：以通用效能模式提供亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 監控Amazon CloudWatch為IOPS瓶頸. 必要時改為提供吞吐量(Throughput)效能模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：以通用效能模式提供Amazon Elastic File System (Amazon EFS)檔案系統. 監控Amazon CloudWatch為IOPS瓶頸. 必要時改為提供吞吐量(Throughput)效能模式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #862
 
@@ -20234,7 +20234,7 @@ C
 - B. 使用帶有AWS Step函式的AWS Lambda處理資料.
 - C. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)來攝取資料.
 - D. 在 Auto Scaling 群組(Auto Scaling group) 中使用 Amazon EC2 例處理資料。
-- E. 使用AWS Fargate與亞馬遜彈性容器服務(Amazon ECS)處理資料.
+- E. 使用AWS Fargate與Amazon Elastic Container Service (Amazon ECS)處理資料.
 
 **答案**
 A,B
@@ -20248,7 +20248,7 @@ A,B
 - 其餘選項比較：
 - C：使用 AWS 資料庫(Database) 遷移服務(AWS DS)來攝取資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在 Auto Scaling 群組(Auto Scaling group) 中使用 Amazon EC2 例處理資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：使用AWS Fargate與亞馬遜彈性容器服務(Amazon ECS)處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：使用AWS Fargate與Amazon Elastic Container Service (Amazon ECS)處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #866
 
@@ -20279,7 +20279,7 @@ A
 一家公司以Amazon EC2的Amazon EC2生產量為主,擁有Amazon Elastic Block Store(Amazon EBS)卷。 一個解決方案架構師需要分析目前的EBS體積成本,並建議最佳化. 建議需要包括每月估計的儲蓄機會。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用亞馬遜檢查員報告生成 EBS 磁碟區建議進行最佳化.
+- A. 使用Amazon Inspector報告生成 EBS 磁碟區建議進行最佳化.
 - B. 使用 AWS Systems Manager 報告,確定 EBS 磁碟區建議最佳化.
 - C. 使用 Amazon CloudWatch 度量衡來決定 EBS 體積建議最佳化.
 - D. 使用AWS計算最佳化器生成EBS磁碟區建議進行最佳化.
@@ -20292,7 +20292,7 @@ D
 正確答案是 **D**。
 - D：使用AWS計算最佳化器生成EBS磁碟區建議進行最佳化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜檢查員報告生成 EBS 磁碟區建議進行最佳化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Inspector報告生成 EBS 磁碟區建議進行最佳化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 AWS Systems Manager 報告,確定 EBS 磁碟區建議最佳化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 Amazon CloudWatch 度量衡來決定 EBS 體積建議最佳化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -20325,8 +20325,8 @@ B
 一家公司希望加強其部署在AWS上的電子商務訂單處理應用程式. 應用程式必須在不可預測的流量激增期間處理每個訂單一次,而不影響客戶的經驗。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列. 將所有命令放在 SQS 佇列中。 配置 AWS Lambda 函式作為處理命令的目標.
-- B. 建立一個亞馬遜簡易通知服務(Amazon SNS)標準主題. 釋出SNS標準主題的所有命令. 將應用程式配置為通知目標。
+- A. 建立Amazon Simple Queue Service (Amazon SQS) FIFO佇列. 將所有命令放在 SQS 佇列中。 配置 AWS Lambda 函式作為處理命令的目標.
+- B. 建立一個Amazon Simple Notification Service (Amazon SNS)標準主題. 釋出SNS標準主題的所有命令. 將應用程式配置為通知目標。
 - C. 使用 Amazon AppFlow 建立 filow. 傳令至佛. 配置 AWS Lambda 函式作為處理命令的目標.
 - D. 在應用程式中配置 AWS X-Ray 以跟蹤命令請求。 透過從Amazon CloudWatch中提取訂單來配置處理訂單的應用程式.
 
@@ -20336,9 +20336,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立亞馬遜簡易佇列服務(Amazon SQS) FIFO佇列. 將所有命令放在 SQS 佇列中。 配置 AWS Lambda 函式作為處理命令的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：建立Amazon Simple Queue Service (Amazon SQS) FIFO佇列. 將所有命令放在 SQS 佇列中。 配置 AWS Lambda 函式作為處理命令的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：建立一個亞馬遜簡易通知服務(Amazon SNS)標準主題. 釋出SNS標準主題的所有命令. 將應用程式配置為通知目標 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立一個Amazon Simple Notification Service (Amazon SNS)標準主題. 釋出SNS標準主題的所有命令. 將應用程式配置為通知目標 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 Amazon AppFlow 建立 filow. 傳令至佛. 配置 AWS Lambda 函式作為處理命令的目標。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在應用程式中配置 AWS X-Ray 以跟蹤命令請求。 透過從Amazon CloudWatch中提取訂單來配置處理訂單的應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -20418,7 +20418,7 @@ D
 
 **選項**
 - A. 設定 AWS Systems Manager 補丁管理器來管理所有EC2例項. 配置 AWS 安全樞紐以生成月報。
-- B. 設定 AWS Systems Manager 補丁管理器來管理所有EC2例項. 部署亞馬遜檢查員,並配置月度報告。
+- B. 設定 AWS Systems Manager 補丁管理器來管理所有EC2例項. 部署Amazon Inspector,並配置月度報告。
 - C. 設定 AWS Shield 高階,並配置月報。 部署AWS Config,使EC2上的補丁裝置自動化。
 - D. 在帳戶中設定Amazon GuardDuty來監控所有EC2例項. 部署AWS Config,使EC2上的補丁裝置自動化。
 
@@ -20430,7 +20430,7 @@ A
 正確答案是 **A**。
 - A：設定 AWS Systems Manager 補丁管理器來管理所有EC2例項. 配置 AWS 安全樞紐以生成月報 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：設定 AWS Systems Manager 補丁管理器來管理所有EC2例項. 部署亞馬遜檢查員,並配置月度報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：設定 AWS Systems Manager 補丁管理器來管理所有EC2例項. 部署Amazon Inspector,並配置月度報告。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：設定 AWS Shield 高階,並配置月報。 部署AWS Config,使EC2上的補丁裝置自動化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在帳戶中設定Amazon GuardDuty來監控所有EC2例項. 部署AWS Config,使EC2上的補丁裝置自動化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -20512,7 +20512,7 @@ C,D
 一家公司使用Amazon S3託管其靜態網站. 公司希望在網頁上新增聯絡表. 聯絡表將有動態伺服器側元件供使用者輸入自己的名字,電子郵件地址,電話號碼,以及使用者訊息. 該公司預計每月不到100次現場存取。 當客戶填寫表格時,聯絡表必須透過電子郵件通知公司. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 在亞馬遜彈性容器服務(Amazon ECS)中託管動態聯絡表。 設定Amazon Simple電子郵件服務(Amazon SES)連線第三方電子郵件提供商.
+- A. 在Amazon Elastic Container Service (Amazon ECS)中託管動態聯絡表。 設定Amazon Simple電子郵件服務(Amazon SES)連線第三方電子郵件提供商.
 - B. 建立一個 Amazon API Gateway 端點,從 AWS Lambda 函式返回聯絡表. 在 API 閘道器上配置另一個 Lambda 功能, 向 Amazon 簡單通知服務( Amazon SNS) 專題釋出訊息。
 - C. 網站主機使用 AWS 放大主機進行靜態內容和動態內容. 使用伺服器側指令碼構建聯絡人表單. 配置 Amazon 簡單佇列服務(Amazon SQS)向公司傳送訊息.
 - D. 將網站從Amazon S3遷移到執行Windows伺服器的Amazon EC2 執行個體. 使用Internet Information Server(IIS)為Windows Server託管網頁. 使用客戶端指令碼構建聯絡人表單. 將窗體與Amazon WorkMail整合.
@@ -20525,7 +20525,7 @@ B
 正確答案是 **B**。
 - B：建立一個 Amazon API Gateway 端點,從 AWS Lambda 函式返回聯絡表. 在 API 閘道器上配置另一個 Lambda 功能, 向 Amazon 簡單通知服務( Amazon SNS) 專題釋出訊息 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在亞馬遜彈性容器服務(Amazon ECS)中託管動態聯絡表。 設定Amazon Simple電子郵件服務(Amazon SES)連線第三方電子郵件提供商。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在Amazon Elastic Container Service (Amazon ECS)中託管動態聯絡表。 設定Amazon Simple電子郵件服務(Amazon SES)連線第三方電子郵件提供商。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：網站主機使用 AWS 放大主機進行靜態內容和動態內容. 使用伺服器側指令碼構建聯絡人表單. 配置 Amazon 簡單佇列服務(Amazon SQS)向公司傳送訊息。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將網站從Amazon S3遷移到執行Windows伺服器的Amazon EC2 執行個體. 使用Internet Information Server(IIS)為Windows Server託管網頁. 使用客戶端指令碼構建聯絡人表單. 將窗體與Amazon WorkMail整合。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -20703,7 +20703,7 @@ A,C,E
 ## Question #885
 
 **題目**
-一家公司釋出了其生產應用的新版本. 公司的工作量使用Amazon EC2,AWS Lambda,AWS Fargate,和亞馬遜賽格邁克. 公司希望最佳化工作量,因為使用狀況穩定。 公司希望以最少的儲蓄計劃來支付大多數的服務. 哪些儲蓄計劃將滿足這些要求?(選二.
+一家公司釋出了其生產應用的新版本. 公司的工作量使用Amazon EC2,AWS Lambda,AWS Fargate,和Amazon SageMaker. 公司希望最佳化工作量,因為使用狀況穩定。 公司希望以最少的儲蓄計劃來支付大多數的服務. 哪些儲蓄計劃將滿足這些要求?(選二.
 
 **選項**
 - A. 為Amazon EC2和SageMaker購買EC2例項儲蓄計劃。
@@ -20755,7 +20755,7 @@ C,D
 ## Question #887
 
 **題目**
-一家公司計劃對Amazon EC2使用亞馬遜彈性塊儲存器(Amazon EBS)作為附加儲存器的應用程式重新託管. 一個解決方案架構師必須設計一個解決方案,以確保所有新建立的Amazon EBS 磁碟區預設加密. 解決方案還必須防止建立未加密的EBS 磁碟區. 哪種解決辦法能滿足這些要求?
+一家公司計劃對Amazon EC2使用Amazon Elastic Block Store (Amazon EBS)作為附加儲存器的應用程式重新託管. 一個解決方案架構師必須設計一個解決方案,以確保所有新建立的Amazon EBS 磁碟區預設加密. 解決方案還必須防止建立未加密的EBS 磁碟區. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 EC2 帳戶屬性以總是加密新的 EBS 磁碟區。
@@ -20873,10 +20873,10 @@ B
 一家公司正在將一個資料中心從原址遷移到AWS。 公司擁有多個遺留的應用程式,託管在單個虛擬伺服器上. 無法更改應用程式設計。 每個單個虛擬伺服器目前作為自己的EC2例項執行. 解決方案設計師需要確保應用程式在向AWS遷移後是可靠和可容錯的。 應用程式將執行在 Amazon EC2 例上。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個Auto Scaling 群組(Auto Scaling group),最少一個,最多一個. 建立每個應用程式例項的亞馬遜機器影象( AMI)。 使用 AMI 在 Auto Scaling 群組(Auto Scaling group) 中建立 EC2 例項 在 Auto Scaling 群組(Auto Scaling group) 前配置 應用程式負載平衡器(Application Load Balancer)。
+- A. 建立一個Auto Scaling 群組(Auto Scaling group),最少一個,最多一個. 建立每個應用程式例項的Amazon Machine Image( AMI)。 使用 AMI 在 Auto Scaling 群組(Auto Scaling group) 中建立 EC2 例項 在 Auto Scaling 群組(Auto Scaling group) 前配置 應用程式負載平衡器(Application Load Balancer)。
 - B. 使用 AWS Backup 建立每個應用程式主機的 EC2 例項中的小時 備份(backup)。 將備份(backup)存放在Amazon S3中,單獨存放可用區(Availability Zone). 配置一個災難復原(disaster recovery)程序,從最近的備份(backup)中恢復每個應用程式的EC2例項.
-- C. 建立每個應用程式例項的亞馬遜機器影象( AMI)。 從AMI推出兩個新的EC2例項. 把每個EC2例項放在單獨的可用區(Availability Zone)中. 配置一個以EC2例項為目標的網路負載平衡器(Network Load Balancer)。
-- D. 使用 AWS 緩解中心重構空間將每個應用程式移出EC2 例項。 將每個應用程式的功能細分為單個元件. 每個應用程式在亞馬遜彈性容器服務(Amazon ECS)上主機,其啟動類型為AWS Fargate.
+- C. 建立每個應用程式例項的Amazon Machine Image( AMI)。 從AMI推出兩個新的EC2例項. 把每個EC2例項放在單獨的可用區(Availability Zone)中. 配置一個以EC2例項為目標的網路負載平衡器(Network Load Balancer)。
+- D. 使用 AWS 緩解中心重構空間將每個應用程式移出EC2 例項。 將每個應用程式的功能細分為單個元件. 每個應用程式在Amazon Elastic Container Service (Amazon ECS)上主機,其啟動類型為AWS Fargate.
 
 **答案**
 C
@@ -20884,11 +20884,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立每個應用程式例項的亞馬遜機器影象( AMI)。 從AMI推出兩個新的EC2例項. 把每個EC2例項放在單獨的可用區(Availability Zone)中. 配置一個以EC2例項為目標的網路負載平衡器(Network Load Balancer)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：建立每個應用程式例項的Amazon Machine Image( AMI)。 從AMI推出兩個新的EC2例項. 把每個EC2例項放在單獨的可用區(Availability Zone)中. 配置一個以EC2例項為目標的網路負載平衡器(Network Load Balancer)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立一個Auto Scaling 群組(Auto Scaling group),最少一個,最多一個. 建立每個應用程式例項的亞馬遜機器影象( AMI)。 使用 AMI 在 Auto Scaling 群組(Auto Scaling group) 中建立 EC2 例項 在 Auto Scaling 群組(Auto Scaling group) 前配置 應用程式負載平衡器(Application Load Balancer) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立一個Auto Scaling 群組(Auto Scaling group),最少一個,最多一個. 建立每個應用程式例項的Amazon Machine Image( AMI)。 使用 AMI 在 Auto Scaling 群組(Auto Scaling group) 中建立 EC2 例項 在 Auto Scaling 群組(Auto Scaling group) 前配置 應用程式負載平衡器(Application Load Balancer) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 AWS Backup 建立每個應用程式主機的 EC2 例項中的小時 備份(backup)。 將備份(backup)存放在Amazon S3中,單獨存放可用區(Availability Zone). 配置一個災難復原(disaster recovery)程序,從最近的備份(backup)中恢復每個應用程式的EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用 AWS 緩解中心重構空間將每個應用程式移出EC2 例項。 將每個應用程式的功能細分為單個元件. 每個應用程式在亞馬遜彈性容器服務(Amazon ECS)上主機,其啟動類型為AWS Fargate。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用 AWS 緩解中心重構空間將每個應用程式移出EC2 例項。 將每個應用程式的功能細分為單個元件. 每個應用程式在Amazon Elastic Container Service (Amazon ECS)上主機,其啟動類型為AWS Fargate。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #893
 
@@ -20988,7 +20988,7 @@ B
 在工作周第一天之前,一家公司每週都開展一項關鍵資料分析工作。 這項工作至少需要1小時才能完成分析. 工作狀態良好,無法容忍中斷。 公司需要在AWS上執行這項工作需要解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 為任務建立容器。 使用 Amazon EventBridge 排程器來安排在亞馬遜彈性容器服務(Amazon ECS)叢集上作為 AWS Fargate 任務執行的任務.
+- A. 為任務建立容器。 使用 Amazon EventBridge 排程器來安排在Amazon Elastic Container Service (Amazon ECS)叢集上作為 AWS Fargate 任務執行的任務.
 - B. 配置在 AWS Lambda 函式中執行的任務。 在 Amazon EventBridge 中建立一個預定規則來引用 Lambda 函式.
 - C. 配置執行亞馬遜 Linux 的 Amazon EC2 Spot 執行個體 的 Auto Scaling 群組(Auto Scaling group)。 配置例項上的 crontab 項來執行分析。
 - D. 配置 AWS 資料同步任務來執行此任務。 配置一個 cron 表示式以在日程中執行任務。
@@ -20999,7 +20999,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為任務建立容器。 使用 Amazon EventBridge 排程器來安排在亞馬遜彈性容器服務(Amazon ECS)叢集上作為 AWS Fargate 任務執行的任務。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：為任務建立容器。 使用 Amazon EventBridge 排程器來安排在Amazon Elastic Container Service (Amazon ECS)叢集上作為 AWS Fargate 任務執行的任務。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：配置在 AWS Lambda 函式中執行的任務。 在 Amazon EventBridge 中建立一個預定規則來引用 Lambda 函式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：配置執行亞馬遜 Linux 的 Amazon EC2 Spot 執行個體 的 Auto Scaling 群組(Auto Scaling group)。 配置例項上的 crontab 項來執行分析 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -21054,7 +21054,7 @@ D
 ## Question #900
 
 **題目**
-一家公司希望使用亞馬遜彈性容器服務公司(Amazon ECS)在混合環境中執行其立體應用. 該應用程式目前執行在房地的集裝箱上。 公司需要一種單一的容器溶液,可以在一個上層,混合,或雲層環境中進行規模化. 公司必須在AWS雲執行新的應用容器,必須使用負載平衡器(load balancer)進行HTTP流量. 哪些行動組合將滿足這些要求?(選二.
+一家公司希望使用Amazon ECS公司(Amazon ECS)在混合環境中執行其立體應用. 該應用程式目前執行在房地的集裝箱上。 公司需要一種單一的容器溶液,可以在一個上層,混合,或雲層環境中進行規模化. 公司必須在AWS雲執行新的應用容器,必須使用負載平衡器(load balancer)進行HTTP流量. 哪些行動組合將滿足這些要求?(選二.
 
 **選項**
 - A. 建立使用AWS Fargate發射型別的雲應用容器的ECS叢集. 使用 Amazon ECS 任何外部發射型別, 用於預設應用容器。
@@ -21152,10 +21152,10 @@ A
 一家公司有一個客戶用來將影象上傳到Amazon S3桶的應用程式. 每天晚上,公司都會推出一個Amazon EC2 Spot Fleet,處理公司當天收到的所有影象. 每個影象的處理需要2分鐘,需要512 MB的記憶體. 一個解決方案架構師需要修改應用程式,在影象上傳時處理影象. 哪些變化將以符合成本效益的方式滿足這些要求?
 
 **選項**
-- A. 使用 S3 事件通知將帶有影象細節的訊息寫入一個亞馬遜簡單佇列服務(Amazon SQS)佇列. 配置 AWS Lambda 函式以讀取佇列中的訊息並處理影象。
-- B. 使用 S3 事件通知將帶有影象細節的訊息寫入一個亞馬遜簡單佇列服務(Amazon SQS)佇列. 配置 EC2 保留例項從佇列中讀取訊息並處理影象。
-- C. 使用 S3 事件通知釋出包含影象細節的郵件到一個亞馬遜簡單通知服務(Amazon SNS)主題. 在亞馬遜彈性容器服務(Amazon ECS)中配置一個集裝箱例項,以訂閱該話題並處理影象。
-- D. 使用 S3 事件通知釋出包含影象細節的郵件到一個亞馬遜簡單通知服務(Amazon SNS)主題. 配置一個 AWS 彈性 Beanstalk 應用程式來訂閱話題並處理影象。
+- A. 使用 S3 事件通知將帶有影象細節的訊息寫入一個Amazon Simple Queue Service (Amazon SQS)佇列. 配置 AWS Lambda 函式以讀取佇列中的訊息並處理影象。
+- B. 使用 S3 事件通知將帶有影象細節的訊息寫入一個Amazon Simple Queue Service (Amazon SQS)佇列. 配置 EC2 保留例項從佇列中讀取訊息並處理影象。
+- C. 使用 S3 事件通知釋出包含影象細節的郵件到一個Amazon Simple Notification Service (Amazon SNS)主題. 在Amazon Elastic Container Service (Amazon ECS)中配置一個集裝箱例項,以訂閱該話題並處理影象。
+- D. 使用 S3 事件通知釋出包含影象細節的郵件到一個Amazon Simple Notification Service (Amazon SNS)主題. 配置一個 AWS 彈性 Beanstalk 應用程式來訂閱話題並處理影象。
 
 **答案**
 A
@@ -21163,11 +21163,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用 S3 事件通知將帶有影象細節的訊息寫入一個亞馬遜簡單佇列服務(Amazon SQS)佇列. 配置 AWS Lambda 函式以讀取佇列中的訊息並處理影象 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：使用 S3 事件通知將帶有影象細節的訊息寫入一個Amazon Simple Queue Service (Amazon SQS)佇列. 配置 AWS Lambda 函式以讀取佇列中的訊息並處理影象 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用 S3 事件通知將帶有影象細節的訊息寫入一個亞馬遜簡單佇列服務(Amazon SQS)佇列. 配置 EC2 保留例項從佇列中讀取訊息並處理影象 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用 S3 事件通知釋出包含影象細節的郵件到一個亞馬遜簡單通知服務(Amazon SNS)主題. 在亞馬遜彈性容器服務(Amazon ECS)中配置一個集裝箱例項,以訂閱該話題並處理影象。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用 S3 事件通知釋出包含影象細節的郵件到一個亞馬遜簡單通知服務(Amazon SNS)主題. 配置一個 AWS 彈性 Beanstalk 應用程式來訂閱話題並處理影象 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用 S3 事件通知將帶有影象細節的訊息寫入一個Amazon Simple Queue Service (Amazon SQS)佇列. 配置 EC2 保留例項從佇列中讀取訊息並處理影象 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用 S3 事件通知釋出包含影象細節的郵件到一個Amazon Simple Notification Service (Amazon SNS)主題. 在Amazon Elastic Container Service (Amazon ECS)中配置一個集裝箱例項,以訂閱該話題並處理影象。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用 S3 事件通知釋出包含影象細節的郵件到一個Amazon Simple Notification Service (Amazon SNS)主題. 配置一個 AWS 彈性 Beanstalk 應用程式來訂閱話題並處理影象 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #905
 
@@ -21336,7 +21336,7 @@ C
 ## Question #912
 
 **題目**
-一家公司透過使用亞馬遜S3 Glacier Deep Archive儲存類,在Amazon S3桶中儲存了跨越多個字首的數百萬個物件. 公司需要刪除所有3年以上的資料,但必須保留的一個資料子集除外. 公司已經確定了必須保留的資料,並希望實施無伺服器解決方案. 哪種解決辦法能滿足這些要求?
+一家公司透過使用Amazon S3 Glacier Deep Archive儲存類,在Amazon S3桶中儲存了跨越多個字首的數百萬個物件. 公司需要刪除所有3年以上的資料,但必須保留的一個資料子集除外. 公司已經確定了必須保留的資料,並希望實施無伺服器解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用 S3 庫存來列出所有物件。 使用 AWS CLI 建立一個執行在 Amazon EC2 例項上的指令碼,從目錄列表中刪除物件.
@@ -21456,8 +21456,8 @@ A
 **選項**
 - A. 使用NAT閘道器管理網路流量. 使用 Amazon EC2 自動縮放組接收,處理和儲存已處理的客戶訂單. 使用 AWS Lambda 函式捕獲和儲存未處理的命令.
 - B. 使用網路負載平衡器(Network Load Balancer)(NLB)管理網路流量。 使用應用程式負載平衡器(Application Load Balancer)接收來自NLUS Amazon Redshift的客戶訂單,並配有多AZ部署以儲存未經處理和處理的客戶訂單.
-- C. 使用一個Gateway 負載平衡器(Load Balancer)(GWLB)來管理網路流量. 使用亞馬遜彈性容器服務(Amazon ECS)接收和處理客戶訂單. 使用GWLB捕捉和儲存未處理的命令. 使用Amazon DynamoDB儲存已處理的客戶訂單.
-- D. 使用應用程式負載平衡器(Application Load Balancer)管理網路流量. 使用 Amazon EC2 自動縮放組來接收和處理客戶訂單. 使用亞馬遜簡易佇列服務(Amazon SQS)儲存未處理的命令. 使用帶有多AZ部署的Amazon RDS儲存已處理的客戶訂單.
+- C. 使用一個Gateway 負載平衡器(Load Balancer)(GWLB)來管理網路流量. 使用Amazon Elastic Container Service (Amazon ECS)接收和處理客戶訂單. 使用GWLB捕捉和儲存未處理的命令. 使用Amazon DynamoDB儲存已處理的客戶訂單.
+- D. 使用應用程式負載平衡器(Application Load Balancer)管理網路流量. 使用 Amazon EC2 自動縮放組來接收和處理客戶訂單. 使用Amazon Simple Queue Service (Amazon SQS)儲存未處理的命令. 使用帶有多AZ部署的Amazon RDS儲存已處理的客戶訂單.
 
 **答案**
 D
@@ -21465,11 +21465,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用應用程式負載平衡器(Application Load Balancer)管理網路流量. 使用 Amazon EC2 自動縮放組來接收和處理客戶訂單. 使用亞馬遜簡易佇列服務(Amazon SQS)儲存未處理的命令. 使用帶有多AZ部署的Amazon RDS儲存已處理的客戶訂單。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：使用應用程式負載平衡器(Application Load Balancer)管理網路流量. 使用 Amazon EC2 自動縮放組來接收和處理客戶訂單. 使用Amazon Simple Queue Service (Amazon SQS)儲存未處理的命令. 使用帶有多AZ部署的Amazon RDS儲存已處理的客戶訂單。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用NAT閘道器管理網路流量. 使用 Amazon EC2 自動縮放組接收,處理和儲存已處理的客戶訂單. 使用 AWS Lambda 函式捕獲和儲存未處理的命令。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用網路負載平衡器(Network Load Balancer)(NLB)管理網路流量。 使用應用程式負載平衡器(Application Load Balancer)接收來自NLUS Amazon Redshift的客戶訂單,並配有多AZ部署以儲存未經處理和處理的客戶訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用一個Gateway 負載平衡器(Load Balancer)(GWLB)來管理網路流量. 使用亞馬遜彈性容器服務(Amazon ECS)接收和處理客戶訂單. 使用GWLB捕捉和儲存未處理的命令. 使用Amazon DynamoDB儲存已處理的客戶訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用一個Gateway 負載平衡器(Load Balancer)(GWLB)來管理網路流量. 使用Amazon Elastic Container Service (Amazon ECS)接收和處理客戶訂單. 使用GWLB捕捉和儲存未處理的命令. 使用Amazon DynamoDB儲存已處理的客戶訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #918
 
@@ -21523,10 +21523,10 @@ A
 一家公司正在從一個單一的架構遷移到一個在Amazon EC2上託管的網路應用程式,一個沒有伺服器的微服務架構. 公司希望使用支援事件驅動,鬆散組合的架構的AWS服務. 公司希望使用出版/訂閱(pub/sub)模式. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給亞馬遜簡易佇列服務(Amazon SQS)佇列. 配置一個或多個訂閱者從 SQS 佇列讀取事件。
-- B. 配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給亞馬遜簡單通知服務(Amazon SNS)主題. 配置一個或多個訂閱者接收來自 SNS 主題的事件.
+- A. 配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給Amazon Simple Queue Service (Amazon SQS)佇列. 配置一個或多個訂閱者從 SQS 佇列讀取事件。
+- B. 配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給Amazon Simple Notification Service (Amazon SNS)主題. 配置一個或多個訂閱者接收來自 SNS 主題的事件.
 - C. 配置一個 Amazon API Gateway WebSocket API ,用於寫入 Amazon Kinesis Data Streams 中的資料流,並帶有增強的扇形輸出. 配置一個或多個使用者接收資料流中的事件。
-- D. 配置 Amazon API Gateway HTTP API 以引用 AWS Lambda 函式,該函式釋出事件給亞馬遜簡易通知服務(Amazon SNS)主題. 配置一個或多個訂閱者以接收來自該主題的事件。
+- D. 配置 Amazon API Gateway HTTP API 以引用 AWS Lambda 函式,該函式釋出事件給Amazon Simple Notification Service (Amazon SNS)主題. 配置一個或多個訂閱者以接收來自該主題的事件。
 
 **答案**
 B
@@ -21534,11 +21534,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給亞馬遜簡單通知服務(Amazon SNS)主題. 配置一個或多個訂閱者接收來自 SNS 主題的事件。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給Amazon Simple Notification Service (Amazon SNS)主題. 配置一個或多個訂閱者接收來自 SNS 主題的事件。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給亞馬遜簡易佇列服務(Amazon SQS)佇列. 配置一個或多個訂閱者從 SQS 佇列讀取事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：配置 Amazon API Gateway REST API 以引用 AWS Lambda 函式,將事件釋出給Amazon Simple Queue Service (Amazon SQS)佇列. 配置一個或多個訂閱者從 SQS 佇列讀取事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：配置一個 Amazon API Gateway WebSocket API ,用於寫入 Amazon Kinesis Data Streams 中的資料流,並帶有增強的扇形輸出. 配置一個或多個使用者接收資料流中的事件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：配置 Amazon API Gateway HTTP API 以引用 AWS Lambda 函式,該函式釋出事件給亞馬遜簡易通知服務(Amazon SNS)主題. 配置一個或多個訂閱者以接收來自該主題的事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：配置 Amazon API Gateway HTTP API 以引用 AWS Lambda 函式,該函式釋出事件給Amazon Simple Notification Service (Amazon SNS)主題. 配置一個或多個訂閱者以接收來自該主題的事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #921
 
@@ -21593,7 +21593,7 @@ B
 
 **選項**
 - A. 使用 AWS 計算最佳化器獲取例項型別垂直縮放的推薦。
-- B. 從網路伺服器建立一個亞馬遜機器影象(AMI). 在新的發射模板中參考AMI.
+- B. 從網路伺服器建立一個Amazon Machine Image (AMI). 在新的發射模板中參考AMI.
 - C. 建立 Auto Scaling 群組(Auto Scaling group) 和 應用程式負載平衡器(Application Load Balancer) 垂直縮放。
 - D. 使用 AWS 計算最佳化器以獲得對例項型別進行水平縮放的推薦。
 - E. 建立 Auto Scaling 群組(Auto Scaling group) 和 應用程式負載平衡器(Application Load Balancer) 橫向縮放。
@@ -21605,7 +21605,7 @@ B,E
 
 **詳解**
 正確答案是 **B, E**。
-- B：從網路伺服器建立一個亞馬遜機器影象(AMI). 在新的發射模板中參考AMI。此選項符合題目條件，能有效滿足核心需求。
+- B：從網路伺服器建立一個Amazon Machine Image (AMI). 在新的發射模板中參考AMI。此選項符合題目條件，能有效滿足核心需求。
 - E：建立 Auto Scaling 群組(Auto Scaling group) 和 應用程式負載平衡器(Application Load Balancer) 橫向縮放 。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - A：使用 AWS 計算最佳化器獲取例項型別垂直縮放的推薦 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -21621,7 +21621,7 @@ B,E
 - A. 使用網路存取分析器來審查公司AWS帳戶中的所有存取許可權.
 - B. 建立 AWS 雲表提醒, 當 IAM 使用者在 AWS 帳戶中建立或修改資源時啟用。
 - C. 使用 AWS 身份和存取管理(IAM)存取分析器來審查公司的所有資源和帳戶.
-- D. 利用亞馬遜巡視員發現現有IAM政策中的弱點.
+- D. 利用Amazon Inspector發現現有IAM政策中的弱點.
 
 **答案**
 C
@@ -21633,7 +21633,7 @@ C
 - 其餘選項比較：
 - A：使用網路存取分析器來審查公司AWS帳戶中的所有存取許可權。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立 AWS 雲表提醒, 當 IAM 使用者在 AWS 帳戶中建立或修改資源時啟用 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：利用亞馬遜巡視員發現現有IAM政策中的弱點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：利用Amazon Inspector發現現有IAM政策中的弱點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #925
 
@@ -21661,7 +21661,7 @@ B
 ## Question #926
 
 **題目**
-一家公司在集裝箱上執行其客戶網上應用程式。 工作量在AWS Fargate上使用亞馬遜彈性容器服務(Amazon ECS). 網路應用是資源密集型的. 網路應用程式需要每週7天、每天24小時供客戶使用。 該公司預計該應用程式將經歷高速流量的短暫暴發。 工作量必須很大。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司在集裝箱上執行其客戶網上應用程式。 工作量在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS). 網路應用是資源密集型的. 網路應用程式需要每週7天、每天24小時供客戶使用。 該公司預計該應用程式將經歷高速流量的短暫暴發。 工作量必須很大。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 配置帶有 Fargate 的 ECS 容量提供者。 使用第三方工具進行負載測試。 在Amazon CloudWatch中正確處理遠門任務.
@@ -21730,7 +21730,7 @@ B
 ## Question #929
 
 **題目**
-一個保健公司正在開發一個AWS Lambda功能,向加密的亞馬遜簡易通知服務(Amazon SNS)釋出通知。 通知載有受保護的健康資訊(PHI)。 SNS主題使用AWS Key Management Service(AWS KMS)客戶管理加密(encryption)的金鑰. 公司必須確保申請獲得安全釋出SNS主題資訊的必要許可. 哪些步驟的組合將滿足這些要求?(選三.
+一個保健公司正在開發一個AWS Lambda功能,向加密的Amazon Simple Notification Service (Amazon SNS)釋出通知。 通知載有受保護的健康資訊(PHI)。 SNS主題使用AWS Key Management Service(AWS KMS)客戶管理加密(encryption)的金鑰. 公司必須確保申請獲得安全釋出SNS主題資訊的必要許可. 哪些步驟的組合將滿足這些要求?(選三.
 
 **選項**
 - A. 為 SNS 主題建立資源政策,允許 Lambda 函式釋出該主題的資訊.
@@ -21780,11 +21780,11 @@ A
 ## Question #931
 
 **題目**
-一家媒體公司在我們東-1區域(Region)擁有多帳戶AWS環境. 該公司在一個釋出效能度量的製作帳戶中有一個亞馬遜簡易通知服務(Amazon SNS)的主題. 公司在一個管理員帳戶中有一個AWS Lambda功能,用於處理和分析日誌資料. 管理員帳戶中的Lambda功能,在報告重要度量衡時,必須被生產帳戶中SNS專題的資訊所引用。 哪些步驟的組合將滿足這些要求?(選二.
+一家媒體公司在我們東-1區域(Region)擁有多帳戶AWS環境. 該公司在一個釋出效能度量的製作帳戶中有一個Amazon Simple Notification Service (Amazon SNS)的主題. 公司在一個管理員帳戶中有一個AWS Lambda功能,用於處理和分析日誌資料. 管理員帳戶中的Lambda功能,在報告重要度量衡時,必須被生產帳戶中SNS專題的資訊所引用。 哪些步驟的組合將滿足這些要求?(選二.
 
 **選項**
 - A. 為Lambda函式建立IAM資源政策,允許Amazon SNS引用該函式.
-- B. 在管理員帳戶中執行一個亞馬遜簡單佇列服務(Amazon SQS)佇列,以緩衝來自生產帳戶中SNS主題的資訊. 配置 SQS 佇列以引用 Lambda 函式。
+- B. 在管理員帳戶中執行一個Amazon Simple Queue Service (Amazon SQS)佇列,以緩衝來自生產帳戶中SNS主題的資訊. 配置 SQS 佇列以引用 Lambda 函式。
 - C. 為 SNS 主題建立 IAM 政策(IAM policy),允許 Lambda 函式訂閱該主題.
 - D. 在生產帳戶中使用一個Amazon EventBridge規則來捕捉SNS主題通知. 配置 EventBridge 規則將通知轉發給管理員帳戶中的 Lambda 函式。
 - E. 將效能指標儲存在生產帳戶中的Amazon S3桶中。 使用 Amazon Athena 來分析管理員帳戶中的度量衡.
@@ -21799,7 +21799,7 @@ A,C
 - A：為Lambda函式建立IAM資源政策,允許Amazon SNS引用該函式。此選項符合題目條件，能有效滿足核心需求。
 - C：為 SNS 主題建立 IAM 政策(IAM policy),允許 Lambda 函式訂閱該主題。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- B：在管理員帳戶中執行一個亞馬遜簡單佇列服務(Amazon SQS)佇列,以緩衝來自生產帳戶中SNS主題的資訊. 配置 SQS 佇列以引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在管理員帳戶中執行一個Amazon Simple Queue Service (Amazon SQS)佇列,以緩衝來自生產帳戶中SNS主題的資訊. 配置 SQS 佇列以引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在生產帳戶中使用一個Amazon EventBridge規則來捕捉SNS主題通知. 配置 EventBridge 規則將通知轉發給管理員帳戶中的 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：將效能指標儲存在生產帳戶中的Amazon S3桶中。 使用 Amazon Athena 來分析管理員帳戶中的度量衡。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -22097,7 +22097,7 @@ C
 - A. 在單一的可用區(Availability Zone)中部署Amazon EC2 執行個體。 在同一可用區(Availability Zone)中部署 RDS DB 例項。 使用 Amazon S3 並啟用版本以儲存靜態資產。
 - B. 在Auto Scaling 群組(Auto Scaling group)中部署Amazon EC2 執行個體,跨越多個可用區(Availability Zones). 部署一個多AZ RDS DB例項。 使用Amazon CloudFront分配靜態資產.
 - C. 在單一的可用區(Availability Zone)中部署Amazon EC2 執行個體。 在第二個可用區(Availability Zone)中部署 RDS DB 例項,用於跨AZ冗餘. 直接從EC2例項提供靜態資產。
-- D. 使用AWS Lambda功能為網路應用程式服務. 使用 Amazon Aurora 無伺服器 v2 為 資料庫(database). 將靜態資產儲存在亞馬遜彈性檔案系統(Amazon EFS) One Zone-不經常存取(One Zone-IA)中.
+- D. 使用AWS Lambda功能為網路應用程式服務. 使用 Amazon Aurora 無伺服器 v2 為 資料庫(database). 將靜態資產儲存在Amazon Elastic File System (Amazon EFS) One Zone-不經常存取(One Zone-IA)中.
 
 **答案**
 B
@@ -22109,7 +22109,7 @@ B
 - 其餘選項比較：
 - A：在單一的可用區(Availability Zone)中部署Amazon EC2 執行個體。 在同一可用區(Availability Zone)中部署 RDS DB 例項。 使用 Amazon S3 並啟用版本以儲存靜態資產 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在單一的可用區(Availability Zone)中部署Amazon EC2 執行個體。 在第二個可用區(Availability Zone)中部署 RDS DB 例項,用於跨AZ冗餘. 直接從EC2例項提供靜態資產。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：使用AWS Lambda功能為網路應用程式服務. 使用 Amazon Aurora 無伺服器 v2 為 資料庫(database). 將靜態資產儲存在亞馬遜彈性檔案系統(Amazon EFS) One Zone-不經常存取(One Zone-IA)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：使用AWS Lambda功能為網路應用程式服務. 使用 Amazon Aurora 無伺服器 v2 為 資料庫(database). 將靜態資產儲存在Amazon Elastic File System (Amazon EFS) One Zone-不經常存取(One Zone-IA)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #945
 
@@ -22189,7 +22189,7 @@ B
 - A. 配置 AWS 的 DMS 複寫(replication) 例項, 並配置多AZ 配置, 用於跨多個 可用區(Availability Zones) 的提供例項。
 - B. 建立一個AWS DMS 無伺服器 複寫(replication)任務,在提供所需能力的同時分析和複製資料.
 - C. 使用 Amazon EC2 自動縮放以根據資料複製量上下縮放 AWS DS MS 複寫(replication) 例項大小。
-- D. 透過使用亞馬遜彈性容器服務(Amazon ECS)提供AWS DMS 複寫(replication)容量,具有AWS Fargate發射型,在提供所需容量的同時分析和複製資料.
+- D. 透過使用Amazon Elastic Container Service (Amazon ECS)提供AWS DMS 複寫(replication)容量,具有AWS Fargate發射型,在提供所需容量的同時分析和複製資料.
 
 **答案**
 A
@@ -22201,7 +22201,7 @@ A
 - 其餘選項比較：
 - B：建立一個AWS DMS 無伺服器 複寫(replication)任務,在提供所需能力的同時分析和複製資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 Amazon EC2 自動縮放以根據資料複製量上下縮放 AWS DS MS 複寫(replication) 例項大小 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：透過使用亞馬遜彈性容器服務(Amazon ECS)提供AWS DMS 複寫(replication)容量,具有AWS Fargate發射型,在提供所需容量的同時分析和複製資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：透過使用Amazon Elastic Container Service (Amazon ECS)提供AWS DMS 複寫(replication)容量,具有AWS Fargate發射型,在提供所需容量的同時分析和複製資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #949
 
@@ -22302,7 +22302,7 @@ A
 
 **選項**
 - A. 將上傳的影象移動到 Amazon S3 Glacier Deep Archive. 將溢價使用者生成的AI影象移至 S3 標準。 將非溢價使用者生成的AI影象移至S3標準-不頻繁存取(S3 Standard-IA).
-- B. 將上傳的影象移到亞馬遜 S3 Glacier Deep Archive 將所有生成的AI影象移到 S3 Glacier Flexible Retrieval.
+- B. 將上傳的影象移到Amazon S3 Glacier Deep Archive 將所有生成的AI影象移到 S3 Glacier Flexible Retrieval.
 - C. 將上傳的影象移動到 Amazon S3 一個區-不頻繁存取(S3 One Zone-IA). 將溢價使用者生成的AI影象移至 S3 標準。 將非Premium使用者生成的AI影象移動到S3標準-不頻繁存取(S3 Standard-IA).
 - D. 將上傳的影象移動到 Amazon S3 一個區-不頻繁存取(S3 One Zone-IA). 將所有生成的AI影象移動到 S3 Glacier Flexible Retrieval.
 
@@ -22314,7 +22314,7 @@ A
 正確答案是 **A**。
 - A：將上傳的影象移動到 Amazon S3 Glacier Deep Archive. 將溢價使用者生成的AI影象移至 S3 標準。 將非溢價使用者生成的AI影象移至S3標準-不頻繁存取(S3 Standard-IA)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：將上傳的影象移到亞馬遜 S3 Glacier Deep Archive 將所有生成的AI影象移到 S3 Glacier Flexible Retrieval。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將上傳的影象移到Amazon S3 Glacier Deep Archive 將所有生成的AI影象移到 S3 Glacier Flexible Retrieval。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將上傳的影象移動到 Amazon S3 一個區-不頻繁存取(S3 One Zone-IA). 將溢價使用者生成的AI影象移至 S3 標準。 將非Premium使用者生成的AI影象移動到S3標準-不頻繁存取(S3 Standard-IA)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：將上傳的影象移動到 Amazon S3 一個區-不頻繁存取(S3 One Zone-IA). 將所有生成的AI影象移動到 S3 Glacier Flexible Retrieval。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -22327,7 +22327,7 @@ A
 - A. 將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將ML模型用作AWS Lambda功能,供NLB使用。 根據NLB收到的流量,使用自動縮放來縮放Lambda功能。
 - B. 將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將ML模型用作ALB將援用的Amazon彈性集裝箱服務(Amazon ECS)服務。 根據ALB收到的流量,使用自動縮放來縮放ECS叢集例項.
 - C. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將 ML 模型應用為 SQS 事件將引用的 AWS Lambda 函式。 根據SQS佇列的大小,使用自動縮放來增加Lambda函式的vCPU數量.
-- D. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將ML模型作為從佇列讀取的亞馬遜彈性容器服務(Amazon ECS)服務。 使用Amazon ECS的自動縮放來根據SQS佇列的大小對叢集能力和服務數量進行比例化.
+- D. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將ML模型作為從佇列讀取的Amazon Elastic Container Service (Amazon ECS)服務。 使用Amazon ECS的自動縮放來根據SQS佇列的大小對叢集能力和服務數量進行比例化.
 
 **答案**
 D
@@ -22335,7 +22335,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將ML模型作為從佇列讀取的亞馬遜彈性容器服務(Amazon ECS)服務。 使用Amazon ECS的自動縮放來根據SQS佇列的大小對叢集能力和服務數量進行比例化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將ML模型作為從佇列讀取的Amazon Elastic Container Service (Amazon ECS)服務。 使用Amazon ECS的自動縮放來根據SQS佇列的大小對叢集能力和服務數量進行比例化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將ML模型用作AWS Lambda功能,供NLB使用。 根據NLB收到的流量,使用自動縮放來縮放Lambda功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將ML模型用作ALB將援用的Amazon彈性集裝箱服務(Amazon ECS)服務。 根據ALB收到的流量,使用自動縮放來縮放ECS叢集例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -22371,9 +22371,9 @@ A
 
 **選項**
 - A. 將資料處理應用程式遷移到 Amazon EC2 Spotexits。 在Amazon S3標準中儲存資料. 將資料移至Amazon S3冰川瞬間. 三十日後取還. 設定在2年後刪除資料的過期值。
-- B. 將資料處理應用程式遷移到 Amazon EC2 On-Demand Events。 資料儲存於亞馬遜 S3 Glacier Instant Retrieval. 30天后將資料移至S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值。
-- C. 部署Amazon EC2 Spotsexits來管理批次作業. 在Amazon S3標準中儲存資料. 30天后將資料移至亞馬遜S3 Glacier Flexible Retrieval. 設定在2年後刪除資料的過期值。
-- D. 部署Amazon EC2 現場調查組來進行批次工作。 在Amazon S3標準中儲存資料. 30天后將資料移至亞馬遜S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值。
+- B. 將資料處理應用程式遷移到 Amazon EC2 On-Demand Events。 資料儲存於Amazon S3 Glacier Instant Retrieval. 30天后將資料移至S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值。
+- C. 部署Amazon EC2 Spotsexits來管理批次作業. 在Amazon S3標準中儲存資料. 30天后將資料移至Amazon S3 Glacier Flexible Retrieval. 設定在2年後刪除資料的過期值。
+- D. 部署Amazon EC2 現場調查組來進行批次工作。 在Amazon S3標準中儲存資料. 30天后將資料移至Amazon S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值。
 
 **答案**
 C
@@ -22381,11 +22381,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：部署Amazon EC2 Spotsexits來管理批次作業. 在Amazon S3標準中儲存資料. 30天后將資料移至亞馬遜S3 Glacier Flexible Retrieval. 設定在2年後刪除資料的過期值 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：部署Amazon EC2 Spotsexits來管理批次作業. 在Amazon S3標準中儲存資料. 30天后將資料移至Amazon S3 Glacier Flexible Retrieval. 設定在2年後刪除資料的過期值 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將資料處理應用程式遷移到 Amazon EC2 Spotexits。 在Amazon S3標準中儲存資料. 將資料移至Amazon S3冰川瞬間. 三十日後取還. 設定在2年後刪除資料的過期值 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將資料處理應用程式遷移到 Amazon EC2 On-Demand Events。 資料儲存於亞馬遜 S3 Glacier Instant Retrieval. 30天后將資料移至S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：部署Amazon EC2 現場調查組來進行批次工作。 在Amazon S3標準中儲存資料. 30天后將資料移至亞馬遜S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將資料處理應用程式遷移到 Amazon EC2 On-Demand Events。 資料儲存於Amazon S3 Glacier Instant Retrieval. 30天后將資料移至S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：部署Amazon EC2 現場調查組來進行批次工作。 在Amazon S3標準中儲存資料. 30天后將資料移至Amazon S3 Glacier Deep Archive. 設定在2年後刪除資料的過期值 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #957
 
@@ -22531,13 +22531,13 @@ A
 ## Question #963
 
 **題目**
-一個解決方案架構師正在設計一個新的無狀態應用程式的雲結構,將在AWS上部署. 解決方案架構師為應用程式建立了一個亞馬遜機器影象(AMI)並推出模板. 根據需要處理的工作數量,處理必須平行進行,同時根據需要增加和刪除應用程式Amazon EC2。 申請必須鬆綁。 工作專案必須長期儲存。 哪種解決辦法能滿足這些要求?
+一個解決方案架構師正在設計一個新的無狀態應用程式的雲結構,將在AWS上部署. 解決方案架構師為應用程式建立了一個Amazon Machine Image (AMI)並推出模板. 根據需要處理的工作數量,處理必須平行進行,同時根據需要增加和刪除應用程式Amazon EC2。 申請必須鬆綁。 工作專案必須長期儲存。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),以根據CPU的使用來新增和刪除EC2例項.
+- A. 建立一個Amazon Simple Notification Service (Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),以根據CPU的使用來新增和刪除EC2例項.
 - B. 建立一個 Amazon 簡單佇列服務( Amazon SQS) 佇列以持有需要處理的工作。 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),以根據網路使用情況新增和刪除EC2例項.
 - C. 建立一個 Amazon 簡單佇列服務( Amazon SQS) 佇列以持有需要處理的工作。 使用帶有縮放策略集的發射模板建立 Auto Scaling 群組(Auto Scaling group),根據SQS佇列中的專案數量新增和刪除EC2例項.
-- D. 建立一個亞馬遜簡單通知服務(Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),根據釋出到SNS主題的資訊數量來新增和刪除EC2例項.
+- D. 建立一個Amazon Simple Notification Service (Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),根據釋出到SNS主題的資訊數量來新增和刪除EC2例項.
 
 **答案**
 C
@@ -22547,9 +22547,9 @@ C
 正確答案是 **C**。
 - C：建立一個 Amazon 簡單佇列服務( Amazon SQS) 佇列以持有需要處理的工作。 使用帶有縮放策略集的發射模板建立 Auto Scaling 群組(Auto Scaling group),根據SQS佇列中的專案數量新增和刪除EC2例項。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立一個亞馬遜簡單通知服務(Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),以根據CPU的使用來新增和刪除EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立一個Amazon Simple Notification Service (Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),以根據CPU的使用來新增和刪除EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立一個 Amazon 簡單佇列服務( Amazon SQS) 佇列以持有需要處理的工作。 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),以根據網路使用情況新增和刪除EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立一個亞馬遜簡單通知服務(Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),根據釋出到SNS主題的資訊數量來新增和刪除EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立一個Amazon Simple Notification Service (Amazon SNS)主題,以傳送需要處理的工作. 透過使用帶有縮放策略集的發射模板來建立Auto Scaling 群組(Auto Scaling group),根據釋出到SNS主題的資訊數量來新增和刪除EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #964
 
@@ -22559,8 +22559,8 @@ C
 **選項**
 - A. 在Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2例項來部署一個集裝箱化的應用程式. 使用應用程式負載平衡器(Application Load Balancer)來分配網路流量. 使用 Amazon RDS DB 例項儲存產品資料和產品影象.
 - B. 使用 AWS Lambda 函式來管理現有的單體應用程式. 使用Amazon DynamoDB儲存產品資料和產品影象. 使用Amazon簡單通知服務(Amazon SNS)進行Lambda函式之間的事件驅動通訊.
-- C. 使用Amazon Elastic Kubernetes Service(Amazon EKS),並部署Amazon EC2,以部署一個容器化的應用程式. 使用Amazon Aurora叢集儲存產品資料. 使用 AWS Step 函式來管理 workfiows。 將產品影象儲存在亞馬遜S3 Glacier Deep Archive.
-- D. 使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3桶中儲存產品影象.
+- C. 使用Amazon Elastic Kubernetes Service(Amazon EKS),並部署Amazon EC2,以部署一個容器化的應用程式. 使用Amazon Aurora叢集儲存產品資料. 使用 AWS Step 函式來管理 workfiows。 將產品影象儲存在Amazon S3 Glacier Deep Archive.
+- D. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3桶中儲存產品影象.
 
 **答案**
 D
@@ -22568,11 +22568,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用帶有AWS Fargate的亞馬遜彈性容器服務(Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3桶中儲存產品影象。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3桶中儲存產品影象。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：在Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2例項來部署一個集裝箱化的應用程式. 使用應用程式負載平衡器(Application Load Balancer)來分配網路流量. 使用 Amazon RDS DB 例項儲存產品資料和產品影象。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 AWS Lambda 函式來管理現有的單體應用程式. 使用Amazon DynamoDB儲存產品資料和產品影象. 使用Amazon簡單通知服務(Amazon SNS)進行Lambda函式之間的事件驅動通訊。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用Amazon Elastic Kubernetes Service(Amazon EKS),並部署Amazon EC2,以部署一個容器化的應用程式. 使用Amazon Aurora叢集儲存產品資料. 使用 AWS Step 函式來管理 workfiows。 將產品影象儲存在亞馬遜S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用Amazon Elastic Kubernetes Service(Amazon EKS),並部署Amazon EC2,以部署一個容器化的應用程式. 使用Amazon Aurora叢集儲存產品資料. 使用 AWS Step 函式來管理 workfiows。 將產品影象儲存在Amazon S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #965
 
@@ -22628,7 +22628,7 @@ B
 **選項**
 - A. 使用 Amazon 簡單佇列服務(Amazon SQS) FIFO 佇列在網路應用伺服器級別和工人級別之間儲存和轉發格式資料.
 - B. 使用網路應用程式伺服器級和工人級之間的Amazon API Gateway HTTP API來儲存和轉發格式資料.
-- C. 在網路應用程式伺服器級和工人級之間使用一個亞馬遜簡易佇列服務(Amazon SQS)的標準佇列來儲存和轉發格式資料.
+- C. 在網路應用程式伺服器級和工人級之間使用一個Amazon Simple Queue Service (Amazon SQS)的標準佇列來儲存和轉發格式資料.
 - D. 使用 AWS 步函式工作符。 在網路應用程式伺服器層和儲存和轉發資料的工人層之間建立一個同步的工作空間。
 
 **答案**
@@ -22640,7 +22640,7 @@ A
 - A：使用 Amazon 簡單佇列服務(Amazon SQS) FIFO 佇列在網路應用伺服器級別和工人級別之間儲存和轉發格式資料。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：使用網路應用程式伺服器級和工人級之間的Amazon API Gateway HTTP API來儲存和轉發格式資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在網路應用程式伺服器級和工人級之間使用一個亞馬遜簡易佇列服務(Amazon SQS)的標準佇列來儲存和轉發格式資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在網路應用程式伺服器級和工人級之間使用一個Amazon Simple Queue Service (Amazon SQS)的標準佇列來儲存和轉發格式資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWS 步函式工作符。 在網路應用程式伺服器層和儲存和轉發資料的工人層之間建立一個同步的工作空間。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #968
@@ -22649,7 +22649,7 @@ A
 一家金融公司使用premises搜尋應用程式從各生產商收集流資料. 該應用程式為搜尋和視覺化功能提供實時更新. 公司計劃向AWS遷移,希望使用AWS本地解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 桶的托爾儲存。 使用Amazon Athena搜尋資料. 使用亞馬遜管理Grafana來建立視覺化.
+- A. 使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 桶的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化.
 - B. 使用Amazon EMR來攝取和處理資料流到Amazon Redshift進行儲存. 使用Amazon Redshift光譜搜尋資料. 使用Amazon QuickSight建立視覺化.
 - C. 使用Amazon Elastic Kubernetes Service(Amazon EKS)來攝取和處理資料流到Amazon DynamoDB進行儲存. 使用Amazon CloudWatch建立圖形儀表板搜尋和視覺化資料.
 - D. 使用Amazon Kinesis資料流來攝取和處理資料流到Amazon OpenSearch Service. 使用 OpenSearch 服務搜尋資料. 使用Amazon QuickSight建立視覺化.
@@ -22662,7 +22662,7 @@ D
 正確答案是 **D**。
 - D：使用Amazon Kinesis資料流來攝取和處理資料流到Amazon OpenSearch Service. 使用 OpenSearch 服務搜尋資料. 使用Amazon QuickSight建立視覺化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 桶的托爾儲存。 使用Amazon Athena搜尋資料. 使用亞馬遜管理Grafana來建立視覺化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 桶的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用Amazon EMR來攝取和處理資料流到Amazon Redshift進行儲存. 使用Amazon Redshift光譜搜尋資料. 使用Amazon QuickSight建立視覺化。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用Amazon Elastic Kubernetes Service(Amazon EKS)來攝取和處理資料流到Amazon DynamoDB進行儲存. 使用Amazon CloudWatch建立圖形儀表板搜尋和視覺化資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -22672,9 +22672,9 @@ D
 一家公司目前執行一個在Linux機器上使用ASP.NET的promess應用程式. 該應用程式需要大量資源,直接為客戶服務。 公司希望將應用程式現代化到.NET. 公司希望在集裝箱上執行該應用程式,並根據Amazon CloudWatch 度量衡進行規模化. 公司還希望縮短用於運營維護活動的時間. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在AWS Fargate上向亞馬遜彈性容器服務(Amazon ECS)部署應用程式.
-- B. 使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在Amazon EC2例項上將應用程式部署到亞馬遜彈性容器服務(Amazon ECS).
-- C. 使用 AWS App Runner 來容器化應用程式。 使用App Runner在AWS Fargate上向亞馬遜彈性容器服務(Amazon ECS)部署應用程式.
+- A. 使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在AWS Fargate上向Amazon Elastic Container Service (Amazon ECS)部署應用程式.
+- B. 使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在Amazon EC2例項上將應用程式部署到Amazon Elastic Container Service (Amazon ECS).
+- C. 使用 AWS App Runner 來容器化應用程式。 使用App Runner在AWS Fargate上向Amazon Elastic Container Service (Amazon ECS)部署應用程式.
 - D. 使用 AWS App Runner 來容器化應用程式。 使用 App Runner 在 Amazon EC2 個例上將應用程式部署到 Amazon Elastic Kubernetes Service(Amazon EKS).
 
 **答案**
@@ -22683,10 +22683,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在AWS Fargate上向亞馬遜彈性容器服務(Amazon ECS)部署應用程式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在AWS Fargate上向Amazon Elastic Container Service (Amazon ECS)部署應用程式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在Amazon EC2例項上將應用程式部署到亞馬遜彈性容器服務(Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用 AWS App Runner 來容器化應用程式。 使用App Runner在AWS Fargate上向亞馬遜彈性容器服務(Amazon ECS)部署應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在Amazon EC2例項上將應用程式部署到Amazon Elastic Container Service (Amazon ECS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用 AWS App Runner 來容器化應用程式。 使用App Runner在AWS Fargate上向Amazon Elastic Container Service (Amazon ECS)部署應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWS App Runner 來容器化應用程式。 使用 App Runner 在 Amazon EC2 個例上將應用程式部署到 Amazon Elastic Kubernetes Service(Amazon EKS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #970
@@ -22742,7 +22742,7 @@ D
 
 **選項**
 - A. 在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 在Windows檔案伺服器中使用Amazon FSx作為兩個叢集節點之間的共享儲存.
-- B. 在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 使用亞馬遜彈性塊儲存器(Amazon EBS)通用SSD(gp3)卷作為EC2例項的附加儲存. 設定應用級複寫(replication),將可用區(Availability Zone)中一個EBS磁碟區的資料同步到第二個可用區(Availability Zone)中的另一個EBS磁碟區.
+- B. 在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 使用Amazon Elastic Block Store (Amazon EBS)通用SSD(gp3)卷作為EC2例項的附加儲存. 設定應用級複寫(replication),將可用區(Availability Zone)中一個EBS磁碟區的資料同步到第二個可用區(Availability Zone)中的另一個EBS磁碟區.
 - C. 在兩個可用區(Availability Zones)中使用Amazon EC2的應用程式。 將一個 EC2 例項配置為活動例項, 將第二個 EC2 例項配置為備用模式。 使用Amazon FSx用於NetApp ONTAP多AZ檔案系統,透過使用Internet Small計算機系統介面(iSCSI)協議存取資料.
 - D. 在兩個可用區(Availability Zones)中使用Amazon EC2的應用程式。 將一個 EC2 例項配置為活動例項, 將第二個 EC2 例項配置為備用模式。 使用 Amazon 彈性塊儲存器(Amazon EBS)提供 IOPS SSD(io2) 卷作為EC2 例項的附加儲存. 設定 Amazon EBS 級 複寫(replication) ,將 可用區(Availability Zone) 中一個io2 磁碟區的資料同步到第二個可用區(Availability Zone)中的另一個io2磁碟區.
 
@@ -22754,7 +22754,7 @@ A
 正確答案是 **A**。
 - A：在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 在Windows檔案伺服器中使用Amazon FSx作為兩個叢集節點之間的共享儲存。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 使用亞馬遜彈性塊儲存器(Amazon EBS)通用SSD(gp3)卷作為EC2例項的附加儲存. 設定應用級複寫(replication),將可用區(Availability Zone)中一個EBS磁碟區的資料同步到第二個可用區(Availability Zone)中的另一個EBS磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 使用Amazon Elastic Block Store (Amazon EBS)通用SSD(gp3)卷作為EC2例項的附加儲存. 設定應用級複寫(replication),將可用區(Availability Zone)中一個EBS磁碟區的資料同步到第二個可用區(Availability Zone)中的另一個EBS磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：在兩個可用區(Availability Zones)中使用Amazon EC2的應用程式。 將一個 EC2 例項配置為活動例項, 將第二個 EC2 例項配置為備用模式。 使用Amazon FSx用於NetApp ONTAP多AZ檔案系統,透過使用Internet Small計算機系統介面(iSCSI)協議存取資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在兩個可用區(Availability Zones)中使用Amazon EC2的應用程式。 將一個 EC2 例項配置為活動例項, 將第二個 EC2 例項配置為備用模式。 使用 Amazon 彈性塊儲存器(Amazon EBS)提供 IOPS SSD(io2) 卷作為EC2 例項的附加儲存. 設定 Amazon EBS 級 複寫(replication) ,將 可用區(Availability Zone) 中一個io2 磁碟區的資料同步到第二個可用區(Availability Zone)中的另一個io2磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -23048,8 +23048,8 @@ A
 
 **選項**
 - A. Amazon S3標準
-- B. 亞馬遜 S3 Intelligent-Tiering
-- C. 亞馬遜 S3 Glacier Deep Archive
+- B. Amazon S3 Intelligent-Tiering
+- C. Amazon S3 Glacier Deep Archive
 - D. Amazon S3 一個區-不經常存取(S3 One Zone-IA)
 
 **答案**
@@ -23058,22 +23058,22 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：亞馬遜 S3 Intelligent-Tiering。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：Amazon S3 Intelligent-Tiering。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：Amazon S3標準。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：亞馬遜 S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：Amazon S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：Amazon S3 一個區-不經常存取(S3 One Zone-IA)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #986
 
 **題目**
-一個公司正在測試一個執行在 Amazon EC2 Linux 例項上的應用程式. EC2例項附有一個單500GB亞馬遜彈性塊儲存器(Amazon EBS)通用SSO(gp2)卷. 該公司將在Auto Scaling 群組(Auto Scaling group)的多個EC2 執行個體中部署該應用程式。 所有例項都要求存取儲存在EBS 磁碟區中的資料. 公司需要一個高度可用且具有彈性的解決方案,不會對應用程式的程式碼進行重大修改. 哪種解決辦法能滿足這些要求?
+一個公司正在測試一個執行在 Amazon EC2 Linux 例項上的應用程式. EC2例項附有一個單500GBAmazon Elastic Block Store (Amazon EBS)通用SSO(gp2)卷. 該公司將在Auto Scaling 群組(Auto Scaling group)的多個EC2 執行個體中部署該應用程式。 所有例項都要求存取儲存在EBS 磁碟區中的資料. 公司需要一個高度可用且具有彈性的解決方案,不會對應用程式的程式碼進行重大修改. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 提供使用NFS伺服器軟體的EC2例項. 在例項中附加單500GB gp2 EBS 磁碟區.
 - B. 為Windows檔案伺服器系統提供Amazon FSx. 在單一的可用區(Availability Zone)內將檔案系統配置為SMB檔案儲存器.
 - C. 提供兩個250GB的IOPS SSD EBS 磁碟區的EC2例項。
-- D. 提供亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 配置檔案系統以使用通用效能模式.
+- D. 提供Amazon Elastic File System (Amazon EFS)檔案系統. 配置檔案系統以使用通用效能模式.
 
 **答案**
 D
@@ -23081,7 +23081,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：提供亞馬遜彈性檔案系統(Amazon EFS)檔案系統. 配置檔案系統以使用通用效能模式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：提供Amazon Elastic File System (Amazon EFS)檔案系統. 配置檔案系統以使用通用效能模式。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：提供使用NFS伺服器軟體的EC2例項. 在例項中附加單500GB gp2 EBS 磁碟區。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：為Windows檔案伺服器系統提供Amazon FSx. 在單一的可用區(Availability Zone)內將檔案系統配置為SMB檔案儲存器。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -23170,7 +23170,7 @@ C
 **選項**
 - A. AWS 資料同步
 - B. 亞馬遜彈性區塊儲存(Amazon EBS)
-- C. 亞馬遜彈性檔案系統(Amazon EFS)
+- C. Amazon Elastic File System (Amazon EFS)
 - D. Amazon EMR 檔案系統(Amazon EMRFS)
 
 **答案**
@@ -23179,7 +23179,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：亞馬遜彈性檔案系統(Amazon EFS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：Amazon Elastic File System (Amazon EFS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：AWS 資料同步。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -23262,7 +23262,7 @@ C
 **選項**
 - A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天.
 - B. 在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼.
-- C. 在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
+- C. 在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
 - D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
 
 **答案**
@@ -23274,7 +23274,7 @@ A
 - A：建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在AWS Key Management Service(AWS KMS)加密的亞馬遜彈性檔案系統(Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #995
@@ -23283,10 +23283,10 @@ A
 一家流媒體公司正在重建其基礎設施,以適應使用者每天消費的日益增長的影片內容需求。 公司需要處理terabyte大小的影片,以遮蔽影片中的一些內容. 影片處理可長達20分鐘. 該公司需要一種能夠隨需求而擴大並保持成本效益的解決辦法。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用AWS Lambda功能處理影片. 在Amazon DynamoDB中儲存影片後設資料. 在亞馬遜S3 Intelligent-Tiering儲存影片內容.
-- B. 使用亞馬遜彈性容器服務(Amazon ECS)和AWS Fargate來實施微服務處理影片. 在Amazon Aurora中儲存影片後設資料. 在亞馬遜S3 Intelligent-Tiering儲存影片內容.
-- C. 在應用程式負載平衡器(Application Load Balancer)(ALB)後面的Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2 執行個體處理影片. 以Amazon S3標準儲存影片內容. 使用亞馬遜簡易佇列服務(Amazon SQS)進行排隊和解析處理任務.
-- D. 在Amazon EC2上的Amazon Elastic Kubernetes Service(Amazon EKS)上部署一個集裝箱化的影片處理應用程式. 將影片後設資料儲存於 Amazon RDS 在一個單獨的 可用區(Availability Zone). 在亞馬遜S3 Glacier Deep Archive儲存影片內容.
+- A. 使用AWS Lambda功能處理影片. 在Amazon DynamoDB中儲存影片後設資料. 在Amazon S3 Intelligent-Tiering儲存影片內容.
+- B. 使用Amazon Elastic Container Service (Amazon ECS)和AWS Fargate來實施微服務處理影片. 在Amazon Aurora中儲存影片後設資料. 在Amazon S3 Intelligent-Tiering儲存影片內容.
+- C. 在應用程式負載平衡器(Application Load Balancer)(ALB)後面的Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2 執行個體處理影片. 以Amazon S3標準儲存影片內容. 使用Amazon Simple Queue Service (Amazon SQS)進行排隊和解析處理任務.
+- D. 在Amazon EC2上的Amazon Elastic Kubernetes Service(Amazon EKS)上部署一個集裝箱化的影片處理應用程式. 將影片後設資料儲存於 Amazon RDS 在一個單獨的 可用區(Availability Zone). 在Amazon S3 Glacier Deep Archive儲存影片內容.
 
 **答案**
 B
@@ -23294,16 +23294,16 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用亞馬遜彈性容器服務(Amazon ECS)和AWS Fargate來實施微服務處理影片. 在Amazon Aurora中儲存影片後設資料. 在亞馬遜S3 Intelligent-Tiering儲存影片內容。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用Amazon Elastic Container Service (Amazon ECS)和AWS Fargate來實施微服務處理影片. 在Amazon Aurora中儲存影片後設資料. 在Amazon S3 Intelligent-Tiering儲存影片內容。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用AWS Lambda功能處理影片. 在Amazon DynamoDB中儲存影片後設資料. 在亞馬遜S3 Intelligent-Tiering儲存影片內容。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在應用程式負載平衡器(Application Load Balancer)(ALB)後面的Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2 執行個體處理影片. 以Amazon S3標準儲存影片內容. 使用亞馬遜簡易佇列服務(Amazon SQS)進行排隊和解析處理任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在Amazon EC2上的Amazon Elastic Kubernetes Service(Amazon EKS)上部署一個集裝箱化的影片處理應用程式. 將影片後設資料儲存於 Amazon RDS 在一個單獨的 可用區(Availability Zone). 在亞馬遜S3 Glacier Deep Archive儲存影片內容。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用AWS Lambda功能處理影片. 在Amazon DynamoDB中儲存影片後設資料. 在Amazon S3 Intelligent-Tiering儲存影片內容。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在應用程式負載平衡器(Application Load Balancer)(ALB)後面的Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2 執行個體處理影片. 以Amazon S3標準儲存影片內容. 使用Amazon Simple Queue Service (Amazon SQS)進行排隊和解析處理任務。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在Amazon EC2上的Amazon Elastic Kubernetes Service(Amazon EKS)上部署一個集裝箱化的影片處理應用程式. 將影片後設資料儲存於 Amazon RDS 在一個單獨的 可用區(Availability Zone). 在Amazon S3 Glacier Deep Archive儲存影片內容。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #996
 
 **題目**
-一家公司在一個Kubernetes叢集上執行一個基於前提的應用程式. 公司最近增加了數百萬新客戶. 該公司現有的房地基礎設施無法應付大量新客戶。 公司需要將前置應用程式遷移到AWS雲. 公司將遷移到亞馬遜智慧Kubernetes Service(Amazon EKS)叢集. 公司不想管理AWS上新架構的基本計算基礎設施. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司在一個Kubernetes叢集上執行一個基於前提的應用程式. 公司最近增加了數百萬新客戶. 該公司現有的房地基礎設施無法應付大量新客戶。 公司需要將前置應用程式遷移到AWS雲. 公司將遷移到Amazon Elastic Kubernetes Service Service(Amazon EKS)叢集. 公司不想管理AWS上新架構的基本計算基礎設施. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 使用自控節點提供計算容量. 向新的 EKS 叢集部署應用程式。
@@ -23332,7 +23332,7 @@ C
 - A. 透過使用開源軟體在Amazon EC2例項上部署自控的資料庫(database). 使用 Spot 執行個體 來最佳化成本。 配置自動備份到 Amazon S3.
 - B. 使用Amazon RDS. 在通用SSD儲存的資料庫(database)中使用點播容量模式. 配置保留期為7天的自動備份。
 - C. 使用Amazon Aurora 伺服器為資料庫(database). 使用無伺服器容量縮放。 配置自動備份到 Amazon S3.
-- D. 在Amazon EC2 執行個體中部署一個自行管理的NoSQL 資料庫(database)。 使用保留例項來最佳化成本。 配置自動備份直接到亞馬遜 S3 Glacier Flexible Retrieval.
+- D. 在Amazon EC2 執行個體中部署一個自行管理的NoSQL 資料庫(database)。 使用保留例項來最佳化成本。 配置自動備份直接到Amazon S3 Glacier Flexible Retrieval.
 
 **答案**
 C
@@ -23344,12 +23344,12 @@ C
 - 其餘選項比較：
 - A：透過使用開源軟體在Amazon EC2例項上部署自控的資料庫(database). 使用 Spot 執行個體 來最佳化成本。 配置自動備份到 Amazon S3。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用Amazon RDS. 在通用SSD儲存的資料庫(database)中使用點播容量模式. 配置保留期為7天的自動備份。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在Amazon EC2 執行個體中部署一個自行管理的NoSQL 資料庫(database)。 使用保留例項來最佳化成本。 配置自動備份直接到亞馬遜 S3 Glacier Flexible Retrieval。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在Amazon EC2 執行個體中部署一個自行管理的NoSQL 資料庫(database)。 使用保留例項來最佳化成本。 配置自動備份直接到Amazon S3 Glacier Flexible Retrieval。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #998
 
 **題目**
-一家公司在AWS上執行其遺留的網路應用程式. 網路應用程式伺服器在一個VPC的公共子網中執行在Amazon EC2例項上. 網路應用伺服器收集客戶的影象,並將影象檔案儲存在本地附屬的亞馬遜彈性塊儲存器(Amazon EBS)卷中. 影象檔案每晚都會上傳到備份(backup)的Amazon S3桶. 一個解決方案架構師發現影象檔案正在透過公共端點上傳到Amazon S3. 解決方案架構師需要確保到Amazon S3的流量不使用公共端點. 哪種解決辦法能滿足這些要求?
+一家公司在AWS上執行其遺留的網路應用程式. 網路應用程式伺服器在一個VPC的公共子網中執行在Amazon EC2例項上. 網路應用伺服器收集客戶的影象,並將影象檔案儲存在本地附屬的Amazon Elastic Block Store (Amazon EBS)卷中. 影象檔案每晚都會上傳到備份(backup)的Amazon S3桶. 一個解決方案架構師發現影象檔案正在透過公共端點上傳到Amazon S3. 解決方案架構師需要確保到Amazon S3的流量不使用公共端點. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為S3 儲存桶(S3 bucket)建立閘道器VPC 端點(VPC endpoint),具有VPC的必要許可權. 配置子網路由表以使用閘道器 VPC 端點(VPC endpoint).
@@ -23423,8 +23423,8 @@ B
 **選項**
 - A. 使用 Amazon CloudWatch 來監視兩個自動縮放組中的每個例項的 CPUUtiliation 度量衡。 配置每個Auto Scaling 群組(Auto Scaling group)的最低容量,以滿足其高峰工作量值.
 - B. 使用 Amazon CloudWatch 來監視兩個自動縮放組中的每個例項的 CPUUtiliation 度量衡。 配置 Cloud Watch 提醒以引用 Amazon 簡單通知服務( Amazon SNS) 主題, 以便根據需要建立額外的 Auto 縮放組。
-- C. 提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組。
-- D. 提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據每個佇列中的訊息數量來縮放自動縮放組。
+- C. 提供兩個Amazon Simple Queue Service (Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組。
+- D. 提供兩個Amazon Simple Queue Service (Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據每個佇列中的訊息數量來縮放自動縮放組。
 
 **答案**
 D
@@ -23432,11 +23432,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據每個佇列中的訊息數量來縮放自動縮放組。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：提供兩個Amazon Simple Queue Service (Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據每個佇列中的訊息數量來縮放自動縮放組。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 Amazon CloudWatch 來監視兩個自動縮放組中的每個例項的 CPUUtiliation 度量衡。 配置每個Auto Scaling 群組(Auto Scaling group)的最低容量,以滿足其高峰工作量值。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用 Amazon CloudWatch 來監視兩個自動縮放組中的每個例項的 CPUUtiliation 度量衡。 配置 Cloud Watch 提醒以引用 Amazon 簡單通知服務( Amazon SNS) 主題, 以便根據需要建立額外的 Auto 縮放組 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：提供兩個亞馬遜簡易佇列服務(Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：提供兩個Amazon Simple Queue Service (Amazon SQS)佇列. 用一個 SQS 佇列來收集命令。 使用第二個 SQS 佇列實現命令。 配置 EC2 例項以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #1002
 
@@ -23513,10 +23513,10 @@ B
 一家公司利用公司在其網站上主持的調查來跟蹤客戶滿意度. 調查有時每個小時有數千名顧客參加。 調查結果目前以電子郵件方式傳送給公司,以便公司僱員能夠手動審查結果和評估客戶情緒。 公司希望實現客戶調查過程自動化. 過去12個月的調查結果必須提供。 哪種解決辦法能夠以最現代的可擴充套件方式滿足這些要求?
 
 **選項**
-- A. 將調查結果資料傳送到連線到亞馬遜簡易佇列服務的Amazon API Gateway端點(Amazon SQS)佇列. 建立一個 AWS Lambda 函式,以檢視 SQS 佇列,呼叫 Amazon Comprehend 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天.
+- A. 將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 建立一個 AWS Lambda 函式,以檢視 SQS 佇列,呼叫 Amazon Comprehend 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天.
 - B. 將調查結果資料傳送給一個正在執行於Amazon EC2例項的API。 配置API將調查結果儲存為Amazon DynamoDB表格中的新記錄,呼叫Amazon Comprehend進行情緒分析,並將結果儲存在第二個DynamoDB表格中. 將所有記錄的TTL設定為未來365天.
 - C. 將調查結果資料寫入Amazon S3桶。 使用 S3 事件通知來引用一個 AWS Lambda 函式來讀取資料並呼叫 Amazon Rekindition 進行情緒分析. 將情緒分析結果儲存在第二個S3 儲存桶(S3 bucket)中. 使用每桶的S3壽命週期政策在365天后過期物件.
-- D. 將調查結果資料傳送到連線到亞馬遜簡易佇列服務的Amazon API Gateway端點(Amazon SQS)佇列. 配置 SQS 佇列以引用 AWS Lambda 函式呼叫 Amazon Lex 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天.
+- D. 將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 配置 SQS 佇列以引用 AWS Lambda 函式呼叫 Amazon Lex 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天.
 
 **答案**
 A
@@ -23524,11 +23524,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將調查結果資料傳送到連線到亞馬遜簡易佇列服務的Amazon API Gateway端點(Amazon SQS)佇列. 建立一個 AWS Lambda 函式,以檢視 SQS 佇列,呼叫 Amazon Comprehend 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 建立一個 AWS Lambda 函式,以檢視 SQS 佇列,呼叫 Amazon Comprehend 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：將調查結果資料傳送給一個正在執行於Amazon EC2例項的API。 配置API將調查結果儲存為Amazon DynamoDB表格中的新記錄,呼叫Amazon Comprehend進行情緒分析,並將結果儲存在第二個DynamoDB表格中. 將所有記錄的TTL設定為未來365天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將調查結果資料寫入Amazon S3桶。 使用 S3 事件通知來引用一個 AWS Lambda 函式來讀取資料並呼叫 Amazon Rekindition 進行情緒分析. 將情緒分析結果儲存在第二個S3 儲存桶(S3 bucket)中. 使用每桶的S3壽命週期政策在365天后過期物件。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將調查結果資料傳送到連線到亞馬遜簡易佇列服務的Amazon API Gateway端點(Amazon SQS)佇列. 配置 SQS 佇列以引用 AWS Lambda 函式呼叫 Amazon Lex 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 配置 SQS 佇列以引用 AWS Lambda 函式呼叫 Amazon Lex 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #1006
 
@@ -23585,10 +23585,10 @@ D
 一家公司在單一的Amazon EC2 On-Demand Incentry上主持一個網站分析應用程式. 分析應用具有很高的韌性,設計上以無狀態模式執行. 公司注意到應用程式在繁忙時期顯示效能退化的跡象,並出現5xx錯誤. 公司要使應用規模無縫. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 建立網路應用程式的亞馬遜機器影象(AMI). 利用AMI推出第二架EC2 強制實驗. 使用一個 應用程式負載平衡器(Application Load Balancer) 來在兩個EC2 例項中分配負載。
-- B. 建立網路應用程式的亞馬遜機器影象(AMI). 利用AMI推出第二架EC2 強制實驗. 使用 Amazon Route 53 加權路由,在兩個EC2 例項中分配負載.
+- A. 建立網路應用程式的Amazon Machine Image (AMI). 利用AMI推出第二架EC2 強制實驗. 使用一個 應用程式負載平衡器(Application Load Balancer) 來在兩個EC2 例項中分配負載。
+- B. 建立網路應用程式的Amazon Machine Image (AMI). 利用AMI推出第二架EC2 強制實驗. 使用 Amazon Route 53 加權路由,在兩個EC2 例項中分配負載.
 - C. 建立 AWS Lambda 函式來停止EC2 例項並更改例項型別。 當CPU利用率超過75%時,建立 Amazon CloudWatch 提醒以引用 Lambda 函式。
-- D. 建立網路應用程式的亞馬遜機器影象(AMI). 將AMI應用到發射模板中. 建立包含發射模板的Auto Scaling 群組(Auto Scaling group). 配置發射模板以使用 Spot Fleet. 在Auto Scaling 群組(Auto Scaling group)上附加一架應用程式負載平衡器(Application Load Balancer).
+- D. 建立網路應用程式的Amazon Machine Image (AMI). 將AMI應用到發射模板中. 建立包含發射模板的Auto Scaling 群組(Auto Scaling group). 配置發射模板以使用 Spot Fleet. 在Auto Scaling 群組(Auto Scaling group)上附加一架應用程式負載平衡器(Application Load Balancer).
 
 **答案**
 D
@@ -23596,10 +23596,10 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：建立網路應用程式的亞馬遜機器影象(AMI). 將AMI應用到發射模板中. 建立包含發射模板的Auto Scaling 群組(Auto Scaling group). 配置發射模板以使用 Spot Fleet. 在Auto Scaling 群組(Auto Scaling group)上附加一架應用程式負載平衡器(Application Load Balancer)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：建立網路應用程式的Amazon Machine Image (AMI). 將AMI應用到發射模板中. 建立包含發射模板的Auto Scaling 群組(Auto Scaling group). 配置發射模板以使用 Spot Fleet. 在Auto Scaling 群組(Auto Scaling group)上附加一架應用程式負載平衡器(Application Load Balancer)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：建立網路應用程式的亞馬遜機器影象(AMI). 利用AMI推出第二架EC2 強制實驗. 使用一個 應用程式負載平衡器(Application Load Balancer) 來在兩個EC2 例項中分配負載 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：建立網路應用程式的亞馬遜機器影象(AMI). 利用AMI推出第二架EC2 強制實驗. 使用 Amazon Route 53 加權路由,在兩個EC2 例項中分配負載。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：建立網路應用程式的Amazon Machine Image (AMI). 利用AMI推出第二架EC2 強制實驗. 使用一個 應用程式負載平衡器(Application Load Balancer) 來在兩個EC2 例項中分配負載 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：建立網路應用程式的Amazon Machine Image (AMI). 利用AMI推出第二架EC2 強制實驗. 使用 Amazon Route 53 加權路由,在兩個EC2 例項中分配負載。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：建立 AWS Lambda 函式來停止EC2 例項並更改例項型別。 當CPU利用率超過75%時,建立 Amazon CloudWatch 提醒以引用 Lambda 函式 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #1009
@@ -23655,13 +23655,13 @@ B,C,D
 ## Question #1011
 
 **題目**
-一家公司在一個私人子網中託管一個應用程式. 該公司已經將該應用與亞馬遜·科尼託整合. 公司使用Amazon Cognitto使用者池認證使用者. 公司需要修改應用程式,以便應用程式能夠安全地將使用者檔案儲存在Amazon S3桶中. 哪些步驟的組合將安全地將Amazon S3與應用程式整合?(選二.
+一家公司在一個私人子網中託管一個應用程式. 該公司已經將該應用與Amazon Cognito整合. 公司使用Amazon Cognitto使用者池認證使用者. 公司需要修改應用程式,以便應用程式能夠安全地將使用者檔案儲存在Amazon S3桶中. 哪些步驟的組合將安全地將Amazon S3與應用程式整合?(選二.
 
 **選項**
 - A. 建立一個Amazon Cognitto身份池,為使用者成功登入時生成安全的Amazon S3存取令牌.
 - B. 使用現有的Amazon Cognitto使用者池為使用者成功登入時生成Amazon S3存取令牌.
 - C. 在公司託管應用程式的同一VPC中建立一個Amazon S3 VPC 端點(VPC endpoint).
-- D. 在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 儲存桶(S3 bucket)指定一項政策,拒絕亞馬遜·科尼奧托未啟動的任何請求.
+- D. 在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 儲存桶(S3 bucket)指定一項政策,拒絕Amazon Cognito未啟動的任何請求.
 - E. 在S3 儲存桶(S3 bucket)上附加一個只允許從使用者的IP地址存取的政策.
 
 **答案**
@@ -23675,7 +23675,7 @@ A,C
 - C：在公司託管應用程式的同一VPC中建立一個Amazon S3 VPC 端點(VPC endpoint)。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：使用現有的Amazon Cognitto使用者池為使用者成功登入時生成Amazon S3存取令牌。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 儲存桶(S3 bucket)指定一項政策,拒絕亞馬遜·科尼奧托未啟動的任何請求。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 儲存桶(S3 bucket)指定一項政策,拒絕Amazon Cognito未啟動的任何請求。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：在S3 儲存桶(S3 bucket)上附加一個只允許從使用者的IP地址存取的政策。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #1012
@@ -23730,10 +23730,10 @@ A
 一個數字影象處理公司想將它的獨白應用程式遷移到AWS雲. 該公司處理數千幅影象,並生成大檔案,作為處理workfiow的一部分. 公司需要一個解決方案來管理越來越多的影象處理工作. 解決方案還必須減少影象處理workfiow中的手工任務. 公司不想管理解決方案的基本基礎設施。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用亞馬遜彈性容器服務(Amazon ECS)與Amazon EC2 Spot 執行個體處理影象. 配置 Amazon 簡單佇列服務( Amazon SQS) 來協調 workfiow。 將已處理的檔案儲存在亞馬遜彈性檔案系統(Amazon EFS)中.
+- A. 使用Amazon Elastic Container Service (Amazon ECS)與Amazon EC2 Spot 執行個體處理影象. 配置 Amazon 簡單佇列服務( Amazon SQS) 來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic File System (Amazon EFS)中.
 - B. 使用 AWS 批次任務處理影象。 使用 AWS Step 函式來協調 workfiow。 在Amazon S3桶中儲存已處理的檔案.
 - C. 使用AWS Lambda函式和Amazon EC2 Spot 執行個體處理影象. 將已處理的檔案儲存在 Amazon FSx 中.
-- D. 部署一組 Amazon EC2 例項處理影象。 使用 AWS Step 函式來協調 workfiow。 將已處理的檔案儲存在亞馬遜彈性塊儲存器(Amazon EBS)中。
+- D. 部署一組 Amazon EC2 例項處理影象。 使用 AWS Step 函式來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic Block Store (Amazon EBS)中。
 
 **答案**
 B
@@ -23743,9 +23743,9 @@ B
 正確答案是 **B**。
 - B：使用 AWS 批次任務處理影象。 使用 AWS Step 函式來協調 workfiow。 在Amazon S3桶中儲存已處理的檔案。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：使用亞馬遜彈性容器服務(Amazon ECS)與Amazon EC2 Spot 執行個體處理影象. 配置 Amazon 簡單佇列服務( Amazon SQS) 來協調 workfiow。 將已處理的檔案儲存在亞馬遜彈性檔案系統(Amazon EFS)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用Amazon Elastic Container Service (Amazon ECS)與Amazon EC2 Spot 執行個體處理影象. 配置 Amazon 簡單佇列服務( Amazon SQS) 來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic File System (Amazon EFS)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用AWS Lambda函式和Amazon EC2 Spot 執行個體處理影象. 將已處理的檔案儲存在 Amazon FSx 中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：部署一組 Amazon EC2 例項處理影象。 使用 AWS Step 函式來協調 workfiow。 將已處理的檔案儲存在亞馬遜彈性塊儲存器(Amazon EBS)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：部署一組 Amazon EC2 例項處理影象。 使用 AWS Step 函式來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic Block Store (Amazon EBS)中。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #1015
 
@@ -23825,7 +23825,7 @@ C
 - A. 建立AWS目錄服務,在AWS上建立一個AWS管理的微軟活動目錄. 與館內活動名錄建立信託關係. 使用分配給 Active Directory 組的 IAM 旋律存取公司AWS 帳戶內的 AWS 資源.
 - B. 為每個開發者建立 IAM 使用者。 根據每個使用者參與每個專案的情況,人工管理每個IAM使用者的許可權. 強制多要素認證(MFA)作為額外的安全層.
 - C. 在 AWS 目錄服務中使用 AD 聯結器來連線到profess Active 目錄. 整合AD聯結器與AWS IAM身份中心. 配置許可權集,讓每個AD組存取特定的AWS帳戶和資源.
-- D. 利用亞馬遜·科尼託部署身份聯邦解決方案. 將身份聯合會解決方案與現場活動目錄整合。 使用Amazon Cognito為開發者提供存取符,以存取AWS帳戶和資源.
+- D. 利用Amazon Cognito部署身份聯邦解決方案. 將身份聯合會解決方案與現場活動目錄整合。 使用Amazon Cognito為開發者提供存取符,以存取AWS帳戶和資源.
 
 **答案**
 C
@@ -23837,7 +23837,7 @@ C
 - 其餘選項比較：
 - A：建立AWS目錄服務,在AWS上建立一個AWS管理的微軟活動目錄. 與館內活動名錄建立信託關係. 使用分配給 Active Directory 組的 IAM 旋律存取公司AWS 帳戶內的 AWS 資源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：為每個開發者建立 IAM 使用者。 根據每個使用者參與每個專案的情況,人工管理每個IAM使用者的許可權. 強制多要素認證(MFA)作為額外的安全層。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：利用亞馬遜·科尼託部署身份聯邦解決方案. 將身份聯合會解決方案與現場活動目錄整合。 使用Amazon Cognito為開發者提供存取符,以存取AWS帳戶和資源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：利用Amazon Cognito部署身份聯邦解決方案. 將身份聯合會解決方案與現場活動目錄整合。 使用Amazon Cognito為開發者提供存取符,以存取AWS帳戶和資源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #1019
 
