@@ -116,7 +116,7 @@ C
 ## Question #6
 
 **題目**
-一家公司使用NFS將大型影片檔案儲存在附著的premess網路儲存中. 每個影片檔案的大小從1MB到500GB不等. 總儲存量為70TB,不再增長. 公司決定將影片檔案遷移到Amazon S3. 公司必須儘快遷移影片檔案,同時使用儘可能少的網路頻寬. 哪種解決辦法能滿足這些要求?
+一家公司使用NFS將大型影片檔案儲存在附著的 on-premises 網路儲存中. 每個影片檔案的大小從1MB到500GB不等. 總儲存量為70TB,不再增長. 公司決定將影片檔案遷移到Amazon S3. 公司必須儘快遷移影片檔案,同時使用儘可能少的網路頻寬. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立 S3 儲存桶(S3 bucket). 建立一個 IAM 角色,該角色擁有寫入 S3 儲存桶(S3 bucket) 的許可權。 使用 AWS CLI 在本地複製所有檔案到 S3 儲存桶(S3 bucket).
@@ -560,7 +560,7 @@ B
 
 **選項**
 - A. 將 Lambda 函式程式碼重置為執行於 Amazon EC2 例項上的 Apache Tomcat 程式碼。 透過使用本地Java 資料庫(Database) 連線資料庫(database)的驅動程式(JDBC)連線.
-- B. 將平臺從奧羅拉改為亞馬遜DynamoD 提供DynamoDB加速器(DAX)叢集. 使用DAX客戶端SDK將現有的DynamoDB API呼叫指向DAX叢集.
+- B. 將平臺從 Aurora 改為Amazon DynamoDB 提供DynamoDB加速器(DAX)叢集. 使用DAX客戶端SDK將現有的DynamoDB API呼叫指向DAX叢集.
 - C. 設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 透過使用亞馬遜簡易通知服務(Amazon SNS)整合Lambda功能.
 - D. 設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 使用 Amazon 簡單佇列服務( Amazon SQS) 佇列整合 Lambda 函式。
 
@@ -573,18 +573,18 @@ D
 - D：設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 使用 Amazon 簡單佇列服務( Amazon SQS) 佇列整合 Lambda 函式 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：將 Lambda 函式程式碼重置為執行於 Amazon EC2 例項上的 Apache Tomcat 程式碼。 透過使用本地Java 資料庫(Database) 連線資料庫(database)的驅動程式(JDBC)連線。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：將平臺從奧羅拉改為亞馬遜DynamoD 提供DynamoDB加速器(DAX)叢集. 使用DAX客戶端SDK將現有的DynamoDB API呼叫指向DAX叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：將平臺從 Aurora 改為Amazon DynamoDB 提供DynamoDB加速器(DAX)叢集. 使用DAX客戶端SDK將現有的DynamoDB API呼叫指向DAX叢集。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：設定兩個Lambda功能. 配置一個函式以接收資訊。 配置其他功能將資訊載入到資料庫(database). 透過使用亞馬遜簡易通知服務(Amazon SNS)整合Lambda功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #26
 
 **題目**
-一個連需要審查它的AWS雲部署,以確保它的Amazon S3桶沒有未經授權的配置改變. 解決方案設計師應如何實現這一目標?
+一家公司需要審查它的AWS雲部署,以確保它的Amazon S3桶沒有未經授權的配置改變. 解決方案設計師應如何實現這一目標?
 
 **選項**
 - A. 開啟AWS Config 並有相應的規則.
 - B. 呼叫AWS信任的顧問進行適當的檢查。
-- C. 使用適當的評估模板開啟Amazon Victor。
+- C. 使用適當的評估模板開啟Amazon Inspector。
 - D. 開啟Amazon S3伺服器存取日誌. 配置 Amazon EventBridge(Amazon 雲表事件).
 
 **答案**
@@ -596,7 +596,7 @@ A
 - A：開啟AWS Config 並有相應的規則。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：呼叫AWS信任的顧問進行適當的檢查。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：使用適當的評估模板開啟Amazon Victor。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：使用適當的評估模板開啟Amazon Inspector。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：開啟Amazon S3伺服器存取日誌. 配置 Amazon EventBridge(Amazon 雲表事件)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #27
@@ -607,7 +607,7 @@ A
 **選項**
 - A. 共享雲表控制檯的儀表板. 輸入產品管理器的電子郵件地址, 並完成共享步驟。 為產品管理器提供一個共享的連結。
 - B. 專門為產品管理器建立 IAM 使用者. 附加 CloudWatch 僅存取 AWS 管理的政策給使用者。 與產品管理器共享新登入憑證。 與產品管理器共享正確儀表板的瀏覽器URL.
-- C. 為公司員工建立IAM使用者. 在 IAM 使用者中附加 Viewly Occess AWS 管理策略。 與產品管理器共享新登入憑證。 請產品管理器導航到雲表控制檯,並在Dashboards區按名稱定位儀表板.
+- C. 為公司員工建立IAM使用者. 在 IAM 使用者中附加 ViewOnlyAccess AWS 管理政策。 與產品管理器共享新登入憑證。 請產品管理器導航到雲表控制檯,並在Dashboards區按名稱定位儀表板.
 - D. 在公共子網中部署堡壘伺服器. 當產品經理需要存取儀表板時,啟動伺服器並共享RDP憑證. 在bastion伺服器上,確保瀏覽器被配置,以快取的AWS憑證開啟儀表板URL,這些憑證具有檢視儀表板的適當許可權.
 
 **答案**
@@ -619,7 +619,7 @@ A
 - A：共享雲表控制檯的儀表板. 輸入產品管理器的電子郵件地址, 並完成共享步驟。 為產品管理器提供一個共享的連結。**CloudWatch 儀表板支援無需 AWS 帳號即可存取的共享連結**，僅提供儀表板的唯讀存取，完全符合「最小權限原則」——產品經理只能看到這個特定儀表板，沒有任何 AWS 帳號或其他資源的存取權限，且無需建立 IAM 使用者。
 - 其餘選項比較：
 - B：專門為產品管理器建立 IAM 使用者. 附加 CloudWatch 僅存取 AWS 管理的政策給使用者。 與產品管理器共享新登入憑證。 與產品管理器共享正確儀表板的瀏覽器URL。**建立 IAM 使用者給予對方 AWS 帳號的部分存取權限，違反了最小權限原則**，且 IAM 使用者擁有的 CloudWatch Read-Only 政策不只限於單一儀表板，存取範圍超過需求。
-- C：為公司員工建立IAM使用者. 在 IAM 使用者中附加 Viewly Occess AWS 管理策略。 與產品管理器共享新登入憑證。 請產品管理器導航到雲表控制檯,並在Dashboards區按名稱定位儀表板。同樣是建立 IAM 使用者的問題，且讓產品管理器自行導覽到儀表板也增加了不必要的步驟。
+- C：為公司員工建立IAM使用者. 在 IAM 使用者中附加 ViewOnlyAccess AWS 管理政策。 與產品管理器共享新登入憑證。 請產品管理器導航到雲表控制檯,並在Dashboards區按名稱定位儀表板。同樣是建立 IAM 使用者的問題，且讓產品管理器自行導覽到儀表板也增加了不必要的步驟。
 - D：在公共子網中部署堡壘伺服器. 當產品經理需要存取儀表板時,啟動伺服器並共享RDP憑證. 在bastion伺服器上,確保瀏覽器被配置,以快取的AWS憑證開啟儀表板URL,這些憑證具有檢視儀表板的適當許可權。部署堡壘伺服器是極度過度設計的方案，維運成本極高，且安全風險更大，完全不符合最小複雜度原則。
 
 ## Question #28
@@ -651,9 +651,9 @@ A
 一家公司提供網路協議(VoIP)語音服務,使用UDP連線. 該服務包括以Auto Scaling 群組(Auto Scaling group)執行的Amazon EC2 執行個體. 該公司在多個AWS地區都有部署. 公司需要以最低的延遲(latency)路由使用者前往區域(Region)路段. 公司還需要在地區間自動故障. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 將北草坪會議大樓作為每個區域(Region)中的AWS全球加速器端點.
+- A. 部署一個網路負載平衡器(Network Load Balancer)(NLB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 將NLB作為每個區域(Region)中的AWS全球加速器端點.
 - B. 部署一個應用程式負載平衡器(Application Load Balancer)(ALB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 將ALB作為每個區域(Region)中的AWS全球加速器端點.
-- C. 部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 建立Amazon Route 53 延遲(latency)記錄,註明每個北草坪會議大樓的別名. 建立一個使用延遲(latency)記錄作為來源的Amazon CloudFront發行.
+- C. 部署一個網路負載平衡器(Network Load Balancer)(NLB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 建立Amazon Route 53 延遲(latency)記錄,註明每個NLB的別名. 建立一個使用延遲(latency)記錄作為來源的Amazon CloudFront發行.
 - D. 部署一個應用程式負載平衡器(Application Load Balancer)(ALB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 建立 Amazon Route 53 加權記錄,該記錄指每個ALB的別名. 使用加權記錄作為來源的Amazon CloudFront分配。
 
 **答案**
@@ -662,10 +662,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 將北草坪會議大樓作為每個區域(Region)中的AWS全球加速器端點。**AWS Global Accelerator 支援 TCP 和 UDP 協定**，使用 AWS 全球骨幹網路路由流量，提供最低延遲的全球路由，並在區域故障時自動容錯移轉。NLB 支援 UDP，與 Global Accelerator 搭配是 VoIP（UDP 協定）跨區域低延遲且自動容錯的最佳組合。
+- A：部署一個網路負載平衡器(Network Load Balancer)(NLB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 將NLB作為每個區域(Region)中的AWS全球加速器端點。**AWS Global Accelerator 支援 TCP 和 UDP 協定**，使用 AWS 全球骨幹網路路由流量，提供最低延遲的全球路由，並在區域故障時自動容錯移轉。NLB 支援 UDP，與 Global Accelerator 搭配是 VoIP（UDP 協定）跨區域低延遲且自動容錯的最佳組合。
 - 其餘選項比較：
 - B：部署一個應用程式負載平衡器(Application Load Balancer)(ALB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 將ALB作為每個區域(Region)中的AWS全球加速器端點。ALB 只支援 HTTP/HTTPS（第 7 層），**完全不支援 UDP 協定**，無法用於 VoIP 服務。
-- C：部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 建立Amazon Route 53 延遲(latency)記錄,註明每個北草坪會議大樓的別名. 建立一個使用延遲(latency)記錄作為來源的Amazon CloudFront發行。**Amazon CloudFront 僅支援 HTTP/HTTPS 流量，不支援 UDP**，無法用於 VoIP 語音服務，此架構技術上不可行。
+- C：部署一個網路負載平衡器(Network Load Balancer)(NLB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 建立Amazon Route 53 延遲(latency)記錄,註明每個NLB的別名. 建立一個使用延遲(latency)記錄作為來源的Amazon CloudFront發行。**Amazon CloudFront 僅支援 HTTP/HTTPS 流量，不支援 UDP**，無法用於 VoIP 語音服務，此架構技術上不可行。
 - D：部署一個應用程式負載平衡器(Application Load Balancer)(ALB)和一個相關的目標群體。 將目標群體與Auto Scaling 群組(Auto Scaling group)聯絡起來。 建立 Amazon Route 53 加權記錄,該記錄指每個ALB的別名. 使用加權記錄作為來源的Amazon CloudFront分配。ALB 和 CloudFront 都不支援 UDP，且 Route 53 加權路由不如 Global Accelerator 能做到真正的自動容錯移轉。
 
 ## Question #30
@@ -740,7 +740,7 @@ B
 ## Question #33
 
 **題目**
-一家公司在AWS上執行線上市場網路應用程式. 該應用程式在高峰時段為數十萬使用者服務. 公司需要一個可擴充套件的,近乎實時的解決方案,以便與其他幾個內部應用程式共享數百萬筆金融交易的細節. 還需要處理交易,以刪除敏感資料,然後儲存在資料庫(database)號檔案,用於低軌道導航系統0002檢索。 解決方案設計師建議如何滿足這些要求?
+一家公司在AWS上執行線上市場網路應用程式. 該應用程式在高峰時段為數十萬使用者服務. 公司需要一個可擴充套件的,近乎實時的解決方案,以便與其他幾個內部應用程式共享數百萬筆金融交易的細節. 還需要處理交易,以刪除敏感資料,然後儲存在資料庫(database)中以供後續檢索。 解決方案設計師建議如何滿足這些要求?
 
 **選項**
 - A. 將交易資料儲存到Amazon DynamoDB中. 在 DynamoDB 中設定一條規則,以刪除每筆交易在寫時的敏感資料. 使用 DynamoDB Streams 與其他應用程式共享交易資料.
@@ -763,7 +763,7 @@ C
 ## Question #34
 
 **題目**
-一個公司在AWS上託管其多級應用. 對於合規(compliance),治理,審計和安全,公司必須跟蹤其AWS資源配置的變化,並記錄API對這些資源的呼聲的歷史. 解決方案設計師應如何滿足這些要求?
+一個公司在AWS上託管其多級應用. 對於合規(compliance),治理,審計和安全,公司必須跟蹤其AWS資源配置的變化,並記錄API對這些資源的呼叫的歷史. 解決方案設計師應如何滿足這些要求?
 
 **選項**
 - A. 使用AWS CloudTrail跟蹤配置變化,使用AWS Config記錄API呼叫.
@@ -1600,13 +1600,13 @@ B
 ## Question #70
 
 **題目**
-一家公司的HTTP應用程式在網路負載平衡器(Network Load Balancer)(北草坪會議大樓)背後. 北草坪會議大樓的目標群體被配置為使用Amazon EC2 Auto Scaling 群組(Auto Scaling group),並有多個執行網路服務的EC2例項. 該公司注意到,北草坪會議大樓沒有發現該應用程式的HTTP錯誤。 這些錯誤需要手動重啟執行網路服務的EC2例項. 公司需要在不寫自定義指令碼或程式碼的情況下改進應用程式的可用性. 解決方案設計師應如何滿足這些要求?
+一家公司的HTTP應用程式在網路負載平衡器(Network Load Balancer)(NLB)背後. NLB的目標群體被配置為使用Amazon EC2 Auto Scaling 群組(Auto Scaling group),並有多個執行網路服務的EC2例項. 該公司注意到,NLB沒有發現該應用程式的HTTP錯誤。 這些錯誤需要手動重啟執行網路服務的EC2例項. 公司需要在不寫自定義指令碼或程式碼的情況下改進應用程式的可用性. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 啟用HTTP在北草坪會議大樓的健康檢查,提供公司應用程式的URL.
+- A. 啟用HTTP在NLB的健康檢查,提供公司應用程式的URL.
 - B. 在 EC2 例項中新增一個 cron 任務, 每分鐘檢查一次本地應用程式的日誌。 如果檢測到 HTTP 錯誤。 應用程式將重新啟動。
-- C. 以應用程式負載平衡器(Application Load Balancer)取代北草坪會議大樓。 透過提供公司應用程式的URL來啟用HTTP健康檢查. 配置自動縮放動作以取代不健康的事件。
-- D. 建立一個亞馬遜雲表警報器,用於監測北草坪會議大樓的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件。
+- C. 以應用程式負載平衡器(Application Load Balancer)取代NLB。 透過提供公司應用程式的URL來啟用HTTP健康檢查. 配置自動縮放動作以取代不健康的事件。
+- D. 建立一個亞馬遜雲表警報器,用於監測NLB的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件。
 
 **答案**
 C
@@ -1614,11 +1614,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：以應用程式負載平衡器(Application Load Balancer)取代北草坪會議大樓。 透過提供公司應用程式的URL來啟用HTTP健康檢查. 配置自動縮放動作以取代不健康的事件 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：以應用程式負載平衡器(Application Load Balancer)取代NLB。 透過提供公司應用程式的URL來啟用HTTP健康檢查. 配置自動縮放動作以取代不健康的事件 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：啟用HTTP在北草坪會議大樓的健康檢查,提供公司應用程式的URL。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：啟用HTTP在NLB的健康檢查,提供公司應用程式的URL。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在 EC2 例項中新增一個 cron 任務, 每分鐘檢查一次本地應用程式的日誌。 如果檢測到 HTTP 錯誤。 應用程式將重新啟動。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：建立一個亞馬遜雲表警報器,用於監測北草坪會議大樓的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：建立一個亞馬遜雲表警報器,用於監測NLB的UnhealthyHostCounctor指標。 配置自動縮放動作以替換提醒處於 ALARM 狀態時的不健康事件 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #71
 
@@ -2771,13 +2771,13 @@ A
 ## Question #120
 
 **題目**
-一家公司在我們西部2個區域(Region)的網路負載平衡器(Network Load Balancer)(北草坪會議大樓)之後,針對3個Amazon EC2情況實施了自我管理的DNS解決方案. 該公司的大部分使用者都位於美國和歐洲. 公司希望改善解決方案的效能和可用性. 該公司在eu-West-1 區域(Region)中推出並配置了3個EC2例項,並增加了EC2例項作為新的北草坪會議大樓的目標。 公司可以使用哪一種解決方案來通向所有EC2的線路交通?
+一家公司在我們西部2個區域(Region)的網路負載平衡器(Network Load Balancer)(NLB)之後,針對3個Amazon EC2情況實施了自我管理的DNS解決方案. 該公司的大部分使用者都位於美國和歐洲. 公司希望改善解決方案的效能和可用性. 該公司在eu-West-1 區域(Region)中推出並配置了3個EC2例項,並增加了EC2例項作為新的NLB的目標。 公司可以使用哪一種解決方案來通向所有EC2的線路交通?
 
 **選項**
-- A. 制定Amazon Route 53的地理路線政策,以便向兩個北草坪會議大樓中的一個提出路線請求。 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源。
-- B. 在 AWS 全球加速器中建立標準加速器。 建立端點組,我們西-2和eu西-1. 增加兩個北草坪會議大樓作為終點組的終點。
+- A. 制定Amazon Route 53的地理路線政策,以便向兩個NLB中的一個提出路線請求。 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源。
+- B. 在 AWS 全球加速器中建立標準加速器。 建立端點組,我們西-2和eu西-1. 增加兩個NLB作為終點組的終點。
 - C. 將 Elastic IP 地址附加到六個 EC2 例項中。 建立 Amazon Route 53 地理定位路由政策, 用於向 EC2 六例之一的路由請求。 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行來源.
-- D. 將兩個北草坪會議大樓改為兩個應用程式負載平衡器。 建立一個 Amazon Route 53 延遲(latency) 路由政策,用於向兩個ALB中的一個路由請求. 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源。
+- D. 將兩個NLB改為兩個應用程式負載平衡器。 建立一個 Amazon Route 53 延遲(latency) 路由政策,用於向兩個ALB中的一個路由請求. 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源。
 
 **答案**
 A
@@ -2785,11 +2785,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：制定Amazon Route 53的地理路線政策,以便向兩個北草坪會議大樓中的一個提出路線請求。 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：制定Amazon Route 53的地理路線政策,以便向兩個NLB中的一個提出路線請求。 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：在 AWS 全球加速器中建立標準加速器。 建立端點組,我們西-2和eu西-1. 增加兩個北草坪會議大樓作為終點組的終點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在 AWS 全球加速器中建立標準加速器。 建立端點組,我們西-2和eu西-1. 增加兩個NLB作為終點組的終點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將 Elastic IP 地址附加到六個 EC2 例項中。 建立 Amazon Route 53 地理定位路由政策, 用於向 EC2 六例之一的路由請求。 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行來源。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：將兩個北草坪會議大樓改為兩個應用程式負載平衡器。 建立一個 Amazon Route 53 延遲(latency) 路由政策,用於向兩個ALB中的一個路由請求. 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：將兩個NLB改為兩個應用程式負載平衡器。 建立一個 Amazon Route 53 延遲(latency) 路由政策,用於向兩個ALB中的一個路由請求. 建立 Amazon CloudFront 分佈。 使用53路記錄作為發行源 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #121
 
@@ -4175,11 +4175,11 @@ A
 ## Question #180
 
 **題目**
-一個公司正在設計一個由API驅動的雲通訊平臺. 該應用程式以Amazon EC2例項為主機,位於網路負載平衡器(Network Load Balancer)(北草坪會議大樓)之後。 公司使用Amazon API Gateway透過API為外部使用者提供對應用程式的存取. 公司希望保護平臺免受SQL注射等網路剝削,也希望探測和緩解大型,精密的DDoS攻擊. 哪種解決方案組合提供了MOST保護?(選二.
+一個公司正在設計一個由API驅動的雲通訊平臺. 該應用程式以Amazon EC2例項為主機,位於網路負載平衡器(Network Load Balancer)(NLB)之後。 公司使用Amazon API Gateway透過API為外部使用者提供對應用程式的存取. 公司希望保護平臺免受SQL注射等網路剝削,也希望探測和緩解大型,精密的DDoS攻擊. 哪種解決方案組合提供了MOST保護?(選二.
 
 **選項**
-- A. 使用AWS WAF保護北草坪會議大樓.
-- B. 使用AWS Shield 前進與北草坪會議大樓.
+- A. 使用AWS WAF保護NLB.
+- B. 使用AWS Shield 前進與NLB.
 - C. 使用AWS WAF保護Amazon API Gateway.
 - D. 使用帶有 AWS Shield 標準的 Amazon GuardDuty
 - E. 使用AWS Shield標準與Amazon API Gateway.
@@ -4191,10 +4191,10 @@ B,C
 
 **詳解**
 正確答案是 **B, C**。
-- B：使用AWS Shield 前進與北草坪會議大樓。此選項符合題目條件，能有效滿足核心需求。
+- B：使用AWS Shield 前進與NLB。此選項符合題目條件，能有效滿足核心需求。
 - C：使用AWS WAF保護Amazon API Gateway。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
-- A：使用AWS WAF保護北草坪會議大樓。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：使用AWS WAF保護NLB。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用帶有 AWS Shield 標準的 Amazon GuardDuty。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - E：使用AWS Shield標準與Amazon API Gateway。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -4371,7 +4371,7 @@ A,D
 - A. 使用 AWS Transfer Family 配置一個 SFTP 啟用的伺服器,其端點可公開存取. 選擇 S3 資料湖(data lake) 為目的地。
 - B. 使用Amazon S3檔案閘道器作為SFTP伺服器. 將 S3 檔案閘道器端點 URL 顯示給新合作伙伴。 與新夥伴共享 S3 檔案閘道器終點。
 - C. 在 VP 的私有子網中啟動 Amazon EC2 例項, 指示新合作伙伴使用 VPN 上傳檔案到 EC2 例項。 執行 cron 任務指令碼, 在 EC2 例項上上傳檔案到 S3 資料湖(data lake)。
-- D. 在VPC的私人子網中發射Amazon EC2 執行個體. 在EC2例項前放置一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 為北草坪會議大樓建立 SFTP 聽器埠。 與新合作伙伴共享北草坪會議大樓主機名. 在 EC2 例項上執行一個 cron 任務指令碼,將檔案上傳到 S3 資料湖(data lake).
+- D. 在VPC的私人子網中發射Amazon EC2 執行個體. 在EC2例項前放置一個網路負載平衡器(Network Load Balancer)(NLB)。 為NLB建立 SFTP 聽器埠。 與新合作伙伴共享NLB主機名. 在 EC2 例項上執行一個 cron 任務指令碼,將檔案上傳到 S3 資料湖(data lake).
 
 **答案**
 D
@@ -4379,7 +4379,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在VPC的私人子網中發射Amazon EC2 執行個體. 在EC2例項前放置一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 為北草坪會議大樓建立 SFTP 聽器埠。 與新合作伙伴共享北草坪會議大樓主機名. 在 EC2 例項上執行一個 cron 任務指令碼,將檔案上傳到 S3 資料湖(data lake)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：在VPC的私人子網中發射Amazon EC2 執行個體. 在EC2例項前放置一個網路負載平衡器(Network Load Balancer)(NLB)。 為NLB建立 SFTP 聽器埠。 與新合作伙伴共享NLB主機名. 在 EC2 例項上執行一個 cron 任務指令碼,將檔案上傳到 S3 資料湖(data lake)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用 AWS Transfer Family 配置一個 SFTP 啟用的伺服器,其端點可公開存取. 選擇 S3 資料湖(data lake) 為目的地 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：使用Amazon S3檔案閘道器作為SFTP伺服器. 將 S3 檔案閘道器端點 URL 顯示給新合作伙伴。 與新夥伴共享 S3 檔案閘道器終點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -6080,8 +6080,8 @@ D
 - A. 配置 Amazon CloudFront 以快取內容的多個版本.
 - B. 在 網路負載平衡器(Network Load Balancer) 中配置一個主機頭, 將流量傳送到不同的情況。
 - C. 配置一個 Lambda@Edge 函式,以根據使用者代理頭向使用者傳送特定物件.
-- D. 配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置北草坪會議大樓,以建立基於主機的線路,通往不同的EC2例項.
-- E. 配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置 UNLB 設定基於路徑的路徑到不同的EC2例項.
+- D. 配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(NLB)。 配置NLB,以建立基於主機的線路,通往不同的EC2例項.
+- E. 配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(NLB)。 配置 UNLB 設定基於路徑的路徑到不同的EC2例項.
 
 **答案**
 A,C
@@ -6094,8 +6094,8 @@ A,C
 - C：配置一個 Lambda@Edge 函式,以根據使用者代理頭向使用者傳送特定物件。此選項符合題目條件，能有效滿足核心需求。
 - 其餘選項比較：
 - B：在 網路負載平衡器(Network Load Balancer) 中配置一個主機頭, 將流量傳送到不同的情況 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置北草坪會議大樓,以建立基於主機的線路,通往不同的EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- E：配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置 UNLB 設定基於路徑的路徑到不同的EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(NLB)。 配置NLB,以建立基於主機的線路,通往不同的EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- E：配置 AWS 全球加速器。 將請求轉交一個網路負載平衡器(Network Load Balancer)(NLB)。 配置 UNLB 設定基於路徑的路徑到不同的EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #262
 
@@ -8555,9 +8555,9 @@ C
 一家公司正在使用Amazon Route 53 延遲(latency)-基於路由的線路,為世界各地的使用者提供其基於UDP的應用程式的路由請求. 該應用程式設在該公司在美國、亞洲和歐洲的虛擬資料中心的冗餘伺服器上。 該公司的合規(compliance)要求規定,申請必須設在辦公地點。 公司希望改進應用程式的效能和可用性. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 配置三個AWS區域的3個網路負載平衡器(北草坪會議大樓),以解決站點問題。 透過使用AWS全球加速器建立加速器,並將北草坪會議大樓登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
+- A. 配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 透過使用AWS全球加速器建立加速器,並將NLB登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
 - B. 在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為其終點。 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
-- C. 配置三個AWS區域的3個網路負載平衡器(北草坪會議大樓),以解決站點問題。 在"53路"中,建立基於延遲(latency)的紀錄,指向三個北草坪會議大樓,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
+- C. 配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 在"53路"中,建立基於延遲(latency)的紀錄,指向三個NLB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
 - D. 在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 在"53路"中,建立基於延遲(latency)的唱片,指向三個ALB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
 
 **答案**
@@ -8566,10 +8566,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：配置三個AWS區域的3個網路負載平衡器(北草坪會議大樓),以解決站點問題。 透過使用AWS全球加速器建立加速器,並將北草坪會議大樓登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 透過使用AWS全球加速器建立加速器,並將NLB登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為其終點。 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：配置三個AWS區域的3個網路負載平衡器(北草坪會議大樓),以解決站點問題。 在"53路"中,建立基於延遲(latency)的紀錄,指向三個北草坪會議大樓,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 在"53路"中,建立基於延遲(latency)的紀錄,指向三個NLB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 在"53路"中,建立基於延遲(latency)的唱片,指向三個ALB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #368
@@ -8900,11 +8900,11 @@ D
 ## Question #382
 
 **題目**
-一家公司在AWS上有一個三級應用程式,從使用者裝置中吸收感測器資料。 流量透過網路負載平衡器(Network Load Balancer)(北草坪會議大樓),然後到Amazon EC2的網路級,最後到EC2的應用級。 應用級呼叫資料庫(database)。 解決方案設計師應如何改善過境資料的安全?
+一家公司在AWS上有一個三級應用程式,從使用者裝置中吸收感測器資料。 流量透過網路負載平衡器(Network Load Balancer)(NLB),然後到Amazon EC2的網路級,最後到EC2的應用級。 應用級呼叫資料庫(database)。 解決方案設計師應如何改善過境資料的安全?
 
 **選項**
-- A. 配置 TLS 聽器。 在北草坪會議大樓部署伺服器憑證。
-- B. 配置 AWS Shield 高階. 在北草坪會議大樓啟用AWS WAF。
+- A. 配置 TLS 聽器。 在NLB部署伺服器憑證。
+- B. 配置 AWS Shield 高階. 在NLB啟用AWS WAF。
 - C. 將負載平衡器(load balancer)改為應用程式負載平衡器(Application Load Balancer)(ALB). 在 ALB 上啟用 AWS WAF。
 - D. 使用 AWSERV007(AWS KMS) 加密 EC2 例項上的 Amazon 彈性塊儲存(Amazon EBS)卷.
 
@@ -8914,9 +8914,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：配置 TLS 聽器。 在北草坪會議大樓部署伺服器憑證。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：配置 TLS 聽器。 在NLB部署伺服器憑證。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：配置 AWS Shield 高階. 在北草坪會議大樓啟用AWS WAF。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：配置 AWS Shield 高階. 在NLB啟用AWS WAF。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將負載平衡器(load balancer)改為應用程式負載平衡器(Application Load Balancer)(ALB). 在 ALB 上啟用 AWS WAF 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWSERV007(AWS KMS) 加密 EC2 例項上的 Amazon 彈性塊儲存(Amazon EBS)卷。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -9513,8 +9513,8 @@ C
 一家公司執行一個應用程式,接收來自數千個使用UDP的地理分散遠端裝置的資料. 應用程式立即處理資料,並在必要時向裝置傳送資訊。 沒有儲存資料。 公司需要一個解決方案,將延遲(latency)用於裝置的資料傳輸最小化. 解決方案還必須為另一個AWS 區域(Region)提供快速故障。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 配置 Amazon Route 53 故障路由策略。 在兩個區域各設立一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置 NLB 以引用 AWS Lambda 函式來處理資料。
-- B. 使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標.
+- A. 配置 Amazon Route 53 故障路由策略。 在兩個區域各設立一個網路負載平衡器(Network Load Balancer)(NLB)。 配置 NLB 以引用 AWS Lambda 函式來處理資料。
+- B. 使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(NLB)。 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標.
 - C. 使用 AWS 全球加速器。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB)作為終點. 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料.
 - D. 配置 Amazon Route 53 故障路由策略。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB). 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料.
 
@@ -9524,9 +9524,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：使用 AWS 全球加速器。 作為終點,在兩個地區各建立一個網路負載平衡器(Network Load Balancer)(NLB)。 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為Amadon ECS中的資料NLProcess的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：配置 Amazon Route 53 故障路由策略。 在兩個區域各設立一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置 NLB 以引用 AWS Lambda 函式來處理資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：配置 Amazon Route 53 故障路由策略。 在兩個區域各設立一個網路負載平衡器(Network Load Balancer)(NLB)。 配置 NLB 以引用 AWS Lambda 函式來處理資料 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用 AWS 全球加速器。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB)作為終點. 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：配置 Amazon Route 53 故障路由策略。 在兩個大區分別建立一個應用程式負載平衡器(Application Load Balancer)(ALB). 建立亞馬遜彈性集裝箱服務(Amazon ECS)叢集,採用遠門發射型. 在叢集上建立一個ECS服務. 將ECS服務設定為ALB的目標. 在亞馬遜ECS中處理資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -9841,7 +9841,7 @@ C
 一家公司正在AWS上開發一種新的機器學習(ML)模型解決方案. 這些模型是作為獨立的微服務開發的,在啟動時從Amazon S3獲取大約1GB的模型資料,並將資料載入到記憶體中. 使用者透過同步API存取模型. 使用者可以傳送請求或批次請求,並指定傳送結果的地點. 公司向數百個使用者提供模型. 這些模型的使用模式不規則。 一些型號可能會被使用數日或數週. 其他型號一次可收到數千批請求。 哪個解決方案設計師建議滿足這些要求?
 
 **選項**
-- A. 將API的請求導向網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 將模型作為AWS Lambda功能,由北草坪會議大樓援引。
+- A. 將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將模型作為AWS Lambda功能,由NLB援引。
 - B. 將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將模型作為亞馬遜彈性集裝箱服務(Amazon ECS)服務,從亞馬遜簡易佇列服務(Amazon SQS)佇列讀取。 根據 SQS 佇列大小,使用 AWS App Mesh 來縮放 ECS 叢集的例項。
 - C. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為 SQS 事件所引用的 AWS Lambda 函式應用。 根據 SQS 佇列大小,使用 AWS 自動縮放來增加 Lambda 函式的 vCPU 數量。
 - D. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為從佇列讀取的亞馬遜彈性集裝箱服務(Amazon ECS)服務。 在亞馬遜ECS上啟用 AWS 自動縮放, 用於基於佇列大小的服務叢集和副本。
@@ -9854,7 +9854,7 @@ D
 正確答案是 **D**。
 - D：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為從佇列讀取的亞馬遜彈性集裝箱服務(Amazon ECS)服務。 在亞馬遜ECS上啟用 AWS 自動縮放, 用於基於佇列大小的服務叢集和副本 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將API的請求導向網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 將模型作為AWS Lambda功能,由北草坪會議大樓援引。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將模型作為AWS Lambda功能,由NLB援引。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將模型作為亞馬遜彈性集裝箱服務(Amazon ECS)服務,從亞馬遜簡易佇列服務(Amazon SQS)佇列讀取。 根據 SQS 佇列大小,使用 AWS App Mesh 來縮放 ECS 叢集的例項 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將模型作為 SQS 事件所引用的 AWS Lambda 函式應用。 根據 SQS 佇列大小,使用 AWS 自動縮放來增加 Lambda 函式的 vCPU 數量 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -10763,8 +10763,8 @@ C
 
 **選項**
 - A. 使用 AWS 全球加速器建立加速器. 在加速器端點後面建立一個應用程式負載平衡器(Application Load Balancer)(ALB),使用全球加速器整合,並監聽TCP和UDP埠. 更新 Auto Scaling 群組(Auto Scaling group) 以註冊 ALB 上的例項。
-- B. 使用 AWS 全球加速器建立加速器. 使用全球加速器整合並監聽TCP和UDP埠,在加速器端點後建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓). 更新Auto Scaling 群組(Auto Scaling group)系統,以便在北草坪會議大樓登記例項。
-- C. 建立 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN)) 端點. 在端點後建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓),並監聽TCP和UDP埠. 更新Auto Scaling 群組(Auto Scaling group),以便在北草坪會議大樓登記例項。 更新 CloudFront 以 LNB 作為原始碼.
+- B. 使用 AWS 全球加速器建立加速器. 使用全球加速器整合並監聽TCP和UDP埠,在加速器端點後建立網路負載平衡器(Network Load Balancer)(NLB). 更新Auto Scaling 群組(Auto Scaling group)系統,以便在NLB登記例項。
+- C. 建立 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN)) 端點. 在端點後建立網路負載平衡器(Network Load Balancer)(NLB),並監聽TCP和UDP埠. 更新Auto Scaling 群組(Auto Scaling group),以便在NLB登記例項。 更新 CloudFront 以 LNB 作為原始碼.
 - D. 建立一個 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN))端點. 在端點後建立應用程式負載平衡器(Application Load Balancer)(ALB),並監聽TCP和UDP埠. 更新 Auto Scaling 群組(Auto Scaling group) 以註冊 ALB 上的例項。 更新 CloudFront 以 ALB 作為來源。
 
 **答案**
@@ -10775,8 +10775,8 @@ A
 正確答案是 **A**。
 - A：使用 AWS 全球加速器建立加速器. 在加速器端點後面建立一個應用程式負載平衡器(Application Load Balancer)(ALB),使用全球加速器整合,並監聽TCP和UDP埠. 更新 Auto Scaling 群組(Auto Scaling group) 以註冊 ALB 上的例項 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：使用 AWS 全球加速器建立加速器. 使用全球加速器整合並監聽TCP和UDP埠,在加速器端點後建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓). 更新Auto Scaling 群組(Auto Scaling group)系統,以便在北草坪會議大樓登記例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN)) 端點. 在端點後建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓),並監聽TCP和UDP埠. 更新Auto Scaling 群組(Auto Scaling group),以便在北草坪會議大樓登記例項。 更新 CloudFront 以 LNB 作為原始碼。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用 AWS 全球加速器建立加速器. 使用全球加速器整合並監聽TCP和UDP埠,在加速器端點後建立網路負載平衡器(Network Load Balancer)(NLB). 更新Auto Scaling 群組(Auto Scaling group)系統,以便在NLB登記例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN)) 端點. 在端點後建立網路負載平衡器(Network Load Balancer)(NLB),並監聽TCP和UDP埠. 更新Auto Scaling 群組(Auto Scaling group),以便在NLB登記例項。 更新 CloudFront 以 LNB 作為原始碼。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立一個 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN))端點. 在端點後建立應用程式負載平衡器(Application Load Balancer)(ALB),並監聽TCP和UDP埠. 更新 Auto Scaling 群組(Auto Scaling group) 以註冊 ALB 上的例項。 更新 CloudFront 以 ALB 作為來源 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #462
@@ -12421,10 +12421,10 @@ A
 一個公司擁有線上遊戲應用,擁有TCP和UDP多人遊戲能力. 公司使用Amazon Route 53將應用流量指向不同AWS區域的多個網路負載平衡器(NLB). 公司需要改善應用效能,減少線上遊戲的延遲(latency),為使用者成長做準備. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在北草坪會議大樓前增加Amazon CloudFront分發。 增加快取控制最大年齡引數。
-- B. 以應用程式負載平衡器(ALB)取代北草坪會議大樓。 配置53路使用基於延遲(latency)的路由.
-- C. 在北草坪會議大樓前增加AWS全球加速器. 配置全域性加速器端點以使用正確的聽器埠。
-- D. 在北草坪會議大樓後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。
+- A. 在NLB前增加Amazon CloudFront分發。 增加快取控制最大年齡引數。
+- B. 以應用程式負載平衡器(ALB)取代NLB。 配置53路使用基於延遲(latency)的路由.
+- C. 在NLB前增加AWS全球加速器. 配置全域性加速器端點以使用正確的聽器埠。
+- D. 在NLB後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。
 
 **答案**
 D
@@ -12432,11 +12432,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在北草坪會議大樓後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- D：在NLB後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在北草坪會議大樓前增加Amazon CloudFront分發。 增加快取控制最大年齡引數 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：以應用程式負載平衡器(ALB)取代北草坪會議大樓。 配置53路使用基於延遲(latency)的路由。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在北草坪會議大樓前增加AWS全球加速器. 配置全域性加速器端點以使用正確的聽器埠 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在NLB前增加Amazon CloudFront分發。 增加快取控制最大年齡引數 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：以應用程式負載平衡器(ALB)取代NLB。 配置53路使用基於延遲(latency)的路由。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在NLB前增加AWS全球加速器. 配置全域性加速器端點以使用正確的聽器埠 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #531
 
@@ -14059,7 +14059,7 @@ A,C,E
 一個公司正計劃將基於TCP的應用程式遷移到公司的VPC. 該應用程式透過公司資料中心的硬體電器在非標準TCP埠上公開開放. 這個公共端點每秒可處理多達300萬個請求,低延遲(latency). 該公司要求AWS中新的公共端點具有同等水平的效能. 解決方案設計師建議如何滿足這一要求?
 
 **選項**
-- A. a 部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置在應用程式所需的TCP埠上可公開存取的北草坪會議大樓。
+- A. a 部署一個網路負載平衡器(Network Load Balancer)(NLB)。 配置在應用程式所需的TCP埠上可公開存取的NLB。
 - B. 部署一架應用程式負載平衡器(Application Load Balancer)(ALB)。 配置 ALB 在應用程式需要的 TCP 埠上可公開存取。
 - C. 部署一個 Amazon CloudFront 分佈,在應用程式所需的 TCP 埠上監聽。 使用 應用程式負載平衡器(Application Load Balancer) 作為原始碼。
 - D. 部署一個安裝在應用程式所需的 TCP 埠的 Amazon API Gateway API。 配置 AWS Lambda 函式, 並配備處理請求的貨幣。
@@ -14070,7 +14070,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：a 部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 配置在應用程式所需的TCP埠上可公開存取的北草坪會議大樓。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：a 部署一個網路負載平衡器(Network Load Balancer)(NLB)。 配置在應用程式所需的TCP埠上可公開存取的NLB。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：部署一架應用程式負載平衡器(Application Load Balancer)(ALB)。 配置 ALB 在應用程式需要的 TCP 埠上可公開存取 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：部署一個 Amazon CloudFront 分佈,在應用程式所需的 TCP 埠上監聽。 使用 應用程式負載平衡器(Application Load Balancer) 作為原始碼 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
@@ -16782,7 +16782,7 @@ B
 - A. 在現有的VPC中配置公共子網. 在公共子網中部署一個MSK叢集. 更新 MSK 叢集安全設定,以允許相互的 TLS 認證。
 - B. 建立新的VPC,擁有公共子網. 在公共子網中部署一個MSK叢集. 更新 MSK 叢集安全設定,以允許相互的 TLS 認證。
 - C. 部署使用私人子網的應用程式負載平衡器(Application Load Balancer)(ALB). 配置 ALB 安全群組(security group) 入境規則,允許從 VPC CIDR 塊進入HTTPS 協議。
-- D. 部署一個使用私人子網的網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 為網際網路上的HTTPS通訊配置一個北草坪會議大樓聽眾。
+- D. 部署一個使用私人子網的網路負載平衡器(Network Load Balancer)(NLB)。 為網際網路上的HTTPS通訊配置一個NLB聽眾。
 
 **答案**
 C
@@ -16794,7 +16794,7 @@ C
 - 其餘選項比較：
 - A：在現有的VPC中配置公共子網. 在公共子網中部署一個MSK叢集. 更新 MSK 叢集安全設定,以允許相互的 TLS 認證 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：建立新的VPC,擁有公共子網. 在公共子網中部署一個MSK叢集. 更新 MSK 叢集安全設定,以允許相互的 TLS 認證 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：部署一個使用私人子網的網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 為網際網路上的HTTPS通訊配置一個北草坪會議大樓聽眾。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：部署一個使用私人子網的網路負載平衡器(Network Load Balancer)(NLB)。 為網際網路上的HTTPS通訊配置一個NLB聽眾。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #717
 
@@ -17662,9 +17662,9 @@ B
 一家公司在世界各地的使用者都存取在Amazon EC2多個區域部署的基於HTTP的應用程式。 公司希望提高應用程式的可用性和效能. 公司還希望保護應用程式免受可能影響到可用性、損害安全或消耗過多資源的常見網路利用。 需要靜態IP地址. 解決方案設計師應該建議什麼來完成這個任務?
 
 **選項**
-- A. 將EC2例項放在每個區域(Region)的網路負載平衡器(北草坪會議大樓)後面。 在北草坪會議大樓部署AWS WAF。 使用 AWS 全球加速器建立加速器,並將北草坪會議大樓登記為終點.
+- A. 將EC2例項放在每個區域(Region)的網路負載平衡器(NLB)後面。 在NLB部署AWS WAF。 使用 AWS 全球加速器建立加速器,並將NLB登記為終點.
 - B. 在區域(Region)中,將EC2例項放在應用程式負載平衡器後面。 在ALBs上部署AWS WAF. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為端點。
-- C. 將EC2例項放在每個區域(Region)的網路負載平衡器(北草坪會議大樓)後面。 在北草坪會議大樓部署AWS WAF。 建立 Amazon CloudFront 分佈,其來源使用基於 Amazon Route 53 延遲(latency) 的路由,用於前往北草坪會議大樓的路由請求.
+- C. 將EC2例項放在每個區域(Region)的網路負載平衡器(NLB)後面。 在NLB部署AWS WAF。 建立 Amazon CloudFront 分佈,其來源使用基於 Amazon Route 53 延遲(latency) 的路由,用於前往NLB的路由請求.
 - D. 在每個區域(Region)中,將EC2例項放在應用程式負載平衡器(ALBs)後面. 建立一個Amazon CloudFront分佈,其來源使用Amazon Route 53 延遲(latency)基於路由的路由,用於向ALB請求路由. 部署AWS WAF 在雲紋分佈。
 
 **答案**
@@ -17673,9 +17673,9 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將EC2例項放在每個區域(Region)的網路負載平衡器(北草坪會議大樓)後面。 在北草坪會議大樓部署AWS WAF。 建立 Amazon CloudFront 分佈,其來源使用基於 Amazon Route 53 延遲(latency) 的路由,用於前往北草坪會議大樓的路由請求。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- C：將EC2例項放在每個區域(Region)的網路負載平衡器(NLB)後面。 在NLB部署AWS WAF。 建立 Amazon CloudFront 分佈,其來源使用基於 Amazon Route 53 延遲(latency) 的路由,用於前往NLB的路由請求。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將EC2例項放在每個區域(Region)的網路負載平衡器(北草坪會議大樓)後面。 在北草坪會議大樓部署AWS WAF。 使用 AWS 全球加速器建立加速器,並將北草坪會議大樓登記為終點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將EC2例項放在每個區域(Region)的網路負載平衡器(NLB)後面。 在NLB部署AWS WAF。 使用 AWS 全球加速器建立加速器,並將NLB登記為終點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在區域(Region)中,將EC2例項放在應用程式負載平衡器後面。 在ALBs上部署AWS WAF. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為端點 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在每個區域(Region)中,將EC2例項放在應用程式負載平衡器(ALBs)後面. 建立一個Amazon CloudFront分佈,其來源使用Amazon Route 53 延遲(latency)基於路由的路由,用於向ALB請求路由. 部署AWS WAF 在雲紋分佈。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -18150,7 +18150,7 @@ C
 **選項**
 - A. 建立檢查VPC. 部署AWS網路防火牆(Firewall)防火牆(firewall),用於檢查VPC. 將檢查VPC附加到一個新的中轉閘道器. 途徑VPC至VPC的交通前往檢查VPC. 應用防火牆(firewall)規則只允許HTTPS通訊.
 - B. 建立VPC Lattice服務網路. 把微服務與服務網路聯絡起來。 為每項服務定義 HTTPS 聽器。 登記微服務計算資源為目標。 確定需要與服務機構進行溝通的VPC. 將這些自願人員與服務網路聯絡起來。
-- C. 建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓),每個微型服務都有HTTPS的聽眾和目標群體. 為每個微服務建立 AWS PrivateLink 端點服務。 在每個 VPC 中建立需要消耗該微服務的介面 VPC 端點(VPC endpoint)。
+- C. 建立網路負載平衡器(Network Load Balancer)(NLB),每個微型服務都有HTTPS的聽眾和目標群體. 為每個微服務建立 AWS PrivateLink 端點服務。 在每個 VPC 中建立需要消耗該微服務的介面 VPC 端點(VPC endpoint)。
 - D. 建立包含微服務的VPC之間的對等連線. 為每個需要連線客戶端的服務建立字首列表. 建立路由表,將路由流量傳送給相應的VPC. 建立安全組只允許 HTTPS 通訊。
 
 **答案**
@@ -18162,7 +18162,7 @@ A
 - A：建立檢查VPC. 部署AWS網路防火牆(Firewall)防火牆(firewall),用於檢查VPC. 將檢查VPC附加到一個新的中轉閘道器. 途徑VPC至VPC的交通前往檢查VPC. 應用防火牆(firewall)規則只允許HTTPS通訊。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：建立VPC Lattice服務網路. 把微服務與服務網路聯絡起來。 為每項服務定義 HTTPS 聽器。 登記微服務計算資源為目標。 確定需要與服務機構進行溝通的VPC. 將這些自願人員與服務網路聯絡起來。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓),每個微型服務都有HTTPS的聽眾和目標群體. 為每個微服務建立 AWS PrivateLink 端點服務。 在每個 VPC 中建立需要消耗該微服務的介面 VPC 端點(VPC endpoint) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：建立網路負載平衡器(Network Load Balancer)(NLB),每個微型服務都有HTTPS的聽眾和目標群體. 為每個微服務建立 AWS PrivateLink 端點服務。 在每個 VPC 中建立需要消耗該微服務的介面 VPC 端點(VPC endpoint) 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：建立包含微服務的VPC之間的對等連線. 為每個需要連線客戶端的服務建立字首列表. 建立路由表,將路由流量傳送給相應的VPC. 建立安全組只允許 HTTPS 通訊 。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #776
@@ -18964,7 +18964,7 @@ D
 **選項**
 - A. 指示供應商報名AWS託管連線直接連線程式. 使用VPC對等連線公司VPC和供應商VPC.
 - B. 配置公司VPC與供應商VPC之間的客戶VPN連線. 使用VPC對等連線公司VPC和供應商VPC.
-- C. 指示供應商建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 將北草坪會議大樓置於Amazon RDS前,供MySQL 資料庫(database)使用. 使用AWS PrivateLink整合公司的VPC和供應商的VPC.
+- C. 指示供應商建立網路負載平衡器(Network Load Balancer)(NLB)。 將NLB置於Amazon RDS前,供MySQL 資料庫(database)使用. 使用AWS PrivateLink整合公司的VPC和供應商的VPC.
 - D. 使用AWS Transit Gateway整合公司的VPC和供應商的VPC. 使用VPC對等連線公司的VPC和供應商的VPC.
 
 **答案**
@@ -18976,7 +18976,7 @@ A
 - A：指示供應商報名AWS託管連線直接連線程式. 使用VPC對等連線公司VPC和供應商VPC。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - B：配置公司VPC與供應商VPC之間的客戶VPN連線. 使用VPC對等連線公司VPC和供應商VPC。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：指示供應商建立網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 將北草坪會議大樓置於Amazon RDS前,供MySQL 資料庫(database)使用. 使用AWS PrivateLink整合公司的VPC和供應商的VPC。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：指示供應商建立網路負載平衡器(Network Load Balancer)(NLB)。 將NLB置於Amazon RDS前,供MySQL 資料庫(database)使用. 使用AWS PrivateLink整合公司的VPC和供應商的VPC。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用AWS Transit Gateway整合公司的VPC和供應商的VPC. 使用VPC對等連線公司的VPC和供應商的VPC。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #811
@@ -19074,13 +19074,13 @@ A
 ## Question #815
 
 **題目**
-一家線上遊戲公司在Amazon EC2公司網路負載平衡器(北草坪會議大樓)背後的多個AWS區域設有其平臺。 北草坪會議大樓可透過網際網路向目標傳送請求。 公司希望透過減少其全球客戶基礎的端到端負載時間來改進客戶的遊戲體驗. 哪種解決辦法能滿足這些要求?
+一家線上遊戲公司在Amazon EC2公司網路負載平衡器(NLB)背後的多個AWS區域設有其平臺。 NLB可透過網際網路向目標傳送請求。 公司希望透過減少其全球客戶基礎的端到端負載時間來改進客戶的遊戲體驗. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在每個區域(Region)中建立應用程式負載平衡器(ALB),以取代現有的北草坪會議大樓. 將現有的EC2例項登記為每個區域(Region)中ALB的目標。
-- B. 配置 Amazon Route 53,在每個區域(Region)中將同樣加權的交通線路通往北草坪會議大樓.
-- C. 在公司擁有大型客戶基地的其他區域建立更多的北草坪會議大樓和EC2例項。
-- D. 在 AWS 全球加速器中建立標準加速器。 將現有的北草坪會議大樓配置為目標終點。
+- A. 在每個區域(Region)中建立應用程式負載平衡器(ALB),以取代現有的NLB. 將現有的EC2例項登記為每個區域(Region)中ALB的目標。
+- B. 配置 Amazon Route 53,在每個區域(Region)中將同樣加權的交通線路通往NLB.
+- C. 在公司擁有大型客戶基地的其他區域建立更多的NLB和EC2例項。
+- D. 在 AWS 全球加速器中建立標準加速器。 將現有的NLB配置為目標終點。
 
 **答案**
 A
@@ -19088,11 +19088,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：在每個區域(Region)中建立應用程式負載平衡器(ALB),以取代現有的北草坪會議大樓. 將現有的EC2例項登記為每個區域(Region)中ALB的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：在每個區域(Region)中建立應用程式負載平衡器(ALB),以取代現有的NLB. 將現有的EC2例項登記為每個區域(Region)中ALB的目標。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：配置 Amazon Route 53,在每個區域(Region)中將同樣加權的交通線路通往北草坪會議大樓。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：在公司擁有大型客戶基地的其他區域建立更多的北草坪會議大樓和EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在 AWS 全球加速器中建立標準加速器。 將現有的北草坪會議大樓配置為目標終點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：配置 Amazon Route 53,在每個區域(Region)中將同樣加權的交通線路通往NLB。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：在公司擁有大型客戶基地的其他區域建立更多的NLB和EC2例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- D：在 AWS 全球加速器中建立標準加速器。 將現有的NLB配置為目標終點。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #816
 
@@ -21455,7 +21455,7 @@ A
 
 **選項**
 - A. 使用NAT閘道器管理網路流量. 使用 Amazon EC2 自動縮放組接收,處理和儲存已處理的客戶訂單. 使用 AWS Lambda 函式捕獲和儲存未處理的命令.
-- B. 使用網路負載平衡器(Network Load Balancer)(北草坪會議大樓)管理網路流量。 使用應用程式負載平衡器(Application Load Balancer)接收來自NLUS Amazon Redshift的客戶訂單,並配有多AZ部署以儲存未經處理和處理的客戶訂單.
+- B. 使用網路負載平衡器(Network Load Balancer)(NLB)管理網路流量。 使用應用程式負載平衡器(Application Load Balancer)接收來自NLUS Amazon Redshift的客戶訂單,並配有多AZ部署以儲存未經處理和處理的客戶訂單.
 - C. 使用一個Gateway 負載平衡器(Load Balancer)(GWLB)來管理網路流量. 使用亞馬遜彈性集裝箱服務(Amazon ECS)接收和處理客戶訂單. 使用GWLB捕捉和儲存未處理的命令. 使用Amazon DynamoDB儲存已處理的客戶訂單.
 - D. 使用應用程式負載平衡器(Application Load Balancer)管理網路流量. 使用 Amazon EC2 自動縮放組來接收和處理客戶訂單. 使用亞馬遜簡易佇列服務(Amazon SQS)儲存未處理的命令. 使用帶有多AZ部署的Amazon RDS儲存已處理的客戶訂單.
 
@@ -21468,7 +21468,7 @@ D
 - D：使用應用程式負載平衡器(Application Load Balancer)管理網路流量. 使用 Amazon EC2 自動縮放組來接收和處理客戶訂單. 使用亞馬遜簡易佇列服務(Amazon SQS)儲存未處理的命令. 使用帶有多AZ部署的Amazon RDS儲存已處理的客戶訂單。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：使用NAT閘道器管理網路流量. 使用 Amazon EC2 自動縮放組接收,處理和儲存已處理的客戶訂單. 使用 AWS Lambda 函式捕獲和儲存未處理的命令。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：使用網路負載平衡器(Network Load Balancer)(北草坪會議大樓)管理網路流量。 使用應用程式負載平衡器(Application Load Balancer)接收來自NLUS Amazon Redshift的客戶訂單,並配有多AZ部署以儲存未經處理和處理的客戶訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：使用網路負載平衡器(Network Load Balancer)(NLB)管理網路流量。 使用應用程式負載平衡器(Application Load Balancer)接收來自NLUS Amazon Redshift的客戶訂單,並配有多AZ部署以儲存未經處理和處理的客戶訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：使用一個Gateway 負載平衡器(Load Balancer)(GWLB)來管理網路流量. 使用亞馬遜彈性集裝箱服務(Amazon ECS)接收和處理客戶訂單. 使用GWLB捕捉和儲存未處理的命令. 使用Amazon DynamoDB儲存已處理的客戶訂單。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #918
@@ -21707,12 +21707,12 @@ D
 ## Question #928
 
 **題目**
-一個公司在一個VPC中託管一個影片流網路應用程式. 公司使用網路負載平衡器(Network Load Balancer)(北草坪會議大樓)處理TCP流量進行實時資料處理. 有人擅自試圖查閱申請。 公司希望透過最小的建築改變來改善應用安全,以防止未經授權的嘗試存取應用. 哪種解決辦法能滿足這些要求?
+一個公司在一個VPC中託管一個影片流網路應用程式. 公司使用網路負載平衡器(Network Load Balancer)(NLB)處理TCP流量進行實時資料處理. 有人擅自試圖查閱申請。 公司希望透過最小的建築改變來改善應用安全,以防止未經授權的嘗試存取應用. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在北草坪會議大樓直接實施一系列AWS WAF規則,以過濾未經授權的流量。
-- B. 以 安全群組(security group) 重新建立北草坪會議大樓, 只允許信任的 IP 地址。
-- C. 與現有北草坪會議大樓平行部署第二個北草坪會議大樓,配置一個嚴格的IP地址,允許列表。
+- A. 在NLB直接實施一系列AWS WAF規則,以過濾未經授權的流量。
+- B. 以 安全群組(security group) 重新建立NLB, 只允許信任的 IP 地址。
+- C. 與現有NLB平行部署第二個NLB,配置一個嚴格的IP地址,允許列表。
 - D. 使用 AWS Shield 高階可以提供強化的DDoS保護,防止未經授權的存取嘗試.
 
 **答案**
@@ -21721,10 +21721,10 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：以 安全群組(security group) 重新建立北草坪會議大樓, 只允許信任的 IP 地址 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- B：以 安全群組(security group) 重新建立NLB, 只允許信任的 IP 地址 。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在北草坪會議大樓直接實施一系列AWS WAF規則,以過濾未經授權的流量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：與現有北草坪會議大樓平行部署第二個北草坪會議大樓,配置一個嚴格的IP地址,允許列表。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在NLB直接實施一系列AWS WAF規則,以過濾未經授權的流量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- C：與現有NLB平行部署第二個NLB,配置一個嚴格的IP地址,允許列表。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：使用 AWS Shield 高階可以提供強化的DDoS保護,防止未經授權的存取嘗試。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #929
@@ -22117,7 +22117,7 @@ B
 一家電子商務公司在多個AWS賬戶中執行多個內部應用程式. 公司使用AWS Organizations管理其AWS賬戶. 公司網路賬戶中的安全裝置必須檢查跨AWS賬戶的應用程式之間的相互作用。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在網路賬戶中部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓),向安全裝置傳送流量。 配置應用程式賬戶,透過在應用程式賬戶中使用一個介面VPC 端點(VPC endpoint)向北草坪會議大樓傳送流量.
+- A. 在網路賬戶中部署一個網路負載平衡器(Network Load Balancer)(NLB),向安全裝置傳送流量。 配置應用程式賬戶,透過在應用程式賬戶中使用一個介面VPC 端點(VPC endpoint)向NLB傳送流量.
 - B. 在應用程式賬戶中部署一個應用程式負載平衡器(Application Load Balancer)(ALB),直接向安全裝置傳送流量。
 - C. 在網路賬戶中部署一個負載平衡器(Load Balancer)閘道器(GWLB),向安全裝置傳送流量。 配置應用程式賬戶,透過在應用程式賬戶中使用介面GWLB端點向GWLB傳送流量.
 - D. 在應用程式賬戶中部署一個介面VPC 端點(VPC endpoint),將流量直接傳送到安全應用程式.
@@ -22130,7 +22130,7 @@ C
 正確答案是 **C**。
 - C：在網路賬戶中部署一個負載平衡器(Load Balancer)閘道器(GWLB),向安全裝置傳送流量。 配置應用程式賬戶,透過在應用程式賬戶中使用介面GWLB端點向GWLB傳送流量。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：在網路賬戶中部署一個網路負載平衡器(Network Load Balancer)(北草坪會議大樓),向安全裝置傳送流量。 配置應用程式賬戶,透過在應用程式賬戶中使用一個介面VPC 端點(VPC endpoint)向北草坪會議大樓傳送流量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：在網路賬戶中部署一個網路負載平衡器(Network Load Balancer)(NLB),向安全裝置傳送流量。 配置應用程式賬戶,透過在應用程式賬戶中使用一個介面VPC 端點(VPC endpoint)向NLB傳送流量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：在應用程式賬戶中部署一個應用程式負載平衡器(Application Load Balancer)(ALB),直接向安全裝置傳送流量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：在應用程式賬戶中部署一個介面VPC 端點(VPC endpoint),將流量直接傳送到安全應用程式。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -22324,7 +22324,7 @@ A
 一家公司正在開發關於AWS的機器學習模型。 該公司正在開發ML模型作為獨立的微服務. 微服務在啟動時從Amazon S3獲取大約1GB的模型資料,並將資料裝入記憶體. 使用者透過同步API存取ML模型. 使用者可以傳送請求或批次請求. 公司向數百個使用者提供ML模型. 這些模型的使用模式不規則。 一些模型在數日或數週內不使用. 其他型號一次收到數以千計的請求。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 將API的請求導向網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 將ML模型用作AWS Lambda功能,供北草坪會議大樓使用。 根據北草坪會議大樓收到的流量,使用自動縮放來縮放Lambda功能。
+- A. 將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將ML模型用作AWS Lambda功能,供NLB使用。 根據NLB收到的流量,使用自動縮放來縮放Lambda功能。
 - B. 將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將ML模型用作ALB將援用的Amazon彈性集裝箱服務(Amazon ECS)服務。 根據ALB收到的流量,使用自動縮放來縮放ECS叢集例項.
 - C. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將 ML 模型應用為 SQS 事件將引用的 AWS Lambda 函式。 根據SQS佇列的大小,使用自動縮放來增加Lambda函式的vCPU數量.
 - D. 將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將ML模型作為從佇列讀取的亞馬遜彈性集裝箱服務(Amazon ECS)服務。 使用Amazon ECS的自動縮放來根據SQS佇列的大小對叢集能力和服務數量進行比例化.
@@ -22337,7 +22337,7 @@ D
 正確答案是 **D**。
 - D：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將ML模型作為從佇列讀取的亞馬遜彈性集裝箱服務(Amazon ECS)服務。 使用Amazon ECS的自動縮放來根據SQS佇列的大小對叢集能力和服務數量進行比例化。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：將API的請求導向網路負載平衡器(Network Load Balancer)(北草坪會議大樓)。 將ML模型用作AWS Lambda功能,供北草坪會議大樓使用。 根據北草坪會議大樓收到的流量,使用自動縮放來縮放Lambda功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：將API的請求導向網路負載平衡器(Network Load Balancer)(NLB)。 將ML模型用作AWS Lambda功能,供NLB使用。 根據NLB收到的流量,使用自動縮放來縮放Lambda功能。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：將API的請求導向應用程式負載平衡器(Application Load Balancer)(ALB). 將ML模型用作ALB將援用的Amazon彈性集裝箱服務(Amazon ECS)服務。 根據ALB收到的流量,使用自動縮放來縮放ECS叢集例項。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：將 API 的請求引導到 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將 ML 模型應用為 SQS 事件將引用的 AWS Lambda 函式。 根據SQS佇列的大小,使用自動縮放來增加Lambda函式的vCPU數量。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
