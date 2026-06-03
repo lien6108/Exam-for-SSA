@@ -2728,7 +2728,7 @@ C
 一家公司正在建立一個基於Amazon EC2的網路應用程式,在多個可用區(Availability Zones)中執行。 網路應用程式將提供對總計約900TB的文字檔案儲存庫的存取. 該公司預計網路應用將經歷需求高的時期. 一個解決方案架構師必須確保文字文件的儲存元件可以縮放以滿足應用程式在任何時候的需求. 該公司對解決方案的整體成本感到關切. 哪些儲存解決方案符合這些要求?
 
 **選項**
-- A. 亞馬遜彈性區塊儲存(Amazon EBS)
+- A. Amazon Elastic Block Store (Amazon EBS)
 - B. Amazon Elastic File System (Amazon EFS)
 - C. Amazon OpenSearch Service(Amazon OpenSearch Service)
 - D. Amazon S3.
@@ -2741,7 +2741,7 @@ D
 正確答案是 **D**。
 - D：Amazon S3。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：Amazon Elastic Block Store (Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：Amazon Elastic File System (Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：Amazon OpenSearch Service(Amazon OpenSearch Service)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -5139,7 +5139,7 @@ B
 一家公司在Amazon Linux EC2的一組例項上執行一個應用程式. 出於合規(compliance)的原因,公司必須保留所有應用日誌檔案7年. 日誌檔案將透過必須能夠同時存取所有檔案的報告工具進行分析。 哪些儲存解決方案符合這些要求?
 
 **選項**
-- A. 亞馬遜彈性區塊儲存(Amazon EBS)
+- A. Amazon Elastic Block Store (Amazon EBS)
 - B. Amazon Elastic File System (Amazon EFS)
 - C. Amazon EC2 例項商店
 - D. Amazon S3.
@@ -5152,7 +5152,7 @@ D
 正確答案是 **D**。
 - D：Amazon S3。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- A：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- A：Amazon Elastic Block Store (Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - B：Amazon Elastic File System (Amazon EFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：Amazon EC2 例項商店。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -5868,7 +5868,7 @@ B
 
 **選項**
 - A. Amazon Elastic File System (Amazon EFS)
-- B. 亞馬遜彈性區塊儲存(Amazon EBS)
+- B. Amazon Elastic Block Store (Amazon EBS)
 - C. Amazon S3 Glacier Deep Archive
 - D. AWS Backup 保管庫
 
@@ -5880,7 +5880,7 @@ A
 正確答案是 **A**。
 - A：Amazon Elastic File System (Amazon EFS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
-- B：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：Amazon Elastic Block Store (Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - C：Amazon S3 Glacier Deep Archive。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：AWS Backup 保管庫。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
@@ -15503,7 +15503,7 @@ B
 ## Question #662
 
 **題目**
-一家公司使用AWS Cost Explorer來監測其AWS的成本. 該公司注意到亞馬遜彈性區塊儲存(Amazon EBS)的儲存和快照(snapshot)的成本每月增加. 然而,公司並不每月購買額外的EBS儲存. 公司希望最佳化其當前儲存使用的每月成本. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司使用AWS Cost Explorer來監測其AWS的成本. 該公司注意到Amazon Elastic Block Store (Amazon EBS)的儲存和快照(snapshot)的成本每月增加. 然而,公司並不每月購買額外的EBS儲存. 公司希望最佳化其當前儲存使用的每月成本. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 在Amazon CloudWatch Logs中使用日誌來監控Amazon EBS的儲存利用率. 使用 Amazon EBS 彈性卷以減少EBS 磁碟區的大小.
@@ -19580,7 +19580,7 @@ B
 ## Question #837
 
 **題目**
-一家公司在Amazon EC2 執行個體中執行其應用程式,由亞馬遜彈性區塊儲存(Amazon EBS)支援. EC2例項執行最近的Amazon Linux釋出. 當公司的員工儲存和檢索25GB或更大的檔案時,應用程式的可用性出現問題. 公司需要一個不要求公司在EC2例項之間傳輸檔案的解決方案. 在許多EC2和多個可用區(Availability Zones)的案例中都必須有這些檔案。 哪種解決辦法能滿足這些要求?
+一家公司在Amazon EC2 執行個體中執行其應用程式,由Amazon Elastic Block Store (Amazon EBS)支援. EC2例項執行最近的Amazon Linux釋出. 當公司的員工儲存和檢索25GB或更大的檔案時,應用程式的可用性出現問題. 公司需要一個不要求公司在EC2例項之間傳輸檔案的解決方案. 在許多EC2和多個可用區(Availability Zones)的案例中都必須有這些檔案。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 把所有檔案都移到一個Amazon S3桶上. 指示員工查閱S3 儲存桶(S3 bucket)的文件.
@@ -23169,7 +23169,7 @@ C
 
 **選項**
 - A. AWS 資料同步
-- B. 亞馬遜彈性區塊儲存(Amazon EBS)
+- B. Amazon Elastic Block Store (Amazon EBS)
 - C. Amazon Elastic File System (Amazon EFS)
 - D. Amazon EMR 檔案系統(Amazon EMRFS)
 
@@ -23182,7 +23182,7 @@ C
 - C：Amazon Elastic File System (Amazon EFS)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
 - 其餘選項比較：
 - A：AWS 資料同步。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- B：亞馬遜彈性區塊儲存(Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：Amazon Elastic Block Store (Amazon EBS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 - D：Amazon EMR 檔案系統(Amazon EMRFS)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
 
 ## Question #991
