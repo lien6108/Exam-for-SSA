@@ -738,25 +738,30 @@ function renderQuizResult(correctCount, wrongItems) {
     item.className = `quiz-result-item ${isCorrect ? 'correct' : 'wrong'}`;
 
     const statusIcon = isCorrect ? '✅' : '❌';
-    const yourText = selected.length === 0
-      ? '（未作答）'
-      : selected.map(k => { const o = q.options.find(x => x.key === k); return `${k}. ${o ? o.text : ''}`; }).join('　');
-    const corrText = correct.map(k => { const o = q.options.find(x => x.key === k); return `${k}. ${o ? o.text : ''}`; }).join('　');
+
+    const optionsHtml = q.options.map(opt => {
+      const isCorrectOpt  = q.answers.includes(opt.key);
+      const isSelectedOpt = selected.includes(opt.key);
+      let cls = 'opt-neutral';
+      if (isCorrectOpt) cls = 'opt-correct';
+      else if (isSelectedOpt) cls = 'opt-wrong';
+      const t = opt.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<div class="qri-option ${cls}"><span class="opt-key">${opt.key}</span><span class="opt-text">${t}</span></div>`;
+    }).join('');
 
     const expHtml = q.explanation
       ? `<div class="explanation"><span class="explanation-label">詳解</span><p class="explanation-text">${q.explanation.replace(/</g, '&lt;')}</p></div>`
       : '';
 
+    const qTextEscaped = q.questionText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     item.innerHTML = `
       <div class="qri-header">
         <span class="qri-icon">${statusIcon}</span>
         <span class="qri-num">Q${i + 1}</span>
         <span class="qri-type">${q.answers.length >= 2 ? '複選' : '單選'}</span>
       </div>
-      <div class="qri-answers">
-        <div class="qri-row"><span class="answer-label your">你的答案：</span><span class="answer-val">${yourText}</span></div>
-        ${isCorrect ? '' : `<div class="qri-row"><span class="answer-label correct">正確答案：</span><span class="answer-val">${corrText}</span></div>`}
-      </div>
+      <p class="qri-q-text">${qTextEscaped}</p>
+      <div class="qri-options">${optionsHtml}</div>
       ${expHtml}
     `;
     section.appendChild(item);
