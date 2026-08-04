@@ -158,7 +158,7 @@ function parseMarkdownQuestions(mdText) {
       : answerRaw.split('').filter(c => /[A-Z]/.test(c));
 
     // 詳解（選填）
-    const exMatch = block.match(/\*\*詳解\*\*\s*\n([\s\S]*?)(?=^##|\Z)/m);
+    const exMatch = block.match(/\*\*詳解\*\*\s*\n([\s\S]*?)(?=\n\*\*分類|$)/);
     const explanation = exMatch ? exMatch[1].trim() : '';
 
     questions.push({ id, questionText, options, answers, explanation });
