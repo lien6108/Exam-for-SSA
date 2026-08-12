@@ -1,0 +1,14 @@
+.git
+.claude
+.wrangler
+bk
+docs
+question-bank
+node_modules
+README.md
+wrangler.toml
+AWS SAA.md
+AWS_SAA_cleaned.md
+AWS_SAA_cleaning_report.md
+AWS_SAA_完整整理版_1_1019.md
+*chunk_output.txt
