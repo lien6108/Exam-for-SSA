@@ -17,11 +17,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：開啟目的地S3 儲存桶(S3 bucket)的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 儲存桶(S3 bucket)。此選項最直接符合題目的需求與限制，通常能在效能、可用性、安全性、成本與維運複雜度之間取得最佳平衡。
+- A：開啟目的地S3 儲存桶(S3 bucket)的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 儲存桶(S3 bucket)。S3 Transfer Acceleration 透過 CloudFront 全球邊緣節點與 AWS 骨幹網路，把上傳路徑最佳化，搭配多部分上傳可平行傳送大型物件、提高輸送量並具容錯能力；資料直接送進目的地 bucket，不需要跨區複寫或額外中介處理，維運複雜度最低，正好符合題目「儘快彙總」且「最少營運複雜性」的要求。
 - 其餘選項比較：
-- B：在最接近的區域(Region)中將每個站點的資料上傳到一個S3 儲存桶(S3 bucket). 使用 S3 Cross-Region Replication 複製物件到目的地 S3 儲存桶(S3 bucket). 然後從來源S3 儲存桶(S3 bucket)中移除資料。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- C：每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 儲存桶(S3 bucket)。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
-- D：在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積。此做法可行性較低、成本或維運複雜度較高，或不完全符合題目限制。
+- B：在最接近的區域(Region)中將每個站點的資料上傳到一個S3 儲存桶(S3 bucket). 使用 S3 Cross-Region Replication 複製物件到目的地 S3 儲存桶(S3 bucket). 然後從來源S3 儲存桶(S3 bucket)中移除資料。多了一層跨區複寫（CRR 本身有複寫延遲）與事後手動清理來源物件的步驟，比直接上傳多出不必要的中介環節與維運負擔，不是最直接的做法。
+- C：每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 儲存桶(S3 bucket)。Snowball Edge 是設計給頻寬有限或離線環境的實體傳輸方案；題目已明說每個站點都有高速網際網路連線，改用實體裝置逐日排程搬運，反而增加裝置申請、運送與排程管理等額外維運複雜度，不符合善用現有高速連線、最小化維運複雜度的要求。
+- D：在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積。資料先停留在區塊儲存（EBS）而非直接進入目的地 S3 bucket，還需要自行維運 EC2 執行個體、排程快照與跨區複製還原流程，架構層數多、維運負擔遠高於直接上傳。
 
 **分類：** 儲存
 
