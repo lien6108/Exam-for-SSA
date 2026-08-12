@@ -1,0 +1,542 @@
+[
+  {
+    "n": 961,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "AWS WAF 的 rate-based rule 會在指定時間窗內統計來源請求數，超過門檻時暫時封鎖異常來源。在 Global Accelerator 將流量導向的 ALB 入口套用 Web ACL，可在請求進入 Auto Scaling 應用程式前抑制大量 HTTP 請求，降低應用層 DDoS 壓力。"},
+      {"letter": "B", "correct": false, "explanation": "由 Lambda 讀取 ALB 指標後更新網路 ACL 會有反應延遲，且 NACL 以子網路和 IP 規則為主，無法像 WAF 依 HTTP 請求速率精準辨識攻擊。把封鎖流程自製化也會增加事件處理與維護負擔。"},
+      {"letter": "C", "correct": false, "explanation": "只在後端 ALB 配置一般 Web ACL，沒有依題目架構把防護控制與 Global Accelerator 的入口流量策略整合。對已經透過加速器集中進入的攻擊流量，應使用題目指定的 rate-based 防護配置。"},
+      {"letter": "D", "correct": false, "explanation": "CloudFront 是內容快取與邊緣分發服務，不能直接作為 Global Accelerator 前方的 DDoS 緩解層來處理這個 ALB 入口。額外增加分發層也會帶來不必要的架構複雜度。"}
+    ]
+  },
+  {
+    "n": 962,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "Athena 的 DynamoDB connector 以唯讀方式把 DynamoDB 表呈現為可查詢資料來源，適合用排程 SQL 產生每日指標，而不必建立長時間執行的分析叢集。查詢可透過條件下推與平行讀取取得資料，並把結果交給 Athena／S3 保存。"},
+      {"letter": "B", "correct": false, "explanation": "Glue DynamoDB export connector 需要建立 Glue 任務與匯出流程，對只需每日 SQL 指標的情境增加 ETL 設定與排程維運。它不是題目所要求的最低額外操作路徑。"},
+      {"letter": "C", "correct": false, "explanation": "Redshift COPY 是把資料載入 Redshift 的批次載入命令，不會直接在 DynamoDB 上提供低維護成本的每日查詢。還要管理 Redshift 資源，與只做週期性指標不相稱。"},
+      {"letter": "D", "correct": false, "explanation": "EMR 與 Hive 外部表會引入叢集、節點與排程管理，遠高於使用 Athena 聯合查詢。這種作法不符合只需偶爾計算指標且要降低營運工作的限制。"}
+    ]
+  },
+  {
+    "n": 963,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "SNS 是發布／訂閱通知服務，訊息可能同時送往多個訂閱者，不是用來可靠保存待處理工作的一次消費佇列。以 CPU 使用率擴縮也無法直接反映待處理工作數量。"},
+      {"letter": "B", "correct": false, "explanation": "SQS 能保存工作，但以 EC2 網路用量作為擴縮訊號，不能準確表示佇列中尚未處理的工作量。當工作數增加而網路流量沒有同步增加時，擴縮會失準。"},
+      {"letter": "C", "correct": true, "explanation": "SQS 會持久保存工作並以訊息可見性逾時把工作與消費者解耦，EC2 失敗時訊息可再次變為可見，不會因節點替換而遺失。Auto Scaling 依 ApproximateNumberOfMessagesVisible 擴縮，能讓平行處理能力跟隨積壓量變化。"},
+      {"letter": "D", "correct": false, "explanation": "SNS 的訊息數量不是適合直接衡量待處理積壓的持久化佇列深度，且發布通知不提供 SQS 那種工作保留與重新投遞語意。這會使工作可靠性與擴縮判斷都不符合需求。"}
+    ]
+  },
+  {
+    "n": 964,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "在 EC2 上自行維護容器叢集需要管理主機、修補與容量，RDS 也不適合同時存放產品影像這類大型物件。這會增加營運負擔並浪費關聯式資料庫儲存。"},
+      {"letter": "B", "correct": false, "explanation": "Lambda 可協助拆分事件處理，但把結構化產品資料與產品影像都放在 DynamoDB，不能充分利用關聯式資料庫模型與物件儲存的成本優勢。"},
+      {"letter": "C", "correct": false, "explanation": "EKS 搭配 EC2 需要管理 Kubernetes 節點，且 Glacier Deep Archive 的取回延遲不適合一般產品影像的即時使用。Step Functions 也不是題目所需的核心儲存解法。"},
+      {"letter": "D", "correct": true, "explanation": "ECS with Fargate 以無伺服器容器執行工作，服務團隊只需管理映像與任務，不必維護 EC2 節點。多 AZ 的 RDS 保留結構化資料庫能力與高可用性，S3 則以高耐久度且可擴展的物件儲存承載產品影像。"}
+    ]
+  },
+  {
+    "n": 965,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "用戶端加密需要在應用程式或資料流程中自行管理加密、金鑰分發與解密，會增加遷移後的實作與維運工作。題目要求的是由 AWS 管理儲存前的加密流程。"},
+      {"letter": "B", "correct": true, "explanation": "SSE-KMS 會在 Amazon S3 儲存物件時使用 KMS 金鑰加密物件資料，並由 S3 管理加解密流程。KMS 也提供金鑰政策、稽核與輪換能力，適合敏感資料的集中式控制。"},
+      {"letter": "C", "correct": false, "explanation": "SSE-C 要求呼叫端在每次請求提供客戶管理的加密金鑰，S3 不會替客戶保存該金鑰。這會增加金鑰保管與請求整合負擔，不是最低營運開銷的選擇。"},
+      {"letter": "D", "correct": false, "explanation": "S3 管理金鑰只能用在伺服器側加密，不能拿來執行所描述的用戶端加密。用戶端加密若自行處理金鑰，也不會自動取得 S3 端的金鑰治理能力。"}
+    ]
+  },
+  {
+    "n": 966,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "介面 VPC Endpoint 只提供前往 AWS 服務的私有網路路徑，不會依每個 EMR 工作建立不同的 IAM 權限。它也不能單獨阻止工作負載透過 IMDSv2 取得基礎 EC2 執行個體的憑證。"},
+      {"letter": "B", "correct": true, "explanation": "EMR runtime role 可在提交工作時指定，讓每個大資料工作以自己的 IAM 角色存取所需 AWS 服務，而不是共用叢集執行個體角色。EMR 的工作層級憑證隔離也能避免工作直接依賴基礎 EC2 的 IMDSv2 憑證，符合團隊間的最小權限需求。"},
+      {"letter": "C", "correct": false, "explanation": "EC2 instance profile 會套用到整個執行個體，叢集上的不同團隊容易共用同一組權限，無法做到工作層級隔離。它也正是透過執行個體身分取得憑證的方式。"},
+      {"letter": "D", "correct": false, "explanation": "安全配置中的應用程式範圍 IAM 設定若停用，反而不能提供每個工作的獨立角色與權限邊界。安全配置本身也不是用來替代 runtime role 的工作提交機制。"}
+    ]
+  },
+  {
+    "n": 967,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "SQS FIFO 佇列能讓表單提交依訊息群組有序處理，並提供恰好一次處理的去重語意，適合每份表單只處理一次的要求。訊息會持久保存並在工作者確認刪除前保留，網路層與工作層因此解耦且不易遺失資料。"},
+      {"letter": "B", "correct": false, "explanation": "API Gateway HTTP API 是請求入口，不是用來持久保存待處理表單的工作佇列；工作者短暫不可用時，直接轉送可能造成資料遺失或需要自行重試。"},
+      {"letter": "C", "correct": false, "explanation": "標準 SQS 佇列可提供至少一次投遞，但可能出現重複訊息，不能直接滿足每份表單只處理一次。除非應用程式自行實作冪等性，否則不符合題目的處理語意。"},
+      {"letter": "D", "correct": false, "explanation": "同步 Step Functions 工作流程會讓網路請求等待工作者完成，無法像佇列一樣吸收突發提交量。同步呼叫也增加逾時與失敗重試對前端的影響。"}
+    ]
+  },
+  {
+    "n": 968,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "把串流先寫成 S3 物件再以 Athena 查詢，較適合批次資料湖，不能自然提供即時搜尋更新。且題目指定的原生串流搜尋與視覺化鏈路並非此組合。"},
+      {"letter": "B", "correct": false, "explanation": "EMR、Redshift 與 Spectrum 主要用於批次或分析查詢，導入叢集與資料倉庫會增加延遲和管理工作。QuickSight 也不會自行把串流資料變成即時搜尋索引。"},
+      {"letter": "C", "correct": false, "explanation": "DynamoDB 適合鍵值與文件資料，但不是通用的全文或探索式搜尋引擎；CloudWatch 儀表板也不等同於搜尋平台。這組服務無法同時滿足即時搜尋與視覺化需求。"},
+      {"letter": "D", "correct": true, "explanation": "Kinesis Data Streams 能持續接收多來源事件並讓消費者平行處理，OpenSearch Service 可提供近即時索引與搜尋。QuickSight 可連接分析資料建立儀表板，形成從串流攝取到查詢與視覺化的受管服務鏈路。"}
+    ]
+  },
+  {
+    "n": 969,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "AWS App2Container 可分析並容器化 ASP.NET 應用程式，ECS on Fargate 則免除 EC2 主機佈建、修補與容量管理。透過 CloudFormation 描述任務、服務與 Auto Scaling，能依 CloudWatch 指標擴縮並降低維運時間。"},
+      {"letter": "B", "correct": false, "explanation": "ECS on EC2 需要自行管理叢集主機、作業系統修補、容量與失敗替換，與縮短營運維護時間的要求不符。App2Container 只解決容器化，不能消除這些主機管理工作。"},
+      {"letter": "C", "correct": false, "explanation": "App Runner 本身是部署容器化 Web 應用程式的受管服務，不是把應用程式部署到 ECS Fargate 的容器化工具。選項混用了互不相同的部署模型。"},
+      {"letter": "D", "correct": false, "explanation": "App Runner 不會把應用程式部署到 EKS，也不會在 EC2 上替 EKS 管理 Kubernetes 基礎設施。這個組合無法形成正確且低維護的執行架構。"}
+    ]
+  },
+  {
+    "n": 970,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "Parameter Store 可以保存參數，但選項使用 BatchGetSecretValue API；該 API 是 Secrets Manager 的介面，不是 Parameter Store 的取值 API。CloudFormation 也不應被當成執行期憑證取用元件。"},
+      {"letter": "B", "correct": false, "explanation": "Secrets Manager 適合保存憑證，但加入 AWS Batch 來讀取密密碼會引入無關的批次運算元件。題目只需要應用程式以 Secrets Manager API 取得秘密。"},
+      {"letter": "C", "correct": false, "explanation": "這個選項把 Secrets Manager 的 BatchGetSecretValue API 套用到 Parameter Store，服務 API 不相容。它也沒有利用 Secrets Manager 對秘密資料的專用生命週期管理。"},
+      {"letter": "D", "correct": true, "explanation": "Secrets Manager 專門管理資料庫與應用程式憑證，BatchGetSecretValue 可在一次呼叫中取得多個秘密，適合多個 AWS 受管服務。搭配 IAM 最小權限與 KMS 加密，應用程式可以安全取用而不必把密碼放進模板或原始碼。"}
+    ]
+  },
+  {
+    "n": 971,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "CachingDisabled 會使每次下載都回源 S3，無法讓世界各地伺服器就近取得相同版本檔案。它反而放大跨區域與遠端下載延遲。"},
+      {"letter": "B", "correct": false, "explanation": "跨區域複寫與主次來源能提供備援，但會新增儲存桶、複寫規則與來源切換的維運成本。題目只要求降低全球下載延遲，不需要這層複雜度。"},
+      {"letter": "C", "correct": false, "explanation": "S3 Transfer Acceleration 主要改善把資料上傳到 S3 的路徑，並非用來讓大量遠端伺服器快取重複下載的軟體檔案。每次下載仍可能回到來源桶。"},
+      {"letter": "D", "correct": true, "explanation": "CloudFront 會把 S3 中的軟體檔案快取到全球邊緣節點，遠端伺服器可從較近的節點下載，減少跨洲延遲。以簽名 URL 控制檔案發行權限，既保護軟體版本又不必管理各地伺服器的下載基礎設施。"}
+    ]
+  },
+  {
+    "n": 972,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "Amazon FSx for Windows File Server 提供 SMB 共享檔案儲存，Windows 叢集的兩個節點可存取同一份資料，避免把單一 AZ 的 EBS 當成跨 AZ 共享磁碟。多 AZ 檔案系統由 AWS 管理備援與故障切換，適合既有 Windows 應用程式。"},
+      {"letter": "B", "correct": false, "explanation": "EBS 磁碟區只能掛載到同一個 AZ 內的 EC2，應用程式層複寫也需要自行處理一致性、衝突與故障切換。這不是低延遲共享儲存的受管解法。"},
+      {"letter": "C", "correct": false, "explanation": "FSx for NetApp ONTAP 的 iSCSI 存取與題目所需的 Windows 共享檔案情境並不匹配，且選項只配置單一活動節點。備用節點與共享區塊資料的切換仍需額外管理。"},
+      {"letter": "D", "correct": false, "explanation": "io2 EBS 仍是單 AZ 磁碟區，EBS 本身不提供跨 AZ 同步複寫；所述應用程式或 EBS 層複寫都要自行建立。這會增加故障切換複雜度，不能直接提供共享儲存。"}
+    ]
+  },
+  {
+    "n": 973,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "ALB 的安全群組需要允許網際網路以 HTTPS 連入 443，才能接收公共流量。這個入站規則只開放必要的監聽器埠，符合最小暴露原則。"},
+      {"letter": "B", "correct": false, "explanation": "ALB 對外送往目標的流量應受目標埠與目標安全群組限制，不應以對所有網際網路目的地的 443 出站規則作為必要條件。這會放大出站範圍。"},
+      {"letter": "C", "correct": true, "explanation": "ALB 安全群組的出站規則必須允許向 EC2 Web 伺服器的 TCP 443 傳送 HTTPS。將目的地限制為應用程式執行個體安全群組，可讓負載平衡器到後端的資料路徑保持最小權限。"},
+      {"letter": "D", "correct": false, "explanation": "後端入站規則的來源應是 ALB 安全群組，而不是網路應用程式執行個體本身。這個方向的規則不能正確授權 ALB 轉送的連線。"},
+      {"letter": "E", "correct": true, "explanation": "EC2 目標的安全群組必須允許來自 ALB 安全群組的 HTTPS 8443 入站流量，因為健康檢查使用的埠號與應用程式轉送埠 443 不同。限制來源為 ALB 可避免其他來源直接探測健康檢查端點。"},
+      {"letter": "F", "correct": false, "explanation": "健康檢查是 ALB 主動連線到目標，而不是目標主動向 ALB 的 8443 出站連線。把規則方向寫反，無法放行實際的檢查請求。"}
+    ]
+  },
+  {
+    "n": 974,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "CloudFront 的公開 ACM 憑證必須在 us-east-1 建立，CloudFront 才能使用自訂網域進行 HTTPS 終止。這是 CloudFront 憑證區域限制，與 S3 儲存桶所在的 eu-west-1 無關。"},
+      {"letter": "B", "correct": false, "explanation": "eu-west-1 的 ACM 憑證不能直接附加到 CloudFront 分佈；CloudFront 要求憑證位於 us-east-1。"},
+      {"letter": "C", "correct": false, "explanation": "S3 Transfer Acceleration 是透過邊緣網路加速上傳到 S3 的端點，不是授權 CloudFront 代表使用者寫入來源桶的機制。它也不能取代 CloudFront Origin Access Control。"},
+      {"letter": "D", "correct": true, "explanation": "CloudFront Origin Access Control 可讓分佈以受控的簽名請求存取 S3，並在桶政策中只授權該 CloudFront distribution。如此可以保留桶的私有性，同時支援經由自訂網域上傳物件。"},
+      {"letter": "E", "correct": false, "explanation": "S3 website endpoint 不支援 CloudFront OAC 的私有來源授權，而且網站端點是 HTTP 來源模式。它不適合需要受控上傳與自訂 HTTPS 網域的架構。"}
+    ]
+  },
+  {
+    "n": 975,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "Athena 可直接對 S3 中的 Parquet 物件執行 SQL，並用日期前綴分割掃描範圍，只需為偶爾查詢付費。設定對應的 KMS 權限後，Athena 能讀取加密資料並計算指定日期的移動平均，無需常駐叢集。"},
+      {"letter": "B", "correct": false, "explanation": "S3 Select 適合對單一物件做投影與篩選，不是跨多個 Parquet 檔案執行移動平均的完整 SQL 分析引擎。它也不能取代對用戶端 KMS 加密資料的查詢解密設定。"},
+      {"letter": "C", "correct": false, "explanation": "Redshift 與 Spectrum 能查詢 S3，但需要管理或配置資料倉庫資源，對低頻查詢會產生不必要的成本與維運。題目不需要長駐分析資料庫。"},
+      {"letter": "D", "correct": false, "explanation": "EMR Serverless 能執行 Spark SQL，但建立 Spark 工作與執行環境比 Athena 直接查詢更複雜。對日期前綴的偶爾聚合而言，這不是最低成本的分析路徑。"}
+    ]
+  },
+  {
+    "n": 976,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "地理位置路由依查詢者所在的地理區域匹配記錄，不會根據各 AWS 資源的實際網路距離計算最近端點。ALB 只在單一區域內分配流量，也無法把使用者導向最近的跨區域資源。"},
+      {"letter": "B", "correct": true, "explanation": "Route 53 地理近距離路由會依使用者與 AWS 資源位置的地理距離選擇區域，並可用 bias 調整流量分布。各區域的 NLB 作為端點後，NLB 再跨 AZ 分配到健康的 EC2，形成全球就近與區域高可用。"},
+      {"letter": "C", "correct": false, "explanation": "多值答案路由主要回傳多個健康記錄，讓用戶端自行選擇，並不保證回傳最接近使用者的位置。它不適合明確的地理就近需求。"},
+      {"letter": "D", "correct": false, "explanation": "加權路由依權重分配流量，適合藍綠部署或比例分流，不會依使用者位置選擇端點。無法保證世界各地請求走向最近的 EC2。"}
+    ]
+  },
+  {
+    "n": 977,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "RDS for MySQL 的儲存加密可使用 KMS 管理金鑰保護靜態資料、快照與備份；資料庫連線則透過 MySQL SSL/TLS 憑證加密傳輸。兩層加密分別涵蓋磁碟上的資料與 EC2 到 RDS 的網路流量，且由受管服務降低維護工作。"},
+      {"letter": "B", "correct": false, "explanation": "IPsec VPN 主要保護網路通道，並不等同於在 RDS 上啟用資料庫原生 SSL/TLS，也會引入端點與路由維運。對同一 VPC 內的 EC2 到 RDS 連線並非最低開銷方案。"},
+      {"letter": "C", "correct": false, "explanation": "第三方應用層加密需要自行管理加密程式、金鑰與資料庫欄位處理，無法涵蓋所有 RDS 儲存資料與備份。它比 RDS 原生 KMS 靜態加密更複雜。"},
+      {"letter": "D", "correct": false, "explanation": "VPN 可加密特定網路通道，但題目只要求應用程式到 RDS 的傳輸保護，建立 VPN 會增加不必要的網路元件。它也沒有取代 RDS 儲存層的 KMS 加密。"}
+    ]
+  },
+  {
+    "n": 978,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "RDS 自動備份會保存資料庫快照與交易日誌，並讓資料庫能在保留窗口內執行 point-in-time restore。以 RDS 的備份設定集中管理保存與復原，比每日建立、清理手動快照更少人工操作。"},
+      {"letter": "B", "correct": false, "explanation": "每日手動快照只能恢復到快照建立的時間點，不能提供連續交易日誌所支援的任意時間復原。還需要額外的生命週期清理工作。"},
+      {"letter": "C", "correct": false, "explanation": "Aurora Clone 是快速建立資料庫副本的開發／測試能力，不是 RDS Oracle 的長期備份保留與 point-in-time restore 機制。刪除 clone 也無法取代備份政策。"},
+      {"letter": "D", "correct": false, "explanation": "AWS Backup 可集中管理快照與部分連續備份，但本題只需 RDS 原生自動備份的時間點復原，額外建立 Backup 計畫會增加配置層。它也不是最直接的 RDS 原生解法。"}
+    ]
+  },
+  {
+    "n": 979,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "Provisioned IOPS 適合需要穩定高 I/O 的工作負載，對讀取比例高但流量可變、寫入偶發的應用會造成過度配置與成本。"},
+      {"letter": "B", "correct": true, "explanation": "Aurora 是受管的關聯式資料庫，保留 SQL 與交易語意，同時可依實際負載自動擴大儲存容量。它避免預先配置大量儲存，適合穩定成長但讀取與寫入量波動的工作負載。"},
+      {"letter": "C", "correct": false, "explanation": "DynamoDB 是 NoSQL 鍵值／文件資料庫，不能直接提供題目所需的關聯式資料庫結構與 SQL 交易模型。即使按需容量可彈性擴縮，資料模型仍不符合。"},
+      {"letter": "D", "correct": false, "explanation": "磁性儲存不適合讀取密集的現代資料庫，效能與可預測性較差；讀取複本也無法消除底層儲存的限制。"}
+    ]
+  },
+  {
+    "n": 980,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "S3 Gateway Endpoint 讓 VPC 內的 EC2 透過 AWS 私有網路存取 S3，不需 NAT 或網際網路閘道器。再以 instance profile 的 IAM 政策限定允許的桶 ARN，可同時達成私有路徑與帳戶內桶的最小權限。"},
+      {"letter": "B", "correct": false, "explanation": "NAT Gateway 只提供出站轉送，不會限制應用程式只能存取公司帳戶的特定 S3 桶；安全群組也不能以 S3 桶資源作為精細授權邊界。"},
+      {"letter": "C", "correct": false, "explanation": "選項中的 IAM 設定語意不完整且把拒絕條件放在執行個體政策，無法可靠地以資源 ARN 限定應用程式可用的桶。Gateway Endpoint 與明確允許政策才是清楚的控制面。"},
+      {"letter": "D", "correct": false, "explanation": "透過 NAT 存取 S3 仍會走公有 AWS 服務端點，而且為每個桶維護拒絕政策增加管理量。這不能提供最簡單的私有 S3 存取路徑。"}
+    ]
+  },
+  {
+    "n": 981,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "把一個共用 IAM 角色指派給所有團隊會使權限邊界變得模糊，即使附加不同自訂政策，也不如以團隊群組與權限集集中管理清楚。它還可能讓團隊取得不必要的資料庫或桶權限。"},
+      {"letter": "B", "correct": true, "explanation": "IAM Identity Center 的 permission set 可集中定義每個團隊在帳戶中的 IAM 權限，並透過群組指派，避免逐一建立長期 IAM 使用者。這能與既有身份目錄整合，將開發、測試與運營的 RDS／S3 權限分開並遵守最小權限。"},
+      {"letter": "C", "correct": false, "explanation": "為每個人建立 IAM 使用者與個別角色會產生大量帳號、金鑰和政策維護工作，與已使用 IAM Identity Center 的集中管理方向相反。"},
+      {"letter": "D", "correct": false, "explanation": "每個團隊各設一個 AWS 帳戶可提供隔離，但需要跨帳戶角色、帳戶生命週期與網路／治理設定，營運負擔高於在 Identity Center 使用群組與權限集。"}
+    ]
+  },
+  {
+    "n": 982,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "桶政策依公司公共 IP 限制來源，沒有為應用程式提供臨時 AWS 憑證，且當來源網路或部署改變時需維護 IP 清單。網路來源限制也不能替代身份授權。"},
+      {"letter": "B", "correct": true, "explanation": "IAM role 的臨時安全憑證有有限期限，應用程式可透過 AWS CLI 或 SDK 代入角色取得 S3 權限，不必保存長期 access key。把角色權限交給 IAM Identity Center 管理，能保留集中撤銷與最小權限控制。"},
+      {"letter": "C", "correct": false, "explanation": "把 IAM 使用者的長期 access key 安裝在虛擬機器上，會造成憑證外洩與輪換風險。這不符合臨時存取與避免長期秘密的安全要求。"},
+      {"letter": "D", "correct": false, "explanation": "把長期 IAM 使用者金鑰放進 Secrets Manager 仍然需要應用程式取用、輪換與撤銷這些金鑰，並未消除長期憑證風險。臨時 role credentials 更適合這個情境。"}
+    ]
+  },
+  {
+    "n": 983,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "每個新帳戶各建立 Direct Connect 連線，需要新的專線、設備與維運流程，無法以一致且具成本效益的方式擴展。"},
+      {"letter": "B", "correct": false, "explanation": "VPC Endpoint 只能連到支援的 AWS 服務，不能把帳戶間的新 VPC 流量集中轉送到現場的 DNS 或目錄伺服器。"},
+      {"letter": "C", "correct": false, "explanation": "每個新帳戶各建立 VPN 會重複配置隧道、路由與監控，帳戶數增加時營運量快速上升。這不是共享既有 DX 的集中拓撲。"},
+      {"letter": "D", "correct": true, "explanation": "AWS Transit Gateway 可作為多 VPC、多帳戶的集中路由樞紐，並以 Transit Gateway attachment 連接新帳戶。把 Direct Connect 指向 Transit Gateway 後，所有帳戶可沿同一條受管 DX 路徑存取現場目錄與 DNS，減少重複連線與路由維護。"}
+    ]
+  },
+  {
+    "n": 984,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "CloudFront 可把 ALB 的動態與快取內容分發到全球邊緣位置，讓大量客戶就近連線，降低回到單一 AWS 區域的延遲與來源負載。沿用既有 ALB 作為來源，不必重建 EC2 應用程式層。"},
+      {"letter": "B", "correct": false, "explanation": "Route 53 負責 DNS 流量導向，不會把單一 ALB 的動態內容快取到全球邊緣。只依地理位置提供 DNS 解析無法直接提升來源回應能力。"},
+      {"letter": "C", "correct": false, "explanation": "S3 靜態網站託管只能承載靜態檔案，無法直接取代需要 EC2 執行的動態網路應用程式。遷移整個應用程式也超出成本最佳化快取的需求。"},
+      {"letter": "D", "correct": false, "explanation": "Direct Connect 是企業到 AWS 的專用網路連線，不是面向數百萬全球終端使用者的內容分發服務。為每個客戶位置提供專線既昂貴又不具可行性。"}
+    ]
+  },
+  {
+    "n": 985,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "S3 Standard 對頻繁存取很合適，但所有物件都支付最高等級的儲存費，無法針對數月未使用的資料自動降成本。"},
+      {"letter": "B", "correct": true, "explanation": "S3 Intelligent-Tiering 會依物件存取模式在存取層之間自動移動資料，適合不可預測且有長時間閒置資料的工作負載。它仍提供 S3 的高耐久度與多 AZ 可用性，避免 One Zone-IA 的單 AZ 風險。"},
+      {"letter": "C", "correct": false, "explanation": "Glacier Deep Archive 的儲存成本低，但取回需要等待且適合長期封存，不符合工作時間內持續存取與高可用性的要求。"},
+      {"letter": "D", "correct": false, "explanation": "S3 One Zone-IA 只存放在單一可用區，AZ 故障時的可用性與韌性較低。它不符合題目要求維持高可用性與最高耐久性的條件。"}
+    ]
+  },
+  {
+    "n": 986,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "自行架設 NFS 伺服器會形成單一檔案伺服器故障點，且要自行管理 NFS、EC2 與 EBS 的可用性。Auto Scaling 新節點共用資料時也會增加掛載與維護工作。"},
+      {"letter": "B", "correct": false, "explanation": "FSx for Windows File Server 提供 SMB，不是 Linux 應用程式慣用的 NFS 介面；單一 AZ 配置也降低可用性。"},
+      {"letter": "C", "correct": false, "explanation": "增加 EBS 磁碟區仍不能讓多個跨節點 EC2 同時共享同一份檔案資料，EBS 也受 AZ 綁定限制。更換磁碟數量不會解決共享儲存需求。"},
+      {"letter": "D", "correct": true, "explanation": "EFS 提供受管的 NFS 檔案系統，可由同一區域多個 AZ 的 EC2 同時掛載，適合 Auto Scaling 新增的 Linux 執行個體。通用效能模式能以簡單的檔案介面提供彈性容量與高可用性，通常不需大幅修改應用程式。"}
+    ]
+  },
+  {
+    "n": 987,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "NLB 可處理 TCP，但此選項沒有提供 Auto Scaling，因此 EC2 數量不會隨使用者增加自動變化。負載平衡器本身不能替代容量擴縮。"},
+      {"letter": "B", "correct": true, "explanation": "EC2 Auto Scaling Group 可在兩個 AZ 維持所需容量，並依使用量自動新增或移除執行個體。它也能在執行個體故障時自動補回，提供成本可控的高可用計算層。"},
+      {"letter": "C", "correct": true, "explanation": "ALB 可跨 AZ 將 TCP 以外的應用程式流量導向健康的 EC2 目標，並集中執行健康檢查。與 Auto Scaling Group 搭配後，新舊執行個體會自動註冊與移除，支援彈性流量分配。"},
+      {"letter": "D", "correct": false, "explanation": "手動增加 EC2 不能隨使用者量自動反應，也需要人工監控與回收容量。這不符合成本效益與自動擴縮要求。"},
+      {"letter": "E", "correct": false, "explanation": "Load Balancer Gateway 主要用於插入第三方虛擬網路設備，不是一般應用程式的 TCP 負載平衡與 Auto Scaling 入口。它會引入不必要的網路設備路徑。"}
+    ]
+  },
+  {
+    "n": 988,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "Organizations 的 tag policy 可在組織或 OU 層集中定義資料敏感度標籤的鍵和值，讓 EC2 資源標籤格式一致。它適合治理標籤標準，並可附加到管理範圍內的 OU。"},
+      {"letter": "B", "correct": false, "explanation": "SCP 可以限制 API 動作，但不是用來定義與標準化標籤鍵值的 tag policy。將兩種政策的職責混用，無法正確完成標籤治理。"},
+      {"letter": "C", "correct": false, "explanation": "Tag policy 不會像 IAM 或 SCP 一樣拒絕未帶標籤的建立動作，也不能以拒絕語句阻止刪除標籤。這些強制性控制需要 SCP。"},
+      {"letter": "D", "correct": true, "explanation": "SCP 可用 aws:RequestTag 與 aws:TagKeys 條件限制 EC2 建立請求必須帶有允許的敏感度標籤，並以拒絕 ec2:DeleteTags 防止身份移除標籤。把 SCP 附加到相應 OU，可在帳戶邊界強制執行而不必逐一修改所有 IAM 政策。"},
+      {"letter": "E", "correct": false, "explanation": "AWS Config 可偵測不合規資源，但觸發 Lambda 刪除 EC2 是破壞性補救，且不是在建立當下阻止無標籤資源。它也無法取代 SCP 的預防性拒絕。"}
+    ]
+  },
+  {
+    "n": 989,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "AWS Backup 不是必要元件，且僅把自動備份的政策交給它並不會自動清理現有手動快照。選項的處理方式無法完整維持既有備份並落實 30 天清理。"},
+      {"letter": "B", "correct": false, "explanation": "停用自動備份會失去 RDS 的 point-in-time restore 能力，且刪除現有備份會違反要保留未滿 30 天資料的條件。"},
+      {"letter": "C", "correct": true, "explanation": "將 RDS 自動備份保留期設為 30 天，可保留交易日誌並支援窗口內的時間點復原；RDS 會自動淘汰超過保留期的自動備份。手動快照不受該設定自動刪除，因此只需手動清理超過 30 天的手動備份即可保留其餘資料。"},
+      {"letter": "D", "correct": false, "explanation": "停用 RDS 自動備份會移除時間點復原能力，而 CloudFormation 本身也不是備份生命週期清理引擎。這個做法同時增加自訂自動化與資料遺失風險。"}
+    ]
+  },
+  {
+    "n": 990,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "DataSync 是在檔案系統或儲存服務間進行資料傳輸與同步的工具，不是遷移後讓 NFS 應用程式持續掛載的檔案儲存服務。"},
+      {"letter": "B", "correct": false, "explanation": "EBS 以區塊裝置提供儲存，不提供應用程式要求的 NFS 通訊協定；應用程式若不能修改，就無法直接使用它。"},
+      {"letter": "C", "correct": true, "explanation": "EFS 提供標準 NFS 介面，EC2 上的既有應用程式可沿用原本的檔案存取協定。它是受管、可彈性擴展且可跨 AZ 掛載的檔案服務，能降低遷移時的程式修改量。"},
+      {"letter": "D", "correct": false, "explanation": "EMRFS 是 EMR 存取 S3 的抽象層，不是一般 EC2 或遺留應用程式可掛載的 NFS 檔案系統。"}
+    ]
+  },
+  {
+    "n": 991,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "S3 能耐久保存物件，但應用程式輪詢新檔案會增加延遲與掃描成本，還需要自行處理重複、排序與刪除。它不是此類短訊息事件的低維護佇列。"},
+      {"letter": "B", "correct": false, "explanation": "API Gateway 與 Lambda 可處理請求，但直接同步執行會讓突發資料量壓垮函式或入口，且沒有持久化重播緩衝。"},
+      {"letter": "C", "correct": true, "explanation": "SQS 會把追蹤器事件持久化，消費者可按自己的速度輪詢處理，突發流量不會直接淹沒 EC2 Web 應用程式。訊息在處理確認前可重試與重播，因此能避免先前的資料遺失，同時只需配置既有應用程式的佇列消費。"},
+      {"letter": "D", "correct": false, "explanation": "DynamoDB 適合保存目前狀態，但以查詢新資料取代事件佇列會增加掃描、去重與消費進度管理。TTL 只是過期刪除，不提供可靠的事件重播語意。"}
+    ]
+  },
+  {
+    "n": 992,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "把 RDS 放在公共子網會擴大資料庫的網路暴露面，且不代表必然安全；應以私有子網和 VPN 保護辦公室到 VPC 的路徑。"},
+      {"letter": "B", "correct": true, "explanation": "RDS 應部署在跨兩個 AZ 的私有子網，資料庫不直接取得公有網路入口。Site-to-Site VPN 以加密隧道把辦公室網路接到 VPC，桌面客戶端可透過私有 DNS／私有 IP 安全連線到 RDS。"},
+      {"letter": "C", "correct": false, "explanation": "只在 RDS 安全群組允許辦公室公共 IP，仍需要資料庫可從公網路徑到達，增加暴露風險。安全群組不能替代辦公室到 VPC 的加密私有連線。"},
+      {"letter": "D", "correct": false, "explanation": "公共子網與逐一建立資料庫使用者都增加暴露和帳號管理工作，且沒有提供辦公室到 AWS 的加密通道。"}
+    ]
+  },
+  {
+    "n": 993,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "Auto Scaling Group 管理 EC2 容量與故障替換，不會改變執行個體間的資料傳輸計費位置。"},
+      {"letter": "B", "correct": false, "explanation": "同一 Region 仍可能跨 AZ 傳輸並產生跨可用區資料傳輸費用；只限制 Region 不足以降低內部傳輸總成本。"},
+      {"letter": "C", "correct": true, "explanation": "把需要互相傳輸批次資料的 EC2 放在同一 AZ，可避免跨 AZ 的資料傳輸費用與額外網路延遲。對主要輸入輸出在 S3 的批次工作，這是最直接降低 EC2 間傳輸成本的佈局。"},
+      {"letter": "D", "correct": false, "explanation": "私人子網只是網路暴露與路由設計，不會消除多 AZ EC2 之間的跨 AZ 傳輸費用。反而把節點分散到多 AZ 會產生更多跨 AZ 流量。"}
+    ]
+  },
+  {
+    "n": 994,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "Secrets Manager 可使用指定 KMS 金鑰加密資料庫秘密，並與 Aurora 叢集的憑證管理整合。設定 14 天自動輪換後，服務會依受管流程更新秘密與資料庫憑證，應用程式只需讀取目前版本，不必自行寫 Lambda 或檔案同步。"},
+      {"letter": "B", "correct": false, "explanation": "Parameter Store 的 SecureString 只保存秘密，不會原生替 Aurora 執行資料庫憑證輪換；還需要自行維護 Lambda、更新資料庫與處理應用程式同步。"},
+      {"letter": "C", "correct": false, "explanation": "把憑證放在 EFS 檔案中需要自行管理檔案權限、掛載、輪換與所有 EC2 節點的一致性。超級使用者限制不是完整的秘密生命週期控制。"},
+      {"letter": "D", "correct": false, "explanation": "S3 物件加密只保護檔案，不會自動輪換 Aurora 的資料庫憑證；應用程式還要定期下載並處理版本同步。這比 Secrets Manager 原生輪換複雜。"}
+    ]
+  },
+  {
+    "n": 995,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "Lambda 單次執行最長 15 分鐘，不能可靠承載可達 20 分鐘的影片處理；TB 級檔案也不適合直接塞入函式暫存空間。"},
+      {"letter": "B", "correct": true, "explanation": "ECS on Fargate 能以容器執行超過 Lambda 時間限制的長時間處理，並依任務量增加或減少工作者，不必管理 EC2 主機。影片內容放在 S3 Intelligent-Tiering 可依存取頻率調整儲存層，Aurora 則保存需要交易與查詢的中繼資料。"},
+      {"letter": "C", "correct": false, "explanation": "EC2 Auto Scaling 搭配 SQS 可以完成處理，但需要管理 AMI、主機修補、容量與 Spot／On-Demand 配置。對題目要求降低基礎設施維護的可擴展服務，營運負擔較高。"},
+      {"letter": "D", "correct": false, "explanation": "EKS on EC2 需要管理 Kubernetes 控制面以外的節點與叢集資源，並把中繼資料放在單一 AZ 的 RDS，形成可用性風險。Glacier Deep Archive 也不適合作為需要處理或近期取用的影片內容層。"}
+    ]
+  },
+  {
+    "n": 996,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "自控節點要求團隊管理 EC2 主機、作業系統、容量與修補，不能滿足不想管理基礎計算設施的條件。"},
+      {"letter": "B", "correct": false, "explanation": "EKS managed node group 由 AWS 管理部分節點生命週期，但仍使用客戶帳戶中的 EC2 節點並需處理容量與節點設定。它不是完全無節點管理的模型。"},
+      {"letter": "C", "correct": true, "explanation": "EKS Fargate 以 Pod 級別提供受管計算，不需要建立或修補 EC2 worker node。以 Fargate profile 將符合條件的 namespace／label 導向 Fargate，可直接部署 Kubernetes 工作負載並隨 Pod 需求擴展。"},
+      {"letter": "D", "correct": false, "explanation": "Karpenter 可自動佈建與調整 EC2 節點，但仍是 EC2 基礎設施，客戶需要負責節點相關設定與成本治理。這不符合完全不管理基礎計算的要求。"}
+    ]
+  },
+  {
+    "n": 997,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "在 EC2 上自行管理開源資料庫會把修補、複寫、備份與故障復原責任交給公司，Spot 也可能中斷交易資料庫。這不是穩定且低維護的關聯式選擇。"},
+      {"letter": "B", "correct": false, "explanation": "RDS 提供受管備份，但點播容量模式是 DynamoDB 的容量設定，不適用於 RDS；這個選項混用了不同資料庫服務的功能。"},
+      {"letter": "C", "correct": true, "explanation": "Aurora Serverless 可在流量變化時自動調整資料庫容量，適合隨應用流量成長且負載波動的關聯式交易資料。Aurora 內建自動備份與 point-in-time restore，將備份管理交給受管服務並降低成本。"},
+      {"letter": "D", "correct": false, "explanation": "NoSQL 資料庫不能直接滿足使用者簡介、設定與交易所需的結構化關聯模型；在 EC2 上自管也增加備份與高可用維護。"}
+    ]
+  },
+  {
+    "n": 998,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "S3 Gateway Endpoint 會把 VPC 內前往 S3 的路由導向 AWS 私有網路，不需經過 NAT Gateway 或公共 S3 端點。把 endpoint 關聯到應用程式子網的路由表後，夜間備份流量即可避免公網路徑。"},
+      {"letter": "B", "correct": false, "explanation": "S3 桶不會部署在 VPC 內，也不能以一般私人 IP 路由表方式搬入 VPC。這個網路模型不符合 S3 的服務邊界。"},
+      {"letter": "C", "correct": false, "explanation": "S3 Access Point 是針對桶的存取政策與端點名稱，不會自動讓 EC2 到 S3 的流量避開公共端點。題目要的是 VPC 路由層的 Gateway Endpoint。"},
+      {"letter": "D", "correct": false, "explanation": "Direct Connect 是現場或專用網路到 AWS 的連線，為同一 VPC 的 EC2 備份流量建立它成本高且不必要。它也不是 S3 私有路由的標準方式。"}
+    ]
+  },
+  {
+    "n": 999,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "Redshift 是分析型資料倉庫，將少量且不常更新的產品目錄搬過去會增加資料載入與資料庫管理工作。它不是解決 RDS 搜尋 CPU 壓力的最低成本快取層。"},
+      {"letter": "B", "correct": true, "explanation": "ElastiCache for Redis 可把不常變動的產品目錄放在記憶體中，搜尋請求不必每次掃描 RDS 表格。採用 lazy loading 會在第一次請求時填入快取，之後直接由低延遲快取回應，降低資料庫 CPU 使用率。"},
+      {"letter": "C", "correct": false, "explanation": "增加 Web EC2 的 Auto Scaling 只能提高應用程式層容量，產品搜尋的瓶頸已確認在 RDS CPU，無法直接降低資料庫查詢負載。"},
+      {"letter": "D", "correct": false, "explanation": "Multi-AZ 主要提供 RDS 高可用與故障切換，不是讀取擴展或快取；把查詢導向備用資料庫也不是其支援的用途。"}
+    ]
+  },
+  {
+    "n": 1000,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "S3 File Gateway 對現場應用程式呈現 SMB 或 NFS 檔案介面，主要把資料存為 S3 物件；它不是以 iSCSI 區塊裝置取代既有區塊儲存。"},
+      {"letter": "B", "correct": true, "explanation": "Volume Gateway 的 cached volume 以 iSCSI 目標提供區塊介面，常用資料保留在現場快取，因此可維持低延遲讀取；完整資料則持久存放在 AWS。它能擴展雲端容量，同時讓既有應用程式繼續使用區塊協定。"},
+      {"letter": "C", "correct": false, "explanation": "Stored volume 以現場儲存作為主要資料來源，雲端只保存快照，不能解決現有空間有限且需要雲端擴展的核心問題。"},
+      {"letter": "D", "correct": false, "explanation": "Tape Gateway 提供虛擬磁帶給備份軟體，不是低延遲的隨機區塊儲存。它不適合承載需要直接存取檔案的現場應用程式。"}
+    ]
+  },
+  {
+    "n": 1001,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "只依 CPU 和設定固定最低容量，無法反映兩個流程不同的處理速度，也可能在訂單收集與履約之間造成容量浪費或積壓。"},
+      {"letter": "B", "correct": false, "explanation": "CloudWatch 警示通知 SNS 後再人工或自動建立新的 Auto Scaling Group，反應較慢且需要額外控制流程。CPU 指標也不是衡量每個流程待處理訂單數量的直接訊號。"},
+      {"letter": "C", "correct": false, "explanation": "依 SQS 傳送通知進行擴縮會受到事件通知頻率與處理時序影響，不能像佇列深度一樣持續反映未完成工作。"},
+      {"letter": "D", "correct": true, "explanation": "用兩個 SQS 佇列分隔收集與履約流程，可讓快速生產者與較慢消費者獨立擴縮，訊息在佇列中持久等待而不因 EC2 變動遺失。以每個佇列的 ApproximateNumberOfMessagesVisible 作為擴縮指標，能直接依積壓量調整對應 Auto Scaling Group。"}
+    ]
+  },
+  {
+    "n": 1002,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "選項同時描述單一區域與全球表格，架構語意不一致；若未在多區域建立全球表格副本，就不能提供跨區域持續可用性。"},
+      {"letter": "B", "correct": false, "explanation": "DAX 可降低熱點讀取延遲，但跨區域複寫仍需自行建置與維護，無法提供 DynamoDB Global Tables 的自動多區域同步。"},
+      {"letter": "C", "correct": false, "explanation": "以 DynamoDB Streams 自行實作跨區域複寫需要 Lambda、去重、失敗重試與衝突處理，維運量高於原生全球表格。"},
+      {"letter": "D", "correct": true, "explanation": "DynamoDB Global Tables 會在多個 AWS 區域建立複本，並由服務自動進行跨區域多主複寫，讓使用者就近讀寫且在區域故障時維持可用。Provisioned capacity 搭配 Auto Scaling 可依穩定工作負載調整吞吐量，通常比全程按需模式更具成本控制能力。"}
+    ]
+  },
+  {
+    "n": 1003,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "S3 沒有可直接掛載到現場應用程式的原生檔案系統掛載點；應用程式不能把 S3 當成一般本機檔案系統使用。"},
+      {"letter": "B", "correct": true, "explanation": "S3 File Gateway 會以 NFS 或 SMB 對現場應用程式呈現檔案介面，並把資料保存到 S3。其本地快取可讓經常使用的媒體維持低延遲存取，同時把主要儲存成本轉移到可擴展的 S3。"},
+      {"letter": "C", "correct": false, "explanation": "把資料複製到 FSx 會維持另一份檔案儲存並增加同步與容量成本；題目也沒有名為 FSx File Gateway 的必要服務。"},
+      {"letter": "D", "correct": false, "explanation": "自行維護檔案伺服器並以 S3 API 存取，仍需管理伺服器、快取、故障與協定轉換。它不能以受管 File Gateway 直接保留既有檔案介面。"}
+    ]
+  },
+  {
+    "n": 1004,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "為每個客戶資料中心建立 Direct Connect 專線成本高、部署時間長，且不適合改善大量國際終端對公共 API 的一般回應延遲。"},
+      {"letter": "B", "correct": true, "explanation": "CloudFront 可在全球邊緣位置終止客戶連線並快取可快取的 API 回應，減少重複請求回到 us-east-1 的距離。CachingOptimized 政策可提高快取命中率，對不常變動的公開回應尤其有效。"},
+      {"letter": "C", "correct": false, "explanation": "Global Accelerator 主要改善 TCP／UDP 到固定區域端點的網路路徑，但不會快取 HTTP API 回應。對可快取的公共資料，CloudFront 更能直接降低來源請求與延遲。"},
+      {"letter": "D", "correct": false, "explanation": "Site-to-Site VPN 是特定網路到 VPC 的加密連線，會增加隧道與路由管理，且不會把公共 API 回應快取到國際客戶附近。"}
+    ]
+  },
+  {
+    "n": 1005,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "API Gateway、SQS 與 Lambda 可吸收每小時數千筆調查的突發量，Lambda 再呼叫 Amazon Comprehend 執行情緒分析，避免自行管理伺服器。DynamoDB 保存結果並以 TTL 在 365 天後自動過期，既保留最近 12 個月資料，也控制儲存成本。"},
+      {"letter": "B", "correct": false, "explanation": "在 EC2 上自行執行 API、資料寫入與分析流程，需要管理主機、擴縮、修補與併發控制；突發量也可能壓垮單一服務。受管事件鏈路能以較少營運工作達成相同功能。"},
+      {"letter": "C", "correct": false, "explanation": "Amazon Rekognition 是影像與影片分析服務，不是文字情緒分析服務；此方案選錯 AI 服務。S3 事件也需要額外處理小檔案觸發與結果查詢模型。"},
+      {"letter": "D", "correct": false, "explanation": "Amazon Lex 是建立對話式機器人的服務，不提供調查文字的情緒分析；應使用 Comprehend。"}
+    ]
+  },
+  {
+    "n": 1006,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "把 ALB 目標型別改成 instance type 會改變註冊方式，但不能單獨完成修補期間的排空、解除註冊與重新加入服務。IP 目標本身也可以受正確的 Systems Manager 自動化流程管理。"},
+      {"letter": "B", "correct": false, "explanation": "既有修補文件沒有針對 ALB 後方 IP 目標的排空與服務狀態處理，直接沿用正是造成錯誤的原因。"},
+      {"letter": "C", "correct": true, "explanation": "AWS-EC2-PatchLoadBalancerInstance 自動化文件會協調從負載平衡服務排除執行個體、執行修補與重新註冊的步驟。它針對 ALB 目標與 Systems Manager 修補流程整合，能避免修補期間仍把流量送到被移除的節點。"},
+      {"letter": "D", "correct": true, "explanation": "Systems Manager Maintenance Windows 可排程修補工作，並在工作期間將執行個體從服務中移除，再於完成後恢復。配合 ALB 的健康檢查與註冊狀態，可使流量只送往可用的節點。"},
+      {"letter": "E", "correct": false, "explanation": "State Manager 適合維持執行個體的期望配置，不是針對 ALB 流量排空與修補順序的專用自動化。只靠健康檢查可能等到失敗後才移除，仍會造成修補視窗錯誤。"}
+    ]
+  },
+  {
+    "n": 1007,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "SSE-S3 使用 S3 管理的金鑰，不能滿足每位客戶必須使用客戶特定 KMS 金鑰的要求。"},
+      {"letter": "B", "correct": false, "explanation": "CSE-Custom 需要自行管理用戶端根金鑰、加密程式與金鑰分發，會增加每個客戶的實作和維護工作。"},
+      {"letter": "C", "correct": false, "explanation": "Glue 工作可執行 ETL，但在每個工作中配置用戶端 KMS 加密仍需由資料流程自行加密、管理金鑰與處理解密。這比使用受管儲存層加密更容易造成維運負擔。"},
+      {"letter": "D", "correct": true, "explanation": "EMR security configuration 可指定每個客戶工作使用各自的 KMS 金鑰，並讓寫入 S3 前由服務執行 SSE-KMS 加密。伺服器側加密把加解密與金鑰使用交給 EMR、S3 和 KMS 管理，避免在轉換程式中自行實作加密。"}
+    ]
+  },
+  {
+    "n": 1008,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "手動啟動第二個 EC2 並以 ALB 分流只能提供固定兩台容量，沒有依需求自動增加或移除執行個體。忙碌期間仍可能再次耗盡容量。"},
+      {"letter": "B", "correct": false, "explanation": "Route 53 加權路由是在 DNS 層分配查詢，不能像 ALB 一樣執行即時健康檢查與連線分流，也不會自動擴展 EC2。"},
+      {"letter": "C", "correct": false, "explanation": "用 Lambda 停止並改變執行個體型別會造成部署中斷，且只能垂直擴展單一節點。它沒有提供多執行個體的自動修復與水平擴展。"},
+      {"letter": "D", "correct": true, "explanation": "AMI 與 launch template 讓 Auto Scaling Group 能一致啟動無狀態 Web 節點，ALB 負責健康檢查與流量分配。使用 Spot Fleet 可降低彈性計算成本，並由 Auto Scaling 依需求補充容量；無狀態設計則讓節點替換不影響使用者請求。"}
+    ]
+  },
+  {
+    "n": 1009,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "SSE-S3 可避免 KMS API 呼叫，但不符合題目目前使用 KMS 且要求嚴格金鑰控制的安全政策。改用 S3 管理金鑰會降低客戶對 KMS 金鑰政策與稽核的控制。"},
+      {"letter": "B", "correct": true, "explanation": "S3 Bucket Key 會在桶或前綴範圍重用較短期的資料金鑰，減少每個物件都直接呼叫 KMS 產生或解密資料金鑰的次數。物件仍使用 SSE-KMS 保護，保留 KMS 金鑰政策與稽核能力，同時降低頻繁存取造成的 KMS 成本。"},
+      {"letter": "C", "correct": false, "explanation": "用戶端加密需要應用程式自行處理加密、解密、金鑰保存與輪換，會增加實作與維運工作。它不是在維持 S3 伺服器側 KMS 控制下減少 KMS 呼叫的方式。"},
+      {"letter": "D", "correct": false, "explanation": "SSE-C 的金鑰由呼叫端每次請求提供，S3 不會把它存放在 KMS 中；選項混淆了兩種金鑰管理模型。"}
+    ]
+  },
+  {
+    "n": 1010,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "AWS SCT 用於異質資料庫的結構描述轉換與評估，不是收集一般 VM 工作負載清單或執行 VM 遷移的主要工具。"},
+      {"letter": "B", "correct": true, "explanation": "AWS Application Migration Service 可在來源 VM 安裝 Replication Agent，持續將磁碟資料複寫到 AWS staging area，適合時間敏感的 lift-and-shift。複寫在背景進行，能縮短最終切換停機時間。"},
+      {"letter": "C", "correct": true, "explanation": "完成初始複寫後建立測試執行個體，可在不影響來源 VM 的情況下驗證應用程式、網路與安全群組。測試確認成功後再進行切換，能降低遷移失敗風險。"},
+      {"letter": "D", "correct": true, "explanation": "切換時停止來源 VM 的寫入並啟動 cutover instance，可建立一致的最終資料狀態並把服務移到 AWS。這符合非關鍵工作負載採用 lift-and-shift 且需要短暫切換窗口的做法。"},
+      {"letter": "E", "correct": false, "explanation": "App2Container 是把應用程式容器化的現代化工具，不是針對一般 VM 磁碟與工作負載的快速複寫遷移服務。"},
+      {"letter": "F", "correct": false, "explanation": "AWS DMS 用於資料庫與資料存放區的遷移，不會複寫和啟動完整 VM 作業系統。用它遷移 VM 不符合工具的責任範圍。"}
+    ]
+  },
+  {
+    "n": 1011,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "Cognito Identity Pool 可在使用者以 User Pool 成功登入後交換身分令牌，取得有期限且受 IAM role 限制的 AWS 憑證。應用程式可用這些臨時憑證直接呼叫 S3，而不必把長期金鑰放在用戶端或伺服器。"},
+      {"letter": "B", "correct": false, "explanation": "User Pool 負責使用者註冊與聯合登入，不會直接為應用程式簽發可呼叫 S3 的 AWS 臨時憑證。要把聯登入口接到 IAM 權限，還需要 Identity Pool。"},
+      {"letter": "C", "correct": true, "explanation": "S3 VPC Endpoint 讓私人子網中的應用程式經由 VPC 私有路徑存取 S3，不需 NAT 或網際網路閘道器。結合桶政策與 Cognito 角色權限，可讓使用者檔案傳輸保持在 AWS 網路內。"},
+      {"letter": "D", "correct": false, "explanation": "NAT Gateway 會提供出站轉送，但仍不是最直接的 S3 私有路徑，且桶政策不能簡單以 Cognito 是否啟動來取代正確的 IAM 臨時憑證授權。"},
+      {"letter": "E", "correct": false, "explanation": "以使用者 IP 授權不適合私人子網中的多個使用者，且無法表達 Cognito 身分與個別檔案權限。IP 來源也會隨網路環境改變。"}
+    ]
+  },
+  {
+    "n": 1012,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "預定擴縮適合可預測的週期流量，但題目描述的是不可預測尖峰；縮小處理層更會加劇佇列積壓。CPU 也不是衡量尚未處理訂單數量的最佳訊號。"},
+      {"letter": "B", "correct": false, "explanation": "ElastiCache 可降低資料庫讀取負載，但目前瓶頸是處理層 CPU 100% 與 SQS 積壓，不是 DynamoDB 查詢延遲。快取不會增加訂單工作者數量。"},
+      {"letter": "C", "correct": false, "explanation": "CloudFront 快取網路層回應不能解決背景訂單處理者的佇列積壓，HTTP 延遲也不是最直接的處理工作量指標。"},
+      {"letter": "D", "correct": true, "explanation": "Auto Scaling 的 target tracking 可把處理層容量調整到目標的佇列深度，當 ApproximateNumberOfMessagesVisible 上升時增加 EC2 工作者。這個指標直接代表待處理訂單量，適合不可預測尖峰並能讓應用程式逐步清空佇列。"}
+    ]
+  },
+  {
+    "n": 1013,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "週一至週六的固定連續執行需求適合使用 Standard Reserved Instances 取得長期折扣；只在週日固定 12 小時出現的容量則使用 Scheduled Reserved Instances。依使用時間分拆購買模式，可避免為整週的額外容量付費，也不承擔 Spot 中斷。"},
+      {"letter": "B", "correct": false, "explanation": "Convertible Reserved Instances 適合未來可能變更執行個體類型的長期需求，但週日容量是固定排程且只運行 12 小時，沒有必要支付較高的彈性換型成本。"},
+      {"letter": "C", "correct": false, "explanation": "Spot Instances 可能因容量需求或價格變化被 AWS 中斷，違反週日工作不能容忍中斷的條件。"},
+      {"letter": "D", "correct": false, "explanation": "週日使用 Spot 仍有中斷風險，且把平日固定容量改用 Convertible RI 沒有帶來題目需要的額外彈性。"}
+    ]
+  },
+  {
+    "n": 1014,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "ECS on EC2 Spot 需要管理叢集容量與中斷替換，EFS 也不是大量已處理影像的最低成本物件儲存。SQS 協調流程還需自行維護工作狀態。"},
+      {"letter": "B", "correct": true, "explanation": "AWS Batch 會依待處理工作佈建與調度批次計算資源，適合可平行化且數量波動的影像處理，而不必管理底層主機。Step Functions 可用狀態機串接處理步驟與錯誤重試，S3 則以高耐久、可擴展的物件儲存保存大型輸出檔案。"},
+      {"letter": "C", "correct": false, "explanation": "Lambda 不適合長時間或大型影像處理，且 EC2 Spot 仍需自行處理容量與中斷；FSx 也不是大量輸出檔案的最低成本歸檔層。"},
+      {"letter": "D", "correct": false, "explanation": "一組 EC2 需要自行管理佈建、修補與擴縮，EBS 又綁定單一 AZ 且不適合跨節點共享大量輸出。它無法滿足不管理基礎設施的要求。"}
+    ]
+  },
+  {
+    "n": 1015,
+    "options": [
+      {"letter": "A", "correct": true, "explanation": "CloudFront 會把 S3 靜態影像快取到全球邊緣位置，降低下載的往返延遲；S3 Transfer Acceleration 則利用 CloudFront 邊緣網路把上傳較快送到來源桶。兩者分別針對下載與上傳瓶頸，不需搬遷現有靜態網站。"},
+      {"letter": "B", "correct": false, "explanation": "把靜態網站搬到多區域 EC2 與 ALB 會引入主機、複寫和部署維護，全球加速器也不會像 CloudFront 一樣快取影像內容。這是過度複雜的替代架構。"},
+      {"letter": "C", "correct": false, "explanation": "CloudFront 主要是內容下載快取，不是一般 S3 上傳的完整替代端點；多桶複寫與依位置重導會增加資料一致性、路由和維運負擔。"},
+      {"letter": "D", "correct": false, "explanation": "Global Accelerator 的端點通常是 ALB、NLB、EC2 或 Elastic IP，不是直接把 S3 桶當作端點。它也不能提供 S3 物件快取與上傳加速的完整功能。"}
+    ]
+  },
+  {
+    "n": 1016,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "S3 Interface Endpoint 可提供私有連線，但需為每個 AZ 建立 ENI 並管理安全群組；對同一 VPC 內的 S3 存取，Gateway Endpoint 通常不需額外每小時端點費用。"},
+      {"letter": "B", "correct": true, "explanation": "S3 Gateway Endpoint 會在 VPC 路由表加入 S3 prefix list 路由，使私人子網直接經 AWS 私有網路存取 S3。這不需要 NAT Gateway 或網際網路閘道器，符合不得穿越網際網路且成本效益高的要求。"},
+      {"letter": "C", "correct": false, "explanation": "桶政策只限制來源 Elastic IP，不能讓流量離開 NAT 後變成私有路徑；應用程式仍會透過 NAT 走公有服務端點。"},
+      {"letter": "D", "correct": false, "explanation": "增加第二個 NAT Gateway 仍是公有端點路徑，並且會增加 NAT 的小時與資料處理成本。它不能符合流量不得穿越網際網路的政策。"}
+    ]
+  },
+  {
+    "n": 1017,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "EC2 instance profile 的權限會暴露給該節點上的多個 Pod，Kubernetes RBAC 也只控制叢集 API，不會把 AWS API 權限隔離到單一 Pod。這不符合服務間的 IAM 最小權限。"},
+      {"letter": "B", "correct": false, "explanation": "IAM policy 不能直接附加到 Kubernetes Pod；Pod 必須透過 Kubernetes service account 與 IAM role 的整合取得 AWS 憑證。"},
+      {"letter": "C", "correct": true, "explanation": "為 UI 與資料服務建立獨立 Kubernetes service account，可讓兩類 Pod 使用不同的 IAM 身分與權限邊界。透過 IAM role for service accounts 將各服務帳戶綁定到只允許其所需 AWS 服務的角色，可避免共用 EC2 instance profile；實際政策應依 UI／資料服務的資料流對應到 S3 或 DynamoDB。"},
+      {"letter": "D", "correct": false, "explanation": "IRSA 的隔離方向是正確的，但選項把 UI 與資料服務的 S3／DynamoDB 權限對應寫反，會讓兩類 Pod 取得錯誤的服務權限。依題目需求仍須讓 UI 只可用 DynamoDB、資料服務只可用 S3。"}
+    ]
+  },
+  {
+    "n": 1018,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "建立 AWS Managed Microsoft AD 與現場 AD 的信任關係會增加目錄基礎設施與信任管理，但不如 IAM Identity Center 直接提供跨帳戶的集中登入與 permission set。"},
+      {"letter": "B", "correct": false, "explanation": "逐一建立 IAM 使用者並人工管理權限會造成帳號生命週期、離職撤銷與多帳戶政策的大量維護工作，也不符合既有 AD 的集中身份來源。"},
+      {"letter": "C", "correct": true, "explanation": "AD Connector 可把 AWS 目錄服務連到現場 Active Directory，讓既有網域帳密成為身份來源而不必同步整套目錄。再與 IAM Identity Center 整合，以 permission set 將 AD 群組映射到 Organizations 中的帳戶與資源權限，提供集中控制與較低營運成本。"},
+      {"letter": "D", "correct": false, "explanation": "Cognito 主要提供應用程式使用者的登入與聯邦身份，不是管理 AWS Organizations 多帳戶開發者存取的最佳控制面。這會偏離 IAM Identity Center 的帳戶權限模型。"}
+    ]
+  },
+  {
+    "n": 1019,
+    "options": [
+      {"letter": "A", "correct": false, "explanation": "API Gateway private integration 是讓 API 連到 VPC 內後端的整合方式，不是依呼叫來源公共 IP 限制誰能呼叫 API 的授權控制。"},
+      {"letter": "B", "correct": true, "explanation": "API Gateway resource policy 可使用 aws:SourceIp 條件允許公司內部受信任的 IP CIDR，並明確拒絕未列入清單的來源。政策在 API Gateway 入口執行，能在回應關鍵資訊前阻擋未授權網路來源。"},
+      {"letter": "C", "correct": false, "explanation": "API Gateway 不是可直接部署到私人子網的 EC2 服務，NACL 也只控制子網層的網路封包，不能取代 API Gateway 的資源政策與 API 授權。"},
+      {"letter": "D", "correct": false, "explanation": "API Gateway 本身沒有可供客戶直接修改的傳統 EC2 安全群組來限制呼叫者 IP。應使用 API Gateway resource policy 或適當的授權器。"}
+    ]
+  }
+]
