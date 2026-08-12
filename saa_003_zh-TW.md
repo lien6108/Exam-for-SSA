@@ -1,13 +1,13 @@
 ## Question #1
 
 **題目**
-一家公司收集多大洲城市的溫度、溼度和大氣壓力資料。 公司每天從每個網站收集的平均資料量為500GB. 每個網站都有高速網際網路連線. 公司希望儘快將所有這些全球網站的資料彙總到一個Amazon S3桶中. 解決辦法必須儘量減少營運複雜性(operational complexity)。 哪種解決辦法符合這些要求?
+一家公司收集多大洲城市的溫度、溼度和大氣壓力資料。 公司每天從每個網站收集的平均資料量為500GB. 每個網站都有高速網際網路連線. 公司希望儘快將所有這些全球網站的資料彙總到一個Amazon S3 bucket中. 解決辦法必須儘量減少營運複雜性(operational complexity)。 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 開啟目的地S3 儲存桶(S3 bucket)的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 儲存桶(S3 bucket).
-- B. 在最接近的區域(Region)中將每個站點的資料上傳到一個S3 儲存桶(S3 bucket). 使用 S3 Cross-Region Replication 複製物件到目的地 S3 儲存桶(S3 bucket). 然後從來源S3 儲存桶(S3 bucket)中移除資料.
-- C. 每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 儲存桶(S3 bucket).
-- D. 在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積.
+- A. 開啟目的地S3 bucket的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 bucket.
+- B. 在最接近的區域(Region)中將每個站點的資料上傳到一個S3 bucket. 使用 S3 Cross-Region Replication 複製物件到目的地 S3 bucket. 然後從來源S3 bucket中移除資料.
+- C. 每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 bucket.
+- D. 在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 bucket的區域(Region). 在區域(Region)中恢復EBS體積.
 
 **答案**
 A
@@ -17,18 +17,18 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：開啟目的地S3 儲存桶(S3 bucket)的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 儲存桶(S3 bucket)。S3 Transfer Acceleration 透過 CloudFront 全球邊緣節點與 AWS 骨幹網路，把上傳路徑最佳化，搭配多部分上傳可平行傳送大型物件、提高輸送量並具容錯能力；資料直接送進目的地 bucket，不需要跨區複寫或額外中介處理，維運複雜度最低，正好符合題目「儘快彙總」且「最少營運複雜性」的要求。
+- A：開啟目的地S3 bucket的S3 Transfer Acceleration 使用多段上傳,將網站資料直接上傳到目的地S3 bucket。S3 Transfer Acceleration 透過 CloudFront 全球邊緣節點與 AWS 骨幹網路，把上傳路徑最佳化，搭配多部分上傳可平行傳送大型物件、提高輸送量並具容錯能力；資料直接送進目的地 bucket，不需要跨區複寫或額外中介處理，維運複雜度最低，正好符合題目「儘快彙總」且「最少營運複雜性」的要求。
 - 其餘選項比較：
-- B：在最接近的區域(Region)中將每個站點的資料上傳到一個S3 儲存桶(S3 bucket). 使用 S3 Cross-Region Replication 複製物件到目的地 S3 儲存桶(S3 bucket). 然後從來源S3 儲存桶(S3 bucket)中移除資料。多了一層跨區複寫（CRR 本身有複寫延遲）與事後手動清理來源物件的步驟，比直接上傳多出不必要的中介環節與維運負擔，不是最直接的做法。
-- C：每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 儲存桶(S3 bucket)。Snowball Edge 是設計給頻寬有限或離線環境的實體傳輸方案；題目已明說每個站點都有高速網際網路連線，改用實體裝置逐日排程搬運，反而增加裝置申請、運送與排程管理等額外維運複雜度，不符合善用現有高速連線、最小化維運複雜度的要求。
-- D：在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 儲存桶(S3 bucket)的區域(Region). 在區域(Region)中恢復EBS體積。資料先停留在區塊儲存（EBS）而非直接進入目的地 S3 bucket，還需要自行維運 EC2 執行個體、排程快照與跨區複製還原流程，架構層數多、維運負擔遠高於直接上傳。
+- B：在最接近的區域(Region)中將每個站點的資料上傳到一個S3 bucket. 使用 S3 Cross-Region Replication 複製物件到目的地 S3 bucket. 然後從來源S3 bucket中移除資料。多了一層跨區複寫（CRR 本身有複寫延遲）與事後手動清理來源物件的步驟，比直接上傳多出不必要的中介環節與維運負擔，不是最直接的做法。
+- C：每天計劃AWS Snowball Edge Storage Optimized裝置任務,將資料從每個站點傳輸到最近的區域(Region). 使用S3 Cross-區域(Region) 複寫(Replication)複製物件到目的地S3 bucket。Snowball Edge 是設計給頻寬有限或離線環境的實體傳輸方案；題目已明說每個站點都有高速網際網路連線，改用實體裝置逐日排程搬運，反而增加裝置申請、運送與排程管理等額外維運複雜度，不符合善用現有高速連線、最小化維運複雜度的要求。
+- D：在最接近的區域(Region)中將每個站點的資料上傳到Amazon EC2例項. 將資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 每隔一段時間,取一架EBS 快照(snapshot),複製到包含目的地S3 bucket的區域(Region). 在區域(Region)中恢復EBS體積。資料先停留在區塊儲存（EBS）而非直接進入目的地 S3 bucket，還需要自行維運 EC2 執行個體、排程快照與跨區複製還原流程，架構層數多、維運負擔遠高於直接上傳。
 
 **分類：** 儲存
 
 ## Question #2
 
 **題目**
-公司需要有能力分析其專有應用程式的日誌檔案. 日誌以JSON格式儲存在Amazon S3桶中. 查詢會簡單且按需執行. 解決方案架構設計師需要在對現有架構進行最小變化的情況下進行分析. 解決方案設計師應做什麼才能滿足這些要求?
+公司需要有能力分析其專有應用程式的日誌檔案. 日誌以JSON格式儲存在Amazon S3 bucket中. 查詢會簡單且按需執行. 解決方案架構設計師需要在對現有架構進行最小變化的情況下進行分析. 解決方案設計師應做什麼才能滿足這些要求?
 
 **選項**
 - A. 使用 Amazon Redshift 將所有內容載入到一個地方,並根據需要執行 SQL 查詢.
@@ -55,13 +55,13 @@ C
 ## Question #3
 
 **題目**
-一家公司使用AWS Organizations管理不同部門的多個AWS帳戶. 管理帳戶有一個Amazon S3桶,內有專案報告. 公司希望將這個S3 儲存桶(S3 bucket)的接入限制在AWS Organizations中只允許組織內部的帳戶使用者使用. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司使用AWS Organizations管理不同部門的多個AWS帳戶. 管理帳戶有一個Amazon S3 bucket,內有專案報告. 公司希望將這個S3 bucket的接入限制在AWS Organizations中只允許組織內部的帳戶使用者使用. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 新增 aws:PrincipalOrgID 全域性條件金鑰,並參考組織ID到S3 儲存桶政策(bucket policy).
-- B. 為每個部門設立一個組織單位。 新增 aws: PrincipalOrgPaths 全域性條件金鑰到 S3 儲存桶政策(bucket policy).
-- C. 使用 AWS CloudTrail 來監視建立帳戶、邀請帳戶組織、離開組織和從組織活動中刪除帳戶。 相應更新S3 儲存桶政策(bucket policy).
-- D. 標記每個需要存取S3 儲存桶(S3 bucket)的使用者. 新增 aws: S3 儲存桶政策(bucket policy) 的主 Tag 全球條件金鑰。
+- A. 新增 aws:PrincipalOrgID 全域性條件金鑰,並參考組織ID到S3 bucket政策(bucket policy).
+- B. 為每個部門設立一個組織單位。 新增 aws: PrincipalOrgPaths 全域性條件金鑰到 S3 bucket政策(bucket policy).
+- C. 使用 AWS CloudTrail 來監視建立帳戶、邀請帳戶組織、離開組織和從組織活動中刪除帳戶。 相應更新S3 bucket政策(bucket policy).
+- D. 標記每個需要存取S3 bucket的使用者. 新增 aws: S3 bucket政策(bucket policy) 的主 Tag 全球條件金鑰。
 
 **答案**
 A
@@ -71,22 +71,22 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：新增 aws:PrincipalOrgID 全域性條件金鑰,並參考組織ID到S3 儲存桶政策(bucket policy)。aws:PrincipalOrgID 是 IAM 提供的全域條件鍵，可在 S3 bucket policy 中直接比對請求者是否屬於指定的 Organization ID，不需列舉或維護組織內所有帳戶 ID；日後組織內新增或移除帳戶都不必更動 policy，因此維運開銷最低。
+- A：新增 aws:PrincipalOrgID 全域性條件金鑰,並參考組織ID到S3 bucket政策(bucket policy)。aws:PrincipalOrgID 是 IAM 提供的全域條件鍵，可在 S3 bucket policy 中直接比對請求者是否屬於指定的 Organization ID，不需列舉或維護組織內所有帳戶 ID；日後組織內新增或移除帳戶都不必更動 policy，因此維運開銷最低。
 - 其餘選項比較：
-- B：為每個部門設立一個組織單位。 新增 aws: PrincipalOrgPaths 全域性條件金鑰到 S3 儲存桶政策(bucket policy)。為每個部門另外建立組織單位，再搭配 aws:PrincipalOrgPaths 條件鍵，等於多引入一層 OU 結構設計與維護成本，對於單純「限制在組織內」的需求而言是過度設計，維運開銷高於直接用 PrincipalOrgID。
-- C：使用 AWS CloudTrail 來監視建立帳戶、邀請帳戶組織、離開組織和從組織活動中刪除帳戶。 相應更新S3 儲存桶政策(bucket policy)。AWS CloudTrail 只負責記錄帳戶建立、加入／離開組織等 API 事件，本身不具備存取控管能力，仍需要人工依據事件手動更新 bucket policy，屬於被動且有延遲的作法，維運負擔明顯較高。
-- D：標記每個需要存取S3 儲存桶(S3 bucket)的使用者. 新增 aws: S3 儲存桶政策(bucket policy) 的主 Tag 全球條件金鑰。對組織內每個現有與未來的使用者逐一打標籤，並用 aws:PrincipalTag 條件鍵控管，需要持續維護標籤的正確性與涵蓋範圍，規模化後的維運成本遠高於直接使用組織層級的 PrincipalOrgID 條件鍵。
+- B：為每個部門設立一個組織單位。 新增 aws: PrincipalOrgPaths 全域性條件金鑰到 S3 bucket政策(bucket policy)。為每個部門另外建立組織單位，再搭配 aws:PrincipalOrgPaths 條件鍵，等於多引入一層 OU 結構設計與維護成本，對於單純「限制在組織內」的需求而言是過度設計，維運開銷高於直接用 PrincipalOrgID。
+- C：使用 AWS CloudTrail 來監視建立帳戶、邀請帳戶組織、離開組織和從組織活動中刪除帳戶。 相應更新S3 bucket政策(bucket policy)。AWS CloudTrail 只負責記錄帳戶建立、加入／離開組織等 API 事件，本身不具備存取控管能力，仍需要人工依據事件手動更新 bucket policy，屬於被動且有延遲的作法，維運負擔明顯較高。
+- D：標記每個需要存取S3 bucket的使用者. 新增 aws: S3 bucket政策(bucket policy) 的主 Tag 全球條件金鑰。對組織內每個現有與未來的使用者逐一打標籤，並用 aws:PrincipalTag 條件鍵控管，需要持續維護標籤的正確性與涵蓋範圍，規模化後的維運成本遠高於直接使用組織層級的 PrincipalOrgID 條件鍵。
 
 **分類：** 安全、身分與合規
 
 ## Question #4
 
 **題目**
-一項申請是在VPC的Amazon EC2 執行個體中進行的。 應用程式處理儲存在Amazon S3桶中的日誌。 EC2例項需要存取S3 儲存桶(S3 bucket)而不連線網際網路。 哪個解決方案將為Amazon S3提供私人網路連線?
+一項申請是在VPC的Amazon EC2 執行個體中進行的。 應用程式處理儲存在Amazon S3 bucket中的日誌。 EC2例項需要存取S3 bucket而不連線網際網路。 哪個解決方案將為Amazon S3提供私人網路連線?
 
 **選項**
-- A. 建立一個VPC 端點(VPC endpoint)到S3 儲存桶(S3 bucket)的閘道器.
-- B. 將日誌流到Amazon CloudWatch Logs。 將日誌匯出至 S3 儲存桶(S3 bucket)。
+- A. 建立一個VPC 端點(VPC endpoint)到S3 bucket的閘道器.
+- B. 將日誌流到Amazon CloudWatch Logs。 將日誌匯出至 S3 bucket。
 - C. 在Amazon EC2上建立執行個體設定檔(instance profile),允許S3存取.
 - D. 建立一個帶有私人連結的Amazon API Gateway API來存取S3端點.
 
@@ -98,9 +98,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個VPC 端點(VPC endpoint)到S3 儲存桶(S3 bucket)的閘道器。建立 S3 的 Gateway VPC Endpoint，可讓 VPC 內的 EC2 執行個體透過 AWS 內部網路直接存取 S3，流量完全不經過網際網路，也不需要 NAT Gateway 或 Internet Gateway，直接滿足題目要求的私有網路連線。
+- A：建立一個VPC 端點(VPC endpoint)到S3 bucket的閘道器。建立 S3 的 Gateway VPC Endpoint，可讓 VPC 內的 EC2 執行個體透過 AWS 內部網路直接存取 S3，流量完全不經過網際網路，也不需要 NAT Gateway 或 Internet Gateway，直接滿足題目要求的私有網路連線。
 - 其餘選項比較：
-- B：將日誌流到Amazon CloudWatch Logs。 將日誌匯出至 S3 儲存桶(S3 bucket)。將日誌串流到 CloudWatch Logs 再匯出到 S3，只是改變資料流向與儲存路徑，並未替 EC2 建立任何私下連線到 S3 的網路通道，無法解決題目要求的連線層面問題。
+- B：將日誌流到Amazon CloudWatch Logs。 將日誌匯出至 S3 bucket。將日誌串流到 CloudWatch Logs 再匯出到 S3，只是改變資料流向與儲存路徑，並未替 EC2 建立任何私下連線到 S3 的網路通道，無法解決題目要求的連線層面問題。
 - C：在Amazon EC2上建立執行個體設定檔(instance profile),允許S3存取。在 EC2 上設定 instance profile 只是解決「誰有權限存取 S3」的 IAM 授權問題，並不會改變流量實際走的網路路徑；沒有私有連線的情況下，具備權限的請求仍會經過公有網際網路。
 - D：建立一個帶有私人連結的Amazon API Gateway API來存取S3端點。API Gateway 是用來對外提供 REST／HTTP API 給用戶端呼叫的服務，並非為 EC2 直接讀寫 S3 物件而設計，引入這一層反而增加不必要的元件與延遲，不是解決私有連線的合適做法。
 
@@ -139,10 +139,10 @@ C
 一家公司使用NFS將大型影片檔案儲存在附著的 on-premises 網路儲存中. 每個影片檔案的大小從1MB到500GB不等. 總儲存量為70TB,不再增長. 公司決定將影片檔案遷移到Amazon S3. 公司必須儘快遷移影片檔案,同時使用儘可能少的網路頻寬. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立 S3 儲存桶(S3 bucket). 建立一個 IAM 角色,該角色擁有寫入 S3 儲存桶(S3 bucket) 的許可權。 使用 AWS CLI 在本地複製所有檔案到 S3 儲存桶(S3 bucket).
+- A. 建立 S3 bucket. 建立一個 IAM 角色,該角色擁有寫入 S3 bucket 的許可權。 使用 AWS CLI 在本地複製所有檔案到 S3 bucket.
 - B. 建立 AWS Snowball Edge 任務。 在本地接收Snowball Edge 裝置。 使用Snowball Edge 用戶端向裝置傳輸資料. 返回裝置,使AWS可以將資料匯入Amazon S3.
-- C. 在本地端部署一個S3檔案閘道器。 建立公共服務端點連線到 S3 檔案閘道器。 建立 S3 儲存桶(S3 bucket). 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 儲存桶(S3 bucket). 將資料從現有的NFS檔案共享轉移到S3檔案閘道器.
-- D. 在AWS Direct Connect網路和AWS之間建立連線. 在本地端部署一個S3檔案閘道器。 建立公共虛擬介面(VIF),連線到S3檔案閘道器. 建立 S3 儲存桶(S3 bucket). 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 儲存桶(S3 bucket). 將資料從現有的NFS檔案共享轉移到S3檔案閘道器.
+- C. 在本地端部署一個S3檔案閘道器。 建立公共服務端點連線到 S3 檔案閘道器。 建立 S3 bucket. 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 bucket. 將資料從現有的NFS檔案共享轉移到S3檔案閘道器.
+- D. 在AWS Direct Connect網路和AWS之間建立連線. 在本地端部署一個S3檔案閘道器。 建立公共虛擬介面(VIF),連線到S3檔案閘道器. 建立 S3 bucket. 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 bucket. 將資料從現有的NFS檔案共享轉移到S3檔案閘道器.
 
 **答案**
 B
@@ -154,9 +154,9 @@ B
 正確答案是 **B**。
 - B：建立 AWS Snowball Edge 任務。 在本地接收Snowball Edge 裝置。 使用Snowball Edge 用戶端向裝置傳輸資料. 返回裝置,使AWS可以將資料匯入Amazon S3。**AWS Snowball Edge 是離線資料傳輸服務，資料透過實體裝置運送，完全不消耗網路頻寬。** 題目明確要求「儘快遷移且使用盡可能少的網路頻寬」，70 TB 資料透過實體裝置傳輸是最佳選擇。
 - 其餘選項比較：
-- A：建立 S3 儲存桶(S3 bucket). 建立一個 IAM 角色,該角色擁有寫入 S3 儲存桶(S3 bucket) 的許可權。 使用 AWS CLI 在本地複製所有檔案到 S3 儲存桶(S3 bucket)。直接透過 AWS CLI 上傳 70 TB 資料需要大量網路頻寬，且速度受限於網際網路連線，不符合最小化頻寬使用的要求。
-- C：在本地端部署一個S3檔案閘道器。 建立公共服務端點連線到 S3 檔案閘道器。 建立 S3 儲存桶(S3 bucket). 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 儲存桶(S3 bucket). 將資料從現有的NFS檔案共享轉移到S3檔案閘道器。S3 File Gateway 是透過網際網路將資料傳輸到 S3，仍然會消耗大量網路頻寬傳送 70 TB 資料，不符合最小化頻寬的要求。
-- D：在AWS Direct Connect網路和AWS之間建立連線. 在本地端部署一個S3檔案閘道器。 建立公共虛擬介面(VIF),連線到S3檔案閘道器. 建立 S3 儲存桶(S3 bucket). 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 儲存桶(S3 bucket). 將資料從現有的NFS檔案共享轉移到S3檔案閘道器。建立 Direct Connect 需要時間，且仍需透過網路傳輸資料，增加了建置複雜度，不符合題目要求。
+- A：建立 S3 bucket. 建立一個 IAM 角色,該角色擁有寫入 S3 bucket 的許可權。 使用 AWS CLI 在本地複製所有檔案到 S3 bucket。直接透過 AWS CLI 上傳 70 TB 資料需要大量網路頻寬，且速度受限於網際網路連線，不符合最小化頻寬使用的要求。
+- C：在本地端部署一個S3檔案閘道器。 建立公共服務端點連線到 S3 檔案閘道器。 建立 S3 bucket. 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 bucket. 將資料從現有的NFS檔案共享轉移到S3檔案閘道器。S3 File Gateway 是透過網際網路將資料傳輸到 S3，仍然會消耗大量網路頻寬傳送 70 TB 資料，不符合最小化頻寬的要求。
+- D：在AWS Direct Connect網路和AWS之間建立連線. 在本地端部署一個S3檔案閘道器。 建立公共虛擬介面(VIF),連線到S3檔案閘道器. 建立 S3 bucket. 在 S3 檔案閘道器上建立一個新的 NFS 檔案共享。 將新檔案共享指向S3 bucket. 將資料從現有的NFS檔案共享轉移到S3檔案閘道器。建立 Direct Connect 需要時間，且仍需透過網路傳輸資料，增加了建置複雜度，不符合題目要求。
 
 **分類：** 移轉和傳輸
 
@@ -276,7 +276,7 @@ B
 **選項**
 - A. 使用AWS Secrets Manager. 開啟自動輪換。
 - B. 使用 AWS Systems Manager 引數儲存器. 開啟自動輪換。
-- C. 建立 Amazon S3 桶以儲存用 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵加密的物件. 將憑證檔案移到 S3 儲存桶(S3 bucket). 將應用程式指向S3 儲存桶(S3 bucket).
+- C. 建立 Amazon S3 bucket以儲存用 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵加密的物件. 將憑證檔案移到 S3 bucket. 將應用程式指向S3 bucket.
 - D. 為每個EC2例項建立加密的Amazon Elastic Block Store (Amazon EBS)磁碟區. 將新的 EBS 磁碟區附加到每個EC2 例項中。 將憑證檔案移到新的EBS 磁碟區中. 將應用程式指向新的 EBS 磁碟區。
 
 **答案**
@@ -290,7 +290,7 @@ A
 - A：使用AWS Secrets Manager. 開啟自動輪換。**AWS Secrets Manager 原生支援 Amazon Aurora 和 RDS 的憑證自動輪換**，無需任何自訂程式碼。啟用自動輪換後，Secrets Manager 會自動更新資料庫密碼並確保應用程式使用新憑證，大幅降低維運負擔，是本題的最佳解。
 - 其餘選項比較：
 - B：使用 AWS Systems Manager 引數儲存器. 開啟自動輪換。**SSM Parameter Store 並不支援 RDS/Aurora 的原生自動輪換功能**，若要實現輪換需要自行撰寫 Lambda 函式來更新參數值並通知資料庫，維運複雜度遠高於 Secrets Manager。
-- C：建立 Amazon S3 桶以儲存用 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵加密的物件. 將憑證檔案移到 S3 儲存桶(S3 bucket). 將應用程式指向S3 儲存桶(S3 bucket)。將憑證存入 S3 需要應用程式修改，且沒有內建的輪換機制，需要自行管理輪換流程，維運複雜度高。
+- C：建立 Amazon S3 bucket以儲存用 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵加密的物件. 將憑證檔案移到 S3 bucket. 將應用程式指向S3 bucket。將憑證存入 S3 需要應用程式修改，且沒有內建的輪換機制，需要自行管理輪換流程，維運複雜度高。
 - D：為每個EC2例項建立加密的Amazon Elastic Block Store (Amazon EBS)磁碟區. 將新的 EBS 磁碟區附加到每個EC2 例項中。 將憑證檔案移到新的EBS 磁碟區中. 將應用程式指向新的 EBS 磁碟區 。EBS 是區塊儲存設備，完全不提供任何憑證管理或輪換功能，此方案徒增複雜度而不解決問題。
 
 **分類：** 安全、身分與合規
@@ -298,13 +298,13 @@ A
 ## Question #12
 
 **題目**
-一家全球公司在Amazon EC2例項上以應用程式負載平衡器(Application Load Balancer)(ALB)為主機。 網路應用有靜態資料和動態資料. 公司將其靜態資料儲存在Amazon S3桶中. 公司希望提高效能,減少靜態資料和動態資料的延遲(latency). 該公司使用自己的域名註冊於Amazon Route 53. 解決方案設計師應如何滿足這些要求?
+一家全球公司在Amazon EC2例項上以應用程式負載平衡器(Application Load Balancer)(ALB)為主機。 網路應用有靜態資料和動態資料. 公司將其靜態資料儲存在Amazon S3 bucket中. 公司希望提高效能,減少靜態資料和動態資料的延遲(latency). 該公司使用自己的域名註冊於Amazon Route 53. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 建立一個以S3 儲存桶(S3 bucket)和ALB為起源的Amazon CloudFront發行. 設定 Route 53 將流量路由至 CloudFront Distribution.
-- B. 建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 儲存桶(S3 bucket)為終點的AWS Global Accelerator 標準加速器。設定 Route 53 路由流量至 CloudFront Distribution.
-- C. 建立一個以S3 儲存桶(S3 bucket)為源的Amazon CloudFront發行. 建立一個以 ALB 和 CloudFront Distribution 為終點的 AWS Global Accelerator 標準加速器. 建立自定義域名,指向加速器 DNS 名稱. 使用自定義域名作為網路應用程式的終點.
-- D. 建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 儲存桶(S3 bucket)為終點的AWS Global Accelerator標準加速器. 建立兩個域名. 點一域名為CloudFront DNS名稱,用於動態內容. 將其他域名指向靜態內容的加速器DNS名稱. 使用域名作為網路應用程式的終點.
+- A. 建立一個以S3 bucket和ALB為起源的Amazon CloudFront發行. 設定 Route 53 將流量路由至 CloudFront Distribution.
+- B. 建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 bucket為終點的AWS Global Accelerator 標準加速器。設定 Route 53 路由流量至 CloudFront Distribution.
+- C. 建立一個以S3 bucket為源的Amazon CloudFront發行. 建立一個以 ALB 和 CloudFront Distribution 為終點的 AWS Global Accelerator 標準加速器. 建立自定義域名,指向加速器 DNS 名稱. 使用自定義域名作為網路應用程式的終點.
+- D. 建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 bucket為終點的AWS Global Accelerator標準加速器. 建立兩個域名. 點一域名為CloudFront DNS名稱,用於動態內容. 將其他域名指向靜態內容的加速器DNS名稱. 使用域名作為網路應用程式的終點.
 
 **答案**
 A
@@ -314,11 +314,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個以S3 儲存桶(S3 bucket)和ALB為起源的Amazon CloudFront發行. 設定 Route 53 將流量路由至 CloudFront Distribution。**CloudFront 支援多個 Origin**，可以同時設定 S3（靜態內容）和 ALB（動態內容）作為不同路徑的 Origin，透過 Cache Behaviors 設定不同路徑規則，一個 CloudFront Distribution 即可服務靜態與動態內容，降低延遲且架構簡單。
+- A：建立一個以S3 bucket和ALB為起源的Amazon CloudFront發行. 設定 Route 53 將流量路由至 CloudFront Distribution。**CloudFront 支援多個 Origin**，可以同時設定 S3（靜態內容）和 ALB（動態內容）作為不同路徑的 Origin，透過 Cache Behaviors 設定不同路徑規則，一個 CloudFront Distribution 即可服務靜態與動態內容，降低延遲且架構簡單。
 - 其餘選項比較：
-- B：建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 儲存桶(S3 bucket)為終點的AWS Global Accelerator 標準加速器。設定 Route 53 路由流量至 CloudFront Distribution。Global Accelerator 不支援 S3 作為終端節點，且將靜態和動態內容分拆到不同服務架構不必要地增加了複雜度和成本。
-- C：建立一個以S3 儲存桶(S3 bucket)為源的Amazon CloudFront發行. 建立一個以 ALB 和 CloudFront Distribution 為終點的 AWS Global Accelerator 標準加速器. 建立自定義域名,指向加速器 DNS 名稱. 使用自定義域名作為網路應用程式的終點。混用 Global Accelerator 和 CloudFront 造成架構過度複雜，且靜態內容不需要 Global Accelerator，CloudFront 邊緣快取已足夠優化靜態內容的延遲。
-- D：建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 儲存桶(S3 bucket)為終點的AWS Global Accelerator標準加速器. 建立兩個域名. 點一域名為CloudFront DNS名稱,用於動態內容. 將其他域名指向靜態內容的加速器DNS名稱. 使用域名作為網路應用程式的終點。使用兩個不同域名分別提供靜態和動態內容，對使用者和應用程式都增加了複雜度，且 Global Accelerator 並不適合做靜態檔案的 CDN 服務。
+- B：建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 bucket為終點的AWS Global Accelerator 標準加速器。設定 Route 53 路由流量至 CloudFront Distribution。Global Accelerator 不支援 S3 作為終端節點，且將靜態和動態內容分拆到不同服務架構不必要地增加了複雜度和成本。
+- C：建立一個以S3 bucket為源的Amazon CloudFront發行. 建立一個以 ALB 和 CloudFront Distribution 為終點的 AWS Global Accelerator 標準加速器. 建立自定義域名,指向加速器 DNS 名稱. 使用自定義域名作為網路應用程式的終點。混用 Global Accelerator 和 CloudFront 造成架構過度複雜，且靜態內容不需要 Global Accelerator，CloudFront 邊緣快取已足夠優化靜態內容的延遲。
+- D：建立一個以ALB為源的Amazon CloudFront分佈. 建立一個以S3 bucket為終點的AWS Global Accelerator標準加速器. 建立兩個域名. 點一域名為CloudFront DNS名稱,用於動態內容. 將其他域名指向靜態內容的加速器DNS名稱. 使用域名作為網路應用程式的終點。使用兩個不同域名分別提供靜態和動態內容，對使用者和應用程式都增加了複雜度，且 Global Accelerator 並不適合做靜態檔案的 CDN 服務。
 
 **分類：** 網路連結和內容交付
 
@@ -330,7 +330,7 @@ A
 **選項**
 - A. 將憑證作為機密存放在AWS Secrets Manager。 為所需區域使用多區域(Region)秘密複寫(replication). 配置密件管理器, 以在日程中輪換憑證。
 - B. 透過建立安全字串引數,將憑證作為機密儲存在 AWS Systems Manager 中. 為所需區域使用多區域(Region)秘密複寫(replication). 配置系統管理器以在時間表中輪換這些憑證。
-- C. 將憑證儲存在 Amazon S3 桶中, 該桶已啟用伺服器側 加密(encryption)(SSE)。 使用Amazon EventBridge(Amazon CloudWatch Events)來引用一個AWS Lambda函式來輪換憑證.
+- C. 將憑證儲存在 Amazon S3 bucket中, 該桶已啟用伺服器側 加密(encryption)(SSE)。 使用Amazon EventBridge(Amazon CloudWatch Events)來引用一個AWS Lambda函式來輪換憑證.
 - D. 使用 AWS Key Management Service(AWS KMS) 多區域(Region) 客戶管理金鑰加密憑證為機密. 在 Amazon DynamoDB 全球表格中儲存這些秘密。 使用 AWS Lambda 函式從 DynamoDB 獲取機密. 使用 RDS API來輪換這些憑證.
 
 **答案**
@@ -344,7 +344,7 @@ A
 - A：將憑證作為機密存放在AWS Secrets Manager。 為所需區域使用多區域(Region)秘密複寫(replication). 配置密件管理器, 以在日程中輪換憑證。AWS Secrets Manager 對 RDS 資料庫憑證提供原生的自動輪換功能（內建輪換用 Lambda 範本），同時支援機密的多區域複寫，可以在多個 AWS 區域套用同一組輪換排程，不需要自行開發輪換或同步邏輯，維運開銷最低。
 - 其餘選項比較：
 - B：透過建立安全字串引數,將憑證作為機密儲存在 AWS Systems Manager 中. 為所需區域使用多區域(Region)秘密複寫(replication). 配置系統管理器以在時間表中輪換這些憑證。Systems Manager Parameter Store 的 SecureString 參數沒有像 Secrets Manager 那樣針對 RDS 提供內建的自動輪換機制，也不原生支援跨區複寫，要達成同樣效果需要額外自建輪換與同步流程，維運複雜度較高。
-- C：將憑證儲存在 Amazon S3 桶中, 該桶已啟用伺服器側 加密(encryption)(SSE)。 使用Amazon EventBridge(Amazon CloudWatch Events)來引用一個AWS Lambda函式來輪換憑證。把憑證存放在啟用 SSE 加密的 S3 桶中，需要另外用 EventBridge 觸發自訂 Lambda 函式執行輪換邏輯，等於自行打造一套憑證管理機制，而非使用託管服務內建的輪換能力，維運負擔明顯較高。
+- C：將憑證儲存在 Amazon S3 bucket中, 該桶已啟用伺服器側 加密(encryption)(SSE)。 使用Amazon EventBridge(Amazon CloudWatch Events)來引用一個AWS Lambda函式來輪換憑證。把憑證存放在啟用 SSE 加密的 S3 bucket中，需要另外用 EventBridge 觸發自訂 Lambda 函式執行輪換邏輯，等於自行打造一套憑證管理機制，而非使用託管服務內建的輪換能力，維運負擔明顯較高。
 - D：使用 AWS Key Management Service(AWS KMS) 多區域(Region) 客戶管理金鑰加密憑證為機密. 在 Amazon DynamoDB 全球表格中儲存這些秘密。 使用 AWS Lambda 函式從 DynamoDB 獲取機密. 使用 RDS API來輪換這些憑證。用 KMS 多區域金鑰加密憑證、存進 DynamoDB 全球資料表，再靠自訂 Lambda 呼叫 RDS API 執行輪換，整套架構需要自行串接與維護多項服務，複雜度遠高於直接使用 Secrets Manager 的原生輪換功能。
 
 **分類：** 安全、身分與合規
@@ -411,8 +411,8 @@ C
 **選項**
 - A. 在Amazon QuickSight建立分析. 連線所有的資料來源並建立新的資料集. 釋出視覺化資料的儀表板. 與適當的IAM角色共享儀表板.
 - B. 在Amazon QuickSight建立分析. 連線所有的資料來源並建立新的資料集. 釋出視覺化資料的儀表板. 與適當的使用者和團體共享儀表板。
-- C. 為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 建立 AWS Glue 提取、轉換和載入任務以生成報告。 將報告公佈給Amazon S3。 使用S3 儲存桶(S3 bucket)政策限制獲取報告.
-- D. 為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 使用 Amazon Athena Federated Query 存取 Amazon RDS 內部的資料用於 PostgreSQL. 透過使用Amazon Athena生成報告. 將報告公佈給Amazon S3。 使用S3 儲存桶(S3 bucket)政策限制獲取報告.
+- C. 為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 建立 AWS Glue 提取、轉換和載入任務以生成報告。 將報告公佈給Amazon S3。 使用S3 bucket政策限制獲取報告.
+- D. 為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 使用 Amazon Athena Federated Query 存取 Amazon RDS 內部的資料用於 PostgreSQL. 透過使用Amazon Athena生成報告. 將報告公佈給Amazon S3。 使用S3 bucket政策限制獲取報告.
 
 **答案**
 B
@@ -425,21 +425,21 @@ B
 - B：在Amazon QuickSight建立分析. 連線所有的資料來源並建立新的資料集. 釋出視覺化資料的儀表板. 與適當的使用者和團體共享儀表板。**Amazon QuickSight 是 AWS 的 BI 可視化服務**，可直接連線 S3 和 RDS 資料來源，建立互動式儀表板。QuickSight 使用自己的使用者和群組權限系統，可精細控制哪些人員可以檢視哪些儀表板，完全滿足「管理團隊完整存取、其他人有限存取」的差異化授權需求。
 - 其餘選項比較：
 - A：在Amazon QuickSight建立分析. 連線所有的資料來源並建立新的資料集. 釋出視覺化資料的儀表板. 與適當的IAM角色共享儀表板。QuickSight 儀表板是透過 QuickSight 的使用者/群組系統（而非 IAM 角色）來共享的，與 IAM 角色共享儀表板在 QuickSight 中並非標準的存取控制方式。
-- C：為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 建立 AWS Glue 提取、轉換和載入任務以生成報告。 將報告公佈給Amazon S3。 使用S3 儲存桶(S3 bucket)政策限制獲取報告。AWS Glue ETL 是資料轉換服務，不提供可視化功能，生成的是靜態檔案而非互動式儀表板，不符合題目的「視覺化」需求。
-- D：為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 使用 Amazon Athena Federated Query 存取 Amazon RDS 內部的資料用於 PostgreSQL. 透過使用Amazon Athena生成報告. 將報告公佈給Amazon S3。 使用S3 儲存桶(S3 bucket)政策限制獲取報告。**Amazon Athena 是 SQL 查詢引擎，完全沒有視覺化功能**，生成的查詢結果是 CSV 檔案，不能提供互動式儀表板，不符合「資料視覺化」的需求。
+- C：為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 建立 AWS Glue 提取、轉換和載入任務以生成報告。 將報告公佈給Amazon S3。 使用S3 bucket政策限制獲取報告。AWS Glue ETL 是資料轉換服務，不提供可視化功能，生成的是靜態檔案而非互動式儀表板，不符合題目的「視覺化」需求。
+- D：為 Amazon S3 中的資料建立 AWS Glue 表格和爬蟲. 使用 Amazon Athena Federated Query 存取 Amazon RDS 內部的資料用於 PostgreSQL. 透過使用Amazon Athena生成報告. 將報告公佈給Amazon S3。 使用S3 bucket政策限制獲取報告。**Amazon Athena 是 SQL 查詢引擎，完全沒有視覺化功能**，生成的查詢結果是 CSV 檔案，不能提供互動式儀表板，不符合「資料視覺化」的需求。
 
 **分類：** 分析
 
 ## Question #17
 
 **題目**
-一家公司正在執行新的業務申請。 該應用程式執行在兩個Amazon EC2 執行個體上,並使用一個Amazon S3桶進行檔案儲存. 一個解決方案設計師需要確保EC2例項能夠存取S3 儲存桶(S3 bucket). 解決方案設計師應如何滿足這一要求?
+一家公司正在執行新的業務申請。 該應用程式執行在兩個Amazon EC2 執行個體上,並使用一個Amazon S3 bucket進行檔案儲存. 一個解決方案設計師需要確保EC2例項能夠存取S3 bucket. 解決方案設計師應如何滿足這一要求?
 
 **選項**
-- A. 建立IAM角色,允許進入S3 儲存桶(S3 bucket). 將角色附加到EC2例項中.
-- B. 建立一個IAM 政策(IAM policy),允許進入S3 儲存桶(S3 bucket). 將政策附加到EC2例項中。
-- C. 建立一個IAM組,允許存取S3 儲存桶(S3 bucket). 將該組附加到 EC2 例項中。
-- D. 建立一個IAM使用者,允許存取S3 儲存桶(S3 bucket). 將使用者帳戶附加到 EC2 例項中。
+- A. 建立IAM角色,允許進入S3 bucket. 將角色附加到EC2例項中.
+- B. 建立一個IAM 政策(IAM policy),允許進入S3 bucket. 將政策附加到EC2例項中。
+- C. 建立一個IAM組,允許存取S3 bucket. 將該組附加到 EC2 例項中。
+- D. 建立一個IAM使用者,允許存取S3 bucket. 將使用者帳戶附加到 EC2 例項中。
 
 **答案**
 A
@@ -449,25 +449,25 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立IAM角色,允許進入S3 儲存桶(S3 bucket). 將角色附加到EC2例項中。IAM 角色可以透過 instance profile 附加到 EC2 執行個體，讓執行個體以角色身分取得自動輪替的暫時性安全憑證來存取 S3，這是 AWS 建議的最佳實務，不需要在執行個體上存放任何長期憑證。
+- A：建立IAM角色,允許進入S3 bucket. 將角色附加到EC2例項中。IAM 角色可以透過 instance profile 附加到 EC2 執行個體，讓執行個體以角色身分取得自動輪替的暫時性安全憑證來存取 S3，這是 AWS 建議的最佳實務，不需要在執行個體上存放任何長期憑證。
 - 其餘選項比較：
-- B：建立一個IAM 政策(IAM policy),允許進入S3 儲存桶(S3 bucket). 將政策附加到EC2例項中。IAM 政策必須依附在使用者、群組或角色等身分上才會生效，無法直接附加到 EC2 執行個體本身，這個操作方式在 IAM 架構中並不成立。
-- C：建立一個IAM組,允許存取S3 儲存桶(S3 bucket). 將該組附加到 EC2 例項中。IAM 群組是用來集中管理一群 IAM 使用者的權限指派，群組本身無法附加到 EC2 執行個體，同樣不是可行的操作方式。
-- D：建立一個IAM使用者,允許存取S3 儲存桶(S3 bucket). 將使用者帳戶附加到 EC2 例項中。IAM 使用者代表人員或應用程式的長期身分，無法直接附加到 EC2 執行個體；若改為把使用者的存取金鑰寫入執行個體，則等於在機器上硬編碼長期憑證，不符合安全最佳實務。
+- B：建立一個IAM 政策(IAM policy),允許進入S3 bucket. 將政策附加到EC2例項中。IAM 政策必須依附在使用者、群組或角色等身分上才會生效，無法直接附加到 EC2 執行個體本身，這個操作方式在 IAM 架構中並不成立。
+- C：建立一個IAM組,允許存取S3 bucket. 將該組附加到 EC2 例項中。IAM 群組是用來集中管理一群 IAM 使用者的權限指派，群組本身無法附加到 EC2 執行個體，同樣不是可行的操作方式。
+- D：建立一個IAM使用者,允許存取S3 bucket. 將使用者帳戶附加到 EC2 例項中。IAM 使用者代表人員或應用程式的長期身分，無法直接附加到 EC2 執行個體；若改為把使用者的存取金鑰寫入執行個體，則等於在機器上硬編碼長期憑證，不符合安全最佳實務。
 
 **分類：** 安全、身分與合規
 
 ## Question #18
 
 **題目**
-一個應用程式開發團隊正在設計一個微服務,將大型影象轉換為較小的壓縮影象. 當使用者透過網路介面上傳影象時,微伺服器應該將影象儲存在Amazon S3桶中,用AWS Lambda功能處理和壓縮影象,並以不同的S3 儲存桶(S3 bucket)壓縮形式儲存影象. 一個解決方案架構師需要設計一個使用持久,無狀態元件自動處理影象的解決方案. 哪些行動組合將滿足這些要求?(選二.
+一個應用程式開發團隊正在設計一個微服務,將大型影象轉換為較小的壓縮影象. 當使用者透過網路介面上傳影象時,微伺服器應該將影象儲存在Amazon S3 bucket中,用AWS Lambda功能處理和壓縮影象,並以不同的S3 bucket壓縮形式儲存影象. 一個解決方案架構師需要設計一個使用持久,無狀態元件自動處理影象的解決方案. 哪些行動組合將滿足這些要求?(選二.
 
 **選項**
-- A. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 配置 S3 儲存桶(S3 bucket) 在影象上傳到 S3 儲存桶(S3 bucket) 時向 SQS 佇列傳送通知。
+- A. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 配置 S3 bucket 在影象上傳到 S3 bucket 時向 SQS 佇列傳送通知。
 - B. 配置 Lambda 函式以使用 Amazon 簡單佇列服務(Amazon SQS) 佇列作為呼叫來源。 當SQS訊息被成功處理時,刪除佇列中的訊息.
-- C. 配置 Lambda 函式以監視 S3 儲存桶(S3 bucket) 用於新的上傳。 當檢測到上傳的影象時,將檔名寫入記憶體中的文字檔案,並使用文字檔案來跟蹤處理過的影象.
+- C. 配置 Lambda 函式以監視 S3 bucket 用於新的上傳。 當檢測到上傳的影象時,將檔名寫入記憶體中的文字檔案,並使用文字檔案來跟蹤處理過的影象.
 - D. 啟動 Amazon EC2 例項以監視 Amazon 簡單佇列服務( Amazon SQS) 佇列。 當專案新增到佇列時,在EC2例項的文字檔案中記錄檔名,並觸發 Lambda 函式.
-- E. 配置 Amazon EventBridge(Amazon CloudWatch事件)活動,以監視S3 儲存桶(S3 bucket). 當一個影象被上傳時,向一個帶有應用程式所有者的電子郵件地址的Amazon Simple Notification Service(Amazon SNS)主題發出警報,供進一步處理.
+- E. 配置 Amazon EventBridge(Amazon CloudWatch事件)活動,以監視S3 bucket. 當一個影象被上傳時,向一個帶有應用程式所有者的電子郵件地址的Amazon Simple Notification Service(Amazon SNS)主題發出警報,供進一步處理.
 
 **答案**
 A,B
@@ -478,12 +478,12 @@ A,B
 
 **詳解**
 正確答案是 **A, B**。
-- A：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 配置 S3 儲存桶(S3 bucket) 在影象上傳到 S3 儲存桶(S3 bucket) 時向 SQS 佇列傳送通知。S3 事件通知可直接串接 SQS，物件上傳到 S3 bucket 時由 S3 主動推送通知進佇列，佇列訊息具持久性（可設定訊息保留天數與死信佇列），即使下游處理端暫時故障，待處理項目也不會遺失，符合題目對「持久、無狀態元件」的設計要求。
+- A：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 配置 S3 bucket 在影象上傳到 S3 bucket 時向 SQS 佇列傳送通知。S3 事件通知可直接串接 SQS，物件上傳到 S3 bucket 時由 S3 主動推送通知進佇列，佇列訊息具持久性（可設定訊息保留天數與死信佇列），即使下游處理端暫時故障，待處理項目也不會遺失，符合題目對「持久、無狀態元件」的設計要求。
 - B：配置 Lambda 函式以使用 Amazon 簡單佇列服務(Amazon SQS) 佇列作為呼叫來源。 當SQS訊息被成功處理時,刪除佇列中的訊息。以 SQS 作為 Lambda 的事件來源（event source mapping），Lambda 依佇列訊息觸發執行、成功處理後才刪除訊息，依賴 SQS 的可見度逾時機制確保未處理完成的訊息會重新出現；Lambda 本身不保留任何處理狀態，是典型的無狀態運算單元，與 SQS 的持久佇列搭配正好滿足需求。
 - 其餘選項比較：
-- C：配置 Lambda 函式以監視 S3 儲存桶(S3 bucket) 用於新的上傳。 當檢測到上傳的影象時,將檔名寫入記憶體中的文字檔案,並使用文字檔案來跟蹤處理過的影象。把已處理清單寫進 Lambda 執行環境「記憶體中」的文字檔案並不具持久性：Lambda 執行環境可能隨時被回收或並行擴充出多個獨立執行環境，記憶體內資料無法跨環境共享或存活，違反題目對「持久」元件的要求。
+- C：配置 Lambda 函式以監視 S3 bucket 用於新的上傳。 當檢測到上傳的影象時,將檔名寫入記憶體中的文字檔案,並使用文字檔案來跟蹤處理過的影象。把已處理清單寫進 Lambda 執行環境「記憶體中」的文字檔案並不具持久性：Lambda 執行環境可能隨時被回收或並行擴充出多個獨立執行環境，記憶體內資料無法跨環境共享或存活，違反題目對「持久」元件的要求。
 - D：啟動 Amazon EC2 例項以監視 Amazon 簡單佇列服務( Amazon SQS) 佇列。 當專案新增到佇列時,在EC2例項的文字檔案中記錄檔名,並觸發 Lambda 函式。用一台常駐執行的 EC2 執行個體輪詢佇列並在本機文字檔記錄狀態，等於自行維運一台需要持續運行、修補與監控的伺服器，既非無伺服器也非無狀態架構，與題目要求的自動化、免管理設計相違背。
-- E：配置 Amazon EventBridge(Amazon CloudWatch事件)活動,以監視S3 儲存桶(S3 bucket). 當一個影象被上傳時,向一個帶有應用程式所有者的電子郵件地址的Amazon Simple Notification Service(Amazon SNS)主題發出警報,供進一步處理。EventBridge 搭配 SNS 只會寄送電子郵件警報通知應用程式擁有者，屬於需要人工介入的通知機制，並未實際執行影像壓縮與轉檔處理邏輯，無法滿足「自動處理影像」的核心需求。
+- E：配置 Amazon EventBridge(Amazon CloudWatch事件)活動,以監視S3 bucket. 當一個影象被上傳時,向一個帶有應用程式所有者的電子郵件地址的Amazon Simple Notification Service(Amazon SNS)主題發出警報,供進一步處理。EventBridge 搭配 SNS 只會寄送電子郵件警報通知應用程式擁有者，屬於需要人工介入的通知機制，並未實際執行影像壓縮與轉檔處理邏輯，無法滿足「自動處理影像」的核心需求。
 
 **分類：** 應用程式整合
 
@@ -547,10 +547,10 @@ D
 一家電子商務公司想在AWS上推出一天一次的交易網站. 每天的銷售時間為24小時。 公司希望在高峰時段以毫秒延遲(latency)處理每小時數百萬個請求. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用Amazon S3在不同的S3桶內託管完整網站. 增加Amazon CloudFront分佈. 設定 S3 桶作為分發的起源。 在Amazon S3中儲存訂單資料.
+- A. 使用Amazon S3在不同的S3 bucket內託管完整網站. 增加Amazon CloudFront分佈. 設定 S3 bucket作為分發的起源。 在Amazon S3中儲存訂單資料.
 - B. 在跨多個可用區(Availability Zones)的Amazon EC2例項上部署全網站。 新增一個應用程式負載平衡器(Application Load Balancer)(ALB)來分配網站流量. 為後端 API 新增另一個 ALB。 為 MySQL 將資料儲存在 Amazon RDS 中.
 - C. 將全部應用程式移到容器中執行。 在Amazon Elastic Kubernetes Service(Amazon EKS)上託管容器. 使用 Kubernetes 叢集自動縮放器來增加和減少處理流量暴動的Pod 數量. 為 MySQL 將資料儲存在 Amazon RDS 中.
-- D. 使用Amazon S3 儲存桶託管網站的靜態內容. 部署Amazon CloudFront 發行版。 設定 S3 儲存桶(S3 bucket) 為源。 為後端API使用Amazon API Gateway和AWS Lambda功能. 在Amazon DynamoDB中儲存資料.
+- D. 使用Amazon S3 bucket託管網站的靜態內容. 部署Amazon CloudFront 發行版。 設定 S3 bucket 為源。 為後端API使用Amazon API Gateway和AWS Lambda功能. 在Amazon DynamoDB中儲存資料.
 
 **答案**
 D
@@ -560,9 +560,9 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用Amazon S3 儲存桶託管網站的靜態內容. 部署Amazon CloudFront 發行版。 設定 S3 儲存桶(S3 bucket) 為源。 為後端API使用Amazon API Gateway和AWS Lambda功能. 在Amazon DynamoDB中儲存資料。S3 搭配 CloudFront 提供靜態內容的全球低延遲分發，API Gateway 加 Lambda 是全託管、依請求量自動擴縮的無伺服器運算，DynamoDB 則能以個位數毫秒延遲並自動擴展讀寫容量，整條鏈路都不需自行佈建或管理伺服器，符合「每小時數百萬請求、毫秒延遲」且「最少營運開銷」的要求。
+- D：使用Amazon S3 bucket託管網站的靜態內容. 部署Amazon CloudFront 發行版。 設定 S3 bucket 為源。 為後端API使用Amazon API Gateway和AWS Lambda功能. 在Amazon DynamoDB中儲存資料。S3 搭配 CloudFront 提供靜態內容的全球低延遲分發，API Gateway 加 Lambda 是全託管、依請求量自動擴縮的無伺服器運算，DynamoDB 則能以個位數毫秒延遲並自動擴展讀寫容量，整條鏈路都不需自行佈建或管理伺服器，符合「每小時數百萬請求、毫秒延遲」且「最少營運開銷」的要求。
 - 其餘選項比較：
-- A：使用Amazon S3在不同的S3桶內託管完整網站. 增加Amazon CloudFront分佈. 設定 S3 桶作為分發的起源。 在Amazon S3中儲存訂單資料。純粹用 S3 託管完整網站僅能提供靜態內容，沒有任何運算服務可處理下單、庫存等動態交易邏輯，且把訂單資料存進 S3 物件儲存也不具備交易型資料庫應有的查詢與一致性能力。
+- A：使用Amazon S3在不同的S3 bucket內託管完整網站. 增加Amazon CloudFront分佈. 設定 S3 bucket作為分發的起源。 在Amazon S3中儲存訂單資料。純粹用 S3 託管完整網站僅能提供靜態內容，沒有任何運算服務可處理下單、庫存等動態交易邏輯，且把訂單資料存進 S3 物件儲存也不具備交易型資料庫應有的查詢與一致性能力。
 - B：在跨多個可用區(Availability Zones)的Amazon EC2例項上部署全網站。 新增一個應用程式負載平衡器(Application Load Balancer)(ALB)來分配網站流量. 為後端 API 新增另一個 ALB。 為 MySQL 將資料儲存在 Amazon RDS 中。EC2 加兩層應用程式負載平衡器需要自行規劃執行個體數量、修補作業系統、調整 Auto Scaling 策略，RDS MySQL 面對每小時數百萬請求也需要手動調校執行個體規格與讀取複本，維運負擔遠高於全託管架構。
 - C：將全部應用程式移到容器中執行。 在Amazon Elastic Kubernetes Service(Amazon EKS)上託管容器. 使用 Kubernetes 叢集自動縮放器來增加和減少處理流量暴動的Pod 數量. 為 MySQL 將資料儲存在 Amazon RDS 中。EKS 搭配自行配置的 Kubernetes cluster autoscaler 需要管理叢集控制平面、節點群組與 Pod 擴縮規則，屬於高維運複雜度的容器平台，與題目要求的「LEAST operational overhead」直接衝突。
 
@@ -631,7 +631,7 @@ B
 - A. 使用 AWS 預算來建立預算報告,並根據例項型別比較EC2 成本.
 - B. 使用Cost Explorer的細粒度篩選功能,根據例項型別對EC2成本進行深入分析.
 - C. 使用AWS計費和成本管理儀表板的圖表來比較過去兩個月基於例項型別的EC2成本.
-- D. 使用 AWS Cost and Usage Reports 建立報告併傳送到Amazon S3桶. 使用帶有Amazon S3的Amazon QuickSight作為源頭,生成基於例項型別的互動圖.
+- D. 使用 AWS Cost and Usage Reports 建立報告併傳送到Amazon S3 bucket. 使用帶有Amazon S3的Amazon QuickSight作為源頭,生成基於例項型別的互動圖.
 
 **答案**
 B
@@ -645,7 +645,7 @@ B
 - 其餘選項比較：
 - A：使用 AWS 預算來建立預算報告,並根據例項型別比較EC2 成本。AWS Budgets 主要用於設定預算閾值和告警，不提供按執行個體類型進行歷史成本深入分析的功能。
 - C：使用AWS計費和成本管理儀表板的圖表來比較過去兩個月基於例項型別的EC2成本。**AWS Billing Dashboard 顯示的是整體帳單摘要**，不提供按執行個體類型篩選的細粒度分析功能，無法做到題目要求的執行個體類型深入分析。
-- D：使用 AWS Cost and Usage Reports 建立報告併傳送到Amazon S3桶. 使用帶有Amazon S3的Amazon QuickSight作為源頭,生成基於例項型別的互動圖。此方案雖然可行，但需要設定 CUR、S3、QuickSight 多個服務，維運開銷遠高於直接使用 Cost Explorer，不符合最低維運開銷的要求。
+- D：使用 AWS Cost and Usage Reports 建立報告併傳送到Amazon S3 bucket. 使用帶有Amazon S3的Amazon QuickSight作為源頭,生成基於例項型別的互動圖。此方案雖然可行，但需要設定 CUR、S3、QuickSight 多個服務，維運開銷遠高於直接使用 Cost Explorer，不符合最低維運開銷的要求。
 
 **分類：** AWS Cost Management
 
@@ -679,7 +679,7 @@ D
 ## Question #26
 
 **題目**
-一家公司需要審查它的AWS雲部署,以確保它的Amazon S3桶沒有未經授權的配置改變. 解決方案設計師應如何實現這一目標?
+一家公司需要審查它的AWS雲部署,以確保它的Amazon S3 bucket沒有未經授權的配置改變. 解決方案設計師應如何實現這一目標?
 
 **選項**
 - A. 開啟AWS Config 並有相應的規則.
@@ -845,7 +845,7 @@ A
 
 **選項**
 - A. 將網站裝箱並在AWS Fargate中託管.
-- B. 建立一個 Amazon S3 桶,並在那裡託管網站.
+- B. 建立一個 Amazon S3 bucket,並在那裡託管網站.
 - C. 在 Amazon EC2 例項上部署網路伺服器以託管網站。
 - D. 配置使用Express.js框架的帶有AWS Lambda目標的應用程式負載平衡器(Application Load Balancer).
 
@@ -857,7 +857,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立一個 Amazon S3 桶,並在那裡託管網站。Amazon S3 靜態網站託管只需依儲存空間與請求次數計費,不需管理任何伺服器,非常適合純靜態的 HTML、CSS、用戶端 JavaScript 與圖片內容,是成本最低的託管方式。
+- B：建立一個 Amazon S3 bucket,並在那裡託管網站。Amazon S3 靜態網站託管只需依儲存空間與請求次數計費,不需管理任何伺服器,非常適合純靜態的 HTML、CSS、用戶端 JavaScript 與圖片內容,是成本最低的託管方式。
 - 其餘選項比較：
 - A：將網站裝箱並在AWS Fargate中託管。AWS Fargate 是容器運算服務,需要持續執行容器並按運算資源計費,對於純靜態的 HTML/CSS/JS/圖片內容而言,是不必要的運算成本與維運負擔。
 - C：在 Amazon EC2 例項上部署網路伺服器以託管網站。在 EC2 例項上部署網頁伺服器需要持續執行運算執行個體,並自行維運作業系統與伺服器軟體,對純靜態內容而言成本與維運複雜度都明顯高於 S3。
@@ -949,13 +949,13 @@ D
 ## Question #36
 
 **題目**
-一家公司正在AWS雲建造一個應用程式. 該應用程式將在兩個AWS區域的Amazon S3桶中儲存資料. 公司必須使用AWS Key Management Service(AWS KMS)客戶管理的金鑰加密儲存在S3桶中的所有資料. 兩個S3桶中的資料必須加密並用相同的KMS金鑰解密. 資料和金鑰必須儲存在這兩個區域的每一個區域。 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司正在AWS雲建造一個應用程式. 該應用程式將在兩個AWS區域的Amazon S3 bucket中儲存資料. 公司必須使用AWS Key Management Service(AWS KMS)客戶管理的金鑰加密儲存在S3 bucket中的所有資料. 兩個S3 bucket中的資料必須加密並用相同的KMS金鑰解密. 資料和金鑰必須儲存在這兩個區域的每一個區域。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 在每個區域(Region)中建立一個S3 儲存桶(S3 bucket). 配置 S3 桶以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3桶之間配置 複寫(replication)。
-- B. 建立客戶管理的多區域(Region) KMS金鑰. 在每個區域(Region)中建立一個S3 儲存桶(S3 bucket). 在S3桶之間配置 複寫(replication)。 用客戶端的 加密(encryption) 配置使用 KMS 金鑰的應用程式。
-- C. 在每個區域(Region)中建立一個客戶管理KMS金鑰和一個S3 儲存桶(S3 bucket). 配置 S3 桶以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3桶之間配置 複寫(replication)。
-- D. 在每個區域(Region)中建立一個客戶管理 KMS 金鑰和一個S3 儲存桶(S3 bucket). 配置 S3 桶,用 AWS KMS 鍵(SSE-KMS)使用伺服器側的 加密(encryption)。 在S3桶之間配置 複寫(replication)。
+- A. 在每個區域(Region)中建立一個S3 bucket. 配置 S3 bucket以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3 bucket之間配置 複寫(replication)。
+- B. 建立客戶管理的多區域(Region) KMS金鑰. 在每個區域(Region)中建立一個S3 bucket. 在S3 bucket之間配置 複寫(replication)。 用客戶端的 加密(encryption) 配置使用 KMS 金鑰的應用程式。
+- C. 在每個區域(Region)中建立一個客戶管理KMS金鑰和一個S3 bucket. 配置 S3 bucket以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3 bucket之間配置 複寫(replication)。
+- D. 在每個區域(Region)中建立一個客戶管理 KMS 金鑰和一個S3 bucket. 配置 S3 bucket,用 AWS KMS 鍵(SSE-KMS)使用伺服器側的 加密(encryption)。 在S3 bucket之間配置 複寫(replication)。
 
 **答案**
 B
@@ -965,11 +965,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立客戶管理的多區域(Region) KMS金鑰. 在每個區域(Region)中建立一個S3 儲存桶(S3 bucket). 在S3桶之間配置 複寫(replication)。 用客戶端的 加密(encryption) 配置使用 KMS 金鑰的應用程式。**KMS Multi-Region Keys** 允許在多個 AWS 區域中使用相同的邏輯金鑰（相同的金鑰材料，但不同區域有各自的金鑰 ARN），實現「在兩個區域都能用同一把金鑰加解密」的需求。搭配 S3 複寫，資料可在兩個區域間同步，且兩端都能以同一金鑰解密，維運開銷最低。
+- B：建立客戶管理的多區域(Region) KMS金鑰. 在每個區域(Region)中建立一個S3 bucket. 在S3 bucket之間配置 複寫(replication)。 用客戶端的 加密(encryption) 配置使用 KMS 金鑰的應用程式。**KMS Multi-Region Keys** 允許在多個 AWS 區域中使用相同的邏輯金鑰（相同的金鑰材料，但不同區域有各自的金鑰 ARN），實現「在兩個區域都能用同一把金鑰加解密」的需求。搭配 S3 複寫，資料可在兩個區域間同步，且兩端都能以同一金鑰解密，維運開銷最低。
 - 其餘選項比較：
-- A：在每個區域(Region)中建立一個S3 儲存桶(S3 bucket). 配置 S3 桶以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3桶之間配置 複寫(replication)。**SSE-S3 使用的是 Amazon S3 管理的金鑰，而非客戶管理的 KMS 金鑰**，不符合題目要求使用 AWS KMS 客戶管理金鑰加密的需求。
-- C：在每個區域(Region)中建立一個客戶管理KMS金鑰和一個S3 儲存桶(S3 bucket). 配置 S3 桶以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3桶之間配置 複寫(replication) 。雖然建立了客戶管理的 KMS 金鑰，但配置的加密方式卻是 **SSE-S3（不是 SSE-KMS）**，實際上沒有使用那把 KMS 金鑰加密，且兩個區域的 KMS 金鑰是不同的，無法用同一把金鑰解密兩端的資料。
-- D：在每個區域(Region)中建立一個客戶管理 KMS 金鑰和一個S3 儲存桶(S3 bucket). 配置 S3 桶,用 AWS KMS 鍵(SSE-KMS)使用伺服器側的 加密(encryption)。 在S3桶之間配置 複寫(replication) 。各區域有獨立的不同 KMS 金鑰，雖然都是 SSE-KMS，但兩個區域的資料各自用不同金鑰加密，**無法滿足「用相同 KMS 金鑰加解密」的核心需求**。
+- A：在每個區域(Region)中建立一個S3 bucket. 配置 S3 bucket以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3 bucket之間配置 複寫(replication)。**SSE-S3 使用的是 Amazon S3 管理的金鑰，而非客戶管理的 KMS 金鑰**，不符合題目要求使用 AWS KMS 客戶管理金鑰加密的需求。
+- C：在每個區域(Region)中建立一個客戶管理KMS金鑰和一個S3 bucket. 配置 S3 bucket以使用伺服器側的 加密(encryption) 與 Amazon S3 管理 加密(encryption) 鍵(SSE-S3). 在S3 bucket之間配置 複寫(replication) 。雖然建立了客戶管理的 KMS 金鑰，但配置的加密方式卻是 **SSE-S3（不是 SSE-KMS）**，實際上沒有使用那把 KMS 金鑰加密，且兩個區域的 KMS 金鑰是不同的，無法用同一把金鑰解密兩端的資料。
+- D：在每個區域(Region)中建立一個客戶管理 KMS 金鑰和一個S3 bucket. 配置 S3 bucket,用 AWS KMS 鍵(SSE-KMS)使用伺服器側的 加密(encryption)。 在S3 bucket之間配置 複寫(replication) 。各區域有獨立的不同 KMS 金鑰，雖然都是 SSE-KMS，但兩個區域的資料各自用不同金鑰加密，**無法滿足「用相同 KMS 金鑰加解密」的核心需求**。
 
 **分類：** 安全、身分與合規
 
@@ -1006,9 +1006,9 @@ B
 一家公司正在Amazon S3上託管一個靜態網站,並使用Amazon Route 53進行DNS. 該網站的需求正在世界各地增加。 該公司必須減少進入網站的使用者的延遲(latency)。 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 將包含網站的S3 儲存桶(S3 bucket)複製到所有AWS區域. 新增 Route 53 地理定位路由記錄.
-- B. AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 儲存桶(S3 bucket)聯絡起來。 編輯路由53條目以指向加速器的IP地址.
-- C. 在S3 儲存桶(S3 bucket)前增加一個Amazon CloudFront分佈. 編輯 Route 53 記錄以指向 CloudFront Distribution.
+- A. 將包含網站的S3 bucket複製到所有AWS區域. 新增 Route 53 地理定位路由記錄.
+- B. AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 bucket聯絡起來。 編輯路由53條目以指向加速器的IP地址.
+- C. 在S3 bucket前增加一個Amazon CloudFront分佈. 編輯 Route 53 記錄以指向 CloudFront Distribution.
 - D. 在桶上啟用 S3 Transfer Acceleration。 編輯 route 53 條目以指向新的終點。
 
 **答案**
@@ -1019,11 +1019,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在S3 儲存桶(S3 bucket)前增加一個Amazon CloudFront分佈. 編輯 Route 53 記錄以指向 CloudFront Distribution。在 S3 儲存桶前建立 Amazon CloudFront 發行版,可將靜態內容快取至全球各地的邊緣節點,讓使用者從最近的邊緣節點取得內容,搭配修改 Route 53 記錄指向該 CloudFront 發行版,即可有效降低全球使用者的存取延遲。
+- C：在S3 bucket前增加一個Amazon CloudFront分佈. 編輯 Route 53 記錄以指向 CloudFront Distribution。在 S3 bucket前建立 Amazon CloudFront 發行版,可將靜態內容快取至全球各地的邊緣節點,讓使用者從最近的邊緣節點取得內容,搭配修改 Route 53 記錄指向該 CloudFront 發行版,即可有效降低全球使用者的存取延遲。
 - 其餘選項比較：
-- A：將包含網站的S3 儲存桶(S3 bucket)複製到所有AWS區域. 新增 Route 53 地理定位路由記錄。將 S3 儲存桶內容複製到所有 AWS 區域並設定 Route 53 地理位置路由,需要自行維護跨區域的內容同步與一致性,操作複雜度遠高於使用單一 CDN 服務,且無法提供邊緣節點層級的快取效果。
-- B：AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 儲存桶(S3 bucket)聯絡起來。 編輯路由53條目以指向加速器的IP地址。AWS Global Accelerator 是透過 AWS 全球網路以任播 IP 將流量導向最近的運算端點(如 ALB、NLB、EC2),主要用於加速應用程式流量,並非為 S3 靜態網站內容提供邊緣快取,無法達到 CloudFront 對靜態內容的延遲改善效果。
-- D：在桶上啟用 S3 Transfer Acceleration。 編輯 route 53 條目以指向新的終點。S3 Transfer Acceleration 是用來加速使用者將資料「上傳」到 S3 儲存桶的速度,並非用來加速一般使用者瀏覽網站時「下載」靜態內容的延遲,與題目需求不符。
+- A：將包含網站的S3 bucket複製到所有AWS區域. 新增 Route 53 地理定位路由記錄。將 S3 bucket內容複製到所有 AWS 區域並設定 Route 53 地理位置路由,需要自行維護跨區域的內容同步與一致性,操作複雜度遠高於使用單一 CDN 服務,且無法提供邊緣節點層級的快取效果。
+- B：AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 bucket聯絡起來。 編輯路由53條目以指向加速器的IP地址。AWS Global Accelerator 是透過 AWS 全球網路以任播 IP 將流量導向最近的運算端點(如 ALB、NLB、EC2),主要用於加速應用程式流量,並非為 S3 靜態網站內容提供邊緣快取,無法達到 CloudFront 對靜態內容的延遲改善效果。
+- D：在桶上啟用 S3 Transfer Acceleration。 編輯 route 53 條目以指向新的終點。S3 Transfer Acceleration 是用來加速使用者將資料「上傳」到 S3 bucket的速度,並非用來加速一般使用者瀏覽網站時「下載」靜態內容的延遲,與題目需求不符。
 
 **分類：** 網路連結和內容交付
 
@@ -1060,10 +1060,10 @@ A
 一家公司擁有數千個邊緣裝置,每天共同生成1TB狀態警報. 每個警報大小約為2KB. 解決方案架構師需要實施一個解決方案來攝取並儲存提醒,供未來分析. 公司想要一個非常可用的解決方案. 然而,公司需要儘量減少成本,不想管理額外的基礎設施. 此外,該公司希望保留14天的資料,以便立即進行分析,並將任何超過14天的資料歸檔。 滿足這些要求的MOST業務效率解決方案是什麼?
 
 **選項**
-- A. 建立 Amazon Kinesis 資料 Firehose 傳送流, 以吞噬警報。 配置 Kinesis 資料 Firehose 流向 Amazon S3 桶傳送警報。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料.
-- B. 在兩個可用區(Availability Zones)上發射Amazon EC2個例,並將其置於一個彈性負載平衡器(Load Balancer)後,以吞噬警報. 在 EC2 例項上建立指令碼, 將提醒儲存在 Amazon S3 桶中。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料.
+- A. 建立 Amazon Kinesis 資料 Firehose 傳送流, 以吞噬警報。 配置 Kinesis 資料 Firehose 流向 Amazon S3 bucket傳送警報。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料.
+- B. 在兩個可用區(Availability Zones)上發射Amazon EC2個例,並將其置於一個彈性負載平衡器(Load Balancer)後,以吞噬警報. 在 EC2 例項上建立指令碼, 將提醒儲存在 Amazon S3 bucket中。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料.
 - C. 建立 Amazon Kinesis 資料 Firehose 傳送流, 以吞噬警報。 配置 Kinesis 資料 Firehose 流向 Amazon OpenSearch Service(Amazon Elasticsearch Service) 叢集傳送警報. 設定 Amazon OpenSearch Service(Amazon Elasticsearch Service) 叢集,每天進行人工快照,並刪除超過14天的叢集資料.
-- D. 建立一個 Amazon 簡單佇列服務( Amazon SQS) 標準佇列來接收提醒, 並將訊息保留期設定為 14 天。 配置消費者以瀏覽 SQS 佇列,檢查訊息的年齡,並根據需要分析訊息資料. 如果訊息已經14天了,消費者應當將訊息複製到一個Amazon S3桶,並刪除SQS佇列中的訊息.
+- D. 建立一個 Amazon 簡單佇列服務( Amazon SQS) 標準佇列來接收提醒, 並將訊息保留期設定為 14 天。 配置消費者以瀏覽 SQS 佇列,檢查訊息的年齡,並根據需要分析訊息資料. 如果訊息已經14天了,消費者應當將訊息複製到一個Amazon S3 bucket,並刪除SQS佇列中的訊息.
 
 **答案**
 A
@@ -1073,24 +1073,24 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立 Amazon Kinesis 資料 Firehose 傳送流, 以吞噬警報。 配置 Kinesis 資料 Firehose 流向 Amazon S3 桶傳送警報。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料。Amazon Kinesis Data Firehose 是全託管的資料串流傳遞服務，不需要建置或管理任何伺服器即可持續將串流資料交付到 Amazon S3，符合公司不想管理額外基礎設施、且需要高可用性的要求。搭配 S3 生命週期規則，在 14 天後自動將物件轉存到 S3 Glacier，剛好對應「14 天內保留供立即分析、超過 14 天歸檔」的資料生命週期需求，整體幾乎不需人工維運，成本也最低。
+- A：建立 Amazon Kinesis 資料 Firehose 傳送流, 以吞噬警報。 配置 Kinesis 資料 Firehose 流向 Amazon S3 bucket傳送警報。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料。Amazon Kinesis Data Firehose 是全託管的資料串流傳遞服務，不需要建置或管理任何伺服器即可持續將串流資料交付到 Amazon S3，符合公司不想管理額外基礎設施、且需要高可用性的要求。搭配 S3 生命週期規則，在 14 天後自動將物件轉存到 S3 Glacier，剛好對應「14 天內保留供立即分析、超過 14 天歸檔」的資料生命週期需求，整體幾乎不需人工維運，成本也最低。
 - 其餘選項比較：
-- B：在兩個可用區(Availability Zones)上發射Amazon EC2個例,並將其置於一個彈性負載平衡器(Load Balancer)後,以吞噬警報. 在 EC2 例項上建立指令碼, 將提醒儲存在 Amazon S3 桶中。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料。此方案需要自行建立與維護 EC2 執行個體、Auto Scaling 與負載平衡器，並自行撰寫程式將資料寫入 S3，等於公司仍要管理伺服器與程式碼的可用性，違反題目「不想管理額外基礎設施」的限制，維運負擔明顯高於全託管的串流服務。
+- B：在兩個可用區(Availability Zones)上發射Amazon EC2個例,並將其置於一個彈性負載平衡器(Load Balancer)後,以吞噬警報. 在 EC2 例項上建立指令碼, 將提醒儲存在 Amazon S3 bucket中。 建立S3生命週期配置,在14天后向Amazon S3冰川過渡資料。此方案需要自行建立與維護 EC2 執行個體、Auto Scaling 與負載平衡器，並自行撰寫程式將資料寫入 S3，等於公司仍要管理伺服器與程式碼的可用性，違反題目「不想管理額外基礎設施」的限制，維運負擔明顯高於全託管的串流服務。
 - C：建立 Amazon Kinesis 資料 Firehose 傳送流, 以吞噬警報。 配置 Kinesis 資料 Firehose 流向 Amazon OpenSearch Service(Amazon Elasticsearch Service) 叢集傳送警報. 設定 Amazon OpenSearch Service(Amazon Elasticsearch Service) 叢集,每天進行人工快照,並刪除超過14天的叢集資料。OpenSearch Service 叢集需要自行規劃節點數量、儲存容量並負責擴縮容，屬於需要管理的基礎設施；每天以人工方式製作快照、手動刪除超過 14 天的資料也是額外的維運工作，成本與人力投入都高於直接用 S3 生命週期規則自動歸檔。
-- D：建立一個 Amazon 簡單佇列服務( Amazon SQS) 標準佇列來接收提醒, 並將訊息保留期設定為 14 天。 配置消費者以瀏覽 SQS 佇列,檢查訊息的年齡,並根據需要分析訊息資料. 如果訊息已經14天了,消費者應當將訊息複製到一個Amazon S3桶,並刪除SQS佇列中的訊息。以 SQS 標準佇列搭配訊息保留 14 天雖然可行，但公司仍必須自行開發並維護一個消費者程式來輪詢佇列、檢查訊息年齡、把逾期訊息搬到 S3 再刪除佇列訊息，這一整套邏輯屬於額外開發與維運工作，不符合以最少人力達成的業務效率要求。
+- D：建立一個 Amazon 簡單佇列服務( Amazon SQS) 標準佇列來接收提醒, 並將訊息保留期設定為 14 天。 配置消費者以瀏覽 SQS 佇列,檢查訊息的年齡,並根據需要分析訊息資料. 如果訊息已經14天了,消費者應當將訊息複製到一個Amazon S3 bucket,並刪除SQS佇列中的訊息。以 SQS 標準佇列搭配訊息保留 14 天雖然可行，但公司仍必須自行開發並維護一個消費者程式來輪詢佇列、檢查訊息年齡、把逾期訊息搬到 S3 再刪除佇列訊息，這一整套邏輯屬於額外開發與維運工作，不符合以最少人力達成的業務效率要求。
 
 **分類：** 儲存
 
 ## Question #41
 
 **題目**
-一家公司的應用程式與多個軟體-as-service(SaaS)源整合,用於資料收集. 該公司執行Amazon EC2 執行個體,接收資料並將資料上傳到Amazon S3桶進行分析. 接收和上傳資料的同一EC2例項,在上傳完成後也會向使用者傳送通知. 公司注意到應用效能緩慢,希望儘可能提高效能. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司的應用程式與多個軟體-as-service(SaaS)源整合,用於資料收集. 該公司執行Amazon EC2 執行個體,接收資料並將資料上傳到Amazon S3 bucket進行分析. 接收和上傳資料的同一EC2例項,在上傳完成後也會向使用者傳送通知. 公司注意到應用效能緩慢,希望儘可能提高效能. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 建立 Auto Scaling 群組(Auto Scaling group) , 以便 EC2 例項可以縮放。 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。
-- B. 建立 Amazon AppFlow filow ,在每個SaaS源和S3 儲存桶(S3 bucket)之間傳輸資料. 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。
-- C. 為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 儲存桶(S3 bucket)作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 儲存桶(S3 bucket)完成後傳送事件. 配置一個Amazon Simple Notification Service (Amazon SNS)話題作為第二條規則的目標.
-- D. 建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 儲存桶(S3 bucket) 完成時, 可將事件傳送到一個Amazon Simple Notification Service (Amazon SNS) 主題.
+- A. 建立 Auto Scaling 群組(Auto Scaling group) , 以便 EC2 例項可以縮放。 配置 S3 事件通知, 當上傳到 S3 bucket 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。
+- B. 建立 Amazon AppFlow filow ,在每個SaaS源和S3 bucket之間傳輸資料. 配置 S3 事件通知, 當上傳到 S3 bucket 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。
+- C. 為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 bucket作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 bucket完成後傳送事件. 配置一個Amazon Simple Notification Service (Amazon SNS)話題作為第二條規則的目標.
+- D. 建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 bucket 完成時, 可將事件傳送到一個Amazon Simple Notification Service (Amazon SNS) 主題.
 
 **答案**
 B
@@ -1100,11 +1100,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立 Amazon AppFlow filow ,在每個SaaS源和S3 儲存桶(S3 bucket)之間傳輸資料. 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。Amazon AppFlow 是全託管的資料整合服務，內建對多種 SaaS 應用程式的連接器，能直接把資料從各個 SaaS 來源送進 S3，不需要再用 EC2 執行個體去輪詢或搬運資料，因此把原本佔用同一台 EC2 的資料擷取工作完全卸載掉。再搭配 S3 事件通知在上傳完成後觸發 SNS 發送使用者通知，讓通知作業與資料處理完全解耦、非同步執行，同時解決效能緩慢與最少維運開銷的要求。
+- B：建立 Amazon AppFlow filow ,在每個SaaS源和S3 bucket之間傳輸資料. 配置 S3 事件通知, 當上傳到 S3 bucket 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。Amazon AppFlow 是全託管的資料整合服務，內建對多種 SaaS 應用程式的連接器，能直接把資料從各個 SaaS 來源送進 S3，不需要再用 EC2 執行個體去輪詢或搬運資料，因此把原本佔用同一台 EC2 的資料擷取工作完全卸載掉。再搭配 S3 事件通知在上傳完成後觸發 SNS 發送使用者通知，讓通知作業與資料處理完全解耦、非同步執行，同時解決效能緩慢與最少維運開銷的要求。
 - 其餘選項比較：
-- A：建立 Auto Scaling 群組(Auto Scaling group) , 以便 EC2 例項可以縮放。 配置 S3 事件通知, 當上傳到 S3 儲存桶(S3 bucket) 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。這個方案只是讓原本負責擷取與通知的 EC2 執行個體可以水平擴充，但 EC2 仍然要負責跟每個 SaaS 來源介接、下載資料的工作，沒有解決同一台機器身兼擷取與通知兩種職責造成的效能瓶頸，還多了一組 Auto Scaling 群組要設定與維運。
-- C：為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 儲存桶(S3 bucket)作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 儲存桶(S3 bucket)完成後傳送事件. 配置一個Amazon Simple Notification Service (Amazon SNS)話題作為第二條規則的目標。Amazon EventBridge 規則主要是根據事件比對後路由到目標，並不是一個資料傳輸服務，無法直接把 SaaS 來源的實際資料內容送進 S3 儲存桶；這個方案在架構上並沒有真正解決如何把 SaaS 資料搬到 S3 的問題，還額外建立了兩條規則，維運複雜度更高。
-- D：建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 儲存桶(S3 bucket) 完成時, 可將事件傳送到一個Amazon Simple Notification Service (Amazon SNS) 主題。把 EC2 換成 ECS 容器只是換了運算平台，仍然需要自行維護容器化的擷取程式與 SaaS 整合邏輯；而 CloudWatch Container Insights 是用來監控容器效能指標的工具，並非設計來在 S3 上傳完成時觸發通知，這個組合技術上並不成立。
+- A：建立 Auto Scaling 群組(Auto Scaling group) , 以便 EC2 例項可以縮放。 配置 S3 事件通知, 當上傳到 S3 bucket 完成後, 將事件傳送到 Amazon 簡單通知服務( Amazon SNS)。這個方案只是讓原本負責擷取與通知的 EC2 執行個體可以水平擴充，但 EC2 仍然要負責跟每個 SaaS 來源介接、下載資料的工作，沒有解決同一台機器身兼擷取與通知兩種職責造成的效能瓶頸，還多了一組 Auto Scaling 群組要設定與維運。
+- C：為每個SaaS源建立一條Amazon EventBridge(Amazon CloudWatch Events)規則,以傳送輸出資料. 配置S3 bucket作為規則的目標. 建立第二個事件Bridge(雲表事件)規則,以便在上傳到S3 bucket完成後傳送事件. 配置一個Amazon Simple Notification Service (Amazon SNS)話題作為第二條規則的目標。Amazon EventBridge 規則主要是根據事件比對後路由到目標，並不是一個資料傳輸服務，無法直接把 SaaS 來源的實際資料內容送進 S3 bucket；這個方案在架構上並沒有真正解決如何把 SaaS 資料搬到 S3 的問題，還額外建立了兩條規則，維運複雜度更高。
+- D：建立 Docker 容器, 而不是 EC2 例項。 Amazon彈性集裝箱服務公司(Amazon ECS)的集裝箱化應用程式。 配置 Amazon CloudWatch 容器透視器, 當上傳到 S3 bucket 完成時, 可將事件傳送到一個Amazon Simple Notification Service (Amazon SNS) 主題。把 EC2 換成 ECS 容器只是換了運算平台，仍然需要自行維護容器化的擷取程式與 SaaS 整合邏輯；而 CloudWatch Container Insights 是用來監控容器效能指標的工具，並非設計來在 S3 上傳完成時觸發通知，這個組合技術上並不成立。
 
 **分類：** 應用程式整合
 
@@ -1165,14 +1165,14 @@ B
 ## Question #44
 
 **題目**
-一家公司有一個Amazon S3 儲存桶,包含關鍵資料. 公司必須保護資料不被意外刪除. 設計師應採取哪些步驟來滿足這些要求?(選二.
+一家公司有一個Amazon S3 bucket,包含關鍵資料. 公司必須保護資料不被意外刪除. 設計師應採取哪些步驟來滿足這些要求?(選二.
 
 **選項**
-- A. 在S3 儲存桶(S3 bucket)上啟用版本.
-- B. 在 S3 儲存桶(S3 bucket) 上啟用 MFA 刪除。
-- C. 在S3 儲存桶(S3 bucket)上建立一個儲存桶政策(bucket policy).
-- D. 在 S3 儲存桶(S3 bucket) 上啟用預設的 加密(encryption)。
-- E. 為 S3 儲存桶(S3 bucket) 中的物件建立 生命週期政策(lifecycle policy)。
+- A. 在S3 bucket上啟用版本.
+- B. 在 S3 bucket 上啟用 MFA 刪除。
+- C. 在S3 bucket上建立一個儲存桶政策(bucket policy).
+- D. 在 S3 bucket 上啟用預設的 加密(encryption)。
+- E. 為 S3 bucket 中的物件建立 生命週期政策(lifecycle policy)。
 
 **答案**
 A,B
@@ -1183,12 +1183,12 @@ A,B
 
 **詳解**
 正確答案是 **A, B**。
-- A：在S3 儲存桶(S3 bucket)上啟用版本。**S3 版本控制（Versioning）** 確保每次刪除物件只是新增一個「刪除標記」，舊版本仍然保留，可以復原誤刪的物件。這是防止意外刪除的基礎機制。
-- B：在 S3 儲存桶(S3 bucket) 上啟用 MFA 刪除。**MFA Delete** 要求執行永久刪除版本或停用版本控制的操作時，必須提供 MFA 驗證碼，防止未授權或意外的永久性刪除，進一步加固保護。MFA Delete 必須在啟用版本控制後才能開啟。
+- A：在S3 bucket上啟用版本。**S3 版本控制（Versioning）** 確保每次刪除物件只是新增一個「刪除標記」，舊版本仍然保留，可以復原誤刪的物件。這是防止意外刪除的基礎機制。
+- B：在 S3 bucket 上啟用 MFA 刪除。**MFA Delete** 要求執行永久刪除版本或停用版本控制的操作時，必須提供 MFA 驗證碼，防止未授權或意外的永久性刪除，進一步加固保護。MFA Delete 必須在啟用版本控制後才能開啟。
 - 其餘選項比較：
-- C：在S3 儲存桶(S3 bucket)上建立一個儲存桶政策(bucket policy)。儲存桶政策可以限制刪除操作，但不能防止具有足夠 IAM 權限的使用者刪除物件，不是最直接的保護機制。
-- D：在 S3 儲存桶(S3 bucket) 上啟用預設的 加密(encryption)。**加密保護的是資料機密性，而非防止刪除**，啟用加密無法阻止授權使用者刪除物件，不符合本題防意外刪除的需求。
-- E：為 S3 儲存桶(S3 bucket) 中的物件建立 生命週期政策(lifecycle policy) 。生命週期政策用於自動化儲存類別轉換或定期刪除，反而可能自動刪除物件，與防止刪除的目標相悖。
+- C：在S3 bucket上建立一個儲存桶政策(bucket policy)。儲存桶政策可以限制刪除操作，但不能防止具有足夠 IAM 權限的使用者刪除物件，不是最直接的保護機制。
+- D：在 S3 bucket 上啟用預設的 加密(encryption)。**加密保護的是資料機密性，而非防止刪除**，啟用加密無法阻止授權使用者刪除物件，不符合本題防意外刪除的需求。
+- E：為 S3 bucket 中的物件建立 生命週期政策(lifecycle policy) 。生命週期政策用於自動化儲存類別轉換或定期刪除，反而可能自動刪除物件，與防止刪除的目標相悖。
 
 **分類：** 儲存
 
@@ -1228,8 +1228,8 @@ B,E
 一家公司有一個為商店提供營銷服務的應用程式. 這些服務是根據商店顧客以前購買的。 儲存透過SFTP向公司上傳交易資料,對資料進行處理和分析,生成新的營銷報價. 一些檔案的大小可以超過200GB. 最近,該公司發現,一些商店上傳了包含個人可識別資訊(PII)的檔案,這些檔案本不該包含在內. 公司希望如果PII再次被共享,管理員會被提醒. 公司也希望實現修復自動化. 解決方案設計師應如何透過 " LEAST " 開發努力滿足這些要求?
 
 **選項**
-- A. 使用Amazon S3桶作為安全轉移點. 使用Amazon Inspector掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件.
-- B. 使用Amazon S3桶作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
+- A. 使用Amazon S3 bucket作為安全轉移點. 使用Amazon Inspector掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件.
+- B. 使用Amazon S3 bucket作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
 - C. 在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件.
 - D. 在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Email Service(Amazon SES)觸發向管理員的通知,並觸發S3 生命週期政策(Lifecycle policy),以移除包含PII的肉類.
 
@@ -1241,9 +1241,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用Amazon S3桶作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。Amazon Macie 是專門用機器學習自動探索、分類並保護 S3 中敏感資料（包含 PII）的託管服務，只要對指定的 S3 儲存桶啟用掃描即可直接偵測物件內容中的個資，不需要自行撰寫任何掃描程式碼；偵測到 PII 後透過 SNS 主題通知管理員進行後續刪除，這條路徑完全建立在既有託管服務之上，符合題目以最少開發努力達成 PII 再次出現時提醒管理員並支援修復自動化的要求。
+- B：使用Amazon S3 bucket作為安全轉移點. 使用Amazon Macie掃描桶內的物體. 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。Amazon Macie 是專門用機器學習自動探索、分類並保護 S3 中敏感資料（包含 PII）的託管服務，只要對指定的 S3 bucket啟用掃描即可直接偵測物件內容中的個資，不需要自行撰寫任何掃描程式碼；偵測到 PII 後透過 SNS 主題通知管理員進行後續刪除，這條路徑完全建立在既有託管服務之上，符合題目以最少開發努力達成 PII 再次出現時提醒管理員並支援修復自動化的要求。
 - 其餘選項比較：
-- A：使用Amazon S3桶作為安全轉移點. 使用Amazon Inspector掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件。Amazon Inspector 是用來掃描 EC2、容器映像與 Lambda 程式碼中的軟體漏洞與網路可達性問題的服務，本身並不具備分析 S3 物件內容以偵測 PII 的能力，技術上無法達成偵測個資的需求；此外這個方案也完全沒有通知管理員的機制，直接刪除物件反而可能在未告知的情況下遺失資料。
+- A：使用Amazon S3 bucket作為安全轉移點. 使用Amazon Inspector掃描桶內的物品. 如果物件包含PII,則觸發一個S3 生命週期政策(Lifecycle policy)來移除包含PII的物件。Amazon Inspector 是用來掃描 EC2、容器映像與 Lambda 程式碼中的軟體漏洞與網路可達性問題的服務，本身並不具備分析 S3 物件內容以偵測 PII 的能力，技術上無法達成偵測個資的需求；此外這個方案也完全沒有通知管理員的機制，直接刪除物件反而可能在未告知的情況下遺失資料。
 - C：在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Notification Service (Amazon SNS)觸發一個通知給管理員以刪除包含PII的物件。採用自訂掃描演算法代表公司必須自行開發、測試並維護 PII 偵測邏輯，尤其部分檔案超過 200GB，還要處理大檔案讀取與效能問題，這些都是可觀的開發投入，與題目要求的最少開發努力直接牴觸，明顯不如直接使用現成的 Macie 服務。
 - D：在 AWS Lambda 函式中執行自定義掃描演算法. 將物件裝入桶時觸發函式。 如果物件包含PII,則使用Amazon Simple Email Service(Amazon SES)觸發向管理員的通知,並觸發S3 生命週期政策(Lifecycle policy),以移除包含PII的肉類。同樣需要自行開發客製化的 PII 掃描演算法，開發成本高；另外 S3 生命週期政策是根據物件存放時間或儲存層級套用的規則，並非能被單次事件即時觸發、針對單一含 PII 物件執行移除動作的機制，這個技術組合本身在設計上就有問題。
 
@@ -1582,9 +1582,9 @@ C
 一家公司託管超過300個全球網站和應用程式. 該公司需要有一個平臺來分析每天超過30 TB的點選流資料. 一個解決方案架構師應該做什麼來傳輸和處理點選流資料?
 
 **選項**
-- A. 設計一個AWS資料管道,將資料歸檔到一個Amazon S3桶,並執行一個Amazon EMR叢集,與資料一起生成分析資料.
+- A. 設計一個AWS資料管道,將資料歸檔到一個Amazon S3 bucket,並執行一個Amazon EMR叢集,與資料一起生成分析資料.
 - B. 建立 Amazon EC2 的 Auto Scaling 群組(Auto Scaling group) 例,處理資料並將其傳送給 Amazon S3 資料湖(data lake) 用於 Amazon Redshift 用於分析.
-- C. 將資料儲存到 Amazon CloudFront。 在Amazon S3桶中儲存資料. 當一個天體被新增到S3 儲存桶(S3 bucket)中時. 執行一個 AWS Lambda 函式處理資料進行分析。
+- C. 將資料儲存到 Amazon CloudFront。 在Amazon S3 bucket中儲存資料. 當一個天體被新增到S3 bucket中時. 執行一個 AWS Lambda 函式處理資料進行分析。
 - D. 從Amazon Kinesis資料流中收集資料. 使用Amazon Kinesis Data Firehose將資料傳輸到一個Amazon S3 資料湖(data lake). 裝入Amazon Redshift中的資料進行分析.
 
 **答案**
@@ -1597,9 +1597,9 @@ D
 正確答案是 **D**。
 - D：從Amazon Kinesis資料流中收集資料. 使用Amazon Kinesis Data Firehose將資料傳輸到一個Amazon S3 資料湖(data lake). 裝入Amazon Redshift中的資料進行分析。Amazon Kinesis Data Streams 專為大規模、即時擷取高吞吐量串流資料而設計，可承接來自 300 多個網站每日超過 30 TB 的持續點選流資料；搭配 Kinesis Data Firehose 將串流資料自動、近乎即時地傳送到 S3 資料湖並暫存，最後裝載進 Amazon Redshift 進行大規模分析查詢，這是 AWS 原生、全代管且針對高量串流資料設計的標準管線。
 - 其餘選項比較：
-- A：設計一個AWS資料管道,將資料歸檔到一個Amazon S3桶,並執行一個Amazon EMR叢集,與資料一起生成分析資料。AWS Data Pipeline 主要用於排程性、批次的資料搬移與轉換工作，屬於定期執行的批次模式，並非為持續、高吞吐量的即時點選流擷取而設計，難以應付每日超過 30 TB 的連續資料流入。
+- A：設計一個AWS資料管道,將資料歸檔到一個Amazon S3 bucket,並執行一個Amazon EMR叢集,與資料一起生成分析資料。AWS Data Pipeline 主要用於排程性、批次的資料搬移與轉換工作，屬於定期執行的批次模式，並非為持續、高吞吐量的即時點選流擷取而設計，難以應付每日超過 30 TB 的連續資料流入。
 - B：建立 Amazon EC2 的 Auto Scaling 群組(Auto Scaling group) 例,處理資料並將其傳送給 Amazon S3 資料湖(data lake) 用於 Amazon Redshift 用於分析。用 EC2 Auto Scaling 群組自行寫程式處理資料再送進 S3 資料湖與 Redshift，等於要自行開發並維運整套串流擷取、緩衝與容錯機制，開發與維運複雜度遠高於使用原生串流服務，也難以保證在每日 30 TB 等級下的可靠性與延展性。
-- C：將資料儲存到 Amazon CloudFront。 在Amazon S3桶中儲存資料. 當一個天體被新增到S3 儲存桶(S3 bucket)中時. 執行一個 AWS Lambda 函式處理資料進行分析。Amazon CloudFront 是內容傳遞網路（CDN），用於加速靜態或動態內容的分發，並非資料擷取或串流處理服務；靠 S3 事件觸發 Lambda 逐一處理物件的方式，在每日 30 TB 高吞吐量的點選流情境下會受限於 Lambda 的執行時間與並行處理能力，不是為大規模串流分析設計的架構。
+- C：將資料儲存到 Amazon CloudFront。 在Amazon S3 bucket中儲存資料. 當一個天體被新增到S3 bucket中時. 執行一個 AWS Lambda 函式處理資料進行分析。Amazon CloudFront 是內容傳遞網路（CDN），用於加速靜態或動態內容的分發，並非資料擷取或串流處理服務；靠 S3 事件觸發 Lambda 逐一處理物件的方式，在每日 30 TB 高吞吐量的點選流情境下會受限於 Lambda 的執行時間與並行處理能力，不是為大規模串流分析設計的架構。
 
 **分類：** 分析
 
@@ -1637,7 +1637,7 @@ C
 
 **選項**
 - A. 在例項後設資料中儲存 資料庫(database) 憑證。 使用 Amazon EventBridge(Amazon CloudWatch Events) 規則執行一個預定的 AWS Lambda 函式,同時更新 RDS 憑證和例項後設資料.
-- B. 在加密的Amazon S3桶中將資料庫(database)憑證儲存在配置檔案中. 使用Amazon EventBridge(Amazon CloudWatch Events)規則執行一個預定的AWS Lambda功能,同時更新配置檔案中的RDS憑證和憑證. 使用 S3 版本來保證返回到先前的值的能力.
+- B. 在加密的Amazon S3 bucket中將資料庫(database)憑證儲存在配置檔案中. 使用Amazon EventBridge(Amazon CloudWatch Events)規則執行一個預定的AWS Lambda功能,同時更新配置檔案中的RDS憑證和憑證. 使用 S3 版本來保證返回到先前的值的能力.
 - C. 將資料庫(database)憑證作為秘密存放在AWS Secrets Manager. 開啟自動輪換的密碼。 將必要的許可附加到EC2角色上,以允許存取該秘密.
 - D. 將資料庫(database)憑證作為加密引數儲存在AWS Systems Manager引數儲存器中. 開啟加密引數的自動輪換。 將所需的許可權附加到 EC2 角色,以授予加密引數的存取許可權.
 
@@ -1652,7 +1652,7 @@ C
 - C：將資料庫(database)憑證作為秘密存放在AWS Secrets Manager. 開啟自動輪換的密碼。 將必要的許可附加到EC2角色上,以允許存取該秘密。AWS Secrets Manager 原生支援密碼自動輪換，只要啟用輪換排程即可自動更新並同步 RDS 上的密碼，應用程式再透過 IAM 角色權限直接向 Secrets Manager 取得密碼，完全不需要在程式碼中寫死憑證，也不用自行維護輪換邏輯，符合最少營運開銷的要求。
 - 其餘選項比較：
 - A：在例項後設資料中儲存 資料庫(database) 憑證。 使用 Amazon EventBridge(Amazon CloudWatch Events) 規則執行一個預定的 AWS Lambda 函式,同時更新 RDS 憑證和例項後設資料。執行個體中繼資料（instance metadata）是唯讀、供執行個體查詢自身資訊用的服務，不是設計來儲存或被外部排程更新的秘密儲存區；要用 Lambda 同步寫回中繼資料需要額外自訂邏輯，且並非受支援的更新方式，維運複雜度高。
-- B：在加密的Amazon S3桶中將資料庫(database)憑證儲存在配置檔案中. 使用Amazon EventBridge(Amazon CloudWatch Events)規則執行一個預定的AWS Lambda功能,同時更新配置檔案中的RDS憑證和憑證. 使用 S3 版本來保證返回到先前的值的能力。把憑證放在加密 S3 桶的設定檔中，仍需自行撰寫 Lambda 邏輯處理輪換、應用程式也要自行重新讀取設定檔，S3 版本控制只能還原到舊版本、不具備自動輪換密碼的能力，整體維運負擔遠高於原生託管方案。
+- B：在加密的Amazon S3 bucket中將資料庫(database)憑證儲存在配置檔案中. 使用Amazon EventBridge(Amazon CloudWatch Events)規則執行一個預定的AWS Lambda功能,同時更新配置檔案中的RDS憑證和憑證. 使用 S3 版本來保證返回到先前的值的能力。把憑證放在加密 S3 bucket的設定檔中，仍需自行撰寫 Lambda 邏輯處理輪換、應用程式也要自行重新讀取設定檔，S3 版本控制只能還原到舊版本、不具備自動輪換密碼的能力，整體維運負擔遠高於原生託管方案。
 - D：將資料庫(database)憑證作為加密引數儲存在AWS Systems Manager引數儲存器中. 開啟加密引數的自動輪換。 將所需的許可權附加到 EC2 角色,以授予加密引數的存取許可權。Systems Manager Parameter Store（即使是加密的 SecureString 參數）本身沒有內建的資料庫密碼自動輪換機制，仍須額外撰寫並維護自動化流程才能定期更換密碼，維運開銷高於 Secrets Manager 的原生輪換功能。
 
 **分類：** 安全、身分與合規
@@ -1771,10 +1771,10 @@ C
 一個公司有一個應用程式,生成大量檔案,每個檔案大小大約5 MB. 這些檔案被儲存在Amazon S3中. 公司政策要求檔案要儲存4年才能刪除. 由於檔案載有不易複製的關鍵業務資料,因此總是需要立即查閱。 檔案在物件建立的前30天經常存取,但在前30天之後很少存取. 哪種儲存解決方案最符合成本效益?
 
 **選項**
-- A. 建立一個S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy),從物件建立起30天將檔案從S3標準移動到S3冰川. 刪除物件建立4年後的檔案。
-- B. 建立S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy),將檔案從S3 Standard移動到S3 One Zone-In頻繁存取(S3 One Zone-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。
-- C. 建立 S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。
-- D. 建立 S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 在物件建立4年後將檔案移至 S3 Glacier。
+- A. 建立一個S3 bucket 生命週期政策(lifecycle policy),從物件建立起30天將檔案從S3標準移動到S3冰川. 刪除物件建立4年後的檔案。
+- B. 建立S3 bucket 生命週期政策(lifecycle policy),將檔案從S3 Standard移動到S3 One Zone-In頻繁存取(S3 One Zone-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。
+- C. 建立 S3 bucket 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。
+- D. 建立 S3 bucket 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 在物件建立4年後將檔案移至 S3 Glacier。
 
 **答案**
 C
@@ -1784,11 +1784,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立 S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。S3 Standard-IA 具備與 S3 標準相同的多可用區耐久性，同時因存取頻率降低而有更低的儲存單價，且仍支援毫秒等級的即時取回，正好同時滿足「30 天後很少存取但仍需隨時可查閱」與「具成本效益」兩項要求，並在滿 4 年後刪除以符合保留政策。
+- C：建立 S3 bucket 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。S3 Standard-IA 具備與 S3 標準相同的多可用區耐久性，同時因存取頻率降低而有更低的儲存單價，且仍支援毫秒等級的即時取回，正好同時滿足「30 天後很少存取但仍需隨時可查閱」與「具成本效益」兩項要求，並在滿 4 年後刪除以符合保留政策。
 - 其餘選項比較：
-- A：建立一個S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy),從物件建立起30天將檔案從S3標準移動到S3冰川. 刪除物件建立4年後的檔案。生命週期政策把檔案在 30 天後轉存到 S3 Glacier，但 Glacier 的資料取回需要數分鐘到數小時的還原時間，無法滿足題目「檔案必須隨時可立即查閱」的要求。
-- B：建立S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy),將檔案從S3 Standard移動到S3 One Zone-In頻繁存取(S3 One Zone-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。S3 One Zone-IA 只將資料存放在單一可用區，題目強調這些檔案承載不易複製的關鍵業務資料，一旦該可用區發生故障就有資料遺失風險，不符合對關鍵且無法重建資料應有的耐久性要求。
-- D：建立 S3 儲存桶(S3 bucket) 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 在物件建立4年後將檔案移至 S3 Glacier。此政策在 30 天後轉為 Standard-IA 沒有問題，但滿 4 年後只是把檔案移到 Glacier 而不是刪除，違反了檔案保存 4 年後即可刪除的公司政策，等於讓資料被無謂地繼續保留並持續產生儲存成本。
+- A：建立一個S3 bucket 生命週期政策(lifecycle policy),從物件建立起30天將檔案從S3標準移動到S3冰川. 刪除物件建立4年後的檔案。生命週期政策把檔案在 30 天後轉存到 S3 Glacier，但 Glacier 的資料取回需要數分鐘到數小時的還原時間，無法滿足題目「檔案必須隨時可立即查閱」的要求。
+- B：建立S3 bucket 生命週期政策(lifecycle policy),將檔案從S3 Standard移動到S3 One Zone-In頻繁存取(S3 One Zone-IA),從物件建立開始30天. 刪除物件建立4年後的檔案。S3 One Zone-IA 只將資料存放在單一可用區，題目強調這些檔案承載不易複製的關鍵業務資料，一旦該可用區發生故障就有資料遺失風險，不符合對關鍵且無法重建資料應有的耐久性要求。
+- D：建立 S3 bucket 生命週期政策(lifecycle policy) ,將檔案從 S3 標準移動到 S3 標準-不頻繁存取(S3 Standard-IA),從物件建立開始30天. 在物件建立4年後將檔案移至 S3 Glacier。此政策在 30 天後轉為 Standard-IA 沒有問題，但滿 4 年後只是把檔案移到 Glacier 而不是刪除，違反了檔案保存 4 年後即可刪除的公司政策，等於讓資料被無謂地繼續保留並持續產生儲存成本。
 
 **分類：** 儲存
 
@@ -1930,13 +1930,13 @@ B
 ## Question #72
 
 **題目**
-一家公司執行一個照片處理應用程式,需要經常上傳和下載Amazon S3桶中位於同一個AWS 區域(Region)的圖片. 一位解決方案設計師注意到資料傳輸費增加,需要實施一個降低這些費用的解決方案。 解決方案架構如何滿足這一要求?
+一家公司執行一個照片處理應用程式,需要經常上傳和下載Amazon S3 bucket中位於同一個AWS 區域(Region)的圖片. 一位解決方案設計師注意到資料傳輸費增加,需要實施一個降低這些費用的解決方案。 解決方案架構如何滿足這一要求?
 
 **選項**
 - A. 將Amazon API Gateway部署到公共子網中,並將路由表調整為透過它的路由S3呼叫.
-- B. 將一個NAT閘道器部署到公共子網,並附加一個允許存取S3桶的端點政策.
-- C. 將應用程式應用到公共子網中,並允許其透過網際網路閘道器進行路由存取S3桶.
-- D. 在VPC中部署一個S3 VPC閘道器端點,並附加一個允許存取S3桶的端點政策.
+- B. 將一個NAT閘道器部署到公共子網,並附加一個允許存取S3 bucket的端點政策.
+- C. 將應用程式應用到公共子網中,並允許其透過網際網路閘道器進行路由存取S3 bucket.
+- D. 在VPC中部署一個S3 VPC閘道器端點,並附加一個允許存取S3 bucket的端點政策.
 
 **答案**
 D
@@ -1946,11 +1946,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在VPC中部署一個S3 VPC閘道器端點,並附加一個允許存取S3桶的端點政策。在 VPC 中部署 S3 閘道器端點（Gateway Endpoint），可讓私有網段內的資源直接透過 AWS 內部網路存取同區域的 S3，不需經過 NAT 閘道器或網際網路閘道器；由於閘道器端點本身不收取額外的資料處理費，等於省去 NAT 閘道器的按 GB 計費與公網資料傳輸費用，直接對應題目「降低資料傳輸費用」的需求。
+- D：在VPC中部署一個S3 VPC閘道器端點,並附加一個允許存取S3 bucket的端點政策。在 VPC 中部署 S3 閘道器端點（Gateway Endpoint），可讓私有網段內的資源直接透過 AWS 內部網路存取同區域的 S3，不需經過 NAT 閘道器或網際網路閘道器；由於閘道器端點本身不收取額外的資料處理費，等於省去 NAT 閘道器的按 GB 計費與公網資料傳輸費用，直接對應題目「降低資料傳輸費用」的需求。
 - 其餘選項比較：
 - A：將Amazon API Gateway部署到公共子網中,並將路由表調整為透過它的路由S3呼叫。Amazon API Gateway 是用來建置 REST/HTTP API 的服務，並非可以掛進路由表、承載 S3 物件流量的網路元件，硬要透過它轉發 S3 呼叫只會增加延遲與成本，無助於降低費用。
-- B：將一個NAT閘道器部署到公共子網,並附加一個允許存取S3桶的端點政策。NAT 閘道器本身會依處理的資料量按 GB 收費，即使加上端點政策，流量仍會經過 NAT 閘道器產生資料處理費用，並不能降低成本；而且「端點政策」是掛在 VPC 端點上，並非掛在 NAT 閘道器上的設定。
-- C：將應用程式應用到公共子網中,並允許其透過網際網路閘道器進行路由存取S3桶。把應用程式放到公有子網並透過網際網路閘道器路由存取 S3，走的仍是產生一般網際網路資料傳輸費用的路徑，正是導致費用上升的原因，並沒有解決問題。
+- B：將一個NAT閘道器部署到公共子網,並附加一個允許存取S3 bucket的端點政策。NAT 閘道器本身會依處理的資料量按 GB 收費，即使加上端點政策，流量仍會經過 NAT 閘道器產生資料處理費用，並不能降低成本；而且「端點政策」是掛在 VPC 端點上，並非掛在 NAT 閘道器上的設定。
+- C：將應用程式應用到公共子網中,並允許其透過網際網路閘道器進行路由存取S3 bucket。把應用程式放到公有子網並透過網際網路閘道器路由存取 S3，走的仍是產生一般網際網路資料傳輸費用的路徑，正是導致費用上升的原因，並沒有解決問題。
 
 **分類：** 網路連結和內容交付
 
@@ -2103,8 +2103,8 @@ C
 **選項**
 - A. 使用DynamomDB點即時恢復來連續備份表格.
 - B. 使用AWS Backup為表格建立備份(backup)排程和保留政策.
-- C. 使用DynamoDB控制檯建立表格的點播備份(backup). 將備份(backup)存放在Amazon S3桶中. 設定S3 儲存桶(S3 bucket)的S3生命週期配置.
-- D. 建立 Amazon EventBridge(Amazon CloudWatch Events) 規則以引用 AWS Lambda 函式. 配置 Lambda 函式備份表,並將 備份(backup) 儲存在 Amazon S3 桶中. 設定S3 儲存桶(S3 bucket)的S3生命週期配置.
+- C. 使用DynamoDB控制檯建立表格的點播備份(backup). 將備份(backup)存放在Amazon S3 bucket中. 設定S3 bucket的S3生命週期配置.
+- D. 建立 Amazon EventBridge(Amazon CloudWatch Events) 規則以引用 AWS Lambda 函式. 配置 Lambda 函式備份表,並將 備份(backup) 儲存在 Amazon S3 bucket中. 設定S3 bucket的S3生命週期配置.
 
 **答案**
 B
@@ -2117,8 +2117,8 @@ B
 - B：使用AWS Backup為表格建立備份(backup)排程和保留政策。AWS Backup可直接針對DynamoDB表設定備份排程與保留政策（可設定為7年），由AWS代管整個備份、保存與到期清除流程，不需額外撰寫程式或人工介入，是滿足長期保留需求時維運負擔最低的做法。
 - 其餘選項比較：
 - A：使用DynamomDB點即時恢復來連續備份表格。DynamoDB的point-in-time recovery只能還原過去最多35天內任一時間點的資料，無法用來滿足長達7年的保留要求。
-- C：使用DynamoDB控制檯建立表格的點播備份(backup). 將備份(backup)存放在Amazon S3桶中. 設定S3 儲存桶(S3 bucket)的S3生命週期配置。透過DynamoDB主控台手動建立隨選備份，再手動把備份搬到S3並設定生命週期規則，屬於需要重複人工操作的流程，維運複雜度遠高於使用AWS Backup的自動化排程機制。
-- D：建立 Amazon EventBridge(Amazon CloudWatch Events) 規則以引用 AWS Lambda 函式. 配置 Lambda 函式備份表,並將 備份(backup) 儲存在 Amazon S3 桶中. 設定S3 儲存桶(S3 bucket)的S3生命週期配置。自行以EventBridge排程觸發Lambda函式執行備份，等同於自建一套備份系統，需要額外開發、測試與維護程式碼，維運成本明顯高於直接使用AWS Backup的原生排程備份功能。
+- C：使用DynamoDB控制檯建立表格的點播備份(backup). 將備份(backup)存放在Amazon S3 bucket中. 設定S3 bucket的S3生命週期配置。透過DynamoDB主控台手動建立隨選備份，再手動把備份搬到S3並設定生命週期規則，屬於需要重複人工操作的流程，維運複雜度遠高於使用AWS Backup的自動化排程機制。
+- D：建立 Amazon EventBridge(Amazon CloudWatch Events) 規則以引用 AWS Lambda 函式. 配置 Lambda 函式備份表,並將 備份(backup) 儲存在 Amazon S3 bucket中. 設定S3 bucket的S3生命週期配置。自行以EventBridge排程觸發Lambda函式執行備份，等同於自建一套備份系統，需要額外開發、測試與維護程式碼，維運成本明顯高於直接使用AWS Backup的原生排程備份功能。
 
 **分類：** 管理與控管
 
@@ -2158,7 +2158,7 @@ A
 - A. 將加密的AMI和快照公開. 修改金鑰政策,允許MSP Partner的 AWS 帳戶使用金鑰.
 - B. 修改 AMI 的發射屬性。 僅與MSP合作伙伴的AWS帳戶共享AMI. 修改金鑰政策,允許MSP Partner的 AWS 帳戶使用金鑰.
 - C. 修改 AMI 的發射屬性。 僅與MSP合作伙伴的AWS帳戶共享AMI. 修改關鍵政策,以信任由MSP合作伙伴擁有的加密(encryption)的新 KMS 金鑰。
-- D. 從源帳戶匯出AMI到MSP Partner的AWS帳戶中的Amazon S3桶,用MSP Partner擁有的新KMS金鑰加密S3 儲存桶(S3 bucket). 複製並啟動MSP Partner的AWS帳戶中的AMI.
+- D. 從源帳戶匯出AMI到MSP Partner的AWS帳戶中的Amazon S3 bucket,用MSP Partner擁有的新KMS金鑰加密S3 bucket. 複製並啟動MSP Partner的AWS帳戶中的AMI.
 
 **答案**
 B
@@ -2172,7 +2172,7 @@ B
 - 其餘選項比較：
 - A：將加密的AMI和快照公開. 修改金鑰政策,允許MSP Partner的 AWS 帳戶使用金鑰。將加密的AMI與快照設為公開，代表任何AWS帳戶都能看到並嘗試使用該AMI，即使底層資料仍受KMS金鑰保護，公開曝露本身已不符合「MOST安全」的要求，存取範圍控管遠不如僅指定單一帳戶共享。
 - C：修改 AMI 的發射屬性。 僅與MSP合作伙伴的AWS帳戶共享AMI. 修改關鍵政策,以信任由MSP合作伙伴擁有的加密(encryption)的新 KMS 金鑰。快照原本是用來源帳戶自己的KMS金鑰加密的，若只讓金鑰政策去信任MSP合作夥伴另外新建的一把KMS金鑰，並無法讓對方用那把新金鑰解密既有的快照資料，這個做法在技術上行不通。
-- D：從源帳戶匯出AMI到MSP Partner的AWS帳戶中的Amazon S3桶,用MSP Partner擁有的新KMS金鑰加密S3 儲存桶(S3 bucket). 複製並啟動MSP Partner的AWS帳戶中的AMI。需要先把AMI匯出、存到對方帳戶的S3桶，再用對方新建的KMS金鑰重新加密，過程中牽涉額外的資料落地、匯出與重新加密步驟，流程繁瑣，維運複雜度遠高於直接調整啟動權限與金鑰政策。
+- D：從源帳戶匯出AMI到MSP Partner的AWS帳戶中的Amazon S3 bucket,用MSP Partner擁有的新KMS金鑰加密S3 bucket. 複製並啟動MSP Partner的AWS帳戶中的AMI。需要先把AMI匯出、存到對方帳戶的S3 bucket，再用對方新建的KMS金鑰重新加密，過程中牽涉額外的資料落地、匯出與重新加密步驟，流程繁瑣，維運複雜度遠高於直接調整啟動權限與金鑰政策。
 
 **分類：** 安全、身分與合規
 
@@ -2290,9 +2290,9 @@ B
 公司擁有一個生產網路應用程式,使用者透過網路介面或移動應用程式上傳文件. 根據新的監管要求。 新文件在儲存後無法修改或刪除。 解決方案設計師應如何滿足這一要求?
 
 **選項**
-- A. 將上傳的文件儲存在 Amazon S3 桶中,啟用了 S3 版本和 S3 Object Lock。
-- B. 將上傳的文件儲存在 Amazon S3 桶中。 配置一個 S3 生命週期政策(Lifecycle policy) 來定期歸檔文件。
-- C. 將上傳的文件儲存在啟用 S3 版本的 Amazon S3 桶中。 配置 ACL 以限制所有隻讀存取。
+- A. 將上傳的文件儲存在 Amazon S3 bucket中,啟用了 S3 版本和 S3 Object Lock。
+- B. 將上傳的文件儲存在 Amazon S3 bucket中。 配置一個 S3 生命週期政策(Lifecycle policy) 來定期歸檔文件。
+- C. 將上傳的文件儲存在啟用 S3 版本的 Amazon S3 bucket中。 配置 ACL 以限制所有隻讀存取。
 - D. 將上傳的文件儲存在Amazon Elastic File System (Amazon EFS)捲上. 以只讀模式載入磁碟區來獲取資料。
 
 **答案**
@@ -2303,10 +2303,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將上傳的文件儲存在 Amazon S3 桶中,啟用了 S3 版本和 S3 Object Lock。S3 Object Lock 搭配啟用 Versioning，可將物件版本鎖定在一次寫入、多次讀取（WORM）狀態，鎖定期間內任何使用者（包含帳號擁有者）都無法修改或刪除該版本，直接對應題目「新文件儲存後無法修改或刪除」的法規要求；Versioning 則確保鎖定作用在正確的物件版本上。
+- A：將上傳的文件儲存在 Amazon S3 bucket中,啟用了 S3 版本和 S3 Object Lock。S3 Object Lock 搭配啟用 Versioning，可將物件版本鎖定在一次寫入、多次讀取（WORM）狀態，鎖定期間內任何使用者（包含帳號擁有者）都無法修改或刪除該版本，直接對應題目「新文件儲存後無法修改或刪除」的法規要求；Versioning 則確保鎖定作用在正確的物件版本上。
 - 其餘選項比較：
-- B：將上傳的文件儲存在 Amazon S3 桶中。 配置一個 S3 生命週期政策(Lifecycle policy) 來定期歸檔文件。S3 生命週期政策的作用是依時間規則轉換儲存類別或讓物件到期，並不會阻止文件被修改或刪除，設定到期規則甚至會主動刪除物件，與「不可刪除」的要求直接牴觸。
-- C：將上傳的文件儲存在啟用 S3 版本的 Amazon S3 桶中。 配置 ACL 以限制所有隻讀存取。啟用 Versioning 只保留歷史版本紀錄，搭配 ACL 限制唯讀存取仍只是一般存取權限層級的控制，具有足夠權限變更 ACL 或桶政策的使用者依然能改回可寫入後刪除物件，不具備強制且不可繞過的鎖定效果。
+- B：將上傳的文件儲存在 Amazon S3 bucket中。 配置一個 S3 生命週期政策(Lifecycle policy) 來定期歸檔文件。S3 生命週期政策的作用是依時間規則轉換儲存類別或讓物件到期，並不會阻止文件被修改或刪除，設定到期規則甚至會主動刪除物件，與「不可刪除」的要求直接牴觸。
+- C：將上傳的文件儲存在啟用 S3 版本的 Amazon S3 bucket中。 配置 ACL 以限制所有隻讀存取。啟用 Versioning 只保留歷史版本紀錄，搭配 ACL 限制唯讀存取仍只是一般存取權限層級的控制，具有足夠權限變更 ACL 或桶政策的使用者依然能改回可寫入後刪除物件，不具備強制且不可繞過的鎖定效果。
 - D：將上傳的文件儲存在Amazon Elastic File System (Amazon EFS)捲上. 以只讀模式載入磁碟區來獲取資料。Amazon EFS 掛載為唯讀模式只是用戶端層級的掛載選項，隨時可重新以讀寫模式掛載，EFS 本身沒有等同 S3 Object Lock 的保留鎖定機制，無法在儲存層強制達成法規要求的不可竄改性。
 
 **分類：** 儲存
@@ -2319,7 +2319,7 @@ A
 **選項**
 - A. 在AWS Secrets Manager中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網路伺服器存取AWS Secrets Manager.
 - B. 在AWS Systems Manager OpsCenter中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網頁伺服器存取OpsCenter.
-- C. 在安全的Amazon S3桶中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網路伺服器檢索憑證並存取資料庫(database).
+- C. 在安全的Amazon S3 bucket中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網路伺服器檢索憑證並存取資料庫(database).
 - D. 將資料庫(database)的使用者憑證儲存在網路伺服器檔案系統中的AWS Key Management Service(AWS KMS)加密檔案中. 網路伺服器應該能夠解密檔案並存取資料庫(database).
 
 **答案**
@@ -2333,7 +2333,7 @@ A
 - A：在AWS Secrets Manager中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網路伺服器存取AWS Secrets Manager。AWS Secrets Manager 原生支援對 Amazon RDS 資料庫使用者憑證的自動輪換（透過內建 Lambda 輪換函式定期更換密碼），並可用 IAM 政策精細授權讓網路伺服器讀取密鑰，同時滿足「安全連線」與「頻繁輪換憑證」兩項要求。
 - 其餘選項比較：
 - B：在AWS Systems Manager OpsCenter中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網頁伺服器存取OpsCenter。AWS Systems Manager OpsCenter 是用來集中檢視、追蹤與處理維運事件（OpsItem）的工具，並不是密鑰或憑證管理服務，不具備儲存資料庫使用者憑證或自動輪換的功能。
-- C：在安全的Amazon S3桶中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網路伺服器檢索憑證並存取資料庫(database)。S3 沒有內建的憑證自動輪換機制，把資料庫密碼以物件形式存放在 S3 中等同以近乎明文檔案的方式管理敏感憑證，輪換需要額外自行開發流程，安全性與維運成本都不如專用的密鑰管理服務。
+- C：在安全的Amazon S3 bucket中儲存資料庫(database)使用者憑證. 授予必要的IAM許可權,允許網路伺服器檢索憑證並存取資料庫(database)。S3 沒有內建的憑證自動輪換機制，把資料庫密碼以物件形式存放在 S3 中等同以近乎明文檔案的方式管理敏感憑證，輪換需要額外自行開發流程，安全性與維運成本都不如專用的密鑰管理服務。
 - D：將資料庫(database)的使用者憑證儲存在網路伺服器檔案系統中的AWS Key Management Service(AWS KMS)加密檔案中. 網路伺服器應該能夠解密檔案並存取資料庫(database)。把憑證存成 KMS 加密檔案放在每台網路伺服器的本機檔案系統，代表金鑰輪換與檔案更新都要逐台伺服器手動或自行寫程式處理，無法集中管理與自動輪換，維運複雜度與擴充性都明顯遜於 Secrets Manager。
 
 **分類：** 安全、身分與合規
@@ -2368,13 +2368,13 @@ A
 ## Question #88
 
 **題目**
-一家調查公司多年來從美國各地區收集了資料。 公司將資料存放在Amazon S3 儲存桶中,該水桶的大小和生長量為3TB. 公司開始與一家擁有S3桶的歐洲營銷公司共享資料. 該公司希望確保其資料傳輸費用儘可能低。 哪種解決辦法能滿足這些要求?
+一家調查公司多年來從美國各地區收集了資料。 公司將資料存放在Amazon S3 bucket中,該水桶的大小和生長量為3TB. 公司開始與一家擁有S3 bucket的歐洲營銷公司共享資料. 該公司希望確保其資料傳輸費用儘可能低。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在公司的S3 儲存桶(S3 bucket)上配置請求者付費功能.
-- B. 配置S3 Cross-Region Replication從公司的S3 儲存桶(S3 bucket)到銷售公司之一的S3桶.
-- C. 為營銷公司配置跨帳戶接入,使營銷公司能夠存取該公司的S3 儲存桶(S3 bucket).
-- D. 配置公司的S3 儲存桶(S3 bucket)使用S3 Intelligent-Tiering. 將S3 儲存桶(S3 bucket)同步到銷售公司之一的S3桶.
+- A. 在公司的S3 bucket上配置請求者付費功能.
+- B. 配置S3 Cross-Region Replication從公司的S3 bucket到銷售公司之一的S3 bucket.
+- C. 為營銷公司配置跨帳戶接入,使營銷公司能夠存取該公司的S3 bucket.
+- D. 配置公司的S3 bucket使用S3 Intelligent-Tiering. 將S3 bucket同步到銷售公司之一的S3 bucket.
 
 **答案**
 B
@@ -2384,24 +2384,24 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：配置S3 Cross-Region Replication從公司的S3 儲存桶(S3 bucket)到銷售公司之一的S3桶。S3 Cross-Region Replication 會把資料從公司位於美國的 S3 儲存桶，非同步複製一份到行銷公司在歐洲、屬於行銷公司帳號下的 S3 儲存桶，之後行銷公司在自己區域內存取的都是本地端複本，只有複製當下才會產生一次跨區域傳輸費用，避免日後每次讀取都得重複支付跨區傳輸費。
+- B：配置S3 Cross-Region Replication從公司的S3 bucket到銷售公司之一的S3 bucket。S3 Cross-Region Replication 會把資料從公司位於美國的 S3 bucket，非同步複製一份到行銷公司在歐洲、屬於行銷公司帳號下的 S3 bucket，之後行銷公司在自己區域內存取的都是本地端複本，只有複製當下才會產生一次跨區域傳輸費用，避免日後每次讀取都得重複支付跨區傳輸費。
 - 其餘選項比較：
-- A：在公司的S3 儲存桶(S3 bucket)上配置請求者付費功能。設定 Requester Pays 只是把跨區域資料傳輸費用轉嫁由請求端（行銷公司）支付，資料本身仍留在公司原本的美國儲存桶，行銷公司往後每一次跨區域讀取都要重新支付跨區傳輸費，並沒有降低整體資料傳輸的次數與總費用。
-- C：為營銷公司配置跨帳戶接入,使營銷公司能夠存取該公司的S3 儲存桶(S3 bucket)。設定跨帳戶存取只是開放行銷公司的 IAM 主體直接讀取公司的 S3 儲存桶，資料仍留在原本的美國區域，行銷公司每次從歐洲讀取都會產生跨區域資料傳輸費用，且這筆費用預設仍由儲存桶擁有者（公司本身）負擔，無助於降低成本。
-- D：配置公司的S3 儲存桶(S3 bucket)使用S3 Intelligent-Tiering. 將S3 儲存桶(S3 bucket)同步到銷售公司之一的S3桶。S3 Intelligent-Tiering 只是依存取頻率自動調整物件的儲存類別以節省儲存費用，與資料傳輸費用無關；而「同步到行銷公司的 S3 桶」並非 S3 原生功能，需額外自行實作，且產生的跨區域傳輸費用與方案 B 相當，卻缺乏 Cross-Region Replication 的原生自動化管理。
+- A：在公司的S3 bucket上配置請求者付費功能。設定 Requester Pays 只是把跨區域資料傳輸費用轉嫁由請求端（行銷公司）支付，資料本身仍留在公司原本的美國儲存桶，行銷公司往後每一次跨區域讀取都要重新支付跨區傳輸費，並沒有降低整體資料傳輸的次數與總費用。
+- C：為營銷公司配置跨帳戶接入,使營銷公司能夠存取該公司的S3 bucket。設定跨帳戶存取只是開放行銷公司的 IAM 主體直接讀取公司的 S3 bucket，資料仍留在原本的美國區域，行銷公司每次從歐洲讀取都會產生跨區域資料傳輸費用，且這筆費用預設仍由儲存桶擁有者（公司本身）負擔，無助於降低成本。
+- D：配置公司的S3 bucket使用S3 Intelligent-Tiering. 將S3 bucket同步到銷售公司之一的S3 bucket。S3 Intelligent-Tiering 只是依存取頻率自動調整物件的儲存類別以節省儲存費用，與資料傳輸費用無關；而「同步到行銷公司的 S3 bucket」並非 S3 原生功能，需額外自行實作，且產生的跨區域傳輸費用與方案 B 相當，卻缺乏 Cross-Region Replication 的原生自動化管理。
 
 **分類：** 儲存
 
 ## Question #89
 
 **題目**
-一家公司使用Amazon S3儲存其保密的稽核(audit)檔案. S3 儲存桶(S3 bucket)採用桶政策,按照最小權限(least privilege)的原則限制稽核(audit)團隊IAM使用者資格. 公司經理擔心S3 儲存桶(S3 bucket)中檔案的意外刪除,希望有一個更安全的解決方案. 一個解決方案設計師應該如何確保稽核(audit)檔案的安全?
+一家公司使用Amazon S3儲存其保密的稽核(audit)檔案. S3 bucket採用桶政策,按照最小權限(least privilege)的原則限制稽核(audit)團隊IAM使用者資格. 公司經理擔心S3 bucket中檔案的意外刪除,希望有一個更安全的解決方案. 一個解決方案設計師應該如何確保稽核(audit)檔案的安全?
 
 **選項**
-- A. 啟用版本和 MFA 刪除 S3 儲存桶(S3 bucket) 上的功能。
+- A. 啟用版本和 MFA 刪除 S3 bucket 上的功能。
 - B. 啟用每個稽核(audit)團隊IAM使用者帳戶的IAM使用者憑證上的多要素認證(MFA).
 - C. 在稽核(audit)團隊的IAM使用者帳戶中新增一個S3 生命週期政策(Lifecycle policy),以否認在稽核(audit)日期期間的s3:刪除物件動作.
-- D. 使用AWS Key Management Service(AWS KMS)加密S3 儲存桶(S3 bucket),並限制稽核(audit)團隊IAM使用者帳戶存取KMS金鑰.
+- D. 使用AWS Key Management Service(AWS KMS)加密S3 bucket,並限制稽核(audit)團隊IAM使用者帳戶存取KMS金鑰.
 
 **答案**
 A
@@ -2411,11 +2411,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：啟用版本和 MFA 刪除 S3 儲存桶(S3 bucket) 上的功能。在 S3 儲存桶上啟用 Versioning 後開啟 MFA Delete，之後要永久刪除物件版本或關閉版本控制，都必須額外提供 root 帳號的 MFA 一次性驗證碼，即使是擁有刪除權限的稽核團隊 IAM 使用者，單憑帳密也無法完成刪除動作，直接防範意外刪除稽核檔案。
+- A：啟用版本和 MFA 刪除 S3 bucket 上的功能。在 S3 bucket上啟用 Versioning 後開啟 MFA Delete，之後要永久刪除物件版本或關閉版本控制，都必須額外提供 root 帳號的 MFA 一次性驗證碼，即使是擁有刪除權限的稽核團隊 IAM 使用者，單憑帳密也無法完成刪除動作，直接防範意外刪除稽核檔案。
 - 其餘選項比較：
 - B：啟用每個稽核(audit)團隊IAM使用者帳戶的IAM使用者憑證上的多要素認證(MFA)。為稽核團隊 IAM 使用者的登入憑證加上多要素認證，強化的是「登入驗證」這一關，並不會限制已登入、且具有刪除權限的使用者對 S3 物件執行刪除操作，無法防止意外刪除檔案本身。
 - C：在稽核(audit)團隊的IAM使用者帳戶中新增一個S3 生命週期政策(Lifecycle policy),以否認在稽核(audit)日期期間的s3:刪除物件動作。S3 生命週期政策是套用在 S3 物件上的儲存類別轉換或到期規則，並不是可以附加在 IAM 使用者帳戶上、用來否決刪除動作的機制，這個做法混淆了 S3 生命週期政策與 IAM 拒絕政策，在技術上不可行。
-- D：使用AWS Key Management Service(AWS KMS)加密S3 儲存桶(S3 bucket),並限制稽核(audit)團隊IAM使用者帳戶存取KMS金鑰。用 KMS 加密儲存桶並限制對金鑰的存取，保護的是檔案內容的機密性，只要使用者仍具備刪除物件的權限，加密與否都不影響其能否刪除物件，無法解決「意外刪除」的問題。
+- D：使用AWS Key Management Service(AWS KMS)加密S3 bucket,並限制稽核(audit)團隊IAM使用者帳戶存取KMS金鑰。用 KMS 加密儲存桶並限制對金鑰的存取，保護的是檔案內容的機密性，只要使用者仍具備刪除物件的權限，加密與否都不影響其能否刪除物件，無法解決「意外刪除」的問題。
 
 **分類：** 儲存
 
@@ -2453,8 +2453,8 @@ D
 
 **選項**
 - A. 配置 S3 閘道器端點。
-- B. 在私有子網中建立 S3 儲存桶(S3 bucket)。
-- C. 在與EC2 執行個體相同的 AWS 區域(Region) 中建立 S3 儲存桶(S3 bucket)。
+- B. 在私有子網中建立 S3 bucket。
+- C. 在與EC2 執行個體相同的 AWS 區域(Region) 中建立 S3 bucket。
 - D. 在與EC2例項相同的子網中配置一個NAT閘道器.
 
 **答案**
@@ -2467,8 +2467,8 @@ A
 正確答案是 **A**。
 - A：配置 S3 閘道器端點。設定 S3 Gateway Endpoint 會在 VPC 路由表中新增一筆指向 S3 的路由，讓 EC2 執行個體對 S3 API 的請求直接經由 AWS 內部骨幹網路傳送，完全不經過網際網路閘道或公有網路，正好符合「不得透過網際網路存取 S3」的安全規定。
 - 其餘選項比較：
-- B：在私有子網中建立 S3 儲存桶(S3 bucket)。S3 儲存桶是區域層級的物件儲存資源，本身並不存在於任何 VPC 子網之中，「在私有子網中建立 S3 儲存桶」在架構上並不成立，無法藉此達成流量不經網際網路的目的。
-- C：在與EC2 執行個體相同的 AWS 區域(Region) 中建立 S3 儲存桶(S3 bucket)。把 S3 儲存桶建立在與 EC2 執行個體相同的 AWS 區域，只能減少跨區延遲與避免跨區傳輸費，但在沒有設定 VPC 端點的情況下，對 S3 的存取預設仍會經由公有的 S3 端點，也就是仍會經過網際網路路徑。
+- B：在私有子網中建立 S3 bucket。S3 bucket是區域層級的物件儲存資源，本身並不存在於任何 VPC 子網之中，「在私有子網中建立 S3 bucket」在架構上並不成立，無法藉此達成流量不經網際網路的目的。
+- C：在與EC2 執行個體相同的 AWS 區域(Region) 中建立 S3 bucket。把 S3 bucket建立在與 EC2 執行個體相同的 AWS 區域，只能減少跨區延遲與避免跨區傳輸費，但在沒有設定 VPC 端點的情況下，對 S3 的存取預設仍會經由公有的 S3 端點，也就是仍會經過網際網路路徑。
 - D：在與EC2例項相同的子網中配置一個NAT閘道器。NAT 閘道的作用是讓私有子網內的執行個體能夠透過網際網路對外發起連線，設定 NAT 閘道後對 S3 的流量反而會被導向網際網路閘道送出，與題目要求的「不得透過網際網路存取」正好相反。
 
 **分類：** 網路連結和內容交付
@@ -2476,14 +2476,14 @@ A
 ## Question #92
 
 **題目**
-一家公司正在Amazon S3桶中儲存敏感的使用者資訊。 該公司希望從執行於VPC內部的Amazon EC2 執行個體的應用層上提供安全進入這個桶的通道. 一個設計師應該採取什麼樣的步驟來實現這一點?(選二.
+一家公司正在Amazon S3 bucket中儲存敏感的使用者資訊。 該公司希望從執行於VPC內部的Amazon EC2 執行個體的應用層上提供安全進入這個桶的通道. 一個設計師應該採取什麼樣的步驟來實現這一點?(選二.
 
 **選項**
 - A. 在 VPC 內配置 Amazon S3 的 VPC 閘道器端點。
-- B. 建立 儲存桶政策(bucket policy) 以公開 S3 儲存桶(S3 bucket) 中的物件。
+- B. 建立 儲存桶政策(bucket policy) 以公開 S3 bucket 中的物件。
 - C. 建立一個 儲存桶政策(bucket policy),它只限制存取執行在 VPC 中的應用程式級.
 - D. 建立具有 S3 存取策略的 IAM 使用者,並將 IAM 憑證複製到 EC2 例項。
-- E. 建立一個NAT例項,讓EC2例項使用NAT例項存取S3 儲存桶(S3 bucket).
+- E. 建立一個NAT例項,讓EC2例項使用NAT例項存取S3 bucket.
 
 **答案**
 A,C
@@ -2497,9 +2497,9 @@ A,C
 - A：在 VPC 內配置 Amazon S3 的 VPC 閘道器端點。Amazon S3 的 VPC Gateway Endpoint 讓 VPC 內的資源能透過 AWS 內部網路直接連線到 S3，流量完全不需要經過網際網路閘道器或 NAT，正好對應題目要求「從 VPC 內部安全存取 S3」的條件，同時也省去額外的資料傳輸費用。
 - C：建立一個 儲存桶政策(bucket policy),它只限制存取執行在 VPC 中的應用程式級。搭配 Gateway Endpoint 使用的儲存桶政策可以加上限定來源必須是該 VPC Endpoint 的條件（例如比對 aws:sourceVpce），確保就算有人知道物件網址，也只有從指定 VPC 內經由端點發出的請求才能存取，落實對敏感資料的存取控制。
 - 其餘選項比較：
-- B：建立 儲存桶政策(bucket policy) 以公開 S3 儲存桶(S3 bucket) 中的物件。把儲存桶政策設成公開，等於讓桶內物件對任何人開放讀取，這與題目要保護敏感使用者資訊的前提完全牴觸。
+- B：建立 儲存桶政策(bucket policy) 以公開 S3 bucket 中的物件。把儲存桶政策設成公開，等於讓桶內物件對任何人開放讀取，這與題目要保護敏感使用者資訊的前提完全牴觸。
 - D：建立具有 S3 存取策略的 IAM 使用者,並將 IAM 憑證複製到 EC2 例項。把 IAM 使用者的長期存取金鑰複製到 EC2 執行個體上，屬於容易外洩的靜態憑證做法，也沒有建立題目要求的安全通道；比較好的做法是替執行個體掛載 IAM 角色，而不是搬運金鑰。
-- E：建立一個NAT例項,讓EC2例項使用NAT例項存取S3 儲存桶(S3 bucket)。透過 NAT 執行個體存取 S3，代表流量仍會走對外路由並產生額外的資料傳輸成本與執行個體維運負擔，並不會比 VPC Endpoint 更安全或更直接。
+- E：建立一個NAT例項,讓EC2例項使用NAT例項存取S3 bucket。透過 NAT 執行個體存取 S3，代表流量仍會走對外路由並產生額外的資料傳輸成本與執行個體維運負擔，並不會比 VPC Endpoint 更安全或更直接。
 
 **分類：** 網路連結和內容交付
 
@@ -2619,7 +2619,7 @@ C
 **選項**
 - A. 配置 Amazon EFS 儲存並設定活動目錄域進行認證.
 - B. 在兩個 可用區(Availability Zones) 中建立一個 AWS Storage Gateway 檔案閘道器上的 SMB 檔案共享。
-- C. 建立 Amazon S3 桶並配置 Microsoft Windows 伺服器以掛載為磁碟區。
+- C. 建立 Amazon S3 bucket並配置 Microsoft Windows 伺服器以掛載為磁碟區。
 - D. 在AWS上為Windows檔案伺服器檔案系統建立Amazon FSx,並設定Active Directory域進行認證.
 
 **答案**
@@ -2634,14 +2634,14 @@ D
 - 其餘選項比較：
 - A：配置 Amazon EFS 儲存並設定活動目錄域進行認證。Amazon EFS 只提供 NFS 通訊協定，Windows 應用程式（包括 SharePoint）需要的是 SMB/CIFS 檔案共享，EFS 本身也沒有原生整合 Active Directory 驗證的能力，無法直接滿足需求。
 - B：在兩個 可用區(Availability Zones) 中建立一個 AWS Storage Gateway 檔案閘道器上的 SMB 檔案共享。AWS Storage Gateway 檔案閘道器的設計情境是讓地端應用程式透過 SMB/NFS 存取雲端的 S3 儲存，屬於混合雲橋接架構，而不是為完全遷移上雲之後、直接在雲端提供高可用 Windows 檔案系統而設計的原生方案。
-- C：建立 Amazon S3 桶並配置 Microsoft Windows 伺服器以掛載為磁碟區。Amazon S3 是物件儲存服務，不支援掛載成 Windows 磁碟機，也不提供檔案系統語意，SharePoint 這類需要檔案系統層級存取（資料夾結構、鎖定機制）的應用程式無法直接運作在 S3 之上。
+- C：建立 Amazon S3 bucket並配置 Microsoft Windows 伺服器以掛載為磁碟區。Amazon S3 是物件儲存服務，不支援掛載成 Windows 磁碟機，也不提供檔案系統語意，SharePoint 這類需要檔案系統層級存取（資料夾結構、鎖定機制）的應用程式無法直接運作在 S3 之上。
 
 **分類：** 儲存
 
 ## Question #98
 
 **題目**
-一個影象處理公司有一個使用者用來上傳影象的網路應用程式. 應用程式將影象上傳到Amazon S3桶中. 公司設定了S3事件通知,將物件建立事件釋出到Amazon Simple Queue Service (Amazon SQS)標準佇列. SQS佇列是AWS Lambda功能的事件源,它處理影象並透過電子郵件將結果傳送給使用者. 使用者報告說,他們正在為每個上傳的影象收到多個電子郵件。 一個解決方案架構師確定,SQS訊息不止一次引用Lambda函式,導致多個電子郵件訊息. 解決方案設計師應該如何用LEAST 營運開銷(operational overhead)解決這個問題?
+一個影象處理公司有一個使用者用來上傳影象的網路應用程式. 應用程式將影象上傳到Amazon S3 bucket中. 公司設定了S3事件通知,將物件建立事件釋出到Amazon Simple Queue Service (Amazon SQS)標準佇列. SQS佇列是AWS Lambda功能的事件源,它處理影象並透過電子郵件將結果傳送給使用者. 使用者報告說,他們正在為每個上傳的影象收到多個電子郵件。 一個解決方案架構師確定,SQS訊息不止一次引用Lambda函式,導致多個電子郵件訊息. 解決方案設計師應該如何用LEAST 營運開銷(operational overhead)解決這個問題?
 
 **選項**
 - A. 在 SQS 佇列中設定長選票, 將接收Message 等待時間增加到 30 秒。
@@ -2699,7 +2699,7 @@ D
 
 **選項**
 - A. 為加密憑證建立 AWS Secrets Manager 秘密。 需要時手動更新憑證。 透過使用精細的IAM存取來控制資料的獲取.
-- B. 建立一個AWS Lambda功能,使用Python加密庫接收和進行加密(encryption)操作. 將函式儲存在 Amazon S3 桶中.
+- B. 建立一個AWS Lambda功能,使用Python加密庫接收和進行加密(encryption)操作. 將函式儲存在 Amazon S3 bucket中.
 - C. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 允許EC2角色在加密(encryption)操作中使用KMS金鑰. 在Amazon S3上儲存加密資料.
 - D. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 允許EC2角色在加密(encryption)操作中使用KMS金鑰. 在Amazon Elastic Block Store(Amazon EBS 磁碟區上儲存加密資料.
 
@@ -2714,7 +2714,7 @@ D
 - D：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 允許EC2角色在加密(encryption)操作中使用KMS金鑰. 在Amazon Elastic Block Store(Amazon EBS 磁碟區上儲存加密資料。建立 AWS KMS 客戶管理金鑰後，讓 EC2 執行個體角色取得使用該金鑰的權限，每次加解密呼叫都會記錄在 CloudTrail，滿足合規稽核與近即時加解密的需求。加密後的憑證直接寫入已掛載在同一執行個體上的 Amazon EBS 磁碟區，EBS 具備同可用區內多重複寫的高耐用性與高可用性，且省去額外設定跨服務儲存桶政策或走 S3 API 的網路呼叫，維運開銷最低。
 - 其餘選項比較：
 - A：為加密憑證建立 AWS Secrets Manager 秘密。 需要時手動更新憑證。 透過使用精細的IAM存取來控制資料的獲取。AWS Secrets Manager 主要用途是集中儲存與版本化機密字串，並不會為應用程式即時執行加解密運算；選項本身寫明需要時「手動更新憑證」，屬於人工作業，與題目要求的近即時加解密及最少維運開銷相矛盾。
-- B：建立一個AWS Lambda功能,使用Python加密庫接收和進行加密(encryption)操作. 將函式儲存在 Amazon S3 桶中。自行在 Lambda 中引入 Python 加密函式庫，等於捨棄 AWS KMS 這類已通過驗證、原生支援金鑰輪替與存取控制的服務，改由團隊自行實作與維護加密邏輯；選項所述「函式儲存在 S3」只是部署 Lambda 程式碼的位置，並未回應「加密後資料存放於高可用儲存」的要求。
+- B：建立一個AWS Lambda功能,使用Python加密庫接收和進行加密(encryption)操作. 將函式儲存在 Amazon S3 bucket中。自行在 Lambda 中引入 Python 加密函式庫，等於捨棄 AWS KMS 這類已通過驗證、原生支援金鑰輪替與存取控制的服務，改由團隊自行實作與維護加密邏輯；選項所述「函式儲存在 S3」只是部署 Lambda 程式碼的位置，並未回應「加密後資料存放於高可用儲存」的要求。
 - C：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 允許EC2角色在加密(encryption)操作中使用KMS金鑰. 在Amazon S3上儲存加密資料。此選項同樣建立 KMS 客戶管理金鑰並授權 EC2 角色執行加解密，滿足加密面的要求，但將結果改存於 Amazon S3；由於應用是跑在同一台 EC2 執行個體上的容器，改寫入 S3 需額外設定儲存桶政策並透過 S3 API 上傳下載，相較直接寫入已掛載的區塊儲存，多了一層網路呼叫與存取設定的維運負擔。
 
 **分類：** 安全、身分與合規
@@ -2779,7 +2779,7 @@ A,B
 ## Question #103
 
 **題目**
-一家公司擁有每天同時執行的AWS Glue提取,轉換,裝載(ETL)工作. 工作處理位於Amazon S3桶中的XML資料. 每天在S3 儲存桶(S3 bucket)中加入新的資料. 一個解決方案架構師注意到,AWS Glue正在處理每次執行中的所有資料. 解決方案設計師應如何防止AWS Glue重新處理舊資料?
+一家公司擁有每天同時執行的AWS Glue提取,轉換,裝載(ETL)工作. 工作處理位於Amazon S3 bucket中的XML資料. 每天在S3 bucket中加入新的資料. 一個解決方案架構師注意到,AWS Glue正在處理每次執行中的所有資料. 解決方案設計師應如何防止AWS Glue重新處理舊資料?
 
 **選項**
 - A. 編輯工作以使用工作書籤。
@@ -2948,9 +2948,9 @@ C
 
 **選項**
 - A. 建立 S3 冰川庫。 對物件應用寫入、讀出(WORM)庫鎖政策。
-- B. 啟用 S3 Object Lock 建立 S3 儲存桶(S3 bucket)。 啟用版本。 規定保留期100年。 對新物件使用治理模式作為S3 儲存桶(S3 bucket)的預設保留模式.
-- C. 建立 S3 儲存桶(S3 bucket). 使用 AWS CloudTrail 來跟蹤任何修改物件的 S3 API 事件. 在接到通知後,從公司擁有的任何備份(backup)版本恢復修改物件.
-- D. 啟用 S3 Object Lock 建立 S3 儲存桶(S3 bucket)。 啟用版本。 在物件上新增一個合法控制元件. 新增 s3: 在需要刪除物件的使用者的 IAM 政策中設定 ObjectLegalHold 許可權。
+- B. 啟用 S3 Object Lock 建立 S3 bucket。 啟用版本。 規定保留期100年。 對新物件使用治理模式作為S3 bucket的預設保留模式.
+- C. 建立 S3 bucket. 使用 AWS CloudTrail 來跟蹤任何修改物件的 S3 API 事件. 在接到通知後,從公司擁有的任何備份(backup)版本恢復修改物件.
+- D. 啟用 S3 Object Lock 建立 S3 bucket。 啟用版本。 在物件上新增一個合法控制元件. 新增 s3: 在需要刪除物件的使用者的 IAM 政策中設定 ObjectLegalHold 許可權。
 
 **答案**
 D
@@ -2960,11 +2960,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：啟用 S3 Object Lock 建立 S3 儲存桶(S3 bucket)。 啟用版本。 在物件上新增一個合法控制元件. 新增 s3: 在需要刪除物件的使用者的 IAM 政策中設定 ObjectLegalHold 許可權。S3 Object Lock 的合法保留（Legal Hold）沒有固定到期時間，會持續生效直到具備權限的使用者主動移除為止，正好對應題目「在不特定時間內保持不可變，直到公司決定修改」的描述；再透過 IAM 政策只把移除合法保留（s3:PutObjectLegalHold）的權限授予特定使用者，即可精確滿足「只有特定使用者才能刪除物件」的存取控管要求。
+- D：啟用 S3 Object Lock 建立 S3 bucket。 啟用版本。 在物件上新增一個合法控制元件. 新增 s3: 在需要刪除物件的使用者的 IAM 政策中設定 ObjectLegalHold 許可權。S3 Object Lock 的合法保留（Legal Hold）沒有固定到期時間，會持續生效直到具備權限的使用者主動移除為止，正好對應題目「在不特定時間內保持不可變，直到公司決定修改」的描述；再透過 IAM 政策只把移除合法保留（s3:PutObjectLegalHold）的權限授予特定使用者，即可精確滿足「只有特定使用者才能刪除物件」的存取控管要求。
 - 其餘選項比較：
 - A：建立 S3 冰川庫。 對物件應用寫入、讀出(WORM)庫鎖政策。S3 Glacier 的 Vault Lock 是套用在 Glacier 保管庫(vault)上的 WORM 鎖定政策，題目要求保護的是「Amazon S3 中的物件」，並非把資料轉存到 Glacier 保管庫，服務層級本身就不對應題目的儲存位置。
-- B：啟用 S3 Object Lock 建立 S3 儲存桶(S3 bucket)。 啟用版本。 規定保留期100年。 對新物件使用治理模式作為S3 儲存桶(S3 bucket)的預設保留模式。Governance 模式搭配 100 年保留期，本質是一段有固定到期日的保留設定，並非題目要求的「在不特定時間內保持不可更改，直到公司決定修改」；且 Governance 模式允許擁有 s3:BypassGovernanceRetention 權限的使用者在保留期滿前繞過鎖定刪除或覆寫物件，與題目「只有特定使用者才能刪除」的精確權限控管不同。
-- C：建立 S3 儲存桶(S3 bucket). 使用 AWS CloudTrail 來跟蹤任何修改物件的 S3 API 事件. 在接到通知後,從公司擁有的任何備份(backup)版本恢復修改物件。此方案屬於事後偵測與復原：用 CloudTrail 記錄誰修改了物件，等收到通知才從備份還原，物件在被竄改的當下並未受到任何保護，不符合題目「防止資料被更改」的預防性要求。
+- B：啟用 S3 Object Lock 建立 S3 bucket。 啟用版本。 規定保留期100年。 對新物件使用治理模式作為S3 bucket的預設保留模式。Governance 模式搭配 100 年保留期，本質是一段有固定到期日的保留設定，並非題目要求的「在不特定時間內保持不可更改，直到公司決定修改」；且 Governance 模式允許擁有 s3:BypassGovernanceRetention 權限的使用者在保留期滿前繞過鎖定刪除或覆寫物件，與題目「只有特定使用者才能刪除」的精確權限控管不同。
+- C：建立 S3 bucket. 使用 AWS CloudTrail 來跟蹤任何修改物件的 S3 API 事件. 在接到通知後,從公司擁有的任何備份(backup)版本恢復修改物件。此方案屬於事後偵測與復原：用 CloudTrail 記錄誰修改了物件，等收到通知才從備份還原，物件在被竄改的當下並未受到任何保護，不符合題目「防止資料被更改」的預防性要求。
 
 **分類：** 儲存
 
@@ -3142,7 +3142,7 @@ C
 - A. 在網站前配置Amazon CloudFront,以使用HTTPS功能.
 - B. 在網站前部署一個AWS WAF網路ACL,以提供HTTPS功能.
 - C. 建立和部署AWS Lambda功能,管理和服務網站內容.
-- D. 建立新網站和Amazon S3桶. 在S3 儲存桶(S3 bucket)上部署網站,啟用靜態網站託管。
+- D. 建立新網站和Amazon S3 bucket. 在S3 bucket上部署網站,啟用靜態網站託管。
 - E. 建立新網站. 透過使用一個Auto Scaling 群組(Auto Scaling group)的Amazon EC2例項在應用程式負載平衡器(Application Load Balancer)背後部署網站.
 
 **答案**
@@ -3155,7 +3155,7 @@ A,D
 **詳解**
 正確答案是 **A, D**。
 - A：在網站前配置Amazon CloudFront,以使用HTTPS功能。Amazon CloudFront 是內容傳遞網路，能在全球邊緣節點快取靜態內容並原生支援 HTTPS，不需要額外伺服器處理 SSL/TLS 憑證，且會隨流量自動擴展，完全符合「每年只更新四次、無動態內容」網站對高擴展性與低維運負擔的要求。
-- D：建立新網站和Amazon S3桶. 在S3 儲存桶(S3 bucket)上部署網站,啟用靜態網站託管。由於網站不需要動態內容，Amazon S3 靜態網站託管可直接把 HTML/CSS/JS 檔案放進儲存桶對外服務，S3 具備近乎無限的容量與高可用性，且不必安裝、修補或維護任何作業系統或伺服器軟體，正好解決原本 CMS 修補負擔沉重的痛點。
+- D：建立新網站和Amazon S3 bucket. 在S3 bucket上部署網站,啟用靜態網站託管。由於網站不需要動態內容，Amazon S3 靜態網站託管可直接把 HTML/CSS/JS 檔案放進儲存桶對外服務，S3 具備近乎無限的容量與高可用性，且不必安裝、修補或維護任何作業系統或伺服器軟體，正好解決原本 CMS 修補負擔沉重的痛點。
 - 其餘選項比較：
 - B：在網站前部署一個AWS WAF網路ACL,以提供HTTPS功能。AWS WAF 是以規則過濾 SQL Injection、XSS 等惡意請求的 Web 應用防火牆，其本質是流量檢測層，並不提供 SSL/TLS 終止或憑證代管能力，無法達成題目要求的 HTTPS 功能。
 - C：建立和部署AWS Lambda功能,管理和服務網站內容。為一個明確「不需要任何動態內容」的網站另外撰寫並部署 Lambda 函式來管理內容，等於自行開發一層運算邏輯，需要額外撰碼與維運，與題目要求的 LEAST 營運開銷方向相反。
@@ -3280,7 +3280,7 @@ A
 - A. 加密最新的 DB 快照(snapshot) 的副本。 將現有的 DB 例項替換為恢復加密的 快照(snapshot).
 - B. 建立一個新的加密的Amazon Elastic Block Store (Amazon EBS)卷,並將快照複製到其中. 在 DB 例項上啟用 加密(encryption)。
 - C. 複製快照並啟用 加密(encryption) 使用 AWS Key Management Service(AWS KMS) 將加密的 快照(snapshot) 恢復到現有的 DB 例項。
-- D. 將快照複製到一個使用伺服器側加密(encryption)加密的Amazon S3桶上,並配有AWS Key Management Service(AWS KMS)管理的金鑰(SSE-KMS).
+- D. 將快照複製到一個使用伺服器側加密(encryption)加密的Amazon S3 bucket上,並配有AWS Key Management Service(AWS KMS)管理的金鑰(SSE-KMS).
 
 **答案**
 A
@@ -3294,7 +3294,7 @@ A
 - 其餘選項比較：
 - B：建立一個新的加密的Amazon Elastic Block Store (Amazon EBS)卷,並將快照複製到其中. 在 DB 例項上啟用 加密(encryption)。手動建立加密的 EBS 磁碟區並把快照複製進去，是針對 EC2／EBS 儲存層的操作方式，RDS 執行個體的底層儲存無法用這種方式手動置換磁碟區來加密；而且 RDS 並不提供「在既有 DB 執行個體上直接啟用加密」這個開關。
 - C：複製快照並啟用 加密(encryption) 使用 AWS Key Management Service(AWS KMS) 將加密的 快照(snapshot) 恢復到現有的 DB 例項。複製快照並啟用加密這個動作本身可行，但接著描述的「把加密快照還原到現有的 DB 執行個體」方向錯誤——RDS 還原快照一定是建立一個全新的 DB 執行個體，無法把還原結果套用回原本既有的執行個體上。
-- D：將快照複製到一個使用伺服器側加密(encryption)加密的Amazon S3桶上,並配有AWS Key Management Service(AWS KMS)管理的金鑰(SSE-KMS)。把快照複製到以 SSE-KMS 加密的 S3 儲存桶，只是把快照資料另存一份到 S3 上加密保存，並沒有讓正在運作中的 RDS 資料庫本身或其原生快照機制變成加密狀態，不符合題目要求資料庫持續以加密方式運作的目標。
+- D：將快照複製到一個使用伺服器側加密(encryption)加密的Amazon S3 bucket上,並配有AWS Key Management Service(AWS KMS)管理的金鑰(SSE-KMS)。把快照複製到以 SSE-KMS 加密的 S3 bucket，只是把快照資料另存一份到 S3 上加密保存，並沒有讓正在運作中的 RDS 資料庫本身或其原生快照機制變成加密狀態，不符合題目要求資料庫持續以加密方式運作的目標。
 
 **分類：** 資料庫
 
@@ -3332,7 +3332,7 @@ B
 
 **選項**
 - A. 使用 AWS Certificate Manager(ACM) 建立新的 SSL 憑證。 在每個例項上安裝ACM憑證。
-- B. 建立 Amazon S3 桶將 SSL 憑證移到 S3 儲存桶(S3 bucket)。 配置 EC2 例項以引用 SSL 終止的桶。
+- B. 建立 Amazon S3 bucket將 SSL 憑證移到 S3 bucket。 配置 EC2 例項以引用 SSL 終止的桶。
 - C. 作為代理伺服器建立另一個 EC2 例項。 將 SSL 憑證移到新例項, 並配置它來直接連線到現有的 EC2 例項。
 - D. 將SSL憑證匯入 AWS Certificate Manager(ACM). 建立一個使用來自ACM的SSL憑證的HTTPS聽器的應用程式負載平衡器(Application Load Balancer).
 
@@ -3347,7 +3347,7 @@ D
 - D：將SSL憑證匯入 AWS Certificate Manager(ACM). 建立一個使用來自ACM的SSL憑證的HTTPS聽器的應用程式負載平衡器(Application Load Balancer)。應用程式負載平衡器可以在 HTTPS 監聽器上直接使用匯入 ACM 的憑證進行 SSL/TLS 終止，把原本消耗在每台 EC2 執行個體上的加解密運算轉移到 ALB 這個受管服務層完成，讓後端 EC2 的運算資源得以釋放回應用邏輯處理，直接解決題目中「SSL 加解密拖垮運算能力」的效能瓶頸。
 - 其餘選項比較：
 - A：使用 AWS Certificate Manager(ACM) 建立新的 SSL 憑證。 在每個例項上安裝ACM憑證。ACM 核發的憑證只能繫結在有整合 ACM 的受管服務（例如 ALB、CloudFront）上，並不能像自簽或第三方憑證一樣直接安裝到 EC2 執行個體的作業系統或網頁伺服器上，這個做法在技術上無法執行，也完全沒有把 SSL 運算卸載出去。
-- B：建立 Amazon S3 桶將 SSL 憑證移到 S3 儲存桶(S3 bucket)。 配置 EC2 例項以引用 SSL 終止的桶。把憑證檔案放進 S3 儲存桶只是單純的檔案儲存，S3 本身不具備反向代理或 TLS 終止能力，EC2 執行個體仍然要自行完成 SSL 加解密運算，CPU 瓶頸完全沒有解決。
+- B：建立 Amazon S3 bucket將 SSL 憑證移到 S3 bucket。 配置 EC2 例項以引用 SSL 終止的桶。把憑證檔案放進 S3 bucket只是單純的檔案儲存，S3 本身不具備反向代理或 TLS 終止能力，EC2 執行個體仍然要自行完成 SSL 加解密運算，CPU 瓶頸完全沒有解決。
 - C：作為代理伺服器建立另一個 EC2 例項。 將 SSL 憑證移到新例項, 並配置它來直接連線到現有的 EC2 例項。另外架設一台 EC2 執行個體當代理伺服器來做 SSL 終止，仍然是用一般運算執行個體處理加解密工作，只是把瓶頸從多台機器集中到單一一台，沒有利用受管服務的擴展能力，且這台新代理伺服器本身可能成為新的單點瓶頸。
 
 **分類：** 網路連結和內容交付
@@ -3548,13 +3548,13 @@ B
 ## Question #131
 
 **題目**
-一家公司正在開發一個檔案共享應用程式,將使用Amazon S3桶進行儲存. 公司希望透過Amazon CloudFront發行服務所有檔案. 公司不希望檔案透過直接導航到S3 URL來存取. 解決方案設計師應如何滿足這些要求?
+一家公司正在開發一個檔案共享應用程式,將使用Amazon S3 bucket進行儲存. 公司希望透過Amazon CloudFront發行服務所有檔案. 公司不希望檔案透過直接導航到S3 URL來存取. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 為每個 S3 儲存桶(S3 bucket) 編寫單個政策, 僅允許 CloudFront 存取。
-- B. 建立 IAM 使用者。 給使用者讀取S3 儲存桶(S3 bucket)中物件的許可權. 指派使用者至雲龍.
-- C. 寫一個S3 儲存桶政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 儲存桶(S3 bucket)為Amazon Resource Name (ARN).
-- D. 建立來源存取身份( OAI)。 指定審調局負責雲紋發行. 配置S3 儲存桶(S3 bucket)許可權,以便只有審調處有讀取許可權.
+- A. 為每個 S3 bucket 編寫單個政策, 僅允許 CloudFront 存取。
+- B. 建立 IAM 使用者。 給使用者讀取S3 bucket中物件的許可權. 指派使用者至雲龍.
+- C. 寫一個S3 bucket政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 bucket為Amazon Resource Name (ARN).
+- D. 建立來源存取身份( OAI)。 指定審調局負責雲紋發行. 配置S3 bucket許可權,以便只有審調處有讀取許可權.
 
 **答案**
 D
@@ -3564,11 +3564,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：建立來源存取身份( OAI)。 指定審調局負責雲紋發行. 配置S3 儲存桶(S3 bucket)許可權,以便只有審調處有讀取許可權。來源存取身分(Origin Access Identity, OAI)是專門給 CloudFront 用來代表自己向 S3 發出請求的特殊身分,將 OAI 指定給該 CloudFront 發行版後,再把 S3 儲存桶政策設定為只允許這個 OAI 讀取物件,就能確保物件只能經由 CloudFront 的請求取得,任何人直接輸入 S3 物件網址存取都會被拒絕,完全對應題目「不希望透過直接導航到 S3 URL 存取檔案」的要求。
+- D：建立來源存取身份( OAI)。 指定審調局負責雲紋發行. 配置S3 bucket許可權,以便只有審調處有讀取許可權。來源存取身分(Origin Access Identity, OAI)是專門給 CloudFront 用來代表自己向 S3 發出請求的特殊身分,將 OAI 指定給該 CloudFront 發行版後,再把 S3 bucket政策設定為只允許這個 OAI 讀取物件,就能確保物件只能經由 CloudFront 的請求取得,任何人直接輸入 S3 物件網址存取都會被拒絕,完全對應題目「不希望透過直接導航到 S3 URL 存取檔案」的要求。
 - 其餘選項比較：
-- A：為每個 S3 儲存桶(S3 bucket) 編寫單個政策, 僅允許 CloudFront 存取。只是描述「寫一個只允許 CloudFront 存取」的政策,卻沒有指定任何實際可用的身分或條件讓 S3 政策去比對,S3 儲存桶政策的 Principal 必須對應到具體的 AWS 身分(例如 OAI 的正規使用者 ID),缺少這個對應關係,政策實際上無法生效。
-- B：建立 IAM 使用者。 給使用者讀取S3 儲存桶(S3 bucket)中物件的許可權. 指派使用者至雲龍。建立 IAM 使用者並給予讀取權限,存取時需要用 AWS 簽章方式驗證身分,並不是一般使用者透過瀏覽器直接點選 CloudFront 連結的存取流程;而且這個做法本身並未限制或阻擋任何人直接輸入 S3 物件網址進行匿名存取,無法達成「阻擋直接存取 S3 URL」的目標。
-- C：寫一個S3 儲存桶政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 儲存桶(S3 bucket)為Amazon Resource Name (ARN)。S3 儲存桶政策的 Principal 欄位無法直接填入 CloudFront 發行版 ID 本身,CloudFront 要以身分的方式出現在 S3 政策裡,需要透過 OAI 的正規使用者 ID(或 OAC 的服務主體)來表示,單純寫入發行版 ID 並不是 S3/IAM 政策支援的格式,這個設定實際上無法運作。
+- A：為每個 S3 bucket 編寫單個政策, 僅允許 CloudFront 存取。只是描述「寫一個只允許 CloudFront 存取」的政策,卻沒有指定任何實際可用的身分或條件讓 S3 政策去比對,S3 bucket政策的 Principal 必須對應到具體的 AWS 身分(例如 OAI 的正規使用者 ID),缺少這個對應關係,政策實際上無法生效。
+- B：建立 IAM 使用者。 給使用者讀取S3 bucket中物件的許可權. 指派使用者至雲龍。建立 IAM 使用者並給予讀取權限,存取時需要用 AWS 簽章方式驗證身分,並不是一般使用者透過瀏覽器直接點選 CloudFront 連結的存取流程;而且這個做法本身並未限制或阻擋任何人直接輸入 S3 物件網址進行匿名存取,無法達成「阻擋直接存取 S3 URL」的目標。
+- C：寫一個S3 bucket政策(bucket policy),指定CloudFront發行ID為特等,並指定目標S3 bucket為Amazon Resource Name (ARN)。S3 bucket政策的 Principal 欄位無法直接填入 CloudFront 發行版 ID 本身,CloudFront 要以身分的方式出現在 S3 政策裡,需要透過 OAI 的正規使用者 ID(或 OAC 的服務主體)來表示,單純寫入發行版 ID 並不是 S3/IAM 政策支援的格式,這個設定實際上無法運作。
 
 **分類：** 網路連結和內容交付
 
@@ -3629,13 +3629,13 @@ D
 ## Question #134
 
 **題目**
-一個公司想要將其應用程式移動到一個沒有伺服器的解決方案. 無伺服器解決方案需要透過使用SL分析現有和新資料. 公司將資料儲存在Amazon S3桶中. 資料需要加密(encryption),必須複製到不同的AWS 區域(Region). 哪個解決方案能以最少的營運開銷達成這些要求？
+一個公司想要將其應用程式移動到一個沒有伺服器的解決方案. 無伺服器解決方案需要透過使用SL分析現有和新資料. 公司將資料儲存在Amazon S3 bucket中. 資料需要加密(encryption),必須複製到不同的AWS 區域(Region). 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 建立新的S3 儲存桶(S3 bucket). 將資料裝入新的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region) kays(SSE-KMS). 使用Amazon Athena查詢資料.
-- B. 建立新的S3 儲存桶(S3 bucket). 將資料裝入新的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料.
-- C. 將資料裝入現有的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon Athena查詢資料.
-- D. 將資料裝入現有的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon RDS查詢資料.
+- A. 建立新的S3 bucket. 將資料裝入新的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption)與AWS KMS多區域(Region) kays(SSE-KMS). 使用Amazon Athena查詢資料.
+- B. 建立新的S3 bucket. 將資料裝入新的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料.
+- C. 將資料裝入現有的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon Athena查詢資料.
+- D. 將資料裝入現有的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon RDS查詢資料.
 
 **答案**
 A
@@ -3645,11 +3645,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立新的S3 儲存桶(S3 bucket). 將資料裝入新的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region) kays(SSE-KMS). 使用Amazon Athena查詢資料。Amazon Athena 是無伺服器的互動式查詢服務，可以直接對 S3 中的資料執行 SQL 查詢，完全不需要佈建任何運算或資料庫執行個體，符合無伺服器解決方案與使用 SQL 分析的要求；建立全新的 S3 儲存桶再啟用 Cross-Region Replication，可確保之後寫入的物件從一開始就自動複製到另一個區域，不必再處理既有物件的補齊複寫；搭配 SSE-KMS 並使用支援跨區使用的 multi-Region KMS 金鑰，能讓加密物件複寫到目的地區域後仍可用對應金鑰解密，同時滿足加密與跨區複製的限制。
+- A：建立新的S3 bucket. 將資料裝入新的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption)與AWS KMS多區域(Region) kays(SSE-KMS). 使用Amazon Athena查詢資料。Amazon Athena 是無伺服器的互動式查詢服務，可以直接對 S3 中的資料執行 SQL 查詢，完全不需要佈建任何運算或資料庫執行個體，符合無伺服器解決方案與使用 SQL 分析的要求；建立全新的 S3 bucket再啟用 Cross-Region Replication，可確保之後寫入的物件從一開始就自動複製到另一個區域，不必再處理既有物件的補齊複寫；搭配 SSE-KMS 並使用支援跨區使用的 multi-Region KMS 金鑰，能讓加密物件複寫到目的地區域後仍可用對應金鑰解密，同時滿足加密與跨區複製的限制。
 - 其餘選項比較：
-- B：建立新的S3 儲存桶(S3 bucket). 將資料裝入新的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料。使用 Amazon RDS 查詢資料，代表必須先把 S3 中的資料匯入並持續維護關聯式資料庫執行個體，這既不是無伺服器架構，也會為既有的 S3 資料流程額外增加 ETL 與資料庫維運工作。
-- C：將資料裝入現有的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon Athena查詢資料。直接使用既有的 S3 儲存桶，Cross-Region Replication 只會複製規則啟用之後新建立的物件，儲存桶中原本已存在的資料不會自動複寫，還得另外執行 S3 Batch Replication 才能補齊；同時採用由 Amazon 自行管理金鑰的 SSE-S3，公司無法像 SSE-KMS 一樣自訂金鑰的存取政策與稽核紀錄。
-- D：將資料裝入現有的S3 儲存桶(S3 bucket). 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon RDS查詢資料。除了與既有儲存桶方案相同、既有物件不會被 Cross-Region Replication 自動複寫的問題之外，還改用 Amazon RDS 查詢資料，違反無伺服器解決方案的前提，同時多背負資料庫佈建與資料搬遷的額外成本。
+- B：建立新的S3 bucket. 將資料裝入新的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料。使用 Amazon RDS 查詢資料，代表必須先把 S3 中的資料匯入並持續維護關聯式資料庫執行個體，這既不是無伺服器架構，也會為既有的 S3 資料流程額外增加 ETL 與資料庫維運工作。
+- C：將資料裝入現有的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon Athena查詢資料。直接使用既有的 S3 bucket，Cross-Region Replication 只會複製規則啟用之後新建立的物件，儲存桶中原本已存在的資料不會自動複寫，還得另外執行 S3 Batch Replication 才能補齊；同時採用由 Amazon 自行管理金鑰的 SSE-S3，公司無法像 SSE-KMS 一樣自訂金鑰的存取政策與稽核紀錄。
+- D：將資料裝入現有的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon RDS查詢資料。除了與既有儲存桶方案相同、既有物件不會被 Cross-Region Replication 自動複寫的問題之外，還改用 Amazon RDS 查詢資料，違反無伺服器解決方案的前提，同時多背負資料庫佈建與資料搬遷的額外成本。
 
 **分類：** 分析
 
@@ -3767,13 +3767,13 @@ B
 ## Question #139
 
 **題目**
-一個報告小組每天在Amazon S3桶中接收檔案. 報告小組每天手動審查並複製從這個最初的S3 儲存桶(S3 bucket)到一個分析的S3 儲存桶(S3 bucket)的檔案,以便與Amazon QuickSight同時使用. 更多團隊開始向最初的S3 儲存桶(S3 bucket)傳送更多更大尺寸的檔案. 報告小組希望隨著檔案進入最初的S3 儲存桶(S3 bucket),檔案自動移動S3 儲存桶(S3 bucket)分析. 報告組也希望使用AWS Lambda功能在複製的資料上執行模式匹配程式碼. 此外,報告小組希望將資料檔案傳送到Amazon SageMaker Pipeline的一條管道. 解決方案設計師應如何用LEAST 營運開銷(operational overhead)滿足這些要求?
+一個報告小組每天在Amazon S3 bucket中接收檔案. 報告小組每天手動審查並複製從這個最初的S3 bucket到一個分析的S3 bucket的檔案,以便與Amazon QuickSight同時使用. 更多團隊開始向最初的S3 bucket傳送更多更大尺寸的檔案. 報告小組希望隨著檔案進入最初的S3 bucket,檔案自動移動S3 bucket分析. 報告組也希望使用AWS Lambda功能在複製的資料上執行模式匹配程式碼. 此外,報告小組希望將資料檔案傳送到Amazon SageMaker Pipeline的一條管道. 解決方案設計師應如何用LEAST 營運開銷(operational overhead)滿足這些要求?
 
 **選項**
-- A. 建立 Lambda 函式,將檔案複製到分析 S3 儲存桶(S3 bucket). 為分析建立 S3 事件通知 S3 儲存桶(S3 bucket). 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別.
-- B. 建立 Lambda 函式,將檔案複製到分析 S3 儲存桶(S3 bucket). 配置分析 S3 儲存桶(S3 bucket) 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標.
-- C. 配置 S3 桶之間的 S3 複寫(replication)。 為分析建立 S3 事件通知 S3 儲存桶(S3 bucket). 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別.
-- D. 配置 S3 桶之間的 S3 複寫(replication)。 配置分析 S3 儲存桶(S3 bucket) 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標.
+- A. 建立 Lambda 函式,將檔案複製到分析 S3 bucket. 為分析建立 S3 事件通知 S3 bucket. 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別.
+- B. 建立 Lambda 函式,將檔案複製到分析 S3 bucket. 配置分析 S3 bucket 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標.
+- C. 配置 S3 bucket之間的 S3 複寫(replication)。 為分析建立 S3 事件通知 S3 bucket. 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別.
+- D. 配置 S3 bucket之間的 S3 複寫(replication)。 配置分析 S3 bucket 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標.
 
 **答案**
 A
@@ -3783,11 +3783,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立 Lambda 函式,將檔案複製到分析 S3 儲存桶(S3 bucket). 為分析建立 S3 事件通知 S3 儲存桶(S3 bucket). 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別。用 Lambda 函式將檔案由原始儲存桶複製到分析用的 S3 儲存桶，可以在複製過程中依需求加入篩選或格式檢查邏輯，彈性優於單純整批複寫；分析儲存桶再啟用原生的 S3 事件通知，並將事件型別限定為 s3:ObjectCreated:Put，只在檔案確實以 PUT 方式寫入時才觸發模式比對用的 Lambda 與 SageMaker Pipeline，整條流程只用到 S3 事件通知加 Lambda 兩種元件，不需要另外建置與維護一層事件匯流排。
+- A：建立 Lambda 函式,將檔案複製到分析 S3 bucket. 為分析建立 S3 事件通知 S3 bucket. 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別。用 Lambda 函式將檔案由原始儲存桶複製到分析用的 S3 bucket，可以在複製過程中依需求加入篩選或格式檢查邏輯，彈性優於單純整批複寫；分析儲存桶再啟用原生的 S3 事件通知，並將事件型別限定為 s3:ObjectCreated:Put，只在檔案確實以 PUT 方式寫入時才觸發模式比對用的 Lambda 與 SageMaker Pipeline，整條流程只用到 S3 事件通知加 Lambda 兩種元件，不需要另外建置與維護一層事件匯流排。
 - 其餘選項比較：
-- B：建立 Lambda 函式,將檔案複製到分析 S3 儲存桶(S3 bucket). 配置分析 S3 儲存桶(S3 bucket) 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標。同樣用 Lambda 複製檔案，卻改讓分析儲存桶把事件送到 Amazon EventBridge，再由 EventBridge 規則觸發下游服務，相較於直接使用 S3 原生事件通知，多了一層事件匯流排需要建立與維護規則，架構元件比直接使用 S3 事件通知更多，並未把維運開銷降到最低。
-- C：配置 S3 桶之間的 S3 複寫(replication)。 為分析建立 S3 事件通知 S3 儲存桶(S3 bucket). 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別。改用 S3 Replication 在儲存桶之間自動複製檔案，雖然省去撰寫複製程式碼的工作，但複寫是單純的整批鏡射，無法像 Lambda 複製一樣依檔案內容或名稱先做篩選或客製化處理；當更多團隊持續傳送更多、更大尺寸的檔案時，這種缺乏篩選彈性的做法難以配合後續模式比對與 Pipeline 的篩選需求。
-- D：配置 S3 桶之間的 S3 複寫(replication)。 配置分析 S3 儲存桶(S3 bucket) 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標。同時具備 S3 Replication 缺乏客製化篩選彈性、以及多了一層 EventBridge 事件匯流排這兩個缺點，是四個選項中架構元件最多、需要維護的規則與設定最複雜的組合。
+- B：建立 Lambda 函式,將檔案複製到分析 S3 bucket. 配置分析 S3 bucket 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標。同樣用 Lambda 複製檔案，卻改讓分析儲存桶把事件送到 Amazon EventBridge，再由 EventBridge 規則觸發下游服務，相較於直接使用 S3 原生事件通知，多了一層事件匯流排需要建立與維護規則，架構元件比直接使用 S3 事件通知更多，並未把維運開銷降到最低。
+- C：配置 S3 bucket之間的 S3 複寫(replication)。 為分析建立 S3 事件通知 S3 bucket. 配置Lambda和SageMaker管道作為事件通知的目的地。 配置 s3: ObjectCreated: Put 作為事件型別。改用 S3 Replication 在儲存桶之間自動複製檔案，雖然省去撰寫複製程式碼的工作，但複寫是單純的整批鏡射，無法像 Lambda 複製一樣依檔案內容或名稱先做篩選或客製化處理；當更多團隊持續傳送更多、更大尺寸的檔案時，這種缺乏篩選彈性的做法難以配合後續模式比對與 Pipeline 的篩選需求。
+- D：配置 S3 bucket之間的 S3 複寫(replication)。 配置分析 S3 bucket 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標。同時具備 S3 Replication 缺乏客製化篩選彈性、以及多了一層 EventBridge 事件匯流排這兩個缺點，是四個選項中架構元件最多、需要維護的規則與設定最複雜的組合。
 
 **分類：** 無伺服器
 
@@ -4183,8 +4183,8 @@ D
 **選項**
 - A. 在治理模式中使用S3 Object Lock,合法持有期為1年.
 - B. 在合規(compliance)模式中使用S3 Object Lock,保留期為365天.
-- C. 使用 IAM 角色來限制所有使用者刪除或更改 S3 儲存桶(S3 bucket) 中的物件. 使用一個S3 儲存桶政策(bucket policy)只允許IAM角色.
-- D. 配置 S3 儲存桶(S3 bucket) 以每次新增物件時引用 AWS Lambda 函式。 配置函式以跟蹤儲存物件的雜湊,從而可以相應標記修改物件.
+- C. 使用 IAM 角色來限制所有使用者刪除或更改 S3 bucket 中的物件. 使用一個S3 bucket政策(bucket policy)只允許IAM角色.
+- D. 配置 S3 bucket 以每次新增物件時引用 AWS Lambda 函式。 配置函式以跟蹤儲存物件的雜湊,從而可以相應標記修改物件.
 
 **答案**
 B
@@ -4197,21 +4197,21 @@ B
 - B：在合規(compliance)模式中使用S3 Object Lock,保留期為365天。S3 Object Lock 的 Compliance 模式屬於真正的 WORM（一次寫入、多次讀取）鎖定，即使是帳號的 root 使用者也無法刪除或縮短保留期限；將保留期設為 365 天，可確保每個檔案自建立後至少一年內任何人都無法修改或刪除，同時對應題目「其他使用者只能唯讀」與「至少保留一年」兩項要求。
 - 其餘選項比較：
 - A：在治理模式中使用S3 Object Lock,合法持有期為1年。Governance 模式下的保留鎖定可以被具備 s3:BypassGovernanceRetention 權限的使用者繞過並刪除或修改物件，不是絕對防止所有人異動的機制；而「合法持有（legal hold）」沒有固定到期時間，必須手動解除，無法保證滿足「至少保留一年」這種明確期限的要求。
-- C：使用 IAM 角色來限制所有使用者刪除或更改 S3 儲存桶(S3 bucket) 中的物件. 使用一個S3 儲存桶政策(bucket policy)只允許IAM角色。IAM 角色與儲存桶政策只是權限控管，任何擁有足夠管理權限的人（例如可以修改該政策或角色本身的人）依然能移除限制後刪除或修改物件，這不是不可竄改的鎖定機制，也無法強制保證一年的最低保留期。
-- D：配置 S3 儲存桶(S3 bucket) 以每次新增物件時引用 AWS Lambda 函式。 配置函式以跟蹤儲存物件的雜湊,從而可以相應標記修改物件。透過 Lambda 追蹤物件雜湊值只能在檔案已經被覆寫之後，事後比對出雜湊不一致並標記，屬於偵測性做法；它並不能真正阻止使用者修改或刪除檔案，不符合題目「任何使用者都無法修改或刪除」的硬性要求。
+- C：使用 IAM 角色來限制所有使用者刪除或更改 S3 bucket 中的物件. 使用一個S3 bucket政策(bucket policy)只允許IAM角色。IAM 角色與儲存桶政策只是權限控管，任何擁有足夠管理權限的人（例如可以修改該政策或角色本身的人）依然能移除限制後刪除或修改物件，這不是不可竄改的鎖定機制，也無法強制保證一年的最低保留期。
+- D：配置 S3 bucket 以每次新增物件時引用 AWS Lambda 函式。 配置函式以跟蹤儲存物件的雜湊,從而可以相應標記修改物件。透過 Lambda 追蹤物件雜湊值只能在檔案已經被覆寫之後，事後比對出雜湊不一致並標記，屬於偵測性做法；它並不能真正阻止使用者修改或刪除檔案，不符合題目「任何使用者都無法修改或刪除」的硬性要求。
 
 **分類：** 儲存
 
 ## Question #155
 
 **題目**
-一個大型媒體公司在AWS上主持一個網路應用程式. 該公司希望開始快取機密媒體檔案,以便世界各地的使用者能夠可靠地查閱這些檔案。 內容儲存在Amazon S3桶中. 公司必須迅速交付內容,無論請求來自何處。 哪種解決辦法能滿足這些要求?
+一個大型媒體公司在AWS上主持一個網路應用程式. 該公司希望開始快取機密媒體檔案,以便世界各地的使用者能夠可靠地查閱這些檔案。 內容儲存在Amazon S3 bucket中. 公司必須迅速交付內容,無論請求來自何處。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用 AWS 資料同步將 S3 桶連線到網路應用程式.
-- B. 部署 AWS 全球加速器將 S3 桶連線到網路應用程式。
-- C. 部署Amazon CloudFront將S3桶連線到CloudFront邊緣伺服器.
-- D. 使用Amazon Simple Queue Service (Amazon SQS)將S3桶連線到網路應用程式.
+- A. 使用 AWS 資料同步將 S3 bucket連線到網路應用程式.
+- B. 部署 AWS 全球加速器將 S3 bucket連線到網路應用程式。
+- C. 部署Amazon CloudFront將S3 bucket連線到CloudFront邊緣伺服器.
+- D. 使用Amazon Simple Queue Service (Amazon SQS)將S3 bucket連線到網路應用程式.
 
 **答案**
 C
@@ -4221,18 +4221,18 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：部署Amazon CloudFront將S3桶連線到CloudFront邊緣伺服器。Amazon CloudFront 是全球內容傳遞網路（CDN），會把 S3 儲存桶中的媒體檔案快取到全球各地的邊緣伺服器；快取建立後，世界各地使用者的請求都能就近從邊緣節點取得內容，滿足「無論請求來自何處都能快速交付」的需求，並可搭配簽名 URL/Cookie 保護機密內容的存取權限。
+- C：部署Amazon CloudFront將S3 bucket連線到CloudFront邊緣伺服器。Amazon CloudFront 是全球內容傳遞網路（CDN），會把 S3 bucket中的媒體檔案快取到全球各地的邊緣伺服器；快取建立後，世界各地使用者的請求都能就近從邊緣節點取得內容，滿足「無論請求來自何處都能快速交付」的需求，並可搭配簽名 URL/Cookie 保護機密內容的存取權限。
 - 其餘選項比較：
-- A：使用 AWS 資料同步將 S3 桶連線到網路應用程式。AWS DataSync 是用來在地端儲存與 AWS 儲存服務之間、或 AWS 儲存服務彼此之間搬移／同步大量資料的線上傳輸服務，不具備快取內容或加速終端使用者請求的能力，與題目要的內容交付需求無關。
-- B：部署 AWS 全球加速器將 S3 桶連線到網路應用程式。AWS Global Accelerator 是利用 AWS 全球網路與 anycast IP 來加速 TCP/UDP 應用程式端點（如 ALB、NLB、EC2）的可用性與效能，它並不會像 CDN 一樣把內容快取在邊緣節點，也不是用來對接 S3 儲存桶做內容快取的標準做法。
-- D：使用Amazon Simple Queue Service (Amazon SQS)將S3桶連線到網路應用程式。Amazon SQS 是用於解耦應用程式元件的訊息佇列服務，完全不具備快取或向終端使用者分發靜態內容的能力，與題目描述的內容交付場景無關。
+- A：使用 AWS 資料同步將 S3 bucket連線到網路應用程式。AWS DataSync 是用來在地端儲存與 AWS 儲存服務之間、或 AWS 儲存服務彼此之間搬移／同步大量資料的線上傳輸服務，不具備快取內容或加速終端使用者請求的能力，與題目要的內容交付需求無關。
+- B：部署 AWS 全球加速器將 S3 bucket連線到網路應用程式。AWS Global Accelerator 是利用 AWS 全球網路與 anycast IP 來加速 TCP/UDP 應用程式端點（如 ALB、NLB、EC2）的可用性與效能，它並不會像 CDN 一樣把內容快取在邊緣節點，也不是用來對接 S3 bucket做內容快取的標準做法。
+- D：使用Amazon Simple Queue Service (Amazon SQS)將S3 bucket連線到網路應用程式。Amazon SQS 是用於解耦應用程式元件的訊息佇列服務，完全不具備快取或向終端使用者分發靜態內容的能力，與題目描述的內容交付場景無關。
 
 **分類：** 網路連結和內容交付
 
 ## Question #156
 
 **題目**
-一家公司生產來自不同資料庫的批次資料。 公司還從網路感測器和應用API中生成直播流資料. 公司需要將所有資料整合成一個商業分析地點. 公司需要處理收到的資料,然後用不同的Amazon S3桶進行資料分級. 團隊日後將進行一次性查詢,並將資料匯入商業智慧工具,以顯示關鍵績效指標(KPI). 哪些步驟與 " LEAST 營運開銷(operational overhead) " 組合可滿足這些要求?(選二.
+一家公司生產來自不同資料庫的批次資料。 公司還從網路感測器和應用API中生成直播流資料. 公司需要將所有資料整合成一個商業分析地點. 公司需要處理收到的資料,然後用不同的Amazon S3 bucket進行資料分級. 團隊日後將進行一次性查詢,並將資料匯入商業智慧工具,以顯示關鍵績效指標(KPI). 哪些步驟與 " LEAST 營運開銷(operational overhead) " 組合可滿足這些要求?(選二.
 
 **選項**
 - A. 使用Amazon Athena進行一次性查詢. 使用Amazon QuickSight為KPI建立儀表板.
@@ -4312,7 +4312,7 @@ A
 - 其餘選項比較：
 - B：AWS 全球加速器。AWS 全球加速器是透過 Anycast IP 把 TCP/UDP 流量路由到最近健康的應用程式端點，用來改善一般應用程式入口的網路連線品質，並不具備影音內容快取或串流分發的能力。
 - C：Amazon Route 53。Amazon Route 53 是 DNS 服務，負責把網域名稱解析到對應的 IP 位址並提供地理路由、延遲路由等策略，本身不快取或傳送影音串流的實際內容。
-- D：Amazon S3 Transfer Acceleration。Amazon S3 Transfer Acceleration 加速的是使用者「上傳」檔案到 S3 儲存桶的傳輸速度，用途是加快資料寫入 S3 的過程，並不是用來加速終端觀眾「下載觀看」串流影片的效能。
+- D：Amazon S3 Transfer Acceleration。Amazon S3 Transfer Acceleration 加速的是使用者「上傳」檔案到 S3 bucket的傳輸速度，用途是加快資料寫入 S3 的過程，並不是用來加速終端觀眾「下載觀看」串流影片的效能。
 
 **分類：** 網路連結和內容交付
 
@@ -4379,8 +4379,8 @@ C
 一家公司有一個小型的Python應用程式,處理JSON文件,並將結果輸出給一個promise SQL 資料庫(database). 應用程式每天執行數千次. 公司希望將應用程式移至AWS雲. 公司需要高可用解決方案,將可擴展性(scalability)最大化,將營運開銷(operational overhead)最小化. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 把JSON檔案放進Amazon S3桶裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中.
-- B. 把JSON檔案放進Amazon S3桶裡. 建立一個執行 Python 程式碼的 AWS Lambda 函式,在檔案到達S3 儲存桶(S3 bucket) 時對其進行處理. 將結果儲存在 Amazon Aurora DB 叢集中.
+- A. 把JSON檔案放進Amazon S3 bucket裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中.
+- B. 把JSON檔案放進Amazon S3 bucket裡. 建立一個執行 Python 程式碼的 AWS Lambda 函式,在檔案到達S3 bucket 時對其進行處理. 將結果儲存在 Amazon Aurora DB 叢集中.
 - C. 將JSON檔案放入Amazon Elastic Block Store (Amazon EBS)卷中. 使用 EBS 多選項特性將磁碟區附加到多個 Amazon EC2 例中. 在 EC2 例項上執行 Python 程式碼來處理文件。 在 Amazon RDS DB 例項中儲存結果。
 - D. 將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在Amazon Elastic Container Service (Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果。
 
@@ -4394,8 +4394,8 @@ D
 正確答案是 **D**。
 - D：將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在Amazon Elastic Container Service (Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果。把 JSON 檔案以訊息形式放進 Amazon SQS 佇列，能將「接收」與「處理」解耦，佇列本身可以緩衝每天數千次的檔案到達量；搭配部署在多個可用區、以 EC2 啟動型別執行的 Amazon ECS 容器叢集消化佇列訊息，可以水平增減容器數量因應負載，並在單一可用區故障時仍維持服務可用，處理結果最後寫入 Amazon RDS 資料庫執行個體。
 - 其餘選項比較：
-- A：把JSON檔案放進Amazon S3桶裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中。直接在多台 Amazon EC2 執行個體上跑 Python 程式處理檔案，需要自行負責作業系統修補、擴充策略設計與執行個體健康狀態管理，這些都是題目希望盡量避免的維運工作。
-- B：把JSON檔案放進Amazon S3桶裡. 建立一個執行 Python 程式碼的 AWS Lambda 函式,在檔案到達S3 儲存桶(S3 bucket) 時對其進行處理. 將結果儲存在 Amazon Aurora DB 叢集中。以 S3 事件觸發 AWS Lambda 處理檔案雖然免管理伺服器，但 Lambda 單次執行有最長 15 分鐘的時間限制，且大量並行執行時容易讓 Aurora 資料庫的連線數瞬間暴增甚至打滿，若沒有搭配 RDS Proxy 之類的連線池管理機制，穩定性會受影響。
+- A：把JSON檔案放進Amazon S3 bucket裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中。直接在多台 Amazon EC2 執行個體上跑 Python 程式處理檔案，需要自行負責作業系統修補、擴充策略設計與執行個體健康狀態管理，這些都是題目希望盡量避免的維運工作。
+- B：把JSON檔案放進Amazon S3 bucket裡. 建立一個執行 Python 程式碼的 AWS Lambda 函式,在檔案到達S3 bucket 時對其進行處理. 將結果儲存在 Amazon Aurora DB 叢集中。以 S3 事件觸發 AWS Lambda 處理檔案雖然免管理伺服器，但 Lambda 單次執行有最長 15 分鐘的時間限制，且大量並行執行時容易讓 Aurora 資料庫的連線數瞬間暴增甚至打滿，若沒有搭配 RDS Proxy 之類的連線池管理機制，穩定性會受影響。
 - C：將JSON檔案放入Amazon Elastic Block Store (Amazon EBS)卷中. 使用 EBS 多選項特性將磁碟區附加到多個 Amazon EC2 例中. 在 EC2 例項上執行 Python 程式碼來處理文件。 在 Amazon RDS DB 例項中儲存結果。Amazon EBS 的 Multi-Attach 功能僅支援特定 Nitro 系統的 io1/io2 磁碟區，且只能讓同一個可用區內的多台 EC2 執行個體掛載同一顆磁碟區，並非跨可用區的高可用架構，仍需自行管理磁碟區與執行個體叢集的擴充。
 
 **分類：** 容器
@@ -4409,7 +4409,7 @@ D
 - A. Amazon FSx 用於與Amazon S3整合的Lustre
 - B. Amazon FSx 用於與 Amazon S3 整合的 Windows 檔案伺服器
 - C. Amazon S3 冰川與Amazon Elastic Block Store整合(Amazon EBS)
-- D. Amazon S3桶,裝有與Amazon Elastic Block Store整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積
+- D. Amazon S3 bucket,裝有與Amazon Elastic Block Store整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積
 
 **答案**
 A
@@ -4419,24 +4419,24 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：Amazon FSx 用於與Amazon S3整合的Lustre。Amazon FSx for Lustre 是專為高效能運算設計的高吞吐量、低延遲平行檔案系統，可以直接與 S3 儲存桶整合，把 S3 上的原始資料以檔案形式呈現給數百個 EC2 執行個體同時掛載讀寫，運算產生的輸出檔案也能同步寫回 S3 做長期持久保存，符合題目對高效能檔案系統加上持久儲存整合的要求。
+- A：Amazon FSx 用於與Amazon S3整合的Lustre。Amazon FSx for Lustre 是專為高效能運算設計的高吞吐量、低延遲平行檔案系統，可以直接與 S3 bucket整合，把 S3 上的原始資料以檔案形式呈現給數百個 EC2 執行個體同時掛載讀寫，運算產生的輸出檔案也能同步寫回 S3 做長期持久保存，符合題目對高效能檔案系統加上持久儲存整合的要求。
 - 其餘選項比較：
 - B：Amazon FSx 用於與 Amazon S3 整合的 Windows 檔案伺服器。Amazon FSx for Windows File Server 走 SMB 通訊協定，服務對象是 Windows 工作負載，而題目明確說明 HPC 工作是由 Linux 承擔，作業系統與通訊協定都不相容。
 - C：Amazon S3 冰川與Amazon Elastic Block Store整合(Amazon EBS)。Amazon S3 Glacier 是低存取頻率的封存儲存，用於長期冷資料保存且取回速度慢，本身也不是檔案系統，無法讓數百個 EC2 執行個體同時掛載進行即時讀寫運算。
-- D：Amazon S3桶,裝有與Amazon Elastic Block Store整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積。Amazon EBS 通用型 SSD（gp2）磁碟區在同一時間只能掛載給單一 EC2 執行個體使用，無法讓題目所述的數百個 Spot 執行個體同時存取並讀寫同一份資料集，架構上不可行。
+- D：Amazon S3 bucket,裝有與Amazon Elastic Block Store整合的VPC 端點(VPC endpoint)(Amazon EBS)通用SSD(gp2)體積。Amazon EBS 通用型 SSD（gp2）磁碟區在同一時間只能掛載給單一 EC2 執行個體使用，無法讓題目所述的數百個 Spot 執行個體同時存取並讀寫同一份資料集，架構上不可行。
 
 **分類：** 儲存
 
 ## Question #163
 
 **題目**
-一家公司正在房地建造一個集裝箱化的應用程式,並決定將該應用程式移至AWS。 該應用程式在部署後不久將有數千個使用者。 該公司不確定如何管理規模集裝箱的部署。 公司需要將集裝箱化的應用部署在高可用架構中,以儘量減少營運開銷(operational overhead). 哪種解決辦法能滿足這些要求?
+一家公司正在內部部署環境開發容器化應用程式，並決定將應用程式遷移至 AWS。應用程式上線後不久，預計會有數千名使用者。公司不確定如何大規模管理容器部署，因此需要在高可用性架構中部署應用程式，同時將營運負擔降至最低。哪個解決方案符合這些要求？
 
 **選項**
-- A. 將集裝箱影象儲存在Amazon ECR中。 使用帶有AWS Fargate發射型的Amazon Elastic Container Service (Amazon ECS)叢集來執行容器. 使用目標跟蹤來根據需求自動進行規模化.
-- B. 將集裝箱影象儲存在Amazon ECR中。 使用帶有Amazon EC2發射型的Amazon ECS叢集(Amazon ECS)執行集裝箱. 使用目標跟蹤來根據需求自動進行規模化.
-- C. 將容器影象儲存在一個執行在 Amazon EC2 例項上的倉庫中。 執行分佈在多個可用區(Availability Zones)的EC2例項上的容器。 監測Amazon CloudWatch中的平均CPU利用率. 視需要推出新的EC2例項。
-- D. 建立一個包含容器影象的Amazon EC2Amazon Machine Image (AMI). 在Auto Scaling 群組(Auto Scaling group)中發射EC2例項,跨越多個可用區(Availability Zones). 使用 Amazon CloudWatch 提醒來縮放 EC2 例項, 當平均 CPU 利用率閾值被突破。
+- A. 將容器映像檔存放在 Amazon ECR 儲存庫。使用採用 AWS Fargate 啟動類型的 Amazon Elastic Container Service (Amazon ECS) 叢集執行容器。使用目標追蹤，依需求自動擴展。
+- B. 將容器映像檔存放在 Amazon ECR 儲存庫。使用採用 Amazon EC2 啟動類型的 Amazon ECS 叢集執行容器。使用目標追蹤，依需求自動擴展。
+- C. 將容器映像檔存放在執行於 Amazon EC2 執行個體上的映像檔儲存庫。將容器部署到分散在多個可用區 (Availability Zones) 的 EC2 執行個體上。監控 Amazon CloudWatch 中的平均 CPU 使用率，並視需要啟動新的 EC2 執行個體。
+- D. 建立包含容器映像檔的 Amazon EC2 Amazon Machine Image (AMI)。將 EC2 執行個體部署到跨多個可用區 (Availability Zones) 的 Auto Scaling 群組中。當平均 CPU 使用率超過門檻時，使用 Amazon CloudWatch 警報擴展 EC2 執行個體數量。
 
 **答案**
 C
@@ -4446,11 +4446,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將容器影象儲存在一個執行在 Amazon EC2 例項上的倉庫中。 執行分佈在多個可用區(Availability Zones)的EC2例項上的容器。 監測Amazon CloudWatch中的平均CPU利用率. 視需要推出新的EC2例項。把容器映像檔存放在自行架設於 EC2 執行個體上的倉庫，並將容器分散部署到跨多個可用區的 EC2 執行個體上執行，透過 Amazon CloudWatch 監控平均 CPU 使用率，在流量上升時視需要啟動新的 EC2 執行個體來承接負載，跨可用區部署確保單一可用區故障時服務仍可用，藉此因應部署後短時間內湧入的數千名使用者。
+- C：將容器映像檔存放在執行於 Amazon EC2 執行個體上的映像檔儲存庫。將容器部署到分散在多個可用區 (Availability Zones) 的 EC2 執行個體上。監控 Amazon CloudWatch 中的平均 CPU 使用率，並視需要啟動新的 EC2 執行個體。此方案需要自行在 EC2 上維護映像檔儲存庫，並自行管理 EC2 執行個體的部署與擴展；雖然跨可用區部署可提升可用性，但主機、儲存庫與擴展流程都需要團隊負責維運。
 - 其餘選項比較：
-- A：將集裝箱影象儲存在Amazon ECR中。 使用帶有AWS Fargate發射型的Amazon Elastic Container Service (Amazon ECS)叢集來執行容器. 使用目標跟蹤來根據需求自動進行規模化。使用 Amazon ECR 存放映像檔並以 AWS Fargate 啟動型別執行 ECS 容器，屬於免管理底層主機的容器執行方式，但這代表團隊需要額外熟悉 ECS 服務、任務定義與 Fargate 的資源配置模式，對「不確定如何管理規模化容器部署」的團隊而言，仍有服務導入與設定上的學習成本。
-- B：將集裝箱影象儲存在Amazon ECR中。 使用帶有Amazon EC2發射型的Amazon ECS叢集(Amazon ECS)執行集裝箱. 使用目標跟蹤來根據需求自動進行規模化。同樣使用 Amazon ECR 加 ECS，但採用 EC2 啟動型別，代表叢集底層的 EC2 主機仍須由團隊自行負責作業系統修補、容量規劃與擴充，並未把主機層級的維運工作交給 AWS 代管。
-- D：建立一個包含容器影象的Amazon EC2Amazon Machine Image (AMI). 在Auto Scaling 群組(Auto Scaling group)中發射EC2例項,跨越多個可用區(Availability Zones). 使用 Amazon CloudWatch 提醒來縮放 EC2 例項, 當平均 CPU 利用率閾值被突破。把容器映像檔直接封裝進 EC2 AMI，之後每次應用程式或容器內容更新，都必須重新建置並發布一個新版 AMI 才能讓 Auto Scaling 群組套用，版本管理與建置流程比直接抓取容器映像檔執行要繁瑣，維運負擔較高。
+- A：將容器映像檔存放在 Amazon ECR 儲存庫。使用採用 AWS Fargate 啟動類型的 Amazon Elastic Container Service (Amazon ECS) 叢集執行容器。使用目標追蹤，依需求自動擴展。使用 Amazon ECR 儲存映像檔，並以 AWS Fargate 啟動類型執行 ECS 容器，可免除管理底層 EC2 主機的工作；但團隊仍需要設定 ECS 服務、任務定義與 Fargate 資源。
+- B：將容器映像檔存放在 Amazon ECR 儲存庫。使用採用 Amazon EC2 啟動類型的 Amazon ECS 叢集執行容器。使用目標追蹤，依需求自動擴展。雖然 Amazon ECS 可協助管理容器，但採用 EC2 啟動類型仍需要團隊負責底層 EC2 主機的作業系統修補、容量規劃與擴展。
+- D：建立包含容器映像檔的 Amazon EC2 Amazon Machine Image (AMI)。將 EC2 執行個體部署到跨多個可用區 (Availability Zones) 的 Auto Scaling 群組中。當平均 CPU 使用率超過門檻時，使用 Amazon CloudWatch 警報擴展 EC2 執行個體數量。將容器映像檔直接封裝在 EC2 AMI 中後，每次應用程式或容器內容更新都必須重新建置並發布新版 AMI，版本管理與部署流程較為繁瑣。
 
 **分類：** 容器
 
@@ -4485,10 +4485,10 @@ C
 解決方案架構師必須設計一個使用帶有Amazon CloudFront來源的Amazon S3的解決方案來儲存靜態網站. 該公司的安全政策要求AWS WAF檢查所有網站流量. 解決方案設計師應如何遵守這些要求?
 
 **選項**
-- A. 配置一個 S3 儲存桶政策(bucket policy) 只接受來自 AWS WAF Amazon 資源名稱(ARN) 的請求。
+- A. 配置一個 S3 bucket政策(bucket policy) 只接受來自 AWS WAF Amazon 資源名稱(ARN) 的請求。
 - B. 配置 Amazon CloudFront 將所有收到的請求轉發給 AWS WAF ,然後請求 S3 源的內容.
 - C. 配置一個安全群組(security group),只允許Amazon CloudFront IP地址存取Amazon S3. 協理AWS WAF呼叫雲紋.
-- D. 配置 Amazon CloudFront 和 Amazon S3 以使用來源存取身份(OAI)限制存取 S3 儲存桶(S3 bucket)。 在分發時啟用 AWS WAF。
+- D. 配置 Amazon CloudFront 和 Amazon S3 以使用來源存取身份(OAI)限制存取 S3 bucket。 在分發時啟用 AWS WAF。
 
 **答案**
 D
@@ -4498,9 +4498,9 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：配置 Amazon CloudFront 和 Amazon S3 以使用來源存取身份(OAI)限制存取 S3 儲存桶(S3 bucket)。 在分發時啟用 AWS WAF。來源存取身分(OAI，現稱 OAC)讓 CloudFront 成為存取該 S3 儲存桶的唯一合法身分，搭配 bucket policy 只信任該 OAI，使用者便無法繞過 CloudFront 直接對 S3 發出請求；同時在 CloudFront distribution 上啟用 AWS WAF，所有流量會先經過 WAF 規則檢查才被處理或回源，因此能同時滿足「限制直接存取 S3」與「WAF 檢查所有網站流量」兩項要求。
+- D：配置 Amazon CloudFront 和 Amazon S3 以使用來源存取身份(OAI)限制存取 S3 bucket。 在分發時啟用 AWS WAF。來源存取身分(OAI，現稱 OAC)讓 CloudFront 成為存取該 S3 bucket的唯一合法身分，搭配 bucket policy 只信任該 OAI，使用者便無法繞過 CloudFront 直接對 S3 發出請求；同時在 CloudFront distribution 上啟用 AWS WAF，所有流量會先經過 WAF 規則檢查才被處理或回源，因此能同時滿足「限制直接存取 S3」與「WAF 檢查所有網站流量」兩項要求。
 - 其餘選項比較：
-- A：配置一個 S3 儲存桶政策(bucket policy) 只接受來自 AWS WAF Amazon 資源名稱(ARN) 的請求。S3 儲存桶政策的 Condition/Principal 機制是用來比對 IAM 身分、VPC 端點或來源 IP 等，並不支援直接以「AWS WAF 的 ARN」作為請求來源條件——WAF 本身不會以自身身分向 S3 發出請求，此設計在架構上無法成立。
+- A：配置一個 S3 bucket政策(bucket policy) 只接受來自 AWS WAF Amazon 資源名稱(ARN) 的請求。S3 bucket政策的 Condition/Principal 機制是用來比對 IAM 身分、VPC 端點或來源 IP 等，並不支援直接以「AWS WAF 的 ARN」作為請求來源條件——WAF 本身不會以自身身分向 S3 發出請求，此設計在架構上無法成立。
 - B：配置 Amazon CloudFront 將所有收到的請求轉發給 AWS WAF ,然後請求 S3 源的內容。AWS WAF 是掛載在 CloudFront、ALB 或 API Gateway 前面的規則檢查引擎，並非可以接收請求再代為轉發的中間代理伺服器；正確用法是把 WAF Web ACL 直接關聯到 CloudFront 分發上做請求檢查，而不是想像成一個獨立的轉發節點。
 - C：配置一個安全群組(security group),只允許Amazon CloudFront IP地址存取Amazon S3. 協理AWS WAF呼叫雲紋。安全群組是套用在具備網路介面的資源（如 EC2、ALB）上的規則物件，Amazon S3 是全代管服務，不支援掛載安全群組來限制存取來源，此選項的資源類型本身就用錯。
 
@@ -4509,13 +4509,13 @@ D
 ## Question #166
 
 **題目**
-全球活動的組織者希望將每日報告作為靜態的HTML頁面上線. 預計這些網頁將引起世界各地使用者數百萬次的瀏覽。 檔案存放在Amazon S3桶中. 已請一個解決方案設計師設計一個高效和有效的解決方案。 設計師應該採取什麼行動來實現這一目標?
+全球活動的組織者希望將每日報告作為靜態的HTML頁面上線. 預計這些網頁將引起世界各地使用者數百萬次的瀏覽。 檔案存放在Amazon S3 bucket中. 已請一個解決方案設計師設計一個高效和有效的解決方案。 設計師應該採取什麼行動來實現這一目標?
 
 **選項**
 - A. 生成檔案的預簽名 URL。
 - B. 在所有區域使用跨區域(Region) 複寫(replication)。
 - C. 使用Amazon Route 53的地理近緣特徵.
-- D. 使用以S3 儲存桶(S3 bucket)為原產地的Amazon CloudFront.
+- D. 使用以S3 bucket為原產地的Amazon CloudFront.
 
 **答案**
 D
@@ -4525,11 +4525,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用以S3 儲存桶(S3 bucket)為原產地的Amazon CloudFront。Amazon CloudFront 是全球內容分發網路(CDN)，以 S3 儲存桶為來源後，靜態 HTML 內容會被快取到全球數百個邊緣節點；世界各地使用者可就近從邊緣節點取得內容，大幅降低延遲並吸收數百萬次瀏覽的請求量，同時減少直接回源到 S3 的請求數與成本，正是「高效且有效」服務全球流量的標準做法。
+- D：使用以S3 bucket為原產地的Amazon CloudFront。Amazon CloudFront 是全球內容分發網路(CDN)，以 S3 bucket為來源後，靜態 HTML 內容會被快取到全球數百個邊緣節點；世界各地使用者可就近從邊緣節點取得內容，大幅降低延遲並吸收數百萬次瀏覽的請求量，同時減少直接回源到 S3 的請求數與成本，正是「高效且有效」服務全球流量的標準做法。
 - 其餘選項比較：
 - A：生成檔案的預簽名 URL。預簽名 URL 是對私有物件核發具時效性的直接存取授權，用途是精細控管誰能存取，並不具備快取或降低全球使用者延遲的能力，對於要服務數百萬次瀏覽的靜態網頁毫無幫助。
 - B：在所有區域使用跨區域(Region) 複寫(replication)。S3 跨區域複寫只是把物件複製到其他區域的儲存桶形成多份副本，使用者仍是直接連線到某個區域的 S3 端點，沒有邊緣快取加速效果，還需要額外設計多區域流量導向邏輯，徒增儲存成本與維運複雜度。
-- C：使用Amazon Route 53的地理近緣特徵。Route 53 地理近緣路由是 DNS 層級的流量導向機制，用來把使用者導向多個不同區域「資源端點」中最近的一個，但題目中的內容來源只有單一 S3 儲存桶，並不存在多個可路由的區域端點，此機制無法提供邊緣快取或降低延遲的效果。
+- C：使用Amazon Route 53的地理近緣特徵。Route 53 地理近緣路由是 DNS 層級的流量導向機制，用來把使用者導向多個不同區域「資源端點」中最近的一個，但題目中的內容來源只有單一 S3 bucket，並不存在多個可路由的區域端點，此機制無法提供邊緣快取或降低延遲的效果。
 
 **分類：** 網路連結和內容交付
 
@@ -4702,7 +4702,7 @@ A
 
 **選項**
 - A. 在網路伺服器前部署 AWS 全球加速器加速器。
-- B. 在S3 儲存桶(S3 bucket)前部署Amazon CloudFront網路發行.
+- B. 在S3 bucket前部署Amazon CloudFront網路發行.
 - C. 在網路伺服器前部署一個Amazon ElastiCache用於Redis例項.
 - D. 在網路伺服器前部署一個Amazon ElastiCache,用於模擬例項。
 
@@ -4714,11 +4714,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在S3 儲存桶(S3 bucket)前部署Amazon CloudFront網路發行。CloudFront 是全球內容傳遞網路，會把 S3 儲存桶中的靜態影片與圖片快取到遍布全球的邊緣節點，讓數百萬使用者從最近的邊緣節點取得內容，只有快取未命中時才回源到 S3，因此能大幅降低直接打到 S3 的請求量與頻寬負載，正符合題目「向全球使用者提供檔案、同時降低來源負載」的需求。
+- B：在S3 bucket前部署Amazon CloudFront網路發行。CloudFront 是全球內容傳遞網路，會把 S3 bucket中的靜態影片與圖片快取到遍布全球的邊緣節點，讓數百萬使用者從最近的邊緣節點取得內容，只有快取未命中時才回源到 S3，因此能大幅降低直接打到 S3 的請求量與頻寬負載，正符合題目「向全球使用者提供檔案、同時降低來源負載」的需求。
 - 其餘選項比較：
 - A：在網路伺服器前部署 AWS 全球加速器加速器。AWS 全球加速器是利用 Anycast IP 與 AWS 全球骨幹網路，優化使用者到應用程式（EC2、ALB、NLB 等）之間的 TCP/UDP 路由與容錯移轉，本身不具備快取功能，無法減少對 S3 原始儲存桶重複下載影片與圖片所造成的來源負載。
 - C：在網路伺服器前部署一個Amazon ElastiCache用於Redis例項。Amazon ElastiCache for Redis 是部署在應用程式與資料庫之間的記憶體內鍵值快取，適合快取資料庫查詢結果或工作階段資料，並非設計來快取或傳遞儲存在 S3 的大型影片與圖片物件，無法解決題目描述的靜態媒體檔案分發問題。
-- D：在網路伺服器前部署一個Amazon ElastiCache,用於模擬例項。Amazon ElastiCache for Memcached 同樣是應用程式層的記憶體快取，用途是加速小型、頻繁存取的運算或查詢結果，而不是用來快取或提供大型靜態媒體檔案給終端使用者，架設在網路伺服器前也無助於降低 S3 儲存桶的下載負載。
+- D：在網路伺服器前部署一個Amazon ElastiCache,用於模擬例項。Amazon ElastiCache for Memcached 同樣是應用程式層的記憶體快取，用途是加速小型、頻繁存取的運算或查詢結果，而不是用來快取或提供大型靜態媒體檔案給終端使用者，架設在網路伺服器前也無助於降低 S3 bucket的下載負載。
 
 **分類：** 網路連結和內容交付
 
@@ -5169,7 +5169,7 @@ C,E
 一個公司有一個基於Java和PHP的網路應用程式. 該公司計劃將申請從辦公地點轉移到AWS. 公司需要能夠頻繁測試新的網站特徵. 該公司還需要一個高度可用和管理的解決方案,這需要最低限度的營運開銷(operational overhead). 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立 Amazon S3 桶. 在 S3 儲存桶(S3 bucket) 上啟用靜態網路託管。 上傳靜態內容到S3 儲存桶(S3 bucket). 使用AWS Lambda處理所有動態內容.
+- A. 建立 Amazon S3 bucket. 在 S3 bucket 上啟用靜態網路託管。 上傳靜態內容到S3 bucket. 使用AWS Lambda處理所有動態內容.
 - B. 在 AWS 彈性 Beanstalk 環境中部署網路應用程式。 使用 URL 互換在多個 Elastic Beanstalk 環境間切換,用於特性測試.
 - C. 向配置在 Java 和 PHP 中的 Amazon EC2 例項部署網路應用程式。 使用自動縮放組和一個應用程式負載平衡器(Application Load Balancer)來管理網站的可用性.
 - D. 整合網路應用程式。 對 Amazon EC2 例項應用網路應用程式。 使用 AWS 負載平衡器(Load Balancer) 控制器在包含測試新站點特性的容器之間動態路由流量.
@@ -5184,7 +5184,7 @@ D
 正確答案是 **D**。
 - D：整合網路應用程式。 對 Amazon EC2 例項應用網路應用程式。 使用 AWS 負載平衡器(Load Balancer) 控制器在包含測試新站點特性的容器之間動態路由流量。要用 AWS Load Balancer Controller 動態路由流量，代表應用程式必須先容器化並部署在 Amazon EKS 叢集上。這需要團隊額外具備並維運 Kubernetes 控制平面與工作節點的能力，其導入與日常維運複雜度都高於直接使用受管的應用程式平台。
 - 其餘選項比較：
-- A：建立 Amazon S3 桶. 在 S3 儲存桶(S3 bucket) 上啟用靜態網路託管。 上傳靜態內容到S3 儲存桶(S3 bucket). 使用AWS Lambda處理所有動態內容。這是一套以 Java 與 PHP 撰寫、具備動態邏輯的既有應用程式，S3 靜態網站託管只能服務靜態檔案。若要把所有動態內容改寫成 AWS Lambda 函式執行，等同於要重新設計整個應用程式架構，工作量與風險都遠超過題目訴求。
+- A：建立 Amazon S3 bucket. 在 S3 bucket 上啟用靜態網路託管。 上傳靜態內容到S3 bucket. 使用AWS Lambda處理所有動態內容。這是一套以 Java 與 PHP 撰寫、具備動態邏輯的既有應用程式，S3 靜態網站託管只能服務靜態檔案。若要把所有動態內容改寫成 AWS Lambda 函式執行，等同於要重新設計整個應用程式架構，工作量與風險都遠超過題目訴求。
 - B：在 AWS 彈性 Beanstalk 環境中部署網路應用程式。 使用 URL 互換在多個 Elastic Beanstalk 環境間切換,用於特性測試。AWS Elastic Beanstalk 原生支援 Java 與 PHP 執行環境，可自動處理容量佈建、負載平衡、健康監控與平台修補。建立第二個 Elastic Beanstalk 環境部署新版特徵，再用 CNAME／URL 互換在兩個環境之間切換流量，就是常見的藍綠部署做法。這樣可以在不影響正式環境可用性的前提下，對新網站特徵做頻繁測試，同時維運負擔遠低於自行管理伺服器。
 - C：向配置在 Java 和 PHP 中的 Amazon EC2 例項部署網路應用程式。 使用自動縮放組和一個應用程式負載平衡器(Application Load Balancer)來管理網站的可用性。自行在 EC2 上安裝並維護 Java／PHP 執行環境，搭配 Auto Scaling 群組與應用程式負載平衡器雖然能達到高可用性，但作業系統修補、執行環境更新與版本部署都需要團隊自行處理。這樣的維運開銷明顯高於使用受管的應用程式平台服務。
 
@@ -5224,7 +5224,7 @@ B
 
 **選項**
 - A. 將文件資訊寫入執行 MySQL 資料庫(database) 的 Amazon EC2 例項。
-- B. 將文件資訊寫入 Amazon S3 桶中。 使用Amazon Athena查詢資料.
+- B. 將文件資訊寫入 Amazon S3 bucket中。 使用Amazon Athena查詢資料.
 - C. 建立 Amazon EC2 的 Auto Scaling 群組(Auto Scaling group) 例,以執行一個自定義應用程式,處理掃描檔案並提取醫療資訊.
 - D. 建立當新文件上傳時執行的 AWS Lambda 函式。 使用Amazon Rekcognition將文件轉換為原始文字. 使用Amazon Translatic Medical來檢測和提取文字中的相關醫學資訊.
 - E. 建立當新文件上傳時執行的 AWS Lambda 函式。 使用 Amazon Textract 將文件轉換為原始文字。 使用Amazon Comprehend Medical來檢測和提取文字中的相關醫學資訊.
@@ -5242,7 +5242,7 @@ C,D
 - D：建立當新文件上傳時執行的 AWS Lambda 函式。 使用Amazon Rekcognition將文件轉換為原始文字. 使用Amazon Translatic Medical來檢測和提取文字中的相關醫學資訊。Amazon Rekognition 是設計用來分析圖片與影片中的物件、場景與人臉的服務，並非針對文件版面（表單、表格）做結構化文字擷取的工具。選項中提到的「Amazon Translatic Medical」也不是真實存在的 AWS 服務名稱，這個組合無法完成從掃描文件擷取醫療資訊的任務。
 - 其餘選項比較：
 - A：將文件資訊寫入執行 MySQL 資料庫(database) 的 Amazon EC2 例項。把文件資訊寫進執行於 EC2 上的自建 MySQL 資料庫，需要自行管理執行個体、資料庫軟體與擴展策略。隨著醫院每天新增數百份檔案，資料庫容量與效能都需要人工介入調整，不具備題目要求的高可擴展性與低維運負擔。
-- B：將文件資訊寫入 Amazon S3 桶中。 使用Amazon Athena查詢資料。將擷取出的文件資訊寫入 Amazon S3，S3 本身具備近乎無限的儲存擴展能力，能承接醫院每天新增數百份檔案的成長量。再用 Amazon Athena 直接以標準 SQL 對 S3 中的資料執行查詢，不需要另外部署或維運任何資料庫伺服器。這同時滿足「最大化可擴展性且降低維運負擔」以及「能對資料執行 SQL 查詢」兩項要求。
+- B：將文件資訊寫入 Amazon S3 bucket中。 使用Amazon Athena查詢資料。將擷取出的文件資訊寫入 Amazon S3，S3 本身具備近乎無限的儲存擴展能力，能承接醫院每天新增數百份檔案的成長量。再用 Amazon Athena 直接以標準 SQL 對 S3 中的資料執行查詢，不需要另外部署或維運任何資料庫伺服器。這同時滿足「最大化可擴展性且降低維運負擔」以及「能對資料執行 SQL 查詢」兩項要求。
 - E：建立當新文件上傳時執行的 AWS Lambda 函式。 使用 Amazon Textract 將文件轉換為原始文字。 使用Amazon Comprehend Medical來檢測和提取文字中的相關醫學資訊。以 S3 上傳事件觸發 AWS Lambda 函式，整條處理流程完全無伺服器，能隨檔案上傳量自動擴展。用 Amazon Textract 從掃描文件中擷取原始文字，Textract 專門處理文件版面、表單與表格的文字擷取。再用 Amazon Comprehend Medical 這個醫療專用自然語言處理服務，從文字中偵測並萃取藥物、病症、劑量等醫療實體資訊。
 
 **分類：** 機器學習
@@ -5496,13 +5496,13 @@ A
 ## Question #202
 
 **題目**
-一家公司計劃將其資料移至Amazon S3桶。 資料儲存在S3 儲存桶(S3 bucket)時必須加密. 此外,每年必須自動輪換加密(encryption)鍵。 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司計劃將其資料移至Amazon S3 bucket。 資料儲存在S3 bucket時必須加密. 此外,每年必須自動輪換加密(encryption)鍵。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 將資料移至S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用SSE-S3 加密(encryption)金鑰的內建金鑰旋轉行為.
-- B. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 儲存桶(S3 bucket).
-- C. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 儲存桶(S3 bucket). 每年手動旋轉KMS金鑰.
-- D. 在將資料移至S3 儲存桶(S3 bucket)之前,用客戶關鍵材料加密資料. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。
+- A. 將資料移至S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用SSE-S3 加密(encryption)金鑰的內建金鑰旋轉行為.
+- B. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 bucket.
+- C. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 bucket. 每年手動旋轉KMS金鑰.
+- D. 在將資料移至S3 bucket之前,用客戶關鍵材料加密資料. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。
 
 **答案**
 B
@@ -5512,11 +5512,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 儲存桶(S3 bucket)。AWS KMS 客戶受管金鑰可以開啟自動金鑰輪替功能，啟用後 KMS 每年會自動產生新的金鑰材質並保留舊版本以便解密既有資料，全程由 AWS 代管不需人工介入；再把 S3 儲存貯體的預設加密設定為使用這把客戶受管金鑰，所有新寫入物件都會自動套用加密，同時滿足加密、年度自動輪替與最小維運開銷三項要求。
+- B：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 bucket。AWS KMS 客戶受管金鑰可以開啟自動金鑰輪替功能，啟用後 KMS 每年會自動產生新的金鑰材質並保留舊版本以便解密既有資料，全程由 AWS 代管不需人工介入；再把 S3 儲存貯體的預設加密設定為使用這把客戶受管金鑰，所有新寫入物件都會自動套用加密，同時滿足加密、年度自動輪替與最小維運開銷三項要求。
 - 其餘選項比較：
-- A：將資料移至S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用SSE-S3 加密(encryption)金鑰的內建金鑰旋轉行為。SSE-S3 使用的是 Amazon S3 自行管理的加密金鑰，S3 服務內部會定期輪替底層金鑰，但這個輪替行為由 AWS 內部排程控制，客戶無法設定或保證明確的每年輪替週期，不符合題目要求的可驗證年度自動輪替。
-- C：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 儲存桶(S3 bucket). 每年手動旋轉KMS金鑰。雖然同樣建立客戶受管 KMS 金鑰並設定 S3 使用它加密，但金鑰輪替是每年手動執行，需要人員自行記得並操作，這正是題目要求排除的營運負擔。
-- D：在將資料移至S3 儲存桶(S3 bucket)之前,用客戶關鍵材料加密資料. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。這是把客戶自有金鑰材質匯入不含金鑰材質的 KMS 金鑰（BYOK）的做法，而 AWS KMS 對於匯入金鑰材質的金鑰並不支援自動金鑰輪替功能，必須由客戶自行定期建立新金鑰並手動更換，因此啟用自動金鑰輪替這個設定在此情境下實際上不會生效。
+- A：將資料移至S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用SSE-S3 加密(encryption)金鑰的內建金鑰旋轉行為。SSE-S3 使用的是 Amazon S3 自行管理的加密金鑰，S3 服務內部會定期輪替底層金鑰，但這個輪替行為由 AWS 內部排程控制，客戶無法設定或保證明確的每年輪替週期，不符合題目要求的可驗證年度自動輪替。
+- C：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰。 將資料移至S3 bucket. 每年手動旋轉KMS金鑰。雖然同樣建立客戶受管 KMS 金鑰並設定 S3 使用它加密，但金鑰輪替是每年手動執行，需要人員自行記得並操作，這正是題目要求排除的營運負擔。
+- D：在將資料移至S3 bucket之前,用客戶關鍵材料加密資料. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。這是把客戶自有金鑰材質匯入不含金鑰材質的 KMS 金鑰（BYOK）的做法，而 AWS KMS 對於匯入金鑰材質的金鑰並不支援自動金鑰輪替功能，必須由客戶自行定期建立新金鑰並手動更換，因此啟用自動金鑰輪替這個設定在此情境下實際上不會生效。
 
 **分類：** 安全、身分與合規
 
@@ -5555,7 +5555,7 @@ D
 **選項**
 - A. 移動購買資料直接寫入Amazon RDS. 使用 RDS 存取控制來限制存取.
 - B. 計劃一個 AWS Lambda 函式,將資料定期從 Amazon RDS 複製到 Amazon S3。 建立 AWS Glue 爬蟲。 使用Amazon Athena查詢資料. 使用S3策略限制存取.
-- C. 使用 AWS 湖組建立 資料湖(data lake)。 建立一個 AWS Glue JDBC 連線到 Amazon RDS. 在湖中註冊S3 儲存桶(S3 bucket)。 使用Lake Formation存取控制限制存取.
+- C. 使用 AWS 湖組建立 資料湖(data lake)。 建立一個 AWS Glue JDBC 連線到 Amazon RDS. 在湖中註冊S3 bucket。 使用Lake Formation存取控制限制存取.
 - D. 建立 Amazon Redshift 叢集。 安排一個 AWS Lambda 函式,將 Amazon S3 和 Amazon RDS 的資料定期複製到 Amazon Redshift。 使用Amazon Redshift存取控制限制存取.
 
 **答案**
@@ -5569,8 +5569,8 @@ D
 - D：建立 Amazon Redshift 叢集。 安排一個 AWS Lambda 函式,將 Amazon S3 和 Amazon RDS 的資料定期複製到 Amazon Redshift。 使用Amazon Redshift存取控制限制存取。Amazon Redshift 是專為大規模結構化資料分析設計的欄式資料倉儲，透過排程的 Lambda 函式把 S3 的購買資料與 RDS 的客戶資料定期整合匯入單一叢集，讓各分析團隊在同一個查詢引擎取得完整資料視圖。Redshift 支援以 GRANT/REVOKE 搭配資料庫使用者、群組及檢視表做到資料表與欄位層級的精細授權，可依團隊分別授予不同存取範圍。將分析負載集中在獨立叢集也能避免多個團隊直接查詢正式環境的 RDS，降低對線上交易系統的效能衝擊。
 - 其餘選項比較：
 - A：移動購買資料直接寫入Amazon RDS. 使用 RDS 存取控制來限制存取。直接把購買資料寫入 RDS 只能仰賴 RDS 原生的資料庫或資料表層級權限，無法針對不同分析團隊做出更精細的欄位或資料集區隔；讓分析查詢直接打在儲存交易資料的 RDS 執行個體上，也會與線上交易負載互相搶資源。
-- B：計劃一個 AWS Lambda 函式,將資料定期從 Amazon RDS 複製到 Amazon S3。 建立 AWS Glue 爬蟲。 使用Amazon Athena查詢資料. 使用S3策略限制存取。此做法只把 RDS 資料複製到 S3，S3 儲存桶政策的授權粒度僅到儲存桶或前綴層級，無法對特定資料表或欄位做精細控管；隨著分析團隊增加，還須持續手動維護多組 Glue 爬蟲排程與 S3 政策，維運負擔會隨團隊數量成長。
-- C：使用 AWS 湖組建立 資料湖(data lake)。 建立一個 AWS Glue JDBC 連線到 Amazon RDS. 在湖中註冊S3 儲存桶(S3 bucket)。 使用Lake Formation存取控制限制存取。此方案透過 Glue JDBC 連線即時存取正式環境的 RDS 資料庫並登錄進資料湖目錄，分析團隊執行查詢時等於直接對生產用 RDS 執行個體發出請求，會增加交易資料庫負載，還需額外維護 VPC 網路與 JDBC 連線設定。
+- B：計劃一個 AWS Lambda 函式,將資料定期從 Amazon RDS 複製到 Amazon S3。 建立 AWS Glue 爬蟲。 使用Amazon Athena查詢資料. 使用S3策略限制存取。此做法只把 RDS 資料複製到 S3，S3 bucket政策的授權粒度僅到儲存桶或前綴層級，無法對特定資料表或欄位做精細控管；隨著分析團隊增加，還須持續手動維護多組 Glue 爬蟲排程與 S3 政策，維運負擔會隨團隊數量成長。
+- C：使用 AWS 湖組建立 資料湖(data lake)。 建立一個 AWS Glue JDBC 連線到 Amazon RDS. 在湖中註冊S3 bucket。 使用Lake Formation存取控制限制存取。此方案透過 Glue JDBC 連線即時存取正式環境的 RDS 資料庫並登錄進資料湖目錄，分析團隊執行查詢時等於直接對生產用 RDS 執行個體發出請求，會增加交易資料庫負載，還需額外維護 VPC 網路與 JDBC 連線設定。
 
 **分類：** 分析
 
@@ -5582,8 +5582,8 @@ D
 **選項**
 - A. 使用Amazon Lightsail建立虛擬伺服器. 在 Lightsail 例項中配置網路伺服器。 使用 SFTP 客戶端上傳網站內容。
 - B. 為 Amazon EC2 例項建立 AWS Auto Scaling 群組(Auto Scaling group)。 使用應用程式負載平衡器(Application Load Balancer)型機車. 使用 SFTP 客戶端上傳網站內容。
-- C. 建立私人Amazon S3 儲存桶. 使用 S3 儲存桶政策(bucket policy) 允許從 CloudFront 原始碼存取身份( OAI) 存取。 使用 AWS CLI 上傳網站內容。
-- D. 打造公共Amazon S3 儲存桶. 配置 SFTP 的 AWS 傳輸。 為網站託管配置 S3 儲存桶(S3 bucket)。 使用 SFTP 客戶端上傳網站內容。
+- C. 建立私人Amazon S3 bucket. 使用 S3 bucket政策(bucket policy) 允許從 CloudFront 原始碼存取身份( OAI) 存取。 使用 AWS CLI 上傳網站內容。
+- D. 打造公共Amazon S3 bucket. 配置 SFTP 的 AWS 傳輸。 為網站託管配置 S3 bucket。 使用 SFTP 客戶端上傳網站內容。
 
 **答案**
 C
@@ -5593,11 +5593,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立私人Amazon S3 儲存桶. 使用 S3 儲存桶政策(bucket policy) 允許從 CloudFront 原始碼存取身份( OAI) 存取。 使用 AWS CLI 上傳網站內容。把網站內容放進私人 S3 儲存桶，並用 OAI 讓 CloudFront 成為唯一能存取該儲存桶的來源，可確保內容只透過 CloudFront 邊緣節點分發、不可被繞過直接存取 S3。S3 本身具備跨多個設施的高耐用性與免管理伺服器的特性，加上依用量計費，是靜態網站託管最具成本效益與復原力的組合，用 CLI 上傳也省去維運 SFTP 伺服器的負擔。
+- C：建立私人Amazon S3 bucket. 使用 S3 bucket政策(bucket policy) 允許從 CloudFront 原始碼存取身份( OAI) 存取。 使用 AWS CLI 上傳網站內容。把網站內容放進私人 S3 bucket，並用 OAI 讓 CloudFront 成為唯一能存取該儲存桶的來源，可確保內容只透過 CloudFront 邊緣節點分發、不可被繞過直接存取 S3。S3 本身具備跨多個設施的高耐用性與免管理伺服器的特性，加上依用量計費，是靜態網站託管最具成本效益與復原力的組合，用 CLI 上傳也省去維運 SFTP 伺服器的負擔。
 - 其餘選項比較：
 - A：使用Amazon Lightsail建立虛擬伺服器. 在 Lightsail 例項中配置網路伺服器。 使用 SFTP 客戶端上傳網站內容。Lightsail 仍是需要自行管理作業系統與網頁伺服器的虛擬機，成本固定且無法自動因應流量變化而擴縮，復原力也不如具備跨可用區高耐用性的 S3。
 - B：為 Amazon EC2 例項建立 AWS Auto Scaling 群組(Auto Scaling group)。 使用應用程式負載平衡器(Application Load Balancer)型機車. 使用 SFTP 客戶端上傳網站內容。為了只是偶爾更新的靜態網站，建置 EC2 Auto Scaling 群組與應用程式負載平衡器等於長期為靜態內容付出運算與負載平衡費用，並不符合「最具成本效益」的要求，且仍需在每台執行個體上配置 SFTP 伺服器。
-- D：打造公共Amazon S3 儲存桶. 配置 SFTP 的 AWS 傳輸。 為網站託管配置 S3 儲存桶(S3 bucket)。 使用 SFTP 客戶端上傳網站內容。公開的 S3 儲存桶會讓內容可被繞過 CloudFront 直接公開存取，失去存取控管的意義；另外架設 AWS Transfer Family 的 SFTP 端點需要持續產生每小時費用，對一個內容不常更新的網站而言是不必要的額外成本與複雜度。
+- D：打造公共Amazon S3 bucket. 配置 SFTP 的 AWS 傳輸。 為網站託管配置 S3 bucket。 使用 SFTP 客戶端上傳網站內容。公開的 S3 bucket會讓內容可被繞過 CloudFront 直接公開存取，失去存取控管的意義；另外架設 AWS Transfer Family 的 SFTP 端點需要持續產生每小時費用，對一個內容不常更新的網站而言是不必要的額外成本與複雜度。
 
 **分類：** 儲存
 
@@ -5658,13 +5658,13 @@ D
 ## Question #208
 
 **題目**
-公司需要將資料從Amazon EC2例項移動到Amazon S3桶. 該公司必須確保沒有API的電話和任何資料透過公共網際網路線路。 只有EC2例項可以存取上傳資料到S3 儲存桶(S3 bucket). 哪種解決辦法能滿足這些要求?
+公司需要將資料從Amazon EC2例項移動到Amazon S3 bucket. 該公司必須確保沒有API的電話和任何資料透過公共網際網路線路。 只有EC2例項可以存取上傳資料到S3 bucket. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在EC2例項所在的子網為Amazon S3建立介面VPC 端點(VPC endpoint). 在 S3 儲存桶(S3 bucket) 上附加一個資源政策, 只允許 EC2 例項的 IAM 角色存取。
-- B. 在EC2例項所在的可用區(Availability Zone)中為Amazon S3建立一個閘道器VPC 端點(VPC endpoint). 將適當的安全小組帶至終點。 在 S3 儲存桶(S3 bucket) 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
-- C. 從 EC2 例項中執行 ns lookup 工具以獲取 S3 儲存桶(S3 bucket) 服務 API 端點的私人 IP 地址。 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 儲存桶(S3 bucket) 存取許可權. 在 S3 儲存桶(S3 bucket) 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
-- D. 使用提供的AWS,可公開獲取的ip-ranges.json檔案獲取S3 儲存桶(S3 bucket)服務API端點的私人IP地址. 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 儲存桶(S3 bucket) 存取許可權. 在 S3 儲存桶(S3 bucket) 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
+- A. 在EC2例項所在的子網為Amazon S3建立介面VPC 端點(VPC endpoint). 在 S3 bucket 上附加一個資源政策, 只允許 EC2 例項的 IAM 角色存取。
+- B. 在EC2例項所在的可用區(Availability Zone)中為Amazon S3建立一個閘道器VPC 端點(VPC endpoint). 將適當的安全小組帶至終點。 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
+- C. 從 EC2 例項中執行 ns lookup 工具以獲取 S3 bucket 服務 API 端點的私人 IP 地址。 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 bucket 存取許可權. 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
+- D. 使用提供的AWS,可公開獲取的ip-ranges.json檔案獲取S3 bucket服務API端點的私人IP地址. 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 bucket 存取許可權. 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
 
 **答案**
 B
@@ -5674,11 +5674,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在EC2例項所在的可用區(Availability Zone)中為Amazon S3建立一個閘道器VPC 端點(VPC endpoint). 將適當的安全小組帶至終點。 在 S3 儲存桶(S3 bucket) 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。Amazon S3 是少數原生支援閘道器（Gateway）型 VPC 端點的服務，透過在 VPC 路由表新增指向 S3 的路由，讓 EC2 的流量完全在 AWS 內部網路傳輸、不經過網際網路閘道器，且不需額外的端點費用。搭配 S3 儲存桶資源政策限定僅允許透過該端點、且來源為指定 EC2 IAM 角色的請求存取，就能達成「只有該 EC2 執行個體可上傳」且完全不經公有網路的要求。
+- B：在EC2例項所在的可用區(Availability Zone)中為Amazon S3建立一個閘道器VPC 端點(VPC endpoint). 將適當的安全小組帶至終點。 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。Amazon S3 是少數原生支援閘道器（Gateway）型 VPC 端點的服務，透過在 VPC 路由表新增指向 S3 的路由，讓 EC2 的流量完全在 AWS 內部網路傳輸、不經過網際網路閘道器，且不需額外的端點費用。搭配 S3 bucket資源政策限定僅允許透過該端點、且來源為指定 EC2 IAM 角色的請求存取，就能達成「只有該 EC2 執行個體可上傳」且完全不經公有網路的要求。
 - 其餘選項比較：
-- A：在EC2例項所在的子網為Amazon S3建立介面VPC 端點(VPC endpoint). 在 S3 儲存桶(S3 bucket) 上附加一個資源政策, 只允許 EC2 例項的 IAM 角色存取。介面型 VPC 端點是以彈性網路介面搭配 PrivateLink 實作，雖然也能避開公有網際網路，但 S3 使用介面端點需額外按小時與流量計費，成本高於原生免費支援的閘道器端點，題目也未要求跨服務通用的端點功能。
-- C：從 EC2 例項中執行 ns lookup 工具以獲取 S3 儲存桶(S3 bucket) 服務 API 端點的私人 IP 地址。 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 儲存桶(S3 bucket) 存取許可權. 在 S3 儲存桶(S3 bucket) 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。對 AWS 服務端點執行 nslookup 取得的 IP 位址並非固定不變，S3 服務背後是由 AWS 動態管理的一組浮動 IP，把這類手動查得的 IP 寫進路由表，一旦端點 IP 變動就會導致路由失效，不是可靠、受官方支援的私有連線方式。
-- D：使用提供的AWS,可公開獲取的ip-ranges.json檔案獲取S3 儲存桶(S3 bucket)服務API端點的私人IP地址. 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 儲存桶(S3 bucket) 存取許可權. 在 S3 儲存桶(S3 bucket) 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。ip-ranges.json 只列出 AWS 各服務使用的 IP「範圍」，並非能直接路由到特定 S3 端點的穩定私有位址，把這種大範圍位址寫入路由表無法可靠地把流量私有導向 S3，且需要持續追蹤檔案更新來維護路由表，不是穩定的做法。
+- A：在EC2例項所在的子網為Amazon S3建立介面VPC 端點(VPC endpoint). 在 S3 bucket 上附加一個資源政策, 只允許 EC2 例項的 IAM 角色存取。介面型 VPC 端點是以彈性網路介面搭配 PrivateLink 實作，雖然也能避開公有網際網路，但 S3 使用介面端點需額外按小時與流量計費，成本高於原生免費支援的閘道器端點，題目也未要求跨服務通用的端點功能。
+- C：從 EC2 例項中執行 ns lookup 工具以獲取 S3 bucket 服務 API 端點的私人 IP 地址。 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 bucket 存取許可權. 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。對 AWS 服務端點執行 nslookup 取得的 IP 位址並非固定不變，S3 服務背後是由 AWS 動態管理的一組浮動 IP，把這類手動查得的 IP 寫進路由表，一旦端點 IP 變動就會導致路由失效，不是可靠、受官方支援的私有連線方式。
+- D：使用提供的AWS,可公開獲取的ip-ranges.json檔案獲取S3 bucket服務API端點的私人IP地址. 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 bucket 存取許可權. 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。ip-ranges.json 只列出 AWS 各服務使用的 IP「範圍」，並非能直接路由到特定 S3 端點的穩定私有位址，把這種大範圍位址寫入路由表無法可靠地把流量私有導向 S3，且需要持續追蹤檔案更新來維護路由表，不是穩定的做法。
 
 **分類：** 網路連結和內容交付
 
@@ -5820,13 +5820,13 @@ A
 ## Question #214
 
 **題目**
-一家公司的報告系統每天向Amazon S3桶提供數百個. 公司必須將這些檔案轉換為Apache Parquet格式,並將檔案儲存在已轉換的資料桶中. 在LEAST的開發努力下,哪一種解決辦法能滿足這些要求?
+一家公司的報告系統每天向Amazon S3 bucket提供數百個. 公司必須將這些檔案轉換為Apache Parquet格式,並將檔案儲存在已轉換的資料桶中. 在LEAST的開發努力下,哪一種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立一個安裝 Apache Spark 的 Amazon EMR 叢集。 寫入 Spark 應用程式以轉換資料。 使用EMR檔案系統(EMRFS)將檔案寫入轉換後的資料桶.
 - B. 建立 AWS Glue 爬蟲以發現資料. 建立一個 AWS Glue 提取,轉換,並載入(ETL)任務來轉換資料. 在輸出步驟中指定已轉換的資料桶。
 - C. 使用 AWS 批次與 Bash 語法建立工作定義,將資料轉換並輸出到轉換後的資料桶中. 使用職務定義來提交工作. 指定陣列任務為任務型別。
-- D. 建立 AWS Lambda 函式,將資料轉換,輸出到轉換後的資料桶中. 配置 S3 儲存桶(S3 bucket) 的事件通知。 指定 Lambda 函式為事件通知的目的地。
+- D. 建立 AWS Lambda 函式,將資料轉換,輸出到轉換後的資料桶中. 配置 S3 bucket 的事件通知。 指定 Lambda 函式為事件通知的目的地。
 
 **答案**
 D
@@ -5836,7 +5836,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：建立 AWS Lambda 函式,將資料轉換,輸出到轉換後的資料桶中. 配置 S3 儲存桶(S3 bucket) 的事件通知。 指定 Lambda 函式為事件通知的目的地。AWS Lambda 可透過設定 S3 儲存桶的事件通知，在每次有新檔案上傳時自動觸發函式執行，函式內只需呼叫既有的資料處理程式庫將檔案轉換為 Apache Parquet 格式後寫入目的地儲存桶。整個流程完全無伺服器、無需佈建或管理任何運算叢集，對於「每天數百個檔案」這種中小規模、事件驅動的轉檔需求而言，是設定與程式開發工作量最少的做法。
+- D：建立 AWS Lambda 函式,將資料轉換,輸出到轉換後的資料桶中. 配置 S3 bucket 的事件通知。 指定 Lambda 函式為事件通知的目的地。AWS Lambda 可透過設定 S3 bucket的事件通知，在每次有新檔案上傳時自動觸發函式執行，函式內只需呼叫既有的資料處理程式庫將檔案轉換為 Apache Parquet 格式後寫入目的地儲存桶。整個流程完全無伺服器、無需佈建或管理任何運算叢集，對於「每天數百個檔案」這種中小規模、事件驅動的轉檔需求而言，是設定與程式開發工作量最少的做法。
 - 其餘選項比較：
 - A：建立一個安裝 Apache Spark 的 Amazon EMR 叢集。 寫入 Spark 應用程式以轉換資料。 使用EMR檔案系統(EMRFS)將檔案寫入轉換後的資料桶。建立安裝 Apache Spark 的 Amazon EMR 叢集需要先規劃節點規模、佈建與管理叢集生命週期，再另外撰寫 Spark 應用程式處理轉檔邏輯，光是叢集建置與維運的前置工作，就遠超過單純轉檔任務所需的開發成本。
 - B：建立 AWS Glue 爬蟲以發現資料. 建立一個 AWS Glue 提取,轉換,並載入(ETL)任務來轉換資料. 在輸出步驟中指定已轉換的資料桶。使用 AWS Glue 雖是受管 ETL 服務，但仍須先建立並執行爬蟲（Crawler）以建立 Data Catalog 中繼資料，再撰寫或產生 ETL 工作腳本並管理其執行排程，相較於直接以事件觸發的單一函式，這整套流程對單純的格式轉換需求而言涉及較多的設定步驟。
@@ -5874,13 +5874,13 @@ A
 ## Question #216
 
 **題目**
-一個公司有一個沒有伺服器的網站,在Amazon S3桶裡有數百萬個物體. 公司使用S3 儲存桶(S3 bucket)作為Amazon CloudFront分銷的原產地. 公司沒有在裝藥前將加密(encryption)設定在S3 儲存桶(S3 bucket)上. 一個解決方案架構師需要為今後S3 儲存桶(S3 bucket)中所有現有物件和所有物件啟用加密(encryption). 以哪些辦法能滿足這些要求?
+一個公司有一個沒有伺服器的網站,在Amazon S3 bucket裡有數百萬個物體. 公司使用S3 bucket作為Amazon CloudFront分銷的原產地. 公司沒有在裝藥前將加密(encryption)設定在S3 bucket上. 一個解決方案架構師需要為今後S3 bucket中所有現有物件和所有物件啟用加密(encryption). 以哪些辦法能滿足這些要求?
 
 **選項**
-- A. 建立新的S3 儲存桶(S3 bucket). 為新的S3 儲存桶(S3 bucket)開啟預設的加密(encryption)設定. 將所有已有物件下載到本地臨時儲存。 上傳物件到新的 S3 儲存桶(S3 bucket).
-- B. 開啟S3 儲存桶(S3 bucket)的預設加密(encryption)設定. 使用 S3 編目特性建立 .csv 檔案,列出未加密物件。 執行 S3 Batch Operations 任務, 使用複製命令加密這些物件。
-- C. 使用 AWS Key Management Service(AWS KMS) 建立一個新的 加密(encryption) 金鑰. 更改S3 儲存桶(S3 bucket)上的設定,使用伺服器側式加密(encryption),由AWS KMS管理加密(encryption)金鑰(SSE-KMS). 開啟S3 儲存桶(S3 bucket)的版本.
-- D. 在AWS管理控制檯中導航到Amazon S3. 瀏覽 S3 儲存桶(S3 bucket) 的物件。 按加密(encryption)欄位排序. 選擇每個未加密物件。 使用修改按鈕對 S3 儲存桶(S3 bucket) 中的每個未加密物件應用預設的 加密(encryption) 設定。
+- A. 建立新的S3 bucket. 為新的S3 bucket開啟預設的加密(encryption)設定. 將所有已有物件下載到本地臨時儲存。 上傳物件到新的 S3 bucket.
+- B. 開啟S3 bucket的預設加密(encryption)設定. 使用 S3 編目特性建立 .csv 檔案,列出未加密物件。 執行 S3 Batch Operations 任務, 使用複製命令加密這些物件。
+- C. 使用 AWS Key Management Service(AWS KMS) 建立一個新的 加密(encryption) 金鑰. 更改S3 bucket上的設定,使用伺服器側式加密(encryption),由AWS KMS管理加密(encryption)金鑰(SSE-KMS). 開啟S3 bucket的版本.
+- D. 在AWS管理控制檯中導航到Amazon S3. 瀏覽 S3 bucket 的物件。 按加密(encryption)欄位排序. 選擇每個未加密物件。 使用修改按鈕對 S3 bucket 中的每個未加密物件應用預設的 加密(encryption) 設定。
 
 **答案**
 B
@@ -5890,11 +5890,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：開啟S3 儲存桶(S3 bucket)的預設加密(encryption)設定. 使用 S3 編目特性建立 .csv 檔案,列出未加密物件。 執行 S3 Batch Operations 任務, 使用複製命令加密這些物件。開啟 S3 預設加密設定只會套用在之後新上傳的物件，無法回溯處理 bucket 內既有的數百萬個物件；透過 S3 Inventory 功能產生的清單報表可以有系統地列出所有未加密物件，再用 S3 Batch Operations 執行大規模的複製操作（以加密後的設定覆寫物件），就能以自動化、可對應百萬等級物件規模的方式一次完成既有物件的加密，同時新設定的預設加密也確保未來上傳的物件自動受到保護。
+- B：開啟S3 bucket的預設加密(encryption)設定. 使用 S3 編目特性建立 .csv 檔案,列出未加密物件。 執行 S3 Batch Operations 任務, 使用複製命令加密這些物件。開啟 S3 預設加密設定只會套用在之後新上傳的物件，無法回溯處理 bucket 內既有的數百萬個物件；透過 S3 Inventory 功能產生的清單報表可以有系統地列出所有未加密物件，再用 S3 Batch Operations 執行大規模的複製操作（以加密後的設定覆寫物件），就能以自動化、可對應百萬等級物件規模的方式一次完成既有物件的加密，同時新設定的預設加密也確保未來上傳的物件自動受到保護。
 - 其餘選項比較：
-- A：建立新的S3 儲存桶(S3 bucket). 為新的S3 儲存桶(S3 bucket)開啟預設的加密(encryption)設定. 將所有已有物件下載到本地臨時儲存。 上傳物件到新的 S3 儲存桶(S3 bucket)。建立新 bucket 並把所有物件下載到本地再重新上傳，對於數百萬個物件而言需要極大量的本地儲存空間與網路頻寬，過程漫長且容易出錯，也會讓 CloudFront 原始網址（origin）指向改變，這種手動搬遷方式在規模與可靠性上都不適合。
-- C：使用 AWS Key Management Service(AWS KMS) 建立一個新的 加密(encryption) 金鑰. 更改S3 儲存桶(S3 bucket)上的設定,使用伺服器側式加密(encryption),由AWS KMS管理加密(encryption)金鑰(SSE-KMS). 開啟S3 儲存桶(S3 bucket)的版本。建立 KMS 金鑰並將 bucket 設定改為 SSE-KMS，這項變更同樣只影響未來上傳的新物件，既有的數百萬個物件並不會被追溯加密；而開啟版本控制（Versioning）跟加密既有物件也是兩件不相關的事，無法達成題目要求。
-- D：在AWS管理控制檯中導航到Amazon S3. 瀏覽 S3 儲存桶(S3 bucket) 的物件。 按加密(encryption)欄位排序. 選擇每個未加密物件。 使用修改按鈕對 S3 儲存桶(S3 bucket) 中的每個未加密物件應用預設的 加密(encryption) 設定。在管理主控台中逐一瀏覽、排序並手動選取每個未加密物件套用加密設定，這種操作方式在物件數量高達數百萬筆的規模下完全不具可行性，屬於無法規模化的人工作業。
+- A：建立新的S3 bucket. 為新的S3 bucket開啟預設的加密(encryption)設定. 將所有已有物件下載到本地臨時儲存。 上傳物件到新的 S3 bucket。建立新 bucket 並把所有物件下載到本地再重新上傳，對於數百萬個物件而言需要極大量的本地儲存空間與網路頻寬，過程漫長且容易出錯，也會讓 CloudFront 原始網址（origin）指向改變，這種手動搬遷方式在規模與可靠性上都不適合。
+- C：使用 AWS Key Management Service(AWS KMS) 建立一個新的 加密(encryption) 金鑰. 更改S3 bucket上的設定,使用伺服器側式加密(encryption),由AWS KMS管理加密(encryption)金鑰(SSE-KMS). 開啟S3 bucket的版本。建立 KMS 金鑰並將 bucket 設定改為 SSE-KMS，這項變更同樣只影響未來上傳的新物件，既有的數百萬個物件並不會被追溯加密；而開啟版本控制（Versioning）跟加密既有物件也是兩件不相關的事，無法達成題目要求。
+- D：在AWS管理控制檯中導航到Amazon S3. 瀏覽 S3 bucket 的物件。 按加密(encryption)欄位排序. 選擇每個未加密物件。 使用修改按鈕對 S3 bucket 中的每個未加密物件應用預設的 加密(encryption) 設定。在管理主控台中逐一瀏覽、排序並手動選取每個未加密物件套用加密設定，這種操作方式在物件數量高達數百萬筆的規模下完全不具可行性，屬於無法規模化的人工作業。
 
 **分類：** 儲存
 
@@ -6129,9 +6129,9 @@ C,E
 一家媒體公司收集和分析房地內的使用者活動資料。 公司希望將這種能力遷移到AWS. 使用者活動資料儲存將繼續增長,規模將達到Petabytes. 公司需要構建一個高可用資料攝取解決方案,以方便對現有資料和SQL新資料進行按需分析. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 將活動資料傳送到一個Amazon Kinesis資料流. 配置流將資料傳送給一個Amazon S3桶.
+- A. 將活動資料傳送到一個Amazon Kinesis資料流. 配置流將資料傳送給一個Amazon S3 bucket.
 - B. 將活動資料傳送到一個Amazon Kinesis Data Firehose送電流. 配置流將資料傳送到 Amazon Redshift 叢集.
-- C. 將活動資料放置在 Amazon S3 桶中. 配置 Amazon S3 在資料到達S3 儲存桶(S3 bucket)時執行一個AWS Lambda功能.
+- C. 將活動資料放置在 Amazon S3 bucket中. 配置 Amazon S3 在資料到達S3 bucket時執行一個AWS Lambda功能.
 - D. 在分佈於多個可用區(Availability Zones)的 Amazon EC2 例項上建立一個攝入服務. 配置將資料轉發給 Amazon RDS 多AZ 資料庫(database).
 
 **答案**
@@ -6142,10 +6142,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將活動資料傳送到一個Amazon Kinesis資料流. 配置流將資料傳送給一個Amazon S3桶。將活動資料送入 Amazon Kinesis 資料流可承接持續成長至 PB 等級的即時資料寫入，再交付到 Amazon S3 落地；S3 具備幾乎無限的擴充容量與高持久性，搭配無伺服器查詢服務即可對現有與新進資料執行隨選 SQL 分析，整條管線皆為全託管元件，不需佈建或維運運算叢集，最符合「最少維運開銷」的要求。
+- A：將活動資料傳送到一個Amazon Kinesis資料流. 配置流將資料傳送給一個Amazon S3 bucket。將活動資料送入 Amazon Kinesis 資料流可承接持續成長至 PB 等級的即時資料寫入，再交付到 Amazon S3 落地；S3 具備幾乎無限的擴充容量與高持久性，搭配無伺服器查詢服務即可對現有與新進資料執行隨選 SQL 分析，整條管線皆為全託管元件，不需佈建或維運運算叢集，最符合「最少維運開銷」的要求。
 - 其餘選項比較：
 - B：將活動資料傳送到一個Amazon Kinesis Data Firehose送電流. 配置流將資料傳送到 Amazon Redshift 叢集。將資料交付到 Amazon Redshift 叢集，代表公司必須持續佈建、擴縮容並維護一組常駐運算節點，雖然 Redshift 原生支援 SQL 查詢，但常駐叢集帶來的管理負擔明顯高於無伺服器架構，不符合「最少維運開銷」的訴求。
-- C：將活動資料放置在 Amazon S3 桶中. 配置 Amazon S3 在資料到達S3 儲存桶(S3 bucket)時執行一個AWS Lambda功能。以 S3 事件觸發 Lambda 函式適合對每個新到達的物件執行事件驅動的處理邏輯，但本身並未提供對「現有資料與新資料」進行 SQL 隨選查詢分析的能力，仍需自行額外建置查詢與資料倉儲層。
+- C：將活動資料放置在 Amazon S3 bucket中. 配置 Amazon S3 在資料到達S3 bucket時執行一個AWS Lambda功能。以 S3 事件觸發 Lambda 函式適合對每個新到達的物件執行事件驅動的處理邏輯，但本身並未提供對「現有資料與新資料」進行 SQL 隨選查詢分析的能力，仍需自行額外建置查詢與資料倉儲層。
 - D：在分佈於多個可用區(Availability Zones)的 Amazon EC2 例項上建立一個攝入服務. 配置將資料轉發給 Amazon RDS 多AZ 資料庫(database)。在多個可用區的 EC2 執行個體上自建資料攝入服務，需要自行負責執行個體的佈建、修補、擴縮容與監控，維運負擔遠高於全託管的串流服務；且 RDS 屬於關聯式資料庫，其儲存與吞吐量擴充能力並不適合持續成長到 PB 等級的活動資料。
 
 **分類：** 分析
@@ -6153,7 +6153,7 @@ A
 ## Question #226
 
 **題目**
-一家公司利用一個執行在Amazon EC2例項上的RESTful網路服務應用程式,從數千個遠端裝置收集資料。 EC2例項接收原始資料,轉換原始資料,並將所有資料儲存在Amazon S3桶中. 遠端裝置的數量將很快增加到數百萬。 公司需要一個高度可擴充套件的解決方案,將營運開銷(operational overhead)最小化. 設計師應採取哪些步驟來滿足這些要求?(選二.
+一家公司利用一個執行在Amazon EC2例項上的RESTful網路服務應用程式,從數千個遠端裝置收集資料。 EC2例項接收原始資料,轉換原始資料,並將所有資料儲存在Amazon S3 bucket中. 遠端裝置的數量將很快增加到數百萬。 公司需要一個高度可擴充套件的解決方案,將營運開銷(operational overhead)最小化. 設計師應採取哪些步驟來滿足這些要求?(選二.
 
 **選項**
 - A. 使用AWS Glue處理Amazon S3中的原始資料.
@@ -6183,13 +6183,13 @@ A,E
 ## Question #227
 
 **題目**
-一家公司需要將AWS CloudTrail的日誌保留3年. 公司正透過使用母帳戶的AWS Organizations,在一組AWS帳戶上強制CloudTrail. CloudTrail目標S3 儲存桶(S3 bucket)配置為S3版本啟用. 一個S3 生命週期政策(Lifecycle policy)已經到位,可以在3年後刪除當前物件. 在使用S3 儲存桶(S3 bucket)的第四年後,S3 儲存桶(S3 bucket)的度量衡顯示物體數量持續上升. 然而,交付S3 儲存桶(S3 bucket)的新CloudTrail日誌的數量仍然一致。 哪種解決方案會以成本效益高的方式刪除3年以上的物件?
+一家公司需要將AWS CloudTrail的日誌保留3年. 公司正透過使用母帳戶的AWS Organizations,在一組AWS帳戶上強制CloudTrail. CloudTrail目標S3 bucket配置為S3版本啟用. 一個S3 生命週期政策(Lifecycle policy)已經到位,可以在3年後刪除當前物件. 在使用S3 bucket的第四年後,S3 bucket的度量衡顯示物體數量持續上升. 然而,交付S3 bucket的新CloudTrail日誌的數量仍然一致。 哪種解決方案會以成本效益高的方式刪除3年以上的物件?
 
 **選項**
 - A. 配置組織集中的 CloudTrail 線索,使其在3年後過期。
 - B. 配置 S3 生命週期政策(Lifecycle policy) 來刪除以前的版本以及當前版本.
 - C. 建立 AWS Lambda 函式,以列舉和刪除 Amazon S3 中年齡超過 3 年的物件。
-- D. 配置父帳戶為交付到 S3 儲存桶(S3 bucket) 的所有物件的擁有者。
+- D. 配置父帳戶為交付到 S3 bucket 的所有物件的擁有者。
 
 **答案**
 B
@@ -6199,11 +6199,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：配置 S3 生命週期政策(Lifecycle policy) 來刪除以前的版本以及當前版本。S3 儲存桶已啟用版本控制，代表既有生命週期規則刪除「目前版本」時，實際上只是把物件標記為刪除（產生 delete marker），原本的資料仍以「非目前版本」形式留在儲存桶中並持續佔用空間，這正是第四年後物件數量仍持續上升的根本原因；因此必須另外設定生命週期政策中的非目前版本到期規則，讓超過 3 年的舊版本一併被刪除，這是完全原生、不需額外運算資源的低成本做法。
+- B：配置 S3 生命週期政策(Lifecycle policy) 來刪除以前的版本以及當前版本。S3 bucket已啟用版本控制，代表既有生命週期規則刪除「目前版本」時，實際上只是把物件標記為刪除（產生 delete marker），原本的資料仍以「非目前版本」形式留在儲存桶中並持續佔用空間，這正是第四年後物件數量仍持續上升的根本原因；因此必須另外設定生命週期政策中的非目前版本到期規則，讓超過 3 年的舊版本一併被刪除，這是完全原生、不需額外運算資源的低成本做法。
 - 其餘選項比較：
-- A：配置組織集中的 CloudTrail 線索,使其在3年後過期。讓 CloudTrail 追蹤本身在 3 年後「過期」只會停止繼續產生新的記錄事件，並不會刪除 S3 儲存桶中既有的物件或先前版本，無法解決物件數量持續累積的問題。
+- A：配置組織集中的 CloudTrail 線索,使其在3年後過期。讓 CloudTrail 追蹤本身在 3 年後「過期」只會停止繼續產生新的記錄事件，並不會刪除 S3 bucket中既有的物件或先前版本，無法解決物件數量持續累積的問題。
 - C：建立 AWS Lambda 函式,以列舉和刪除 Amazon S3 中年齡超過 3 年的物件。自行開發 Lambda 函式列舉並刪除超過 3 年的物件雖然技術上可行，但需要額外撰寫、測試、排程觸發與長期維護程式碼，相較於直接啟用 S3 原生的生命週期規則，多出不必要的開發與維運成本。
-- D：配置父帳戶為交付到 S3 儲存桶(S3 bucket) 的所有物件的擁有者。變更父帳戶為 S3 物件的擁有者，只是調整物件擁有權歸屬的設定，與是否清除超過 3 年的舊版本物件毫無關聯，無法解決儲存空間持續增長的根本問題。
+- D：配置父帳戶為交付到 S3 bucket 的所有物件的擁有者。變更父帳戶為 S3 物件的擁有者，只是調整物件擁有權歸屬的設定，與是否清除超過 3 年的舊版本物件毫無關聯，無法解決儲存空間持續增長的根本問題。
 
 **分類：** 儲存
 
@@ -6350,7 +6350,7 @@ C
 **選項**
 - A. 確保根使用者使用強密碼.
 - B. 為根使用者啟用多要素認證。
-- C. 將根使用者存取金鑰儲存在加密的 Amazon S3 桶中.
+- C. 將根使用者存取金鑰儲存在加密的 Amazon S3 bucket中.
 - D. 將根使用者新增到包含行政許可權的組中.
 - E. 用內含的策略文件對根使用者應用所需的許可權.
 
@@ -6366,7 +6366,7 @@ A,B
 - A：確保根使用者使用強密碼。強密碼可降低 root 使用者帳號遭暴力破解或密碼猜測攻擊得逞的風險，是保護帳戶中權限最高身分的基本防護措施。
 - B：為根使用者啟用多要素認證。為 root 使用者啟用多重要素驗證，即使密碼外洩，攻擊者仍需持有額外的 MFA 裝置才能完成登入，是 AWS 官方針對 root 帳戶防護明確建議的核心控制措施。
 - 其餘選項比較：
-- C：將根使用者存取金鑰儲存在加密的 Amazon S3 桶中。root 使用者本就應盡量避免建立存取金鑰；即使加密儲存在 S3 中，金鑰仍是可被取出使用的憑證，等同保留了不必要的攻擊面，與移除 root 存取金鑰的最佳實務相牴觸。
+- C：將根使用者存取金鑰儲存在加密的 Amazon S3 bucket中。root 使用者本就應盡量避免建立存取金鑰；即使加密儲存在 S3 中，金鑰仍是可被取出使用的憑證，等同保留了不必要的攻擊面，與移除 root 存取金鑰的最佳實務相牴觸。
 - D：將根使用者新增到包含行政許可權的組中。root 使用者無法被加入 IAM 群組，且 root 帳戶預設本就擁有完整管理權限，將其加入具管理權限的群組既不是有效操作，也無助於保護 root 存取安全。
 - E：用內含的策略文件對根使用者應用所需的許可權。root 使用者的權限並非透過 IAM 政策（含內嵌政策）管理，IAM 政策是附加給 IAM 使用者、群組或角色的機制，並不適用於 root 帳戶身分，此做法在 AWS 架構中不成立。
 
@@ -6618,7 +6618,7 @@ C
 ## Question #243
 
 **題目**
-一個醫學研究實驗室產生與新研究相關的資料. 實驗室希望向全國各地的診所提供最低延遲(latency)的資料,以備它們基於檔案的應用。 資料檔案儲存在 Amazon S3 桶中,每個診所都有隻讀許可權. 解決方案設計師建議如何滿足這些要求?
+一個醫學研究實驗室產生與新研究相關的資料. 實驗室希望向全國各地的診所提供最低延遲(latency)的資料,以備它們基於檔案的應用。 資料檔案儲存在 Amazon S3 bucket中,每個診所都有隻讀許可權. 解決方案設計師建議如何滿足這些要求?
 
 **選項**
 - A. 在每個診所的房地安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器
@@ -6636,7 +6636,7 @@ C
 正確答案是 **C**。
 - C：在每個診所的房舍安裝一個AWS Storage Gateway卷閘道器作為虛擬機器。AWS Storage Gateway 磁碟區閘道器（Volume Gateway）以 iSCSI 區塊儲存裝置的形式，把常用資料區塊快取在診所端的本地虛擬機器上，原始資料則保存在 Amazon S3；診所端存取常用資料時可命中本地快取，藉此降低跨網路存取 S3 的延遲。
 - 其餘選項比較：
-- A：在每個診所的房地安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器。AWS Storage Gateway 檔案閘道器（File Gateway）會把 Amazon S3 儲存桶以 NFS/SMB 檔案共享的形式掛載到本地端，並在本地快取常用檔案，但仍需在每個診所部署與維護對應的虛擬機器閘道器，屬於額外的地端維運項目。
+- A：在每個診所的房地安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器。AWS Storage Gateway 檔案閘道器（File Gateway）會把 Amazon S3 bucket以 NFS/SMB 檔案共享的形式掛載到本地端，並在本地快取常用檔案，但仍需在每個診所部署與維護對應的虛擬機器閘道器，屬於額外的地端維運項目。
 - B：使用 AWS DataSync 將檔案移動到每個診所的配置應用程式。AWS DataSync 是用來將資料在儲存系統之間搬移或同步的批次傳輸服務，題目描述的是診所要持續以低延遲讀取 S3 上既有的檔案，而不是把整批檔案一次性搬移並部署到各診所的應用程式環境中，使用情境並不相符。
 - D：將一個 Amazon 彈性檔案系統(Amazon EFS) 附加到每個診所的預設伺服器上。Amazon EFS 是設計給部署在 AWS 內、可從多個 EC2 執行個體掛載的區域型檔案系統，並不能直接掛載到位於全國各地診所的地端伺服器上做為低延遲的本地存取方案，也沒有跨地端站點的內建快取機制。
 
@@ -6815,7 +6815,7 @@ D
 **選項**
 - A. 使用Amazon CloudWatch作為目標. 設定雲表日誌組, 過期90天
 - B. 使用Amazon Kinesis作為目標. 配置 Kinesis 流, 將日誌保留90天。
-- C. 使用AWS CloudTrail作為目標. 配置 CloudTrail 以儲存到 Amazon S3 桶,並啟用 S3 Intelligent-Tiering。
+- C. 使用AWS CloudTrail作為目標. 配置 CloudTrail 以儲存到 Amazon S3 bucket,並啟用 S3 Intelligent-Tiering。
 - D. 使用Amazon S3作為目標. 啟用 S3 生命週期政策(Lifecycle policy) 在90天后將日誌轉換為 S3 標準-不頻繁存取(S3 Standard-IA)。
 
 **答案**
@@ -6829,7 +6829,7 @@ A
 - A：使用Amazon CloudWatch作為目標. 設定雲表日誌組, 過期90天。VPC 流量日誌若以 CloudWatch Logs 為目的地，可直接搭配 CloudWatch Logs Insights 進行即時查詢、建立指標篩選器與警示，適合「前 90 天需要頻繁存取」這類需要立即排查與監控的情境；將日誌群組保留期設定為 90 天，可讓保留策略與存取頻率的時間窗一致，避免安全團隊持續為不再頻繁查詢的舊資料付出與現行儲存體相同層級的管理成本。
 - 其餘選項比較：
 - B：使用Amazon Kinesis作為目標. 配置 Kinesis 流, 將日誌保留90天。Kinesis 是即時串流管線，主要用途是把資料即時轉送給消費端應用程式做進一步處理，屬於暫存性質的串流緩衝區，並非設計來做長期日誌保存或供人工查詢分析，單純設定「保留 90 天」並不能取代具備查詢介面的日誌儲存服務。
-- C：使用AWS CloudTrail作為目標. 配置 CloudTrail 以儲存到 Amazon S3 桶,並啟用 S3 Intelligent-Tiering。AWS CloudTrail 記錄的是 AWS 帳戶內的 API 呼叫與管理事件，而不是 VPC 內部的網路封包流量，CloudTrail 本身無法作為 VPC 流量日誌的投遞目標，服務類型從根本上就不符合題目要求。
+- C：使用AWS CloudTrail作為目標. 配置 CloudTrail 以儲存到 Amazon S3 bucket,並啟用 S3 Intelligent-Tiering。AWS CloudTrail 記錄的是 AWS 帳戶內的 API 呼叫與管理事件，而不是 VPC 內部的網路封包流量，CloudTrail 本身無法作為 VPC 流量日誌的投遞目標，服務類型從根本上就不符合題目要求。
 - D：使用Amazon S3作為目標. 啟用 S3 生命週期政策(Lifecycle policy) 在90天后將日誌轉換為 S3 標準-不頻繁存取(S3 Standard-IA)。將日誌直接送往 S3 並用生命週期規則轉換儲存層級，對長期低頻存取的成本優化雖然有利，但初期查詢需額外透過 Amazon Athena 或匯入其他分析工具才能檢索，不像 CloudWatch Logs 原生就能即時查詢與監控，較不利於題目中「頻繁存取」階段的即時排查需求。
 
 **分類：** 管理與控管
@@ -6972,7 +6972,7 @@ D
 ## Question #256
 
 **題目**
-一名解決方案設計師正在使用Amazon S3桶進行檔案審查應用。 解決辦法必須防止意外刪除檔案,並確保提供所有版本的檔案。 使用者必須能夠下載、修改和上傳文件。 應採取何種綜合行動來滿足這些要求?(選二.
+一名解決方案設計師正在使用Amazon S3 bucket進行檔案審查應用。 解決辦法必須防止意外刪除檔案,並確保提供所有版本的檔案。 使用者必須能夠下載、修改和上傳文件。 應採取何種綜合行動來滿足這些要求?(選二.
 
 **選項**
 - A. 啟用只讀桶 ACL。
@@ -6990,11 +6990,11 @@ B,D
 
 **詳解**
 正確答案是 **B, D**。
-- B：在桶上啟用版本。在 S3 儲存桶啟用版本控制後，每次檔案被覆寫或修改都會保留為新版本而非直接取代舊內容，使用者仍可正常下載、修改、上傳檔案，同時所有歷史版本都完整保留，符合提供所有版本檔案的要求。
+- B：在桶上啟用版本。在 S3 bucket啟用版本控制後，每次檔案被覆寫或修改都會保留為新版本而非直接取代舊內容，使用者仍可正常下載、修改、上傳檔案，同時所有歷史版本都完整保留，符合提供所有版本檔案的要求。
 - D：啟用 MFA 在桶上刪除。啟用 MFA Delete 後，任何永久刪除物件版本或關閉版本控制的操作都必須額外提供多重要素驗證裝置的一次性密碼，能有效防止帳號被盜用或誤操作造成的意外刪除。
 - 其餘選項比較：
 - A：啟用只讀桶 ACL。唯讀（read-only）的儲存桶 ACL 會讓一般使用者無法上傳或修改檔案，直接牴觸題目要求使用者必須能下載、修改與上傳檔案的條件。
-- C：將IAM 政策(IAM policy)附在桶上。IAM 政策是附加在 IAM 使用者、群組或角色上，並非附加在 S3 儲存桶本身的機制（附加在儲存桶上的應是儲存桶政策），而且 IAM 政策本身也無法提供版本保留或防止刪除的能力。
+- C：將IAM 政策(IAM policy)附在桶上。IAM 政策是附加在 IAM 使用者、群組或角色上，並非附加在 S3 bucket本身的機制（附加在儲存桶上的應是儲存桶政策），而且 IAM 政策本身也無法提供版本保留或防止刪除的能力。
 - E：使用 AWS KMS 加密水桶。以 AWS KMS 加密儲存桶只能保護資料的機密性，防止未授權方讀取內容，完全無法防止已授權使用者誤刪檔案，也不會保留檔案的歷史版本。
 
 **分類：** 儲存
@@ -7029,13 +7029,13 @@ A
 ## Question #258
 
 **題目**
-一家公司有一個應用程式,每小時將數百個.csv檔案放入Amazon S3桶. 檔案大小為1GB. 每次上傳一個檔案,公司需要將檔案轉換為Apache Parquet格式,並將輸出檔案放入S3 儲存桶(S3 bucket). 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司有一個應用程式,每小時將數百個.csv檔案放入Amazon S3 bucket. 檔案大小為1GB. 每次上傳一個檔案,公司需要將檔案轉換為Apache Parquet格式,並將輸出檔案放入S3 bucket. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 建立 AWS Lambda 功能,下載 .csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 儲存桶(S3 bucket) 中. 為每個 S3 PUT 活動啟動 Lambda 函式。
-- B. 建立一個 Apache Spark 任務來讀取.csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 儲存桶(S3 bucket) 中. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 Spark 任務。
-- C. 為 S3 儲存桶(S3 bucket) 建立 AWS Glue 表格和 AWS Glue 爬蟲,應用程式將 .csv 檔案放在其中. 計劃一個 AWS Lambda 函式,定期使用 Amazon Athena 查詢 AWS Glue 表格,將查詢結果轉換為 Parquet 格式,並將輸出檔案放置為 S3 儲存桶(S3 bucket).
-- D. 建立一個 AWS Glue 提取,轉換和載入(ETL)任務,將.csv檔案轉換為Parquet格式,並將輸出檔案放置為S3 儲存桶(S3 bucket). 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 ETL 任務。
+- A. 建立 AWS Lambda 功能,下載 .csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 bucket 中. 為每個 S3 PUT 活動啟動 Lambda 函式。
+- B. 建立一個 Apache Spark 任務來讀取.csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 bucket 中. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 Spark 任務。
+- C. 為 S3 bucket 建立 AWS Glue 表格和 AWS Glue 爬蟲,應用程式將 .csv 檔案放在其中. 計劃一個 AWS Lambda 函式,定期使用 Amazon Athena 查詢 AWS Glue 表格,將查詢結果轉換為 Parquet 格式,並將輸出檔案放置為 S3 bucket.
+- D. 建立一個 AWS Glue 提取,轉換和載入(ETL)任務,將.csv檔案轉換為Parquet格式,並將輸出檔案放置為S3 bucket. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 ETL 任務。
 
 **答案**
 A
@@ -7045,11 +7045,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立 AWS Lambda 功能,下載 .csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 儲存桶(S3 bucket) 中. 為每個 S3 PUT 活動啟動 Lambda 函式。以 AWS Lambda 函式對每個 S3 PUT 事件即時觸發，函式內直接完成下載、轉換為 Parquet 格式、再寫回 S3 的完整流程，整個方案只需要維護一個 Lambda 函式與其觸發設定，不必另外建立或維運 Glue 爬蟲、Glue 資料目錄、ETL 任務或運算叢集，是這幾個選項中所需管理元件最少、營運開銷最低的做法。
+- A：建立 AWS Lambda 功能,下載 .csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 bucket 中. 為每個 S3 PUT 活動啟動 Lambda 函式。以 AWS Lambda 函式對每個 S3 PUT 事件即時觸發，函式內直接完成下載、轉換為 Parquet 格式、再寫回 S3 的完整流程，整個方案只需要維護一個 Lambda 函式與其觸發設定，不必另外建立或維運 Glue 爬蟲、Glue 資料目錄、ETL 任務或運算叢集，是這幾個選項中所需管理元件最少、營運開銷最低的做法。
 - 其餘選項比較：
-- B：建立一個 Apache Spark 任務來讀取.csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 儲存桶(S3 bucket) 中. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 Spark 任務。自建 Apache Spark 任務需要準備並維運可執行 Spark 的運算環境（例如叢集），再另外用 Lambda 去呼叫這個 Spark 任務，等於同時維護兩套執行環境與程式碼，營運複雜度明顯高於單一 Lambda 函式直接處理轉檔。
-- C：為 S3 儲存桶(S3 bucket) 建立 AWS Glue 表格和 AWS Glue 爬蟲,應用程式將 .csv 檔案放在其中. 計劃一個 AWS Lambda 函式,定期使用 Amazon Athena 查詢 AWS Glue 表格,將查詢結果轉換為 Parquet 格式,並將輸出檔案放置為 S3 儲存桶(S3 bucket)。此方案還需額外建立並維護 Glue 資料目錄與 Glue 爬蟲的排程，再定期以 Lambda 透過 Athena 查詢資料表、轉換格式，牽涉的元件數量與排程協調工作遠多於直接以事件觸發的單一函式，而且是批次查詢而非逐檔即時轉換，架構明顯更複雜。
-- D：建立一個 AWS Glue 提取,轉換和載入(ETL)任務,將.csv檔案轉換為Parquet格式,並將輸出檔案放置為S3 儲存桶(S3 bucket). 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 ETL 任務。此方案需要另外撰寫、部署並維護一支 Glue ETL 任務定義（含轉換腳本），再用 Lambda 去啟動該 ETL 任務，等於同時管理 Lambda 觸發器與 Glue ETL 任務兩套元件，比起單一 Lambda 函式直接完成轉檔，多了一層額外的服務相依與維運項目。
+- B：建立一個 Apache Spark 任務來讀取.csv 檔案,將檔案轉換為 Parquet 格式,並將輸出檔案放置在 S3 bucket 中. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 Spark 任務。自建 Apache Spark 任務需要準備並維運可執行 Spark 的運算環境（例如叢集），再另外用 Lambda 去呼叫這個 Spark 任務，等於同時維護兩套執行環境與程式碼，營運複雜度明顯高於單一 Lambda 函式直接處理轉檔。
+- C：為 S3 bucket 建立 AWS Glue 表格和 AWS Glue 爬蟲,應用程式將 .csv 檔案放在其中. 計劃一個 AWS Lambda 函式,定期使用 Amazon Athena 查詢 AWS Glue 表格,將查詢結果轉換為 Parquet 格式,並將輸出檔案放置為 S3 bucket。此方案還需額外建立並維護 Glue 資料目錄與 Glue 爬蟲的排程，再定期以 Lambda 透過 Athena 查詢資料表、轉換格式，牽涉的元件數量與排程協調工作遠多於直接以事件觸發的單一函式，而且是批次查詢而非逐檔即時轉換，架構明顯更複雜。
+- D：建立一個 AWS Glue 提取,轉換和載入(ETL)任務,將.csv檔案轉換為Parquet格式,並將輸出檔案放置為S3 bucket. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 ETL 任務。此方案需要另外撰寫、部署並維護一支 Glue ETL 任務定義（含轉換腳本），再用 Lambda 去啟動該 ETL 任務，等於同時管理 Lambda 觸發器與 Glue ETL 任務兩套元件，比起單一 Lambda 函式直接完成轉檔，多了一層額外的服務相依與維運項目。
 
 **分類：** 無伺服器
 
@@ -7359,13 +7359,13 @@ C
 ## Question #270
 
 **題目**
-一家公司正在使用一個集中的AWS帳戶,將日誌資料儲存在各種Amazon S3桶中. 一個解決方案架構師需要在資料上傳到S3桶之前確保資料在休息時加密. 資料也必須在過境時加密。 哪種解決辦法符合這些要求?
+一家公司正在使用一個集中的AWS帳戶,將日誌資料儲存在各種Amazon S3 bucket中. 一個解決方案架構師需要在資料上傳到S3 bucket之前確保資料在休息時加密. 資料也必須在過境時加密。 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 使用客戶端的加密(encryption)加密正在上傳到S3桶的資料.
-- B. 使用伺服器側加密(encryption)加密正在上傳到S3桶的資料.
+- A. 使用客戶端的加密(encryption)加密正在上傳到S3 bucket的資料.
+- B. 使用伺服器側加密(encryption)加密正在上傳到S3 bucket的資料.
 - C. 建立需要使用伺服器側加密(encryption)的桶策略,使用S3管理的加密(encryption)金鑰(SSE-S3)進行S3上傳.
-- D. 透過使用預設的AWS Key Management Service(AWS KMS)金鑰,啟用安全選項加密S3桶.
+- D. 透過使用預設的AWS Key Management Service(AWS KMS)金鑰,啟用安全選項加密S3 bucket.
 
 **答案**
 A
@@ -7375,11 +7375,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用客戶端的加密(encryption)加密正在上傳到S3桶的資料。使用客戶端加密代表資料在應用程式端、離開用戶端環境上傳到 S3 之前就已經完成加密，滿足題目「資料在上傳到 S3 桶之前必須已在休息狀態下加密」的明確時間點要求；資料傳輸過程本身走 HTTPS，因此同時滿足傳輸中加密的要求。
+- A：使用客戶端的加密(encryption)加密正在上傳到S3 bucket的資料。使用客戶端加密代表資料在應用程式端、離開用戶端環境上傳到 S3 之前就已經完成加密，滿足題目「資料在上傳到 S3 bucket之前必須已在休息狀態下加密」的明確時間點要求；資料傳輸過程本身走 HTTPS，因此同時滿足傳輸中加密的要求。
 - 其餘選項比較：
-- B：使用伺服器側加密(encryption)加密正在上傳到S3桶的資料。伺服器端加密是資料抵達 S3 服務端之後，由 AWS 代為執行加密程序，加密發生的時間點在上傳「之後」而非之前，不符合題目要求資料須在上傳前就已加密的限制。
+- B：使用伺服器側加密(encryption)加密正在上傳到S3 bucket的資料。伺服器端加密是資料抵達 S3 服務端之後，由 AWS 代為執行加密程序，加密發生的時間點在上傳「之後」而非之前，不符合題目要求資料須在上傳前就已加密的限制。
 - C：建立需要使用伺服器側加密(encryption)的桶策略,使用S3管理的加密(encryption)金鑰(SSE-S3)進行S3上傳。建立要求使用 SSE-S3 的儲存貯體政策，同樣只是強制 S3 收到物件後套用伺服器端加密，加密仍是在資料抵達 S3 之後才發生，並未讓資料在上傳前就先行加密。
-- D：透過使用預設的AWS Key Management Service(AWS KMS)金鑰,啟用安全選項加密S3桶。透過預設的 AWS KMS 金鑰啟用桶子加密選項，本質上也是伺服器端加密（SSE-KMS），加密時機同樣在物件上傳完成、儲存於 S3 之後才套用，無法滿足「上傳前先加密」的條件。
+- D：透過使用預設的AWS Key Management Service(AWS KMS)金鑰,啟用安全選項加密S3 bucket。透過預設的 AWS KMS 金鑰啟用桶子加密選項，本質上也是伺服器端加密（SSE-KMS），加密時機同樣在物件上傳完成、儲存於 S3 之後才套用，無法滿足「上傳前先加密」的條件。
 
 **分類：** 安全、身分與合規
 
@@ -7416,7 +7416,7 @@ C
 一家公司為一個動態網站提供服務,該網站來自應用程式負載平衡器(Application Load Balancer)(ALB)背後的Amazon EC2例項。 網站需要支援多種語言為世界各地的客戶服務. 網站的架構在西-西-1區域(Region)執行,為位於世界其他地區的使用者展示高要求的延遲(latency)。 網站需要快速高效地滿足請求,無論使用者所在位置如何. 然而,該公司並不想在多個地區重新建立現有的建築. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 以Amazon S3桶服務的網站取代現有架構。 配置一個以 S3 儲存桶(S3 bucket) 為源的 Amazon CloudFront 分佈。 根據 Accept-Language 請求頭設定快取行為設定為快取。
+- A. 以Amazon S3 bucket服務的網站取代現有架構。 配置一個以 S3 bucket 為源的 Amazon CloudFront 分佈。 根據 Accept-Language 請求頭設定快取行為設定為快取。
 - B. 配置 Amazon CloudFront 分佈,以 ALB 作為來源。 根據 Accept-Language 請求頭設定快取行為設定為快取。
 - C. 建立一個與ALB整合的Amazon API Gateway API. 配置使用 HTTP 整合型別的 API。 設定一個 API 閘道器階段,以啟用基於 Accept-Language 請求頭的 API 快取。
 - D. 在每個新增的區域(Region)中啟動EC2例項,並配置NGINX作為該區域(Region)的快取伺服器. 將所有EC2例項和ALB放在帶有地理定位路由政策的Amazon Route 53記錄集後面.
@@ -7431,7 +7431,7 @@ B
 正確答案是 **B**。
 - B：配置 Amazon CloudFront 分佈,以 ALB 作為來源。 根據 Accept-Language 請求頭設定快取行為設定為快取。Amazon CloudFront 是全球性的內容分發網路（CDN），以 ALB 作為源站後可在全球各地的邊緣節點快取內容，讓世界各地使用者都能就近取得回應，直接降低延遲；同時可依 Accept-Language 請求標頭設定不同的快取行為，讓 CloudFront 針對不同語言版本分別快取物件，滿足多語系網站的需求，且完全不需要在其他地區重建任何基礎架構。
 - 其餘選項比較：
-- A：以Amazon S3桶服務的網站取代現有架構。 配置一個以 S3 儲存桶(S3 bucket) 為源的 Amazon CloudFront 分佈。 根據 Accept-Language 請求頭設定快取行為設定為快取。題目的網站是仰賴 ALB 與 EC2 的動態網站，直接改用 S3 儲存貯體託管的靜態網站會失去伺服器端運算與動態內容產生的能力，等於整個架構重寫，而非題目要求的最小調整。
+- A：以Amazon S3 bucket服務的網站取代現有架構。 配置一個以 S3 bucket 為源的 Amazon CloudFront 分佈。 根據 Accept-Language 請求頭設定快取行為設定為快取。題目的網站是仰賴 ALB 與 EC2 的動態網站，直接改用 S3 儲存貯體託管的靜態網站會失去伺服器端運算與動態內容產生的能力，等於整個架構重寫，而非題目要求的最小調整。
 - C：建立一個與ALB整合的Amazon API Gateway API. 配置使用 HTTP 整合型別的 API。 設定一個 API 閘道器階段,以啟用基於 Accept-Language 請求頭的 API 快取。Amazon API Gateway 的快取機制是為 API 呼叫流量而設計，用來快取 API 的回應結果，並非用來加速一般網頁前端內容的全球傳遞，其部署範圍與 CDN 的邊緣節點覆蓋率也無法相比。
 - D：在每個新增的區域(Region)中啟動EC2例項,並配置NGINX作為該區域(Region)的快取伺服器. 將所有EC2例項和ALB放在帶有地理定位路由政策的Amazon Route 53記錄集後面。在每個新增區域各自啟動 EC2 執行個體並自行維運 NGINX 快取伺服器，正是題目明確排除的「不想在多個地區重新建立現有架構」做法，還需額外處理 Route 53 地理定位路由設定，維運複雜度大幅提高。
 
@@ -7638,10 +7638,10 @@ B
 一家公司正在使用Amazon CloudFront及其網站. 該公司已啟用CloudFront發售記錄, 公司需要對原木進行高階分析,建立視覺化. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 使用Amazon Athena中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以AWS Glue視覺效果.
-- B. 使用Amazon Athena中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以Amazon QuickSight視覺化結果.
-- C. 使用Amazon DynamoDB中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以AWS Glue視覺效果.
-- D. 使用Amazon DynamoDB中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以Amazon QuickSight視覺化結果.
+- A. 使用Amazon Athena中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以AWS Glue視覺效果.
+- B. 使用Amazon Athena中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以Amazon QuickSight視覺化結果.
+- C. 使用Amazon DynamoDB中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以AWS Glue視覺效果.
+- D. 使用Amazon DynamoDB中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以Amazon QuickSight視覺化結果.
 
 **答案**
 A
@@ -7651,11 +7651,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用Amazon Athena中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以AWS Glue視覺效果。Amazon Athena 可以直接對已經存放在 S3 中的 CloudFront 標準存取日誌執行標準 SQL 查詢，不需要額外建立或管理伺服器即可完成複雜的篩選與彙總分析；搭配 AWS Glue 建立資料目錄（Data Catalog）為日誌檔案定義結構化的資料表綱要，讓後續的高階分析作業能建立在一致且已解析好的資料結構之上。
+- A：使用Amazon Athena中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以AWS Glue視覺效果。Amazon Athena 可以直接對已經存放在 S3 中的 CloudFront 標準存取日誌執行標準 SQL 查詢，不需要額外建立或管理伺服器即可完成複雜的篩選與彙總分析；搭配 AWS Glue 建立資料目錄（Data Catalog）為日誌檔案定義結構化的資料表綱要，讓後續的高階分析作業能建立在一致且已解析好的資料結構之上。
 - 其餘選項比較：
-- B：使用Amazon Athena中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以Amazon QuickSight視覺化結果。同樣使用 Athena 查詢 CloudFront 日誌，但改以 QuickSight 呈現結果；QuickSight 是獨立的 BI 服務，需要另外設定資料集連線與訂閱，並未包含透過 Glue 建立資料目錄這一步驟來事先整理與定義日誌欄位結構。
-- C：使用Amazon DynamoDB中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以AWS Glue視覺效果。DynamoDB 是鍵值/文件型 NoSQL 資料庫，並不支援直接以標準 SQL 語法查詢存放在 S3 中的日誌物件，若要用 DynamoDB 分析這些日誌，必須先把資料匯入 DynamoDB 資料表，不符合直接對既有 S3 日誌進行查詢的情境。
-- D：使用Amazon DynamoDB中的標準SQL查詢來分析S3 儲存桶(S3 bucket)中的CloudFront日誌. 以Amazon QuickSight視覺化結果。同樣採用 DynamoDB 作為查詢引擎，一樣無法直接讀取 S3 中的 CloudFront 日誌物件，需要額外的資料搬遷與轉換流程才能匯入，增加了不必要的資料管線與延遲。
+- B：使用Amazon Athena中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以Amazon QuickSight視覺化結果。同樣使用 Athena 查詢 CloudFront 日誌，但改以 QuickSight 呈現結果；QuickSight 是獨立的 BI 服務，需要另外設定資料集連線與訂閱，並未包含透過 Glue 建立資料目錄這一步驟來事先整理與定義日誌欄位結構。
+- C：使用Amazon DynamoDB中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以AWS Glue視覺效果。DynamoDB 是鍵值/文件型 NoSQL 資料庫，並不支援直接以標準 SQL 語法查詢存放在 S3 中的日誌物件，若要用 DynamoDB 分析這些日誌，必須先把資料匯入 DynamoDB 資料表，不符合直接對既有 S3 日誌進行查詢的情境。
+- D：使用Amazon DynamoDB中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以Amazon QuickSight視覺化結果。同樣採用 DynamoDB 作為查詢引擎，一樣無法直接讀取 S3 中的 CloudFront 日誌物件，需要額外的資料搬遷與轉換流程才能匯入，增加了不必要的資料管線與延遲。
 
 **分類：** 分析
 
@@ -7719,7 +7719,7 @@ C
 一家研究公司透過模擬應用和視覺化應用進行實驗。 模擬應用程式執行在Linux上,並將中間資料輸出給每5分鐘共享一次NFS. 視覺化應用程式是Windows桌面應用程式,顯示模擬輸出,需要SMB檔案系統. 公司維護兩個同步檔案系統. 這項戰略造成資料重複和資源使用效率低下。 公司需要將應用程式遷移到AWS,而不對兩個應用程式進行程式碼修改. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 將兩個應用都遷移到AWS Lambda. 建立一個 Amazon S3 桶,以便在應用程式之間交換資料.
+- A. 將兩個應用都遷移到AWS Lambda. 建立一個 Amazon S3 bucket,以便在應用程式之間交換資料.
 - B. 將這兩種應用都遷移到Amazon ECS公司(Amazon ECS)。 配置 Amazon FSx 檔案閘道器進行儲存.
 - C. 將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon 簡單佇列服務(Amazon SQS)在應用程式之間交換資料.
 - D. 將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon FSx 用於 NetApp ONTAP 儲存。
@@ -7734,7 +7734,7 @@ D
 正確答案是 **D**。
 - D：將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon FSx 用於 NetApp ONTAP 儲存。Amazon FSx for NetApp ONTAP 是同時原生支援 NFS 與 SMB 雙協定的完全代管檔案系統，讓 Linux 上的模擬應用程式以 NFS 掛載寫入中繼資料，同時讓 Windows 上的視覺化應用程式以 SMB 協定讀取同一份底層資料，不必再維護兩套各自同步的檔案系統，也完全不需要修改任一應用程式的程式碼即可達成資料共享。
 - 其餘選項比較：
-- A：將兩個應用都遷移到AWS Lambda. 建立一個 Amazon S3 桶,以便在應用程式之間交換資料。AWS Lambda 有 15 分鐘的執行時間限制且屬於無狀態、事件驅動的運算服務，並不提供可長期掛載的持久檔案系統，無法直接執行現有依賴 NFS/SMB 檔案存取的模擬與視覺化應用程式，遷移到 Lambda 等同於要重寫應用程式邏輯。
+- A：將兩個應用都遷移到AWS Lambda. 建立一個 Amazon S3 bucket,以便在應用程式之間交換資料。AWS Lambda 有 15 分鐘的執行時間限制且屬於無狀態、事件驅動的運算服務，並不提供可長期掛載的持久檔案系統，無法直接執行現有依賴 NFS/SMB 檔案存取的模擬與視覺化應用程式，遷移到 Lambda 等同於要重寫應用程式邏輯。
 - B：將這兩種應用都遷移到Amazon ECS公司(Amazon ECS)。 配置 Amazon FSx 檔案閘道器進行儲存。Amazon FSx File Gateway 的用途是讓地端伺服器透過 NFS 協定存取雲端上的 Amazon FSx for Windows File Server 儲存資源，主要解決的是地端與雲端間的儲存延伸問題，並不是讓雲端上的 Linux 與 Windows 應用程式原生共享同一份資料的雙協定方案。
 - C：將模擬應用移到 Linux Amazon EC2 例項中. 將視覺化應用程式遷移到 Windows EC2 例項。 配置 Amazon 簡單佇列服務(Amazon SQS)在應用程式之間交換資料。改用 Amazon SQS 交換資料需要應用程式改寫程式碼以呼叫佇列的傳送與接收 API，取代原本透過 NFS/SMB 檔案系統掛載存取檔案的方式，這違反了公司明確提出『不對兩個應用程式進行程式碼修改』的限制。
 
@@ -7855,7 +7855,7 @@ B
 
 **選項**
 - A. 建立一個可存取網路伺服器的Amazon S3標準桶.
-- B. 配置一個 Amazon CloudFront 分散式,以 Amazon S3 桶作為來源.
+- B. 配置一個 Amazon CloudFront 分散式,以 Amazon S3 bucket作為來源.
 - C. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 在所有網路伺服器上掛載 EFS 檔案系統。
 - D. 配置通用 SSD(gp3) Amazon Elastic Block Store(Amazon EBS) 磁碟區. 將 EBS 捲上載到所有網路伺服器。
 
@@ -7869,7 +7869,7 @@ A
 正確答案是 **A**。
 - A：建立一個可存取網路伺服器的Amazon S3標準桶。S3 是物件儲存服務，存取物件需要透過 REST API 或 SDK 呼叫；既有應用程式若原本以一般檔案系統路徑讀取檔案，改用 S3 勢必要修改程式邏輯，違反題目「不得對應用程式做任何修改」的限制。
 - 其餘選項比較：
-- B：配置一個 Amazon CloudFront 分散式,以 Amazon S3 桶作為來源。CloudFront 搭配 S3 來源是用來加速內容對外部使用者的分發，解決的是內容傳遞延遲問題，並不會讓多台 Linux 網路伺服器之間共享一份可掛載的檔案儲存，無法滿足伺服器端共享檔案的需求。
+- B：配置一個 Amazon CloudFront 分散式,以 Amazon S3 bucket作為來源。CloudFront 搭配 S3 來源是用來加速內容對外部使用者的分發，解決的是內容傳遞延遲問題，並不會讓多台 Linux 網路伺服器之間共享一份可掛載的檔案儲存，無法滿足伺服器端共享檔案的需求。
 - C：建立Amazon Elastic File System (Amazon EFS)檔案系統. 在所有網路伺服器上掛載 EFS 檔案系統。Amazon EFS 是採用 NFS 協定的受控檔案系統，可同時掛載到多台 Linux 執行個體上，應用程式只需透過一般的檔案系統路徑存取檔案，完全不需要修改成呼叫任何 API，同時滿足「不得修改應用程式」與「多台伺服器共享同一份檔案」兩項限制。
 - D：配置通用 SSD(gp3) Amazon Elastic Block Store(Amazon EBS) 磁碟區. 將 EBS 捲上載到所有網路伺服器。EBS 磁碟區在一般用途下同一時間只能掛載給單一執行個體使用，無法作為多台網路伺服器共用的集中式共享檔案儲存。
 
@@ -7878,13 +7878,13 @@ A
 ## Question #289
 
 **題目**
-一個公司有一個AWS Lambda功能,需要讀取位於同一個AWS帳戶的Amazon S3桶. 哪種解決辦法能以安全的方式滿足這些要求?
+一個公司有一個AWS Lambda功能,需要讀取位於同一個AWS帳戶的Amazon S3 bucket. 哪種解決辦法能以安全的方式滿足這些要求?
 
 **選項**
-- A. 應用S3 儲存桶政策(bucket policy),允許讀取S3 儲存桶(S3 bucket)。
-- B. 將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色中,允許讀取 S3 儲存桶(S3 bucket)。
-- C. 在 Lambda 函式的程式碼中嵌入一個存取金鑰和一個秘密金鑰,以授予閱讀存取S3 儲存桶(S3 bucket)所需的IAM許可權.
-- D. 將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色上, 允許讀取帳戶中的所有 S3 桶。
+- A. 應用S3 bucket政策(bucket policy),允許讀取S3 bucket。
+- B. 將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色中,允許讀取 S3 bucket。
+- C. 在 Lambda 函式的程式碼中嵌入一個存取金鑰和一個秘密金鑰,以授予閱讀存取S3 bucket所需的IAM許可權.
+- D. 將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色上, 允許讀取帳戶中的所有 S3 bucket。
 
 **答案**
 D
@@ -7894,11 +7894,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色上, 允許讀取帳戶中的所有 S3 桶。將 IAM 政策範圍開放到帳戶中所有 S3 儲存桶，雖然功能上可以讀到目標桶，但明顯超出實際需求、違反最小權限原則；題目明確要求「安全的方式」，這種過度授權正是應該避免的做法。
+- D：將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色上, 允許讀取帳戶中的所有 S3 bucket。將 IAM 政策範圍開放到帳戶中所有 S3 bucket，雖然功能上可以讀到目標桶，但明顯超出實際需求、違反最小權限原則；題目明確要求「安全的方式」，這種過度授權正是應該避免的做法。
 - 其餘選項比較：
-- A：應用S3 儲存桶政策(bucket policy),允許讀取S3 儲存桶(S3 bucket)。僅在 S3 儲存桶政策上開放讀取權限，並未說明 Lambda 執行角色本身是否具備對應的 IAM 權限；若執行角色未同時被授予存取許可，單靠資源端的桶政策不足以完成同帳戶下 Lambda 對 S3 的存取控管，也不是標準做法。
-- B：將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色中,允許讀取 S3 儲存桶(S3 bucket)。為 Lambda 函式建立專屬 IAM 角色，並附加只允許讀取該特定 S3 儲存桶的最小權限政策，讓函式執行時透過角色自動取得暫時憑證，權限範圍精準對應到「讀取這一個桶」的實際需求，符合最小權限原則與題目要求的安全做法。
-- C：在 Lambda 函式的程式碼中嵌入一個存取金鑰和一個秘密金鑰,以授予閱讀存取S3 儲存桶(S3 bucket)所需的IAM許可權。將存取金鑰與秘密金鑰硬編碼在 Lambda 程式碼中，等同於把長期有效的憑證明文寫進程式碼庫，一旦程式碼外流就會造成金鑰外洩風險，也放棄了 Lambda 執行角色原生提供的臨時憑證機制，明顯不安全。
+- A：應用S3 bucket政策(bucket policy),允許讀取S3 bucket。僅在 S3 bucket政策上開放讀取權限，並未說明 Lambda 執行角色本身是否具備對應的 IAM 權限；若執行角色未同時被授予存取許可，單靠資源端的桶政策不足以完成同帳戶下 Lambda 對 S3 的存取控管，也不是標準做法。
+- B：將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色中,允許讀取 S3 bucket。為 Lambda 函式建立專屬 IAM 角色，並附加只允許讀取該特定 S3 bucket的最小權限政策，讓函式執行時透過角色自動取得暫時憑證，權限範圍精準對應到「讀取這一個桶」的實際需求，符合最小權限原則與題目要求的安全做法。
+- C：在 Lambda 函式的程式碼中嵌入一個存取金鑰和一個秘密金鑰,以授予閱讀存取S3 bucket所需的IAM許可權。將存取金鑰與秘密金鑰硬編碼在 Lambda 程式碼中，等同於把長期有效的憑證明文寫進程式碼庫，一旦程式碼外流就會造成金鑰外洩風險，也放棄了 Lambda 執行角色原生提供的臨時憑證機制，明顯不安全。
 
 **分類：** 安全、身分與合規
 
@@ -8019,13 +8019,13 @@ D
 ## Question #294
 
 **題目**
-在 Amazon EC2 例項中託管的應用程式需要存取 Amazon S3 桶。 交通不能穿過網際網路。 解決方案設計師應如何配置存取許可權以滿足這些要求?
+在 Amazon EC2 例項中託管的應用程式需要存取 Amazon S3 bucket。 交通不能穿過網際網路。 解決方案設計師應如何配置存取許可權以滿足這些要求?
 
 **選項**
 - A. 使用 Amazon Route 53 建立私有主機區。
 - B. 在VPC中為Amazon S3設定閘道器VPC 端點(VPC endpoint).
-- C. 配置 EC2 例項以使用 NAT 閘道器存取 S3 儲存桶(S3 bucket)。
-- D. 在VPC和S3 儲存桶(S3 bucket)之間建立AWS站點對站點VPN連線.
+- C. 配置 EC2 例項以使用 NAT 閘道器存取 S3 bucket。
+- D. 在VPC和S3 bucket之間建立AWS站點對站點VPN連線.
 
 **答案**
 B
@@ -8038,8 +8038,8 @@ B
 - B：在VPC中為Amazon S3設定閘道器VPC 端點(VPC endpoint)。在 VPC 中為 Amazon S3 建立閘道 VPC 端點後，AWS 會在路由表加入指向 S3 服務的私有路由，讓 VPC 內的流量透過 AWS 內部網路直接到達 S3，完全不需經過網際網路閘道或 NAT，滿足『流量不能穿越網際網路』的要求，且不產生額外的資料傳輸費用。
 - 其餘選項比較：
 - A：使用 Amazon Route 53 建立私有主機區。Amazon Route 53 私有託管區域只負責在 VPC 內解析網域名稱，並不會建立任何通往 AWS 服務的網路路徑，無法解決 EC2 存取 S3 的流量路由問題。
-- C：配置 EC2 例項以使用 NAT 閘道器存取 S3 儲存桶(S3 bucket)。NAT 閘道器是讓私有子網路資源經由網際網路閘道對外連線，即使能藉此連到 S3 的公有端點，流量實際上仍會經過對外網際網路路徑，違反『流量不能穿越網際網路』的限制。
-- D：在VPC和S3 儲存桶(S3 bucket)之間建立AWS站點對站點VPN連線。AWS Site-to-Site VPN 是透過網際網路上的加密通道把地端網路連接到 VPC，設計目的是站台對 VPC 的連線，並不能建立 VPC 與 S3 這類 AWS 公有服務之間的連線路徑。
+- C：配置 EC2 例項以使用 NAT 閘道器存取 S3 bucket。NAT 閘道器是讓私有子網路資源經由網際網路閘道對外連線，即使能藉此連到 S3 的公有端點，流量實際上仍會經過對外網際網路路徑，違反『流量不能穿越網際網路』的限制。
+- D：在VPC和S3 bucket之間建立AWS站點對站點VPN連線。AWS Site-to-Site VPN 是透過網際網路上的加密通道把地端網路連接到 VPC，設計目的是站台對 VPC 的連線，並不能建立 VPC 與 S3 這類 AWS 公有服務之間的連線路徑。
 
 **分類：** 網路連結和內容交付
 
@@ -8050,8 +8050,8 @@ B
 
 **選項**
 - A. 將資料儲存在 Amazon DynamoDB 表格中。 建立代理應用程式層,以擷取和處理每個應用程式要求的資料.
-- B. 在Amazon S3桶中儲存資料. 透過使用S3 Object Lambda處理和轉換資料,然後將資料返回請求的應用程式.
-- C. 處理資料,並將轉換後的資料儲存在三個獨立的Amazon S3桶中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式指向各自的S3 儲存桶(S3 bucket)。
+- B. 在Amazon S3 bucket中儲存資料. 透過使用S3 Object Lambda處理和轉換資料,然後將資料返回請求的應用程式.
+- C. 處理資料,並將轉換後的資料儲存在三個獨立的Amazon S3 bucket中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式指向各自的S3 bucket。
 - D. 處理資料,並將轉換後的資料儲存在三個獨立的Amazon DynamoDB表格中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式對準各自的DynamoDB表格.
 
 **答案**
@@ -8062,11 +8062,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在Amazon S3桶中儲存資料. 透過使用S3 Object Lambda處理和轉換資料,然後將資料返回請求的應用程式。S3 Object Lambda 可在 S3 GET 請求路徑上掛接 Lambda 函式，透過 Object Lambda Access Point 於資料被讀取的當下即時遮蔽或轉換 PII 欄位再回傳給呼叫端；只需維護單一份原始資料，並為需要 PII 與不需要 PII 的應用程式分別設定不同的存取點，即可用最少的維運成本達成資料分流需求。
+- B：在Amazon S3 bucket中儲存資料. 透過使用S3 Object Lambda處理和轉換資料,然後將資料返回請求的應用程式。S3 Object Lambda 可在 S3 GET 請求路徑上掛接 Lambda 函式，透過 Object Lambda Access Point 於資料被讀取的當下即時遮蔽或轉換 PII 欄位再回傳給呼叫端；只需維護單一份原始資料，並為需要 PII 與不需要 PII 的應用程式分別設定不同的存取點，即可用最少的維運成本達成資料分流需求。
 - 其餘選項比較：
 - A：將資料儲存在 Amazon DynamoDB 表格中。 建立代理應用程式層,以擷取和處理每個應用程式要求的資料。把資料放進 DynamoDB 並自行開發代理應用層來擷取與過濾每個應用程式所需的欄位，等於要自行撰寫並長期維運一套客製化的 PII 遮蔽邏輯，這正是題目要求『最少維運開銷』要避免的做法；DynamoDB 以主鍵存取與項目大小計費，也不適合存放數 TB 規模的原始客戶資料。
-- C：處理資料,並將轉換後的資料儲存在三個獨立的Amazon S3桶中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式指向各自的S3 儲存桶(S3 bucket)。預先處理資料並將轉換後結果分別存成三個獨立的 S3 儲存桶，代表必須建置並維護一套 ETL 流程，讓三份資料副本隨來源資料更新而保持同步，這種持續複製與重新處理的維運負擔遠高於直接在讀取時轉換單一份原始資料。
-- D：處理資料,並將轉換後的資料儲存在三個獨立的Amazon DynamoDB表格中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式對準各自的DynamoDB表格。作法與選項 C 類似，但改存進三個獨立的 DynamoDB 資料表，除了同樣要維護三份資料副本外，還需額外處理將資料匯入 DynamoDB 項目結構的轉換工作，維運複雜度比存成三個 S3 儲存桶更高。
+- C：處理資料,並將轉換後的資料儲存在三個獨立的Amazon S3 bucket中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式指向各自的S3 bucket。預先處理資料並將轉換後結果分別存成三個獨立的 S3 bucket，代表必須建置並維護一套 ETL 流程，讓三份資料副本隨來源資料更新而保持同步，這種持續複製與重新處理的維運負擔遠高於直接在讀取時轉換單一份原始資料。
+- D：處理資料,並將轉換後的資料儲存在三個獨立的Amazon DynamoDB表格中,以便每個應用程式都有自己的自定義資料集. 將每個應用程式對準各自的DynamoDB表格。作法與選項 C 類似，但改存進三個獨立的 DynamoDB 資料表，除了同樣要維護三份資料副本外，還需額外處理將資料匯入 DynamoDB 項目結構的轉換工作，維運複雜度比存成三個 S3 bucket更高。
 
 **分類：** 儲存
 
@@ -8158,8 +8158,8 @@ D
 
 **選項**
 - A. 為NetApp ONTAP檔案系統建立 Amazon FSx. 符合每卷的分級政策。 將原始資料匯入檔案系統。 在EC2例項上掛載絲狀系統。
-- B. 建立 Amazon S3 桶儲存原始資料。 為Lustre檔案系統建立一個使用持久SSD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。
-- C. 建立 Amazon S3 桶儲存原始資料。 為Lustre檔案系統建立一個使用持續HDD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。
+- B. 建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持久SSD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。
+- C. 建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持續HDD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。
 - D. 為NetApp ONTAP檔案系統建立 Amazon FSx. 將每卷的分層策略設定為無線。 將原始資料匯入檔案系統。 在 EC2 例項上掛載檔案系統。
 
 **答案**
@@ -8173,8 +8173,8 @@ D
 - D：為NetApp ONTAP檔案系統建立 Amazon FSx. 將每卷的分層策略設定為無線。 將原始資料匯入檔案系統。 在 EC2 例項上掛載檔案系統。此方案使用 Amazon FSx for NetApp ONTAP，並將各磁碟區的分層原則設為不進行分層，讓資料維持在高效能主層而不會被移轉到低速的容量儲存層拖慢存取速度；原始資料匯入檔案系統後，由多台 EC2 執行個體掛載使用。
 - 其餘選項比較：
 - A：為NetApp ONTAP檔案系統建立 Amazon FSx. 符合每卷的分級政策。 將原始資料匯入檔案系統。 在EC2例項上掛載絲狀系統。此方案使用 FSx for NetApp ONTAP，並設定『每卷分級政策』，代表較不常存取的資料可能被自動分層到低成本、低效能的容量儲存層；資料一旦被分層，存取延遲與可用吞吐量都會下降，與題目要求的次毫秒延遲及至少 6 GBps 吞吐量產生衝突。
-- B：建立 Amazon S3 桶儲存原始資料。 為Lustre檔案系統建立一個使用持久SSD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。此方案採用 FSx for Lustre 搭配持久型 SSD 儲存，是 AWS 針對高效能運算（HPC）情境設計的平行檔案系統，吞吐量會隨佈建容量等比放大，約 8TB 的容量已足以超過 6 GBps 的吞吐量門檻並具備次毫秒等級延遲，屬於此類巨量、高併發存取情境的典型選擇，但依此題判定並非被選定的答案。
-- C：建立 Amazon S3 桶儲存原始資料。 為Lustre檔案系統建立一個使用持續HDD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。此方案將 FSx for Lustre 建立在持久型 HDD 儲存上，HDD 部署類型成本較低，但單位容量可提供的吞吐量與存取延遲都明顯遜於 SSD 部署類型，難以同時穩定達到次毫秒延遲與至少 6 GBps 吞吐量的雙重要求。
+- B：建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持久SSD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。此方案採用 FSx for Lustre 搭配持久型 SSD 儲存，是 AWS 針對高效能運算（HPC）情境設計的平行檔案系統，吞吐量會隨佈建容量等比放大，約 8TB 的容量已足以超過 6 GBps 的吞吐量門檻並具備次毫秒等級延遲，屬於此類巨量、高併發存取情境的典型選擇，但依此題判定並非被選定的答案。
+- C：建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持續HDD儲存的Amazon FSx. 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 例項上掛載檔案系統。此方案將 FSx for Lustre 建立在持久型 HDD 儲存上，HDD 部署類型成本較低，但單位容量可提供的吞吐量與存取延遲都明顯遜於 SSD 部署類型，難以同時穩定達到次毫秒延遲與至少 6 GBps 吞吐量的雙重要求。
 
 **分類：** 儲存
 
@@ -8235,11 +8235,11 @@ C
 ## Question #302
 
 **題目**
-一家公司希望建立移動應用程式,允許使用者在移動裝置上流傳慢動作影片片段. 目前,該應用程式將影片片段捕獲,並以原始格式將影片片段上傳到Amazon S3桶中. 應用程式直接從S3 儲存桶(S3 bucket)上檢索這些影片片段. 然而,這些影片的原始格式很大。 使用者在移動裝置上遇到緩衝和回放的問題. 公司希望實施解決方案,以最大限度地提高該應用的效能和可擴展性(scalability),同時將營運開銷(operational overhead)最小化. 哪些解決方案組合將滿足這些要求?(選二.
+一家公司希望建立移動應用程式,允許使用者在移動裝置上流傳慢動作影片片段. 目前,該應用程式將影片片段捕獲,並以原始格式將影片片段上傳到Amazon S3 bucket中. 應用程式直接從S3 bucket上檢索這些影片片段. 然而,這些影片的原始格式很大。 使用者在移動裝置上遇到緩衝和回放的問題. 公司希望實施解決方案,以最大限度地提高該應用的效能和可擴展性(scalability),同時將營運開銷(operational overhead)最小化. 哪些解決方案組合將滿足這些要求?(選二.
 
 **選項**
 - A. 部署Amazon CloudFront,用於內容傳送和快取.
-- B. 使用AWS DataSync在其它S3桶中複製橫跨AW'S區域的影片檔案.
+- B. 使用AWS DataSync在其它S3 bucket中複製橫跨AW'S區域的影片檔案.
 - C. 使用Amazon Elastic Transcoder將影片檔案轉換為更合適的格式.
 - D. 在本地區部署Amazon EC2自動密封組,以交付內容和快取。
 - E. 在Amazon EC2例項中部署Auto Scaling 群組(Auto Scaling group),將影片檔案轉換為更適當的格式。
@@ -8252,9 +8252,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：部署Amazon CloudFront,用於內容傳送和快取。Amazon CloudFront是全代管CDN服務，能將影片內容快取到全球邊緣節點，讓行動裝置從鄰近節點取得資料而非每次都直接讀取來源S3儲存桶，可大幅降低延遲並改善緩衝與播放體驗，且會依流量自動擴展，不需要自行維運額外基礎設施。
+- A：部署Amazon CloudFront,用於內容傳送和快取。Amazon CloudFront是全代管CDN服務，能將影片內容快取到全球邊緣節點，讓行動裝置從鄰近節點取得資料而非每次都直接讀取來源S3 bucket，可大幅降低延遲並改善緩衝與播放體驗，且會依流量自動擴展，不需要自行維運額外基礎設施。
 - 其餘選項比較：
-- B：使用AWS DataSync在其它S3桶中複製橫跨AW'S區域的影片檔案。AWS DataSync是用來在儲存系統之間搬移或同步資料的服務，僅將影片檔案複製到其他區域的S3儲存桶並不會改變影片的原始格式與檔案大小，也不具備快取或加速交付給行動裝置的能力，無法解決題目描述的緩衝與播放問題。
+- B：使用AWS DataSync在其它S3 bucket中複製橫跨AW'S區域的影片檔案。AWS DataSync是用來在儲存系統之間搬移或同步資料的服務，僅將影片檔案複製到其他區域的S3 bucket並不會改變影片的原始格式與檔案大小，也不具備快取或加速交付給行動裝置的能力，無法解決題目描述的緩衝與播放問題。
 - C：使用Amazon Elastic Transcoder將影片檔案轉換為更合適的格式。Amazon Elastic Transcoder是全代管的影音轉檔服務，能將使用者上傳的原始格式大檔轉換成適合行動裝置串流播放的格式與位元率，從根本上縮小需傳輸的檔案大小，直接解決原始格式過大造成緩衝的問題，且屬全代管服務不必自建轉檔管線。
 - D：在本地區部署Amazon EC2自動密封組,以交付內容和快取。在地端自行部署EC2 Auto Scaling群組來負責內容交付與快取，代表公司需要自行建置、修補與維運一整套快取伺服器叢集，這正是題目要求盡量降低的維運負擔，而且地端方案也無法達到CloudFront遍布全球邊緣節點所帶來的低延遲效果。
 - E：在Amazon EC2例項中部署Auto Scaling 群組(Auto Scaling group),將影片檔案轉換為更適當的格式。使用EC2 Auto Scaling群組自行架設影片轉檔叢集，等同要自行開發、維護轉碼程式與擴縮邏輯，相較於直接使用Amazon Elastic Transcoder這類全代管轉檔服務，會顯著增加維運複雜度，不符合題目「將維運開銷降到最低」的要求。
@@ -8324,7 +8324,7 @@ A
 - A. 建立一個 AWS 資料同步任務,將資料作為可掛載的檔案系統共享. 將檔案系統掛載到應用程式伺服器。
 - B. 建立 Amazon EC2 Windows 例項。 安裝和配置例項上的 Windows 檔案共享角色。 連線應用程式伺服器到檔案共享。
 - C. 為Windows檔案伺服器檔案系統建立Amazon FSx. 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
-- D. 建立 Amazon S3 桶. 為應用程式指定一個IAM角色,允許進入S3 儲存桶(S3 bucket)。 S3 儲存桶(S3 bucket) 掛載到應用程式伺服器中.
+- D. 建立 Amazon S3 bucket. 為應用程式指定一個IAM角色,允許進入S3 bucket。 S3 bucket 掛載到應用程式伺服器中.
 
 **答案**
 C
@@ -8338,7 +8338,7 @@ C
 - 其餘選項比較：
 - A：建立一個 AWS 資料同步任務,將資料作為可掛載的檔案系統共享. 將檔案系統掛載到應用程式伺服器。AWS DataSync是資料傳輸／同步服務，用來在不同儲存系統間搬移資料，本身並不提供可讓多台伺服器以SMB通訊協定掛載、持續讀寫的共享檔案系統，無法作為應用程式的共享儲存層使用。
 - B：建立 Amazon EC2 Windows 例項。 安裝和配置例項上的 Windows 檔案共享角色。 連線應用程式伺服器到檔案共享。自行在EC2 Windows執行個體安裝並設定檔案共享角色，代表作業系統的修補、容量調整、高可用性與備份都必須由公司自行負責維運，不符合題目要求解決方案「必須得到充分管理」的條件。
-- D：建立 Amazon S3 桶. 為應用程式指定一個IAM角色,允許進入S3 儲存桶(S3 bucket)。 S3 儲存桶(S3 bucket) 掛載到應用程式伺服器中。Amazon S3是物件儲存服務，並非設計讓伺服器以傳統檔案系統語意（如目錄結構、檔案鎖定）並透過SMB通訊協定掛載存取，遊戲應用程式若依賴一般檔案系統操作，S3無法直接滿足此需求。
+- D：建立 Amazon S3 bucket. 為應用程式指定一個IAM角色,允許進入S3 bucket。 S3 bucket 掛載到應用程式伺服器中。Amazon S3是物件儲存服務，並非設計讓伺服器以傳統檔案系統語意（如目錄結構、檔案鎖定）並透過SMB通訊協定掛載存取，遊戲應用程式若依賴一般檔案系統操作，S3無法直接滿足此需求。
 
 **分類：** 儲存
 
@@ -8429,7 +8429,7 @@ A,C
 ## Question #309
 
 **題目**
-一個解決方案架構師需要最佳化儲存成本. 解決方案架構師必須識別任何不再存取或很少存取的Amazon S3桶. 哪個解決方案能用LEAST 營運開銷(operational overhead)來實現這一目標?
+一個解決方案架構師需要最佳化儲存成本. 解決方案架構師必須識別任何不再存取或很少存取的Amazon S3 bucket. 哪個解決方案能用LEAST 營運開銷(operational overhead)來實現這一目標?
 
 **選項**
 - A. 透過使用S3 Storage Lens儀表板進行高階活動度量儀分析桶進入模式.
@@ -8456,13 +8456,13 @@ D
 ## Question #310
 
 **題目**
-一家公司向從事人工智慧和機器學習研究的客戶出售資料集(AI/ML). 資料集是大型的,格式化的檔案,存放於我們東-1 區域(Region)的Amazon S3桶中. 公司主機是客戶購買特定資料集存取許可權的網路應用程式. 網路應用程式部署在應用程式負載平衡器(Application Load Balancer)後面的多個Amazon EC2例項上。 購買後,客戶收到一個S3簽名的URL,允許存取檔案. 客戶分佈於北美和歐洲. 公司希望降低與資料傳輸相關的成本,並希望保持或提高效能. 解決方案設計師應如何滿足這些要求?
+一家公司向從事人工智慧和機器學習研究的客戶出售資料集(AI/ML). 資料集是大型的,格式化的檔案,存放於我們東-1 區域(Region)的Amazon S3 bucket中. 公司主機是客戶購買特定資料集存取許可權的網路應用程式. 網路應用程式部署在應用程式負載平衡器(Application Load Balancer)後面的多個Amazon EC2例項上。 購買後,客戶收到一個S3簽名的URL,允許存取檔案. 客戶分佈於北美和歐洲. 公司希望降低與資料傳輸相關的成本,並希望保持或提高效能. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 在現有的S3 儲存桶(S3 bucket)上配置S3 Transfer Acceleration. 直接客戶向S3 Transfer Acceleration端點提出請求. 繼續為存取控制(access control)使用S3簽名的URL.
-- B. 以現有的S3 儲存桶(S3 bucket)作為原產地,部署Amazon CloudFront分佈. 直接客戶向CloudFront URL請求. 切換到CloudFront為存取控制(access control)簽名的URL.
-- C. 在eu-Central-1 區域(Region)中設定第二架S3 儲存桶(S3 bucket),在水桶之間安裝S3 Cross-Region Replication. 直接客戶向最近的區域(Region)請求. 繼續為存取控制(access control)使用S3簽名的URL.
-- D. 修改網路應用程式,使資料集流到終端使用者。 配置網路應用程式讀取現有S3 儲存桶(S3 bucket)的資料. 在應用程式中直接執行存取控制(access control).
+- A. 在現有的S3 bucket上配置S3 Transfer Acceleration. 直接客戶向S3 Transfer Acceleration端點提出請求. 繼續為存取控制(access control)使用S3簽名的URL.
+- B. 以現有的S3 bucket作為原產地,部署Amazon CloudFront分佈. 直接客戶向CloudFront URL請求. 切換到CloudFront為存取控制(access control)簽名的URL.
+- C. 在eu-Central-1 區域(Region)中設定第二架S3 bucket,在水桶之間安裝S3 Cross-Region Replication. 直接客戶向最近的區域(Region)請求. 繼續為存取控制(access control)使用S3簽名的URL.
+- D. 修改網路應用程式,使資料集流到終端使用者。 配置網路應用程式讀取現有S3 bucket的資料. 在應用程式中直接執行存取控制(access control).
 
 **答案**
 B
@@ -8472,11 +8472,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：以現有的S3 儲存桶(S3 bucket)作為原產地,部署Amazon CloudFront分佈. 直接客戶向CloudFront URL請求. 切換到CloudFront為存取控制(access control)簽名的URL。以既有 S3 儲存桶作為源站部署 CloudFront 發佈，能把大型資料集快取到北美與歐洲鄰近的邊緣節點，讓重複下載的客戶直接從快取取得檔案而不必每次都回源，減少資料傳出流量並降低延遲；CloudFront 同時支援簽名 URL，可以無縫接續既有「購買後核發存取權」的授權邏輯。
+- B：以現有的S3 bucket作為原產地,部署Amazon CloudFront分佈. 直接客戶向CloudFront URL請求. 切換到CloudFront為存取控制(access control)簽名的URL。以既有 S3 bucket作為源站部署 CloudFront 發佈，能把大型資料集快取到北美與歐洲鄰近的邊緣節點，讓重複下載的客戶直接從快取取得檔案而不必每次都回源，減少資料傳出流量並降低延遲；CloudFront 同時支援簽名 URL，可以無縫接續既有「購買後核發存取權」的授權邏輯。
 - 其餘選項比較：
-- A：在現有的S3 儲存桶(S3 bucket)上配置S3 Transfer Acceleration. 直接客戶向S3 Transfer Acceleration端點提出請求. 繼續為存取控制(access control)使用S3簽名的URL。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速「上傳」到 S3 的路徑，用來解決長距離上傳延遲問題，並非用來降低對外散布內容給大量下載端的傳輸成本，而且使用這項功能本身還會產生比標準傳輸更高的費用，與題目要降低成本的目標相反。
-- C：在eu-Central-1 區域(Region)中設定第二架S3 儲存桶(S3 bucket),在水桶之間安裝S3 Cross-Region Replication. 直接客戶向最近的區域(Region)請求. 繼續為存取控制(access control)使用S3簽名的URL。在 eu-central-1 另建第二個儲存桶並做跨區複寫，等於要為同一份大型資料集重複支付一份儲存費用，而且只解決歐洲客戶的地緣延遲問題，對北美客戶的傳輸成本和效能完全沒有幫助，還額外增加維持兩地資料同步一致的複雜度。
-- D：修改網路應用程式,使資料集流到終端使用者。 配置網路應用程式讀取現有S3 儲存桶(S3 bucket)的資料. 在應用程式中直接執行存取控制(access control)。讓網路應用程式自己讀取 S3 資料再轉發給使用者，代表所有檔案流量都要先流經 EC2 執行個體與 Application Load Balancer，這會大幅墊高運算與頻寬負擔、提高資料傳出成本，反而失去了物件儲存服務直接發送靜態大型檔案的效率。
+- A：在現有的S3 bucket上配置S3 Transfer Acceleration. 直接客戶向S3 Transfer Acceleration端點提出請求. 繼續為存取控制(access control)使用S3簽名的URL。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速「上傳」到 S3 的路徑，用來解決長距離上傳延遲問題，並非用來降低對外散布內容給大量下載端的傳輸成本，而且使用這項功能本身還會產生比標準傳輸更高的費用，與題目要降低成本的目標相反。
+- C：在eu-Central-1 區域(Region)中設定第二架S3 bucket,在水桶之間安裝S3 Cross-Region Replication. 直接客戶向最近的區域(Region)請求. 繼續為存取控制(access control)使用S3簽名的URL。在 eu-central-1 另建第二個儲存桶並做跨區複寫，等於要為同一份大型資料集重複支付一份儲存費用，而且只解決歐洲客戶的地緣延遲問題，對北美客戶的傳輸成本和效能完全沒有幫助，還額外增加維持兩地資料同步一致的複雜度。
+- D：修改網路應用程式,使資料集流到終端使用者。 配置網路應用程式讀取現有S3 bucket的資料. 在應用程式中直接執行存取控制(access control)。讓網路應用程式自己讀取 S3 資料再轉發給使用者，代表所有檔案流量都要先流經 EC2 執行個體與 Application Load Balancer，這會大幅墊高運算與頻寬負擔、提高資料傳出成本，反而失去了物件儲存服務直接發送靜態大型檔案的效率。
 
 **分類：** 網路連結和內容交付
 
@@ -8540,7 +8540,7 @@ C
 一家公司正在AWS上建立一個移動應用程式. 公司希望將覆蓋範圍擴大到數百萬使用者. 公司需要搭建一個平臺,以便經授權的使用者可以在自己的移動裝置上觀看公司的內容. 解決方案設計師建議如何滿足這些要求?
 
 **選項**
-- A. 向公眾釋出內容 Amazon S3桶. 使用 AWS Key Management Service(AWS KMS) 金鑰進行流內容.
+- A. 向公眾釋出內容 Amazon S3 bucket. 使用 AWS Key Management Service(AWS KMS) 金鑰進行流內容.
 - B. 在移動應用程式和AWS環境之間設定IPsec VPN以流出內容.
 - C. 使用Amazon CloudFront. 為流內容提供已簽名的 URL。
 - D. 在移動應用程式和AWS環境之間設定AWS客戶端VPN以流出內容.
@@ -8555,7 +8555,7 @@ C
 正確答案是 **C**。
 - C：使用Amazon CloudFront. 為流內容提供已簽名的 URL。Amazon CloudFront 是為大規模內容散布設計的 CDN，能把串流內容快取到全球邊緣節點，同時服務數百萬行動裝置使用者並維持低延遲；搭配 CloudFront 簽名 URL，可以在使用者取得授權後核發具時效性、僅限該使用者使用的存取憑證，正好對應「只有已授權使用者才能觀看」的存取控制需求。
 - 其餘選項比較：
-- A：向公眾釋出內容 Amazon S3桶. 使用 AWS Key Management Service(AWS KMS) 金鑰進行流內容。把內容所在的 S3 儲存桶設為公開，等於任何人都能直接存取物件，無法限制只有已授權使用者才能觀看；KMS 金鑰加密解決的是靜態資料的機密性問題，並不提供依使用者身分核發存取權限的機制，兩者合起來仍達不到授權存取控制。
+- A：向公眾釋出內容 Amazon S3 bucket. 使用 AWS Key Management Service(AWS KMS) 金鑰進行流內容。把內容所在的 S3 bucket設為公開，等於任何人都能直接存取物件，無法限制只有已授權使用者才能觀看；KMS 金鑰加密解決的是靜態資料的機密性問題，並不提供依使用者身分核發存取權限的機制，兩者合起來仍達不到授權存取控制。
 - B：在移動應用程式和AWS環境之間設定IPsec VPN以流出內容。IPsec VPN 通常用於站點對站點或固定用戶端與 AWS 環境間建立私有連線，需要在每台裝置上配置並維護 VPN 用戶端與金鑰，這種做法不適合開放給數百萬名一般消費性行動應用程式使用者使用。
 - D：在移動應用程式和AWS環境之間設定AWS客戶端VPN以流出內容。AWS Client VPN 同樣需要為每個使用者部署用戶端憑證與連線設定檔，屬於企業員工遠端存取內部資源的解決方案，用來服務大規模、公開的行動應用程式使用者並不具備可擴充性，也不是內容散布服務。
 
@@ -8756,7 +8756,7 @@ A
 ## Question #321
 
 **題目**
-一個解決方案架構師應該做什麼來確保上傳到Amazon S3桶的所有物件都加密?
+一個解決方案架構師應該做什麼來確保上傳到Amazon S3 bucket的所有物件都加密?
 
 **選項**
 - A. 如果 PutObject 沒有 s3: x-amz- acl 頭集, 更新 儲存桶政策(bucket policy) 以拒絕。
@@ -8813,10 +8813,10 @@ C
 一家公司的設施在整個大樓的每個入口都設有警徽閱讀器。 當徽章掃描後,讀者會在HTTPS上傳送資訊,以表明是誰試圖進入該特定入口. 一個解決方案架構師必須設計一個系統來處理感測器發出的這些訊息. 解決方案必須非常可用,結果必須提供給公司安全小組分析。 解決方案設計師應該建議哪種系統架構?
 
 **選項**
-- A. 啟動一個 Amazon EC2 例項,作為 HTTPS 的終點並處理訊息。 配置 EC2 例項將結果儲存到 Amazon S3 桶中。
+- A. 啟動一個 Amazon EC2 例項,作為 HTTPS 的終點並處理訊息。 配置 EC2 例項將結果儲存到 Amazon S3 bucket中。
 - B. 在 Amazon API Gateway 中建立一個 HTTPS 端點。 配置 API 閘道器端點以引用 AWS Lambda 函式來處理訊息,並將結果儲存到 Amazon DynamoDB 表格中.
 - C. 使用Amazon Route 53將傳入的感測器訊息引導到AWS Lambda功能上. 配置 Lambda 函式處理訊息,並將結果儲存到 Amazon DynamoDB 表格中.
-- D. 為Amazon S3建立閘道器VPC 端點(VPC endpoint). 配置從設施網路到VPC的站點對站點VPN連線,以便感測器資料可以透過VPC 端點(VPC endpoint)直接寫入S3 儲存桶(S3 bucket).
+- D. 為Amazon S3建立閘道器VPC 端點(VPC endpoint). 配置從設施網路到VPC的站點對站點VPN連線,以便感測器資料可以透過VPC 端點(VPC endpoint)直接寫入S3 bucket.
 
 **答案**
 B
@@ -8828,9 +8828,9 @@ B
 正確答案是 **B**。
 - B：在 Amazon API Gateway 中建立一個 HTTPS 端點。 配置 API 閘道器端點以引用 AWS Lambda 函式來處理訊息,並將結果儲存到 Amazon DynamoDB 表格中。Amazon API Gateway 提供全代管、可跨可用區自動擴充的 HTTPS 端點，不需要自行維運伺服器即可達到高可用性；每個門禁讀卡機的請求都能觸發 AWS Lambda 函式進行驗證與處理，並把結果寫入 Amazon DynamoDB，DynamoDB 具備高吞吐量與持久性，方便安全團隊之後查詢分析。
 - 其餘選項比較：
-- A：啟動一個 Amazon EC2 例項,作為 HTTPS 的終點並處理訊息。 配置 EC2 例項將結果儲存到 Amazon S3 桶中。用單一 Amazon EC2 執行個體作為 HTTPS 端點，代表這台執行個體本身就是單點故障；若沒有額外搭配負載平衡器與 Auto Scaling 群組，一旦這個執行個體故障或需要維護，所有門禁讀卡機的訊息就會中斷，達不到題目要求的高可用性。
+- A：啟動一個 Amazon EC2 例項,作為 HTTPS 的終點並處理訊息。 配置 EC2 例項將結果儲存到 Amazon S3 bucket中。用單一 Amazon EC2 執行個體作為 HTTPS 端點，代表這台執行個體本身就是單點故障；若沒有額外搭配負載平衡器與 Auto Scaling 群組，一旦這個執行個體故障或需要維護，所有門禁讀卡機的訊息就會中斷，達不到題目要求的高可用性。
 - C：使用Amazon Route 53將傳入的感測器訊息引導到AWS Lambda功能上. 配置 Lambda 函式處理訊息,並將結果儲存到 Amazon DynamoDB 表格中。Amazon Route 53 是 DNS 服務，負責網域名稱解析，本身無法終止 HTTPS 連線或直接把請求內容遞交給 Lambda 函式執行，這個角色實際上需要 API Gateway 或負載平衡器來擔任，選項描述的架構在技術上並不成立。
-- D：為Amazon S3建立閘道器VPC 端點(VPC endpoint). 配置從設施網路到VPC的站點對站點VPN連線,以便感測器資料可以透過VPC 端點(VPC endpoint)直接寫入S3 儲存桶(S3 bucket)。透過站點對站點 VPN 與 S3 閘道器 VPC 端點讓感測器資料直接寫入 S3 儲存桶，只解決了資料落地儲存的問題，並沒有針對每一筆門禁訊息進行解析、驗證或結構化處理，安全團隊難以直接對 S3 中的原始上傳內容做有效率的查詢與分析。
+- D：為Amazon S3建立閘道器VPC 端點(VPC endpoint). 配置從設施網路到VPC的站點對站點VPN連線,以便感測器資料可以透過VPC 端點(VPC endpoint)直接寫入S3 bucket。透過站點對站點 VPN 與 S3 閘道器 VPC 端點讓感測器資料直接寫入 S3 bucket，只解決了資料落地儲存的問題，並沒有針對每一筆門禁訊息進行解析、驗證或結構化處理，安全團隊難以直接對 S3 中的原始上傳內容做有效率的查詢與分析。
 
 **分類：** 無伺服器
 
@@ -8840,7 +8840,7 @@ B
 一家公司希望實施災難復原(disaster recovery)計劃,用於其主要前提檔案儲存量. 檔案儲存量由一個Internet Small計算機系統介面(iSCSI)裝置掛載在本地儲存伺服器上. 檔案儲存量持有上百兆位元組(TB)的資料. 公司希望確保終端使用者在不經歷延遲(latency)的情況下,保留對現場系統的所有檔案型別的即時存取. 哪個解決方案將滿足這些要求,對公司現有基礎設施的LEAST數額進行修改?
 
 **選項**
-- A. 提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於房地. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 儲存桶(S3 bucket)。
+- A. 提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於房地. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 bucket。
 - B. 提供AWS Storage Gateway磁帶閘道器. 使用資料備份(backup)解決方案將所有現有資料備份到虛擬磁帶庫. 配置資料 備份(backup) 解決方案在初始 備份(backup) 完成後夜間執行. 為了從災難中恢復過來,提供Amazon EC2例項,並將資料從虛擬磁帶庫的卷中恢復到Amazon Elastic Block Store(Amazon EBS)。
 - C. 提供AWS Storage Gateway卷門快取卷. 設定本地快取為 10 TB。 使用 iSCSI 將 Volume Gateway 快取的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中.
 - D. 提供AWS Storage Gateway卷閘道器儲存的磁碟區,磁碟空間與現有的檔案儲存磁碟區相同. 使用 iSCSI 將儲存的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中.
@@ -8855,7 +8855,7 @@ C
 正確答案是 **C**。
 - C：提供AWS Storage Gateway卷門快取卷. 設定本地快取為 10 TB。 使用 iSCSI 將 Volume Gateway 快取的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中。Volume Gateway 的快取磁碟區模式會把完整資料集放在 S3，僅在本地端保留一份熱資料快取（此處設定 10 TB），前端仍以 iSCSI 介面掛接，因此檔案伺服器與應用程式完全不用更動存取協定；常用資料留在本地快取可維持低延遲存取，搭配磁碟區排程快照，即可在故障時把快照還原成 EBS 磁碟區並掛載到 EC2 例項完成復原。
 - 其餘選項比較：
-- A：提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於房地. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 儲存桶(S3 bucket)。S3 File Gateway 只支援 NFS／SMB 通訊協定，而檔案伺服器目前是透過 iSCSI 掛載，改用此方案必須連帶修改應用程式的存取協定，屬於較大幅度的架構變更，不符合題目要求的最少修改原則。
+- A：提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於房地. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 bucket。S3 File Gateway 只支援 NFS／SMB 通訊協定，而檔案伺服器目前是透過 iSCSI 掛載，改用此方案必須連帶修改應用程式的存取協定，屬於較大幅度的架構變更，不符合題目要求的最少修改原則。
 - B：提供AWS Storage Gateway磁帶閘道器. 使用資料備份(backup)解決方案將所有現有資料備份到虛擬磁帶庫. 配置資料 備份(backup) 解決方案在初始 備份(backup) 完成後夜間執行. 為了從災難中恢復過來,提供Amazon EC2例項,並將資料從虛擬磁帶庫的卷中恢復到Amazon Elastic Block Store(Amazon EBS)。Tape Gateway 提供的是虛擬磁帶庫，資料透過備份軟體以排程（例如每日一次）方式寫入，使用者無法對已封存的內容做即時存取，無法滿足終端使用者不經歷延遲、即時存取檔案的要求。
 - D：提供AWS Storage Gateway卷閘道器儲存的磁碟區,磁碟空間與現有的檔案儲存磁碟區相同. 使用 iSCSI 將儲存的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中。Volume Gateway 的儲存磁碟區模式會把與現有檔案磁碟區相同容量（上百 TB）的完整資料集持續留在本地，等於要準備與原有規模相當的儲存硬體，並沒有減少本地端基礎設施的規模與複雜度。
 
@@ -8864,12 +8864,12 @@ C
 ## Question #325
 
 **題目**
-一家公司正在託管一個Amazon S3桶的網路應用程式。 該應用程式使用Amazon Cognito作為身份提供者,對使用者進行認證,並返回一個JSON Web Token(JWT),提供存取儲存在另一個S3 儲存桶(S3 bucket)的受保護資源. 應用程式部署後,使用者會報告錯誤,無法存取受保護的內容. 一個解決方案架構師必須透過提供適當的許可權來解決這個問題,這樣使用者就可以存取受保護的內容. 哪種解決辦法符合這些要求?
+一家公司正在託管一個Amazon S3 bucket的網路應用程式。 該應用程式使用Amazon Cognito作為身份提供者,對使用者進行認證,並返回一個JSON Web Token(JWT),提供存取儲存在另一個S3 bucket的受保護資源. 應用程式部署後,使用者會報告錯誤,無法存取受保護的內容. 一個解決方案架構師必須透過提供適當的許可權來解決這個問題,這樣使用者就可以存取受保護的內容. 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 更新Amazon Cognito身份池,以承擔存取受保護內容的適當IAM角色.
 - B. 更新S3 ACL,允許應用程式存取受保護的內容.
-- C. 將應用程式重新調配到Amazon S3,以防止最終一致在S3 儲存桶(S3 bucket)中讀取,從而影響使用者存取受保護內容的能力.
+- C. 將應用程式重新調配到Amazon S3,以防止最終一致在S3 bucket中讀取,從而影響使用者存取受保護內容的能力.
 - D. 更新Amazon Cognitto 池,在身份池內使用自定義屬性對映,並給予使用者存取受保護內容的適當許可權.
 
 **答案**
@@ -8883,7 +8883,7 @@ A
 - A：更新Amazon Cognito身份池,以承擔存取受保護內容的適當IAM角色。Cognito 身分池讓使用者驗證後取得的 JWT，再交換成由該身分池所指派 IAM 角色簽發的暫時憑證，能否存取 S3 上的受保護資源完全取決於這個 IAM 角色所附加的權限；使用者無法存取的根本原因通常是角色權限不足，因此更新身分池所承擔的 IAM 角色，才能真正授予存取受保護內容的權限。
 - 其餘選項比較：
 - B：更新S3 ACL,允許應用程式存取受保護的內容。透過身分池取得的是 STS 簽發的暫時 IAM 憑證，S3 端的授權判斷依據是該角色的 IAM 政策，而非傳統的物件層級 ACL；修改 ACL 不會影響 IAM 角色本身的權限範圍，無法解決此處的存取被拒問題。
-- C：將應用程式重新調配到Amazon S3,以防止最終一致在S3 儲存桶(S3 bucket)中讀取,從而影響使用者存取受保護內容的能力。Amazon S3 目前對所有物件的讀寫皆提供強一致性，並不存在題目所說的最終一致性問題；重新部署應用程式也不會處理驗證後的 IAM 授權層面問題，與使用者無法存取受保護內容的實際原因無關。
+- C：將應用程式重新調配到Amazon S3,以防止最終一致在S3 bucket中讀取,從而影響使用者存取受保護內容的能力。Amazon S3 目前對所有物件的讀寫皆提供強一致性，並不存在題目所說的最終一致性問題；重新部署應用程式也不會處理驗證後的 IAM 授權層面問題，與使用者無法存取受保護內容的實際原因無關。
 - D：更新Amazon Cognitto 池,在身份池內使用自定義屬性對映,並給予使用者存取受保護內容的適當許可權。自訂屬性對應是使用者集區(User Pool)用來承接外部身分提供者屬性欄位的功能，屬於使用者個人資料層面，並不會授予任何 AWS 資源的存取權限，因此無法解決存取 S3 受保護內容被拒的問題。
 
 **分類：** 安全、身分與合規
@@ -9170,7 +9170,7 @@ C
 - A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天.
 - B. 在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼.
 - C. 在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
-- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
+- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3 bucket中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 bucket中的檔案.
 
 **答案**
 A
@@ -9184,7 +9184,7 @@ A
 - 其餘選項比較：
 - B：在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼。AWS Systems Manager 參數儲存器沒有針對 RDS/Aurora 提供內建的自動輪替機制，這個做法需要自行撰寫並維運一個 Lambda 函式，同時手動處理兩個參數（使用者名稱與密碼）的同步更新，作業負擔明顯高於使用具備原生輪替範本的服務。
 - C：在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。此做法需要額外建置並維運一套 Amazon EFS 檔案系統與跨所有應用程式層 EC2 執行個體的掛載設定，還要管理檔案存取權限並自行撰寫 Lambda 函式處理輪替與寫檔邏輯，等於自行搭建一整套憑證分發機制，維運複雜度遠高於使用代管的密碼儲存服務。
-- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。此做法需要應用程式自行實作定期輪詢並下載 S3 檔案的邏輯，加上自訂 Lambda 函式負責輪替 Aurora 憑證並重新上傳到 S3，整個流程都要自行開發與維護，並未使用任何具備原生憑證輪替能力的代管服務。
+- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3 bucket中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 bucket中的檔案。此做法需要應用程式自行實作定期輪詢並下載 S3 檔案的邏輯，加上自訂 Lambda 函式負責輪替 Aurora 憑證並重新上傳到 S3，整個流程都要自行開發與維護，並未使用任何具備原生憑證輪替能力的代管服務。
 
 **分類：** 安全、身分與合規
 
@@ -9304,7 +9304,7 @@ C
 **選項**
 - A. 使用Amazon EMR直接接收從資料庫(database)到QuickSight SPICE引擎的資料. 只包括所需的列。
 - B. 使用AWS Glue工作室來攝取從資料庫(database)到S3 資料湖(data lake)的資料. 將一個IAM 政策(IAM policy)附加到QuickSight使用者上,以強制執行列級的存取控制(access control). 使用Amazon S3作為QuickSight的資料來源.
-- C. 使用 AWS Glue 彈性檢視為 Amazon S3 中的 資料庫(database) 建立可實現檢視. 為QuickSight使用者建立一個S3 儲存桶政策(bucket policy),用於執行列級的存取控制(access control). 使用Amazon S3作為QuickSight的資料來源.
+- C. 使用 AWS Glue 彈性檢視為 Amazon S3 中的 資料庫(database) 建立可實現檢視. 為QuickSight使用者建立一個S3 bucket政策(bucket policy),用於執行列級的存取控制(access control). 使用Amazon S3作為QuickSight的資料來源.
 - D. 使用湖泊形成藍圖來吸收從資料庫(database)到S3 資料湖(data lake)的資料. 使用 Lake Formation 執行列級的 存取控制(access control),供快速視使用者使用. 使用Amazon Athena作為QuickSight的資料來源.
 
 **答案**
@@ -9315,7 +9315,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：使用 AWS Glue 彈性檢視為 Amazon S3 中的 資料庫(database) 建立可實現檢視. 為QuickSight使用者建立一個S3 儲存桶政策(bucket policy),用於執行列級的存取控制(access control). 使用Amazon S3作為QuickSight的資料來源。S3 儲存桶政策同樣只能控制整個 bucket 或物件（prefix）層級的存取，無法深入檔案內部限制個別欄位可見性；Glue Elastic Views 本身只是用來建立跨資料來源的實體化檢視以同步資料，並不提供存取控制機制。
+- C：使用 AWS Glue 彈性檢視為 Amazon S3 中的 資料庫(database) 建立可實現檢視. 為QuickSight使用者建立一個S3 bucket政策(bucket policy),用於執行列級的存取控制(access control). 使用Amazon S3作為QuickSight的資料來源。S3 bucket政策同樣只能控制整個 bucket 或物件（prefix）層級的存取，無法深入檔案內部限制個別欄位可見性；Glue Elastic Views 本身只是用來建立跨資料來源的實體化檢視以同步資料，並不提供存取控制機制。
 - 其餘選項比較：
 - A：使用Amazon EMR直接接收從資料庫(database)到QuickSight SPICE引擎的資料. 只包括所需的列。用 Amazon EMR 直接把資料庫資料接到 QuickSight SPICE 引擎，雖然可在匯入階段手動篩選欄位，但這是寫死在 ETL 邏輯裡的一次性篩選，無法動態依使用者身分套用不同的欄位權限，管理 EMR 叢集本身也會提高營運複雜度。
 - B：使用AWS Glue工作室來攝取從資料庫(database)到S3 資料湖(data lake)的資料. 將一個IAM 政策(IAM policy)附加到QuickSight使用者上,以強制執行列級的存取控制(access control). 使用Amazon S3作為QuickSight的資料來源。IAM 政策是用來控制對 AWS 資源（如 S3 物件、API 呼叫）的存取權限，最小授權粒度是物件或前綴層級，無法針對檔案內部個別欄位進行授權控制，因此無法達成欄位層級授權的需求。
@@ -9359,7 +9359,7 @@ C
 - A. 將 MySQL 資料庫(database) 遷移到多個 EC2 例項。 在 DR 區域(Region) 中配置備用EC2 例項。 開啟複寫(replication)
 - B. 將 MySQL 資料庫(database) 移動到 Amazon RDS。 使用多AZ部署. 在不同的可用區(Availability Zones)中,開啟讀取複寫(replication),作為主要DB例項.
 - C. 將 MySQL 資料庫(database) 移動到一個 Amazon Aurora 全球資料庫(database). 主機主機DB叢集在主機區域(Region). 託管DR 區域(Region)中的二級DB叢集.
-- D. 將預定的MySQL 資料庫(database)的備份(backup)儲存在為S3 Cross-Region Replication(CRR)配置的Amazon S3 儲存桶中. 使用資料備份(backup)在DR 區域(Region)中恢復資料庫(database).
+- D. 將預定的MySQL 資料庫(database)的備份(backup)儲存在為S3 Cross-Region Replication(CRR)配置的Amazon S3 bucket中. 使用資料備份(backup)在DR 區域(Region)中恢復資料庫(database).
 
 **答案**
 B
@@ -9373,7 +9373,7 @@ B
 - 其餘選項比較：
 - A：將 MySQL 資料庫(database) 遷移到多個 EC2 例項。 在 DR 區域(Region) 中配置備用EC2 例項。 開啟複寫(replication)。把資料庫遷移到多個 EC2 執行個體並自行在 DR 區域架設備用執行個體、手動開啟複寫，等於自己管理資料庫引擎、複寫拓撲與容錯移轉邏輯，營運負擔遠高於使用受管資料庫服務。
 - C：將 MySQL 資料庫(database) 移動到一個 Amazon Aurora 全球資料庫(database). 主機主機DB叢集在主機區域(Region). 託管DR 區域(Region)中的二級DB叢集。Amazon Aurora 全球資料庫原生支援跨多個 AWS 區域的低延遲複寫，主要區域的寫入通常在 1 秒內即可複寫到次要區域，且次要區域可在區域級中斷時快速升級為主要叢集，整個複寫與容錯移轉機制由 AWS 全代管，符合多區域與最少營運開銷的要求。
-- D：將預定的MySQL 資料庫(database)的備份(backup)儲存在為S3 Cross-Region Replication(CRR)配置的Amazon S3 儲存桶中. 使用資料備份(backup)在DR 區域(Region)中恢復資料庫(database)。將排程備份透過 S3 跨區複寫送到另一個區域，資料確實會到達 DR 區域，但復原時仍需手動或另行自動化執行還原備份的流程，復原時間較長，且備份間隔之外的資料異動可能遺失，操作複雜度高於原生跨區複寫的資料庫服務。
+- D：將預定的MySQL 資料庫(database)的備份(backup)儲存在為S3 Cross-Region Replication(CRR)配置的Amazon S3 bucket中. 使用資料備份(backup)在DR 區域(Region)中恢復資料庫(database)。將排程備份透過 S3 跨區複寫送到另一個區域，資料確實會到達 DR 區域，但復原時仍需手動或另行自動化執行還原備份的流程，復原時間較長，且備份間隔之外的資料異動可能遺失，操作複雜度高於原生跨區複寫的資料庫服務。
 
 **分類：** 資料庫
 
@@ -9521,7 +9521,7 @@ A
 - A. 建立資料庫(database) 快照(snapshot). 複製快照(snapshot)到一個新的未加密的快照(snapshot). 與收購公司的AWS帳戶共享新的快照(snapshot)。
 - B. 建立資料庫(database) 快照(snapshot). 將收購公司的AWS帳戶新增到 KMS 關鍵政策中。 與收購公司的AWS帳戶共享快照(snapshot)。
 - C. 建立 資料庫(database) 快照(snapshot),使用不同的 AWS 管理的 KMS 金鑰. 在 KMS 金鑰別名中新增收購公司的 AWS 帳戶。 與收購公司的AWS帳戶共享快照(snapshot).
-- D. 建立資料庫(database) 快照(snapshot). 下載資料庫(database) 快照(snapshot). 把資料庫(database) 快照(snapshot)上傳到Amazon S3桶上. 更新S3 儲存桶政策(bucket policy), 允許從收購公司的AWS帳戶存取。
+- D. 建立資料庫(database) 快照(snapshot). 下載資料庫(database) 快照(snapshot). 把資料庫(database) 快照(snapshot)上傳到Amazon S3 bucket上. 更新S3 bucket政策(bucket policy), 允許從收購公司的AWS帳戶存取。
 
 **答案**
 B
@@ -9535,7 +9535,7 @@ B
 - 其餘選項比較：
 - A：建立資料庫(database) 快照(snapshot). 複製快照(snapshot)到一個新的未加密的快照(snapshot). 與收購公司的AWS帳戶共享新的快照(snapshot)。將加密快照複製為「未加密」版本再分享，等於讓原本受保護的機密資料在傳輸與儲存過程中失去加密防護，違反機密資料的安全要求；且 Aurora 也不支援把使用客戶管理金鑰加密的快照直接複製成未加密版本。
 - C：建立 資料庫(database) 快照(snapshot),使用不同的 AWS 管理的 KMS 金鑰. 在 KMS 金鑰別名中新增收購公司的 AWS 帳戶。 與收購公司的AWS帳戶共享快照(snapshot)。改用 AWS 受管金鑰（AWS managed key）建立新快照，再嘗試在「金鑰別名」中加入對方帳戶——金鑰別名只是帳戶內部識別金鑰的名稱標籤，並非跨帳戶授權機制，AWS managed key 也不允許透過別名或政策讓其他帳戶使用，這個做法在技術上行不通。
-- D：建立資料庫(database) 快照(snapshot). 下載資料庫(database) 快照(snapshot). 把資料庫(database) 快照(snapshot)上傳到Amazon S3桶上. 更新S3 儲存桶政策(bucket policy), 允許從收購公司的AWS帳戶存取。RDS/Aurora 快照無法直接「下載」成一般檔案，即使改用快照匯出到 S3 的功能，匯出的也只是 Parquet 格式的分析用資料而非可還原的完整快照，透過 S3 儲存桶政策開放存取還會讓機密資料暴露在額外的儲存層與存取路徑上，增加外洩風險與維運複雜度。
+- D：建立資料庫(database) 快照(snapshot). 下載資料庫(database) 快照(snapshot). 把資料庫(database) 快照(snapshot)上傳到Amazon S3 bucket上. 更新S3 bucket政策(bucket policy), 允許從收購公司的AWS帳戶存取。RDS/Aurora 快照無法直接「下載」成一般檔案，即使改用快照匯出到 S3 的功能，匯出的也只是 Parquet 格式的分析用資料而非可還原的完整快照，透過 S3 bucket政策開放存取還會讓機密資料暴露在額外的儲存層與存取路徑上，增加外洩風險與維運複雜度。
 
 **分類：** 資料庫
 
@@ -9764,7 +9764,7 @@ A,D
 ## Question #358
 
 **題目**
-一家社交媒體公司在應用程式負載平衡器(Application Load Balancer)(ALB)之後執行其在Amazon EC2例項上的應用. ALB是Amazon CloudFront分佈的起源. 該應用程式有超過十億張影象儲存在Amazon S3桶中,每秒處理數千張影象. 公司希望將影象的大小動態調整,為客戶服務適當的格式. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家社交媒體公司在應用程式負載平衡器(Application Load Balancer)(ALB)之後執行其在Amazon EC2例項上的應用. ALB是Amazon CloudFront分佈的起源. 該應用程式有超過十億張影象儲存在Amazon S3 bucket中,每秒處理數千張影象. 公司希望將影象的大小動態調整,為客戶服務適當的格式. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 在 EC2 例項上安裝外部影象管理庫。 使用影象管理庫處理影象.
@@ -9791,13 +9791,13 @@ D
 ## Question #359
 
 **題目**
-醫院需要將患者記錄儲存在Amazon S3桶中. 醫院的合規(compliance)小組必須確保所有受保護的健康資訊在中途和休息時都加密。 合規(compliance)團隊必須管理加密(encryption)關鍵值供資料休息. 哪種解決辦法能滿足這些要求?
+醫院需要將患者記錄儲存在Amazon S3 bucket中. 醫院的合規(compliance)小組必須確保所有受保護的健康資訊在中途和休息時都加密。 合規(compliance)團隊必須管理加密(encryption)關鍵值供資料休息. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在AWS Certificate Manager(ACM)中建立一個公開的SSL/TLS憑證. 將憑證與Amazon S3聯絡起來。 每個 S3 儲存桶(S3 bucket) 配置預設的 加密(encryption),以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰.
-- B. 在 S3 儲存桶(S3 bucket) 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個 S3 儲存桶(S3 bucket) 配置預設的 加密(encryption) 使用伺服器側的 加密(encryption) 與 S3 管理的 加密(encryption) 鍵(SSE- S3). 指派合規(compliance)團隊管理SSE-S3金鑰.
-- C. 在 S3 儲存桶(S3 bucket) 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個S3 儲存桶(S3 bucket)配置預設的加密(encryption),使用伺服器側式的加密(encryption),並配有AWS KMS金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰.
-- D. 使用 aws: 在 S3 儲存桶(S3 bucket) 政策上保證運輸條件, 只允許在 HTTPS(TLS) 上加密連線。 使用Amazon Macie來保護儲存在Amazon S3中的敏感資料. 指派合規(compliance)團隊管理梅西.
+- A. 在AWS Certificate Manager(ACM)中建立一個公開的SSL/TLS憑證. 將憑證與Amazon S3聯絡起來。 每個 S3 bucket 配置預設的 加密(encryption),以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰.
+- B. 在 S3 bucket 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個 S3 bucket 配置預設的 加密(encryption) 使用伺服器側的 加密(encryption) 與 S3 管理的 加密(encryption) 鍵(SSE- S3). 指派合規(compliance)團隊管理SSE-S3金鑰.
+- C. 在 S3 bucket 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個S3 bucket配置預設的加密(encryption),使用伺服器側式的加密(encryption),並配有AWS KMS金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰.
+- D. 使用 aws: 在 S3 bucket 政策上保證運輸條件, 只允許在 HTTPS(TLS) 上加密連線。 使用Amazon Macie來保護儲存在Amazon S3中的敏感資料. 指派合規(compliance)團隊管理梅西.
 
 **答案**
 C
@@ -9807,11 +9807,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在 S3 儲存桶(S3 bucket) 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個S3 儲存桶(S3 bucket)配置預設的加密(encryption),使用伺服器側式的加密(encryption),並配有AWS KMS金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰。儲存桶政策中的 aws:SecureTransport 條件可確保只接受 HTTPS(TLS) 連線，滿足傳輸中加密；搭配 SSE-KMS 並使用客戶管理的 KMS 金鑰，合規團隊可被授予金鑰管理員權限直接掌控金鑰政策、輪替與存取權限，同時滿足靜態加密與「合規團隊管理加密金鑰」兩項要求。
+- C：在 S3 bucket 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個S3 bucket配置預設的加密(encryption),使用伺服器側式的加密(encryption),並配有AWS KMS金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰。儲存桶政策中的 aws:SecureTransport 條件可確保只接受 HTTPS(TLS) 連線，滿足傳輸中加密；搭配 SSE-KMS 並使用客戶管理的 KMS 金鑰，合規團隊可被授予金鑰管理員權限直接掌控金鑰政策、輪替與存取權限，同時滿足靜態加密與「合規團隊管理加密金鑰」兩項要求。
 - 其餘選項比較：
-- A：在AWS Certificate Manager(ACM)中建立一個公開的SSL/TLS憑證. 將憑證與Amazon S3聯絡起來。 每個 S3 儲存桶(S3 bucket) 配置預設的 加密(encryption),以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰。Amazon S3 的傳輸層加密（HTTPS）是由 AWS 內建端點憑證直接提供，S3 儲存桶本身無法掛載 ACM 憑證來啟用或加強傳輸加密，此作法也未透過儲存桶政策強制連線必須使用 HTTPS。
-- B：在 S3 儲存桶(S3 bucket) 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個 S3 儲存桶(S3 bucket) 配置預設的 加密(encryption) 使用伺服器側的 加密(encryption) 與 S3 管理的 加密(encryption) 鍵(SSE- S3). 指派合規(compliance)團隊管理SSE-S3金鑰。aws:SecureTransport 條件確實能正確強制傳輸中加密，但 SSE-S3 使用的加密金鑰完全由 AWS 產生、持有並自動輪替，客戶（含合規團隊）無法檢視或管理這把金鑰，不符合「合規團隊必須自行管理靜態加密金鑰」的要求。
-- D：使用 aws: 在 S3 儲存桶(S3 bucket) 政策上保證運輸條件, 只允許在 HTTPS(TLS) 上加密連線。 使用Amazon Macie來保護儲存在Amazon S3中的敏感資料. 指派合規(compliance)團隊管理梅西。Amazon Macie 是用於自動探索與分類 S3 中敏感資料的服務，並非加密金鑰管理服務，它不會產生或持有可供合規團隊管理的加密金鑰，無法滿足「管理靜態加密金鑰」的要求。
+- A：在AWS Certificate Manager(ACM)中建立一個公開的SSL/TLS憑證. 將憑證與Amazon S3聯絡起來。 每個 S3 bucket 配置預設的 加密(encryption),以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS). 指派合規(compliance)團隊管理KMS金鑰。Amazon S3 的傳輸層加密（HTTPS）是由 AWS 內建端點憑證直接提供，S3 bucket本身無法掛載 ACM 憑證來啟用或加強傳輸加密，此作法也未透過儲存桶政策強制連線必須使用 HTTPS。
+- B：在 S3 bucket 政策上使用 aws:Secure Transport 條件,只允許在 HTTPS(TLS) 上加密連線. 每個 S3 bucket 配置預設的 加密(encryption) 使用伺服器側的 加密(encryption) 與 S3 管理的 加密(encryption) 鍵(SSE- S3). 指派合規(compliance)團隊管理SSE-S3金鑰。aws:SecureTransport 條件確實能正確強制傳輸中加密，但 SSE-S3 使用的加密金鑰完全由 AWS 產生、持有並自動輪替，客戶（含合規團隊）無法檢視或管理這把金鑰，不符合「合規團隊必須自行管理靜態加密金鑰」的要求。
+- D：使用 aws: 在 S3 bucket 政策上保證運輸條件, 只允許在 HTTPS(TLS) 上加密連線。 使用Amazon Macie來保護儲存在Amazon S3中的敏感資料. 指派合規(compliance)團隊管理梅西。Amazon Macie 是用於自動探索與分類 S3 中敏感資料的服務，並非加密金鑰管理服務，它不會產生或持有可供合規團隊管理的加密金鑰，無法滿足「管理靜態加密金鑰」的要求。
 
 **分類：** 安全、身分與合規
 
@@ -9848,10 +9848,10 @@ A
 一家公司在AWS上主持多人遊戲應用. 公司希望該應用程式使用次毫秒延遲(latency)讀取資料,並對歷史資料進行一次性查詢. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 經常存取的資料使用 Amazon RDS。 執行一個定期自定義指令碼,將資料匯出為 Amazon S3 桶。
-- B. 直接將資料儲存在Amazon S3桶中. 實施S3 生命週期政策(Lifecycle policy),將舊資料移動到S3 Glacier Deep Archive進行長期儲存. 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢.
-- C. 使用與DynamoDB加速器(DAX)的Amazon DynamoDB來獲取經常存取的資料. 透過使用 DynamoDB 表匯出將資料匯出為 Amazon S3 桶。 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢.
-- D. 經常存取的資料使用Amazon DynamoDB. 開啟流線到Amazon Kinesis資料流. 使用Amazon Kinesis Data Firehose來讀取來自Kinesis Data Streams的資料. 把記錄存放在Amazon S3桶裡.
+- A. 經常存取的資料使用 Amazon RDS。 執行一個定期自定義指令碼,將資料匯出為 Amazon S3 bucket。
+- B. 直接將資料儲存在Amazon S3 bucket中. 實施S3 生命週期政策(Lifecycle policy),將舊資料移動到S3 Glacier Deep Archive進行長期儲存. 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢.
+- C. 使用與DynamoDB加速器(DAX)的Amazon DynamoDB來獲取經常存取的資料. 透過使用 DynamoDB 表匯出將資料匯出為 Amazon S3 bucket。 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢.
+- D. 經常存取的資料使用Amazon DynamoDB. 開啟流線到Amazon Kinesis資料流. 使用Amazon Kinesis Data Firehose來讀取來自Kinesis Data Streams的資料. 把記錄存放在Amazon S3 bucket裡.
 
 **答案**
 B
@@ -9861,11 +9861,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：直接將資料儲存在Amazon S3桶中. 實施S3 生命週期政策(Lifecycle policy),將舊資料移動到S3 Glacier Deep Archive進行長期儲存. 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢。Amazon S3 的物件讀取延遲通常是數十毫秒等級，不具備次毫秒等級的讀取能力，這個方案無法滿足「經常存取資料需要次毫秒延遲讀取」的核心需求，只解決了歷史資料查詢的部分。
+- B：直接將資料儲存在Amazon S3 bucket中. 實施S3 生命週期政策(Lifecycle policy),將舊資料移動到S3 Glacier Deep Archive進行長期儲存. 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢。Amazon S3 的物件讀取延遲通常是數十毫秒等級，不具備次毫秒等級的讀取能力，這個方案無法滿足「經常存取資料需要次毫秒延遲讀取」的核心需求，只解決了歷史資料查詢的部分。
 - 其餘選項比較：
-- A：經常存取的資料使用 Amazon RDS。 執行一個定期自定義指令碼,將資料匯出為 Amazon S3 桶。Amazon RDS 屬於關聯式資料庫，讀取延遲一般在個位數毫秒以上，無法達到題目要求的次毫秒（sub-millisecond）延遲；此外還需自行撰寫、排程並維護匯出指令碼，增加不必要的維運負擔。
-- C：使用與DynamoDB加速器(DAX)的Amazon DynamoDB來獲取經常存取的資料. 透過使用 DynamoDB 表匯出將資料匯出為 Amazon S3 桶。 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢。DynamoDB Accelerator（DAX）是 DynamoDB 的記憶體內快取層，可將讀取延遲降到微秒等級，符合次毫秒延遲需求；DynamoDB 表匯出到 S3 是不需撰寫程式碼的原生受管功能，再透過 Amazon Athena 對 S3 中的資料做無伺服器的一次性查詢，三者組合能以最少的維運負擔同時滿足即時讀取與歷史查詢兩項需求。
-- D：經常存取的資料使用Amazon DynamoDB. 開啟流線到Amazon Kinesis資料流. 使用Amazon Kinesis Data Firehose來讀取來自Kinesis Data Streams的資料. 把記錄存放在Amazon S3桶裡。此方案額外引入 Kinesis Data Streams 與 Kinesis Data Firehose 兩個串流元件，需規劃分片、監控串流健康狀況等額外維運工作，相較原生的 DynamoDB 表匯出功能明顯增加維運複雜度，且方案本身未使用 DAX，無法確保次毫秒等級的讀取延遲。
+- A：經常存取的資料使用 Amazon RDS。 執行一個定期自定義指令碼,將資料匯出為 Amazon S3 bucket。Amazon RDS 屬於關聯式資料庫，讀取延遲一般在個位數毫秒以上，無法達到題目要求的次毫秒（sub-millisecond）延遲；此外還需自行撰寫、排程並維護匯出指令碼，增加不必要的維運負擔。
+- C：使用與DynamoDB加速器(DAX)的Amazon DynamoDB來獲取經常存取的資料. 透過使用 DynamoDB 表匯出將資料匯出為 Amazon S3 bucket。 透過使用Amazon Athena對Amazon S3中的資料進行一次性查詢。DynamoDB Accelerator（DAX）是 DynamoDB 的記憶體內快取層，可將讀取延遲降到微秒等級，符合次毫秒延遲需求；DynamoDB 表匯出到 S3 是不需撰寫程式碼的原生受管功能，再透過 Amazon Athena 對 S3 中的資料做無伺服器的一次性查詢，三者組合能以最少的維運負擔同時滿足即時讀取與歷史查詢兩項需求。
+- D：經常存取的資料使用Amazon DynamoDB. 開啟流線到Amazon Kinesis資料流. 使用Amazon Kinesis Data Firehose來讀取來自Kinesis Data Streams的資料. 把記錄存放在Amazon S3 bucket裡。此方案額外引入 Kinesis Data Streams 與 Kinesis Data Firehose 兩個串流元件，需規劃分片、監控串流健康狀況等額外維運工作，相較原生的 DynamoDB 表匯出功能明顯增加維運複雜度，且方案本身未使用 DAX，無法確保次毫秒等級的讀取延遲。
 
 **分類：** 資料庫
 
@@ -10155,9 +10155,9 @@ A,E
 
 **選項**
 - A. 在 資料庫(database) 表中儲存影象和地理程式碼。 使用 Oracle 執行在 Amazon RDS 多AZ DB 例項上。
-- B. 將影象儲存在 Amazon S3 桶中. 使用以地理程式碼為鍵的Amazon DynamoDB,將影象S3 URL作為值.
+- B. 將影象儲存在 Amazon S3 bucket中. 使用以地理程式碼為鍵的Amazon DynamoDB,將影象S3 URL作為值.
 - C. 將影象和地理程式碼儲存在 Amazon DynamoDB 表格中。 在負載高的時候配置 DynamoDB 加速器(DAX).
-- D. 將影象儲存在 Amazon S3 桶中. 在 資料庫(database) 表中儲存地理程式碼和影象 S3 URL。 使用 Oracle 執行在 Amazon RDS 多AZ DB 例項上。
+- D. 將影象儲存在 Amazon S3 bucket中. 在 資料庫(database) 表中儲存地理程式碼和影象 S3 URL。 使用 Oracle 執行在 Amazon RDS 多AZ DB 例項上。
 
 **答案**
 B
@@ -10167,11 +10167,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：將影象儲存在 Amazon S3 桶中. 使用以地理程式碼為鍵的Amazon DynamoDB,將影象S3 URL作為值。Amazon S3 提供近乎無限、高耐久性的物件儲存，最適合存放大量高解析度影像本身；DynamoDB 是可依需求自動擴充讀寫容量的 NoSQL 資料庫，以地理程式碼為主鍵、只存放對應的 S3 URL，能讓資料表項目保持精簡並承受天災期間每隔幾分鐘數萬筆的寫入尖峰，同時具備高可用與高擴充性。
+- B：將影象儲存在 Amazon S3 bucket中. 使用以地理程式碼為鍵的Amazon DynamoDB,將影象S3 URL作為值。Amazon S3 提供近乎無限、高耐久性的物件儲存，最適合存放大量高解析度影像本身；DynamoDB 是可依需求自動擴充讀寫容量的 NoSQL 資料庫，以地理程式碼為主鍵、只存放對應的 S3 URL，能讓資料表項目保持精簡並承受天災期間每隔幾分鐘數萬筆的寫入尖峰，同時具備高可用與高擴充性。
 - 其餘選項比較：
 - A：在 資料庫(database) 表中儲存影象和地理程式碼。 使用 Oracle 執行在 Amazon RDS 多AZ DB 例項上。RDS 搭配 Oracle 引擎的資料表並不適合直接儲存大量高解析度影像；關聯式資料庫將二進位大型物件塞進資料列會拖慢查詢與備份效能，而 Multi-AZ 執行個體的運算與儲存容量固定，無法像 DynamoDB 那樣彈性因應每隔幾分鐘數萬筆的寫入尖峰。
 - C：將影象和地理程式碼儲存在 Amazon DynamoDB 表格中。 在負載高的時候配置 DynamoDB 加速器(DAX)。DynamoDB 每個項目大小上限為 400 KB，直接把高解析度影像存進資料表項目在技術上不可行；DAX 只是唯讀快取用來加速讀取延遲，無法解決影像儲存空間限制與寫入尖峰擴充的根本問題。
-- D：將影象儲存在 Amazon S3 桶中. 在 資料庫(database) 表中儲存地理程式碼和影象 S3 URL。 使用 Oracle 執行在 Amazon RDS 多AZ DB 例項上。雖然影像已移到 S3，但地理程式碼與 URL 的對應仍存放在 Oracle 執行於 RDS Multi-AZ 的資料表中，Multi-AZ 執行個體的容量固定，無法彈性擴充以吸收天災事件中每隔幾分鐘數萬筆的更新寫入。
+- D：將影象儲存在 Amazon S3 bucket中. 在 資料庫(database) 表中儲存地理程式碼和影象 S3 URL。 使用 Oracle 執行在 Amazon RDS 多AZ DB 例項上。雖然影像已移到 S3，但地理程式碼與 URL 的對應仍存放在 Oracle 執行於 RDS Multi-AZ 的資料表中，Multi-AZ 執行個體的容量固定，無法彈性擴充以吸收天災事件中每隔幾分鐘數萬筆的更新寫入。
 
 **分類：** 資料庫
 
@@ -10724,13 +10724,13 @@ A
 ## Question #393
 
 **題目**
-一個付款處理公司記錄與客戶的所有語音通訊,並將音訊檔案儲存在Amazon S3桶中. 公司需要從音訊檔案中獲取文字. 公司必須從文字中刪除屬於客戶的個人識別資訊。 解決方案設計師應如何滿足這些要求?
+一個付款處理公司記錄與客戶的所有語音通訊,並將音訊檔案儲存在Amazon S3 bucket中. 公司需要從音訊檔案中獲取文字. 公司必須從文字中刪除屬於客戶的個人識別資訊。 解決方案設計師應如何滿足這些要求?
 
 **選項**
 - A. 使用 Amazon Kinesis 影片流處理音訊檔案。 使用 AWS Lambda 函式掃描已知的 PII 模式.
-- B. 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能開始一個Amazon Textract任務來分析通話錄音.
-- C. 配置 Amazon 轉錄工作, 並開啟 PII 編輯功能。 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能來開始抄錄工作. 將輸出儲存在單獨的S3 儲存桶(S3 bucket)中.
-- D. 建立 Amazon Connect 聯絡符, 接收已開啟的音訊檔案。 嵌入一個 AWS Lambda 函式掃描已知的 PII 模式. 使用 Amazon EventBridge 在音訊檔案上傳到S3 儲存桶(S3 bucket) 時啟動聯絡方式。
+- B. 當一個音訊檔案被上傳到S3 bucket時,引用一個AWS Lambda功能開始一個Amazon Textract任務來分析通話錄音.
+- C. 配置 Amazon 轉錄工作, 並開啟 PII 編輯功能。 當一個音訊檔案被上傳到S3 bucket時,引用一個AWS Lambda功能來開始抄錄工作. 將輸出儲存在單獨的S3 bucket中.
+- D. 建立 Amazon Connect 聯絡符, 接收已開啟的音訊檔案。 嵌入一個 AWS Lambda 函式掃描已知的 PII 模式. 使用 Amazon EventBridge 在音訊檔案上傳到S3 bucket 時啟動聯絡方式。
 
 **答案**
 C
@@ -10740,11 +10740,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：配置 Amazon 轉錄工作, 並開啟 PII 編輯功能。 當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能來開始抄錄工作. 將輸出儲存在單獨的S3 儲存桶(S3 bucket)中。Amazon Transcribe 可將音訊檔案轉換成文字，並內建 PII 編輯(redaction)功能，能在產生逐字稿的同時自動偵測並遮蔽姓名、電話號碼等個人識別資訊；搭配 S3 事件觸發 Lambda 啟動轉錄工作、並將結果輸出到另一個 S3 儲存桶，完整對應『從錄音檔取得文字並移除客戶 PII』的需求，且不需要額外自行開發偵測邏輯。
+- C：配置 Amazon 轉錄工作, 並開啟 PII 編輯功能。 當一個音訊檔案被上傳到S3 bucket時,引用一個AWS Lambda功能來開始抄錄工作. 將輸出儲存在單獨的S3 bucket中。Amazon Transcribe 可將音訊檔案轉換成文字，並內建 PII 編輯(redaction)功能，能在產生逐字稿的同時自動偵測並遮蔽姓名、電話號碼等個人識別資訊；搭配 S3 事件觸發 Lambda 啟動轉錄工作、並將結果輸出到另一個 S3 bucket，完整對應『從錄音檔取得文字並移除客戶 PII』的需求，且不需要額外自行開發偵測邏輯。
 - 其餘選項比較：
-- A：使用 Amazon Kinesis 影片流處理音訊檔案。 使用 AWS Lambda 函式掃描已知的 PII 模式。Amazon Kinesis Video Streams 是用來擷取與處理即時串流影像/影音資料的服務，並非針對已經存放在 S3 儲存桶中、需要批次轉錄成文字的錄音檔案設計，也不具備語音轉文字或 PII 遮蔽能力。
-- B：當一個音訊檔案被上傳到S3 儲存桶(S3 bucket)時,引用一個AWS Lambda功能開始一個Amazon Textract任務來分析通話錄音。Amazon Textract 是從掃描文件或圖片中擷取文字與結構化資料的服務，處理的對象是影像/文件而非語音錄音檔，無法將通話錄音轉換成文字。
-- D：建立 Amazon Connect 聯絡符, 接收已開啟的音訊檔案。 嵌入一個 AWS Lambda 函式掃描已知的 PII 模式. 使用 Amazon EventBridge 在音訊檔案上傳到S3 儲存桶(S3 bucket) 時啟動聯絡方式。Amazon Connect 是雲端聯絡中心服務，主要用於即時通話的路由與座席管理；此選項還要求自行嵌入 Lambda 掃描已知 PII 樣式，等於自己重造一套轉錄與遮蔽機制，架構明顯比使用內建 PII 編輯功能的 Transcribe 更複雜，也不適合處理已經存放在 S3 的既有錄音檔案。
+- A：使用 Amazon Kinesis 影片流處理音訊檔案。 使用 AWS Lambda 函式掃描已知的 PII 模式。Amazon Kinesis Video Streams 是用來擷取與處理即時串流影像/影音資料的服務，並非針對已經存放在 S3 bucket中、需要批次轉錄成文字的錄音檔案設計，也不具備語音轉文字或 PII 遮蔽能力。
+- B：當一個音訊檔案被上傳到S3 bucket時,引用一個AWS Lambda功能開始一個Amazon Textract任務來分析通話錄音。Amazon Textract 是從掃描文件或圖片中擷取文字與結構化資料的服務，處理的對象是影像/文件而非語音錄音檔，無法將通話錄音轉換成文字。
+- D：建立 Amazon Connect 聯絡符, 接收已開啟的音訊檔案。 嵌入一個 AWS Lambda 函式掃描已知的 PII 模式. 使用 Amazon EventBridge 在音訊檔案上傳到S3 bucket 時啟動聯絡方式。Amazon Connect 是雲端聯絡中心服務，主要用於即時通話的路由與座席管理；此選項還要求自行嵌入 Lambda 掃描已知 PII 樣式，等於自己重造一套轉錄與遮蔽機制，架構明顯比使用內建 PII 編輯功能的 Transcribe 更複雜，也不適合處理已經存放在 S3 的既有錄音檔案。
 
 **分類：** 機器學習
 
@@ -10832,7 +10832,7 @@ A
 ## Question #397
 
 **題目**
-一家電子商務公司需要開展預定的日常工作,以彙總和過濾分析的銷售記錄。 公司將銷售記錄存放在Amazon S3桶中. 每個物體的大小可達10GB. 根據銷售活動的數量,工作可長達1小時完成. 工作的CPU和記憶體使用是恆定的,是事先知道的. 解決方案設計師需要儘量減少工作運作所需的業務努力量。 哪種解決辦法符合這些要求?
+一家電子商務公司需要開展預定的日常工作,以彙總和過濾分析的銷售記錄。 公司將銷售記錄存放在Amazon S3 bucket中. 每個物體的大小可達10GB. 根據銷售活動的數量,工作可長達1小時完成. 工作的CPU和記憶體使用是恆定的,是事先知道的. 解決方案設計師需要儘量減少工作運作所需的業務努力量。 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 建立具有 Amazon EventBridge 通知的 AWS Lambda 函式. 將事件Bridge事件安排在每天執行一次.
@@ -10967,13 +10967,13 @@ A
 ## Question #402
 
 **題目**
-一個公司需要吸收和處理其應用生成的大量流資料. 該應用程式執行在 Amazon EC2 例項上,並將資料傳送給 Amazon Kinesis 資料流,資料流配置為預設設定. 每隔一天,應用程式會消耗資料,並將資料寫入一個Amazon S3桶,用於商業智慧(BI)處理. 該公司注意到,Amazon S3沒有收到應用程式傳送給Kinesis Data Streams的所有資料。 解決方案設計師應如何解決這一問題?
+一個公司需要吸收和處理其應用生成的大量流資料. 該應用程式執行在 Amazon EC2 例項上,並將資料傳送給 Amazon Kinesis 資料流,資料流配置為預設設定. 每隔一天,應用程式會消耗資料,並將資料寫入一個Amazon S3 bucket,用於商業智慧(BI)處理. 該公司注意到,Amazon S3沒有收到應用程式傳送給Kinesis Data Streams的所有資料。 解決方案設計師應如何解決這一問題?
 
 **選項**
 - A. 透過修改資料保留期來更新 Kinesis 資料流預設設定。
 - B. 更新應用程式以使用Kinesis製片人庫(KPL)將資料傳送給Kinesis Data Streams.
 - C. 更新 Kinesis shards 的編號,處理傳送給 Kinesis Data Streams 的吞吐量(throughput) 資料.
-- D. 開啟S3 儲存桶(S3 bucket)內部的S3版本,以保留S3 儲存桶(S3 bucket)中攝入的每個物件的每個版本.
+- D. 開啟S3 bucket內部的S3版本,以保留S3 bucket中攝入的每個物件的每個版本.
 
 **答案**
 A
@@ -10987,7 +10987,7 @@ A
 - 其餘選項比較：
 - B：更新應用程式以使用Kinesis製片人庫(KPL)將資料傳送給Kinesis Data Streams。改用 Kinesis Producer Library（KPL）主要是優化生產端的批次與壓縮效率、提升寫入吞吐效能，並不會改變資料流的保留期，無法解決資料因保留期到期而被刪除的問題。
 - C：更新 Kinesis shards 的編號,處理傳送給 Kinesis Data Streams 的吞吐量(throughput) 資料。增加 shard 數量是用來提升資料流的寫入或讀取吞吐量、避免發生佈建吞吐量超額這類節流錯誤，但題目描述的現象是資料完全遺失，根源在於保留期設定而非吞吐量不足，因此增加 shard 數量無法解決問題。
-- D：開啟S3 儲存桶(S3 bucket)內部的S3版本,以保留S3 儲存桶(S3 bucket)中攝入的每個物件的每個版本。開啟 S3 儲存桶版本控制只會對已經成功寫入 S3 的物件保留多個版本，但問題發生在資料尚未寫入 S3 之前、就已在 Kinesis Data Streams 端因保留期到期而遺失，S3 版本控制完全無法補救尚未到達 S3 的資料。
+- D：開啟S3 bucket內部的S3版本,以保留S3 bucket中攝入的每個物件的每個版本。開啟 S3 bucket版本控制只會對已經成功寫入 S3 的物件保留多個版本，但問題發生在資料尚未寫入 S3 之前、就已在 Kinesis Data Streams 端因保留期到期而遺失，S3 版本控制完全無法補救尚未到達 S3 的資料。
 
 **分類：** 分析
 
@@ -11021,11 +11021,11 @@ A
 ## Question #404
 
 **題目**
-當新檔案上傳到Amazon S3桶時,一連部署了一個無伺服器應用程式,該應用程式引用了AWS Lambda功能. 應用程式使用Lambda函式處理文件. 在近期的一次營銷運動之後,公司注意到申請沒有處理許多檔案. 一個解決方案設計師應該做些什麼來改進這一應用的架構?
+當新檔案上傳到Amazon S3 bucket時,一連部署了一個無伺服器應用程式,該應用程式引用了AWS Lambda功能. 應用程式使用Lambda函式處理文件. 在近期的一次營銷運動之後,公司注意到申請沒有處理許多檔案. 一個解決方案設計師應該做些什麼來改進這一應用的架構?
 
 **選項**
 - A. 將Lambda函式的執行時間超時值設定為15分鐘.
-- B. 配置 S3 儲存桶(S3 bucket) 複寫(replication) 策略. 在S3 儲存桶(S3 bucket)中預置文件供以後處理.
+- B. 配置 S3 bucket 複寫(replication) 策略. 在S3 bucket中預置文件供以後處理.
 - C. 增加部署Lambda職能。 裝入兩個Lambda函式的檔案處理平衡。
 - D. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將請求傳送給佇列。 配置佇列為 Lambda 的事件源。
 
@@ -11040,7 +11040,7 @@ D
 - D：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將請求傳送給佇列。 配置佇列為 Lambda 的事件源。SQS 佇列可在 S3 事件觸發與 Lambda 執行之間加入緩衝層，行銷活動帶來的突發上傳流量會先堆積在佇列中而不直接壅塞 Lambda 的並行執行數；Lambda 以輪詢方式從佇列拉取訊息並依可控速率處理，避免瞬間高併發觸發節流，佇列本身也提供訊息持久化與重試機制，降低漏處理風險。
 - 其餘選項比較：
 - A：將Lambda函式的執行時間超時值設定為15分鐘。Lambda 逾時值調整只影響單次執行可執行的最長時間（最高 15 分鐘），並不能解決大量檔案同時湧入導致並行呼叫數超出限制而遭節流的根本問題，對處理量不足沒有幫助。
-- B：配置 S3 儲存桶(S3 bucket) 複寫(replication) 策略. 在S3 儲存桶(S3 bucket)中預置文件供以後處理。S3 複寫是把物件非同步複製到另一個儲存桶的資料備援機制，並不會觸發或協助任何運算邏輯去處理已上傳的檔案，無法解決檔案未被應用程式處理的問題。
+- B：配置 S3 bucket 複寫(replication) 策略. 在S3 bucket中預置文件供以後處理。S3 複寫是把物件非同步複製到另一個儲存桶的資料備援機制，並不會觸發或協助任何運算邏輯去處理已上傳的檔案，無法解決檔案未被應用程式處理的問題。
 - C：增加部署Lambda職能。 裝入兩個Lambda函式的檔案處理平衡。單純多部署一個 Lambda 函式並在兩者間手動分攤負載，仍受限於帳戶或區域的 Lambda 並行執行配額，且沒有緩衝機制，遇到尖峰流量時兩個函式一樣可能同時被節流，維運複雜度反而更高。
 
 **分類：** 應用程式整合
@@ -11243,12 +11243,12 @@ C
 ## Question #412
 
 **題目**
-一家影象託管公司將其物品存放在Amazon S3桶中. 公司希望避免S3 儲存桶中的物體意外暴露給公眾. 整個AWS帳戶中的所有S3物件需要保持私密. 哪種解決辦法能滿足這些要求?
+一家影象託管公司將其物品存放在Amazon S3 bucket中. 公司希望避免S3 bucket中的物體意外暴露給公眾. 整個AWS帳戶中的所有S3物件需要保持私密. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用Amazon GuardDuty監控S3 儲存桶(S3 bucket)政策. 建立一個自動補救行動規則,使用AWS Lambda函式來補救任何使物體公開的改變.
-- B. 使用 AWS 信任的顧問尋找可公開存取的 S3 桶。 在檢測到更改時配置信任顧問的電子郵件通知。 如果允許公眾存取,則手動更改S3 儲存桶政策(bucket policy).
-- C. 使用 AWS 資源存取管理器尋找可公開存取的 S3 桶. 使用Amazon簡單通知服務(Amazon SNS)在檢測到變化時引用一個AWS Lambda函式. 部署一個Lambda職能,在方案上補救變化。
+- A. 使用Amazon GuardDuty監控S3 bucket政策. 建立一個自動補救行動規則,使用AWS Lambda函式來補救任何使物體公開的改變.
+- B. 使用 AWS 信任的顧問尋找可公開存取的 S3 bucket。 在檢測到更改時配置信任顧問的電子郵件通知。 如果允許公眾存取,則手動更改S3 bucket政策(bucket policy).
+- C. 使用 AWS 資源存取管理器尋找可公開存取的 S3 bucket. 使用Amazon簡單通知服務(Amazon SNS)在檢測到變化時引用一個AWS Lambda函式. 部署一個Lambda職能,在方案上補救變化。
 - D. 在帳戶級別上使用 S3 Block Public Access 特性. 使用AWS Organizations來建立服務控制政策(SCP),防止IAM使用者更改設定. 應用 SCP 到帳戶。
 
 **答案**
@@ -11261,9 +11261,9 @@ D
 正確答案是 **D**。
 - D：在帳戶級別上使用 S3 Block Public Access 特性. 使用AWS Organizations來建立服務控制政策(SCP),防止IAM使用者更改設定. 應用 SCP 到帳戶。S3 Block Public Access 在帳戶層級啟用後，不論儲存桶政策或 ACL 如何設定，都會一律封鎖任何使物件或儲存桶變成公開的存取方式，屬於預防性而非偵測後補救的機制；再透過 AWS Organizations 的 SCP 禁止 IAM 使用者關閉此設定，等於在帳戶邊界上鎖死這項防護，確保整個帳戶所有 S3 物件持續保持私密，完全符合題目「避免意外暴露」與「全帳戶」的要求。
 - 其餘選項比較：
-- A：使用Amazon GuardDuty監控S3 儲存桶(S3 bucket)政策. 建立一個自動補救行動規則,使用AWS Lambda函式來補救任何使物體公開的改變。GuardDuty 是威脅偵測服務，設計用來分析 CloudTrail、VPC Flow Logs 與 DNS 記錄以找出異常行為與惡意活動，並非用來監控或解析 S3 儲存桶政策的組態內容；即使加上 Lambda 自動修復，也只能在物件已經被公開曝露之後才被動偵測與回應，無法達到「避免意外暴露」的預防性要求。
-- B：使用 AWS 信任的顧問尋找可公開存取的 S3 桶。 在檢測到更改時配置信任顧問的電子郵件通知。 如果允許公眾存取,則手動更改S3 儲存桶政策(bucket policy)。AWS Trusted Advisor 雖然能標記出可公開存取的 S3 儲存桶，但方案中要求「手動」變更儲存桶政策，屬於偵測後人工補救的被動流程，存在人工介入前的曝險空窗期，無法保證整個帳戶所有物件持續保持私密。
-- C：使用 AWS 資源存取管理器尋找可公開存取的 S3 桶. 使用Amazon簡單通知服務(Amazon SNS)在檢測到變化時引用一個AWS Lambda函式. 部署一個Lambda職能,在方案上補救變化。AWS Resource Access Manager (RAM) 是用來跨帳戶共享 AWS 資源（如子網路、Transit Gateway）的服務，本身沒有掃描或找出可公開存取 S3 儲存桶的功能，選項描述的能力與 RAM 的實際用途不符。
+- A：使用Amazon GuardDuty監控S3 bucket政策. 建立一個自動補救行動規則,使用AWS Lambda函式來補救任何使物體公開的改變。GuardDuty 是威脅偵測服務，設計用來分析 CloudTrail、VPC Flow Logs 與 DNS 記錄以找出異常行為與惡意活動，並非用來監控或解析 S3 bucket政策的組態內容；即使加上 Lambda 自動修復，也只能在物件已經被公開曝露之後才被動偵測與回應，無法達到「避免意外暴露」的預防性要求。
+- B：使用 AWS 信任的顧問尋找可公開存取的 S3 bucket。 在檢測到更改時配置信任顧問的電子郵件通知。 如果允許公眾存取,則手動更改S3 bucket政策(bucket policy)。AWS Trusted Advisor 雖然能標記出可公開存取的 S3 bucket，但方案中要求「手動」變更儲存桶政策，屬於偵測後人工補救的被動流程，存在人工介入前的曝險空窗期，無法保證整個帳戶所有物件持續保持私密。
+- C：使用 AWS 資源存取管理器尋找可公開存取的 S3 bucket. 使用Amazon簡單通知服務(Amazon SNS)在檢測到變化時引用一個AWS Lambda函式. 部署一個Lambda職能,在方案上補救變化。AWS Resource Access Manager (RAM) 是用來跨帳戶共享 AWS 資源（如子網路、Transit Gateway）的服務，本身沒有掃描或找出可公開存取 S3 bucket的功能，選項描述的能力與 RAM 的實際用途不符。
 
 **分類：** 安全、身分與合規
 
@@ -11324,13 +11324,13 @@ C
 ## Question #415
 
 **題目**
-一家公司正在Amazon S3 Standard中儲存幾位元組資料. 資料被儲存在多個S3桶中,並以不同頻率存取. 公司並不知道所有資料的存取模式. 公司需要針對每個S3 儲存桶(S3 bucket)實施一個解決方案,以最佳化S3的使用成本. 哪種辦法能滿足這些要求?
+一家公司正在Amazon S3 Standard中儲存幾位元組資料. 資料被儲存在多個S3 bucket中,並以不同頻率存取. 公司並不知道所有資料的存取模式. 公司需要針對每個S3 bucket實施一個解決方案,以最佳化S3的使用成本. 哪種辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個S3生命週期配置,其規則是將S3 儲存桶(S3 bucket)中的物件轉換為S3 Intelligent-Tiering.
-- B. 使用S3儲存類分析工具確定S3 儲存桶(S3 bucket)中每個物件的正確等級. 將每個物件移動到指定的儲存級別。
-- C. 建立一個S3生命週期配置,其規則是將S3 儲存桶(S3 bucket)中的物件轉換為S3 Glacier Instant Retrieval.
-- D. 建立一個S3壽命週期配置,其規則是將S3 儲存桶(S3 bucket)中的物件轉換為S3 One Zone-不經常存取(S3 One Zone-IA).
+- A. 建立一個S3生命週期配置,其規則是將S3 bucket中的物件轉換為S3 Intelligent-Tiering.
+- B. 使用S3儲存類分析工具確定S3 bucket中每個物件的正確等級. 將每個物件移動到指定的儲存級別。
+- C. 建立一個S3生命週期配置,其規則是將S3 bucket中的物件轉換為S3 Glacier Instant Retrieval.
+- D. 建立一個S3壽命週期配置,其規則是將S3 bucket中的物件轉換為S3 One Zone-不經常存取(S3 One Zone-IA).
 
 **答案**
 A
@@ -11340,11 +11340,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個S3生命週期配置,其規則是將S3 儲存桶(S3 bucket)中的物件轉換為S3 Intelligent-Tiering。S3 Intelligent-Tiering 會依物件實際存取頻率的變化，自動在頻繁存取、不頻繁存取與封存層級之間搬移物件，且搬移過程沒有取回費用與效能影響，正是針對「不知道存取模式」且分佈在多個儲存桶的情境設計的解決方案，能以最少的人工介入持續最佳化成本。
+- A：建立一個S3生命週期配置,其規則是將S3 bucket中的物件轉換為S3 Intelligent-Tiering。S3 Intelligent-Tiering 會依物件實際存取頻率的變化，自動在頻繁存取、不頻繁存取與封存層級之間搬移物件，且搬移過程沒有取回費用與效能影響，正是針對「不知道存取模式」且分佈在多個儲存桶的情境設計的解決方案，能以最少的人工介入持續最佳化成本。
 - 其餘選項比較：
-- B：使用S3儲存類分析工具確定S3 儲存桶(S3 bucket)中每個物件的正確等級. 將每個物件移動到指定的儲存級別。S3 儲存類別分析工具本身只提供分析建議，並不會自動搬移物件，還需要人工根據分析結果逐一將物件移動到指定儲存級別，屬於一次性、人工判斷的作法，無法隨存取模式持續變化自動調整，維運負擔遠高於自動化分層。
-- C：建立一個S3生命週期配置,其規則是將S3 儲存桶(S3 bucket)中的物件轉換為S3 Glacier Instant Retrieval。S3 Glacier Instant Retrieval 是針對很少存取（例如一季存取一次）的封存級資料設計，具有取回費用與較長的最小儲存期間；在不清楚各物件實際存取頻率的情況下把所有物件都轉入這個級別，經常被存取的物件將產生大量取回費用，不符合「不知道存取模式」的前提。
-- D：建立一個S3壽命週期配置,其規則是將S3 儲存桶(S3 bucket)中的物件轉換為S3 One Zone-不經常存取(S3 One Zone-IA)。S3 One Zone-IA 只將資料儲存在單一可用區，缺乏跨 AZ 的容錯能力，且屬於不頻繁存取層級，若物件實際上仍被頻繁存取會產生額外的資料取出費用；在不了解各物件存取頻率的情況下強制套用此單一儲存類別，無法依實際使用模式最佳化成本。
+- B：使用S3儲存類分析工具確定S3 bucket中每個物件的正確等級. 將每個物件移動到指定的儲存級別。S3 儲存類別分析工具本身只提供分析建議，並不會自動搬移物件，還需要人工根據分析結果逐一將物件移動到指定儲存級別，屬於一次性、人工判斷的作法，無法隨存取模式持續變化自動調整，維運負擔遠高於自動化分層。
+- C：建立一個S3生命週期配置,其規則是將S3 bucket中的物件轉換為S3 Glacier Instant Retrieval。S3 Glacier Instant Retrieval 是針對很少存取（例如一季存取一次）的封存級資料設計，具有取回費用與較長的最小儲存期間；在不清楚各物件實際存取頻率的情況下把所有物件都轉入這個級別，經常被存取的物件將產生大量取回費用，不符合「不知道存取模式」的前提。
+- D：建立一個S3壽命週期配置,其規則是將S3 bucket中的物件轉換為S3 One Zone-不經常存取(S3 One Zone-IA)。S3 One Zone-IA 只將資料儲存在單一可用區，缺乏跨 AZ 的容錯能力，且屬於不頻繁存取層級，若物件實際上仍被頻繁存取會產生額外的資料取出費用；在不了解各物件存取頻率的情況下強制套用此單一儲存類別，無法依實際使用模式最佳化成本。
 
 **分類：** 儲存
 
@@ -11408,12 +11408,12 @@ C
 ## Question #418
 
 **題目**
-一個解決方案架構師需要允許團隊成員在兩個不同的AWS帳戶中存取Amazon S3桶:一個開發帳戶和一個生產帳戶. 該團隊目前透過使用獨特的IAM使用者來存取開發帳戶中的S3桶,這些使用者被分配到帳戶中擁有適當許可權的IAM組. 解決方案架構師在生產帳戶中建立了IAM角色. 該角色有一項政策允許進入生產帳戶中的S3 儲存桶(S3 bucket)。 在遵守最小權限(least privilege)原則的同時,哪一種解決辦法將滿足這些要求?
+一個解決方案架構師需要允許團隊成員在兩個不同的AWS帳戶中存取Amazon S3 bucket:一個開發帳戶和一個生產帳戶. 該團隊目前透過使用獨特的IAM使用者來存取開發帳戶中的S3 bucket,這些使用者被分配到帳戶中擁有適當許可權的IAM組. 解決方案架構師在生產帳戶中建立了IAM角色. 該角色有一項政策允許進入生產帳戶中的S3 bucket。 在遵守最小權限(least privilege)原則的同時,哪一種解決辦法將滿足這些要求?
 
 **選項**
 - A. 將管理員存取政策附於發展帳戶使用者。
 - B. 增加發展帳戶作為生產帳戶中角色信託政策的主要部分。
-- C. 關閉生產帳戶中S3 儲存桶(S3 bucket)上的S3 Block Public Access功能.
+- C. 關閉生產帳戶中S3 bucket上的S3 Block Public Access功能.
 - D. 在製作帳戶中建立一個使用者,每個團隊成員都有獨特的憑證.
 
 **答案**
@@ -11426,8 +11426,8 @@ B
 正確答案是 **B**。
 - B：增加發展帳戶作為生產帳戶中角色信託政策的主要部分。在生產帳戶 IAM 角色的信任政策（trust policy）中把開發帳戶加入為受信任的主體，團隊成員可以繼續使用他們在開發帳戶中原有的 IAM 使用者身分，透過 sts:AssumeRole 跨帳戶擔任生產帳戶中權限範圍已受限定的角色，不需要建立新身分或給予多餘權限，是符合最小權限原則的標準跨帳戶存取模式。
 - 其餘選項比較：
-- A：將管理員存取政策附於發展帳戶使用者。把管理員存取政策直接附加在開發帳戶的使用者身上，等於賦予遠超過存取單一 S3 儲存桶所需的權限，明顯違反最小權限原則，而且這個做法也沒有建立任何跨帳戶信任機制，使用者仍然無法用開發帳戶身分實際存取生產帳戶中的資源。
-- C：關閉生產帳戶中S3 儲存桶(S3 bucket)上的S3 Block Public Access功能。關閉生產帳戶 S3 儲存桶上的 S3 Block Public Access，會讓儲存桶暴露在網際網路公開存取的風險中，這與題目要求的最小權限精神完全相反，也和「讓內部團隊跨帳戶存取」的目標無關。
+- A：將管理員存取政策附於發展帳戶使用者。把管理員存取政策直接附加在開發帳戶的使用者身上，等於賦予遠超過存取單一 S3 bucket所需的權限，明顯違反最小權限原則，而且這個做法也沒有建立任何跨帳戶信任機制，使用者仍然無法用開發帳戶身分實際存取生產帳戶中的資源。
+- C：關閉生產帳戶中S3 bucket上的S3 Block Public Access功能。關閉生產帳戶 S3 bucket上的 S3 Block Public Access，會讓儲存桶暴露在網際網路公開存取的風險中，這與題目要求的最小權限精神完全相反，也和「讓內部團隊跨帳戶存取」的目標無關。
 - D：在製作帳戶中建立一個使用者,每個團隊成員都有獨特的憑證。在生產帳戶中再建立一組獨立的 IAM 使用者與專屬憑證，代表每位團隊成員需要同時維護開發帳戶與生產帳戶兩套身分與憑證，增加了憑證管理與輪替的負擔，也沒有善用題目中已經建立好、範圍受限的 IAM 角色。
 
 **分類：** 安全、身分與合規
@@ -11497,8 +11497,8 @@ A
 **選項**
 - A. 建立加密的Amazon Elastic Block Store(Amazon EBS)磁碟區. 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將 EBS 磁碟區附加到 SFTP 服務端點. 允許使用者存取SFTP服務.
 - B. 建立加密的Amazon Elastic File System (Amazon EFS)卷. 建立具有彈性IP地址的AWS Transfer Family SFTP服務,並建立具有網際網路上網功能的VPC 端點(VPC endpoint). 在端點上附加一個只允許信任的IP地址的安全群組(security group). 將 EFS 磁碟區附加到 SFTP 服務端點。 允許使用者存取SFTP服務.
-- C. 建立預設 加密(encryption) 的 Amazon S3 桶。 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務.
-- D. 建立 Amazon S3 桶, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務.
+- C. 建立預設 加密(encryption) 的 Amazon S3 bucket。 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將S3 bucket附加到SFTP服務端點. 允許使用者存取SFTP服務.
+- D. 建立 Amazon S3 bucket, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 bucket附加到SFTP服務端點. 允許使用者存取SFTP服務.
 
 **答案**
 C
@@ -11508,11 +11508,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立預設 加密(encryption) 的 Amazon S3 桶。 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務。AWS Transfer Family 搭配 Amazon S3 屬於完全受管、無需規劃容量或效能模式的無伺服器儲存後端，能自動因應大量並行 SFTP 連線的存取需求。透過每個 SFTP 使用者對應的 IAM 政策與家目錄設定，可以精細控制各使用者能存取的儲存路徑與可執行的操作，同時延續現行架構以受信任 IP 存取端點的模式，符合高度可配置安全性與維持使用者權限控管的要求。
+- C：建立預設 加密(encryption) 的 Amazon S3 bucket。 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將S3 bucket附加到SFTP服務端點. 允許使用者存取SFTP服務。AWS Transfer Family 搭配 Amazon S3 屬於完全受管、無需規劃容量或效能模式的無伺服器儲存後端，能自動因應大量並行 SFTP 連線的存取需求。透過每個 SFTP 使用者對應的 IAM 政策與家目錄設定，可以精細控制各使用者能存取的儲存路徑與可執行的操作，同時延續現行架構以受信任 IP 存取端點的模式，符合高度可配置安全性與維持使用者權限控管的要求。
 - 其餘選項比較：
 - A：建立加密的Amazon Elastic Block Store(Amazon EBS)磁碟區. 建立一個只允許信任的IP地址的AWS Transfer Family SFTP服務. 將 EBS 磁碟區附加到 SFTP 服務端點. 允許使用者存取SFTP服務。AWS Transfer Family 目前僅支援以 Amazon S3 或 Amazon EFS 作為儲存後端，並不支援直接掛接 Amazon EBS 磁碟區，此架構在技術上無法建立。
 - B：建立加密的Amazon Elastic File System (Amazon EFS)卷. 建立具有彈性IP地址的AWS Transfer Family SFTP服務,並建立具有網際網路上網功能的VPC 端點(VPC endpoint). 在端點上附加一個只允許信任的IP地址的安全群組(security group). 將 EFS 磁碟區附加到 SFTP 服務端點。 允許使用者存取SFTP服務。採用 EFS 作為後端須將 Transfer Family 部署在 VPC 內，並額外設定具備網際網路連線能力的 VPC 端點與安全群組，架構複雜度明顯提高；EFS 在 Bursting Throughput 模式下的可用 IOPS 與已儲存的資料量成正比，資料量不足時難以穩定達到高 IOPS，須額外設定 Provisioned Throughput 才能因應大量存取，增加成本與管理負擔。
-- D：建立 Amazon S3 桶, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 儲存桶(S3 bucket)附加到SFTP服務端點. 允許使用者存取SFTP服務。把 Transfer Family 端點建立在私有子網、僅供 VPC 內部存取，會讓 SFTP 服務失去現行透過網際網路、從受信任 IP 來源連線的能力，除非另外建置 VPN 或 Direct Connect 才能讓外部使用者連線，這對維持現有存取模式而言是不必要的額外網路複雜度。
+- D：建立 Amazon S3 bucket, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 bucket附加到SFTP服務端點. 允許使用者存取SFTP服務。把 Transfer Family 端點建立在私有子網、僅供 VPC 內部存取，會讓 SFTP 服務失去現行透過網際網路、從受信任 IP 來源連線的能力，除非另外建置 VPN 或 Direct Connect 才能讓外部使用者連線，這對維持現有存取模式而言是不必要的額外網路複雜度。
 
 **分類：** 移轉和傳輸
 
@@ -11738,14 +11738,14 @@ D
 ## Question #430
 
 **題目**
-一家制造公司擁有機器感測器,可以上傳.csv檔案到Amazon S3桶. 這些.csv檔案必須轉換成影象,必須儘快提供,以便自動生成圖形報告. 影象在1個月後變得無關緊要,但必須儲存.csv檔案,以便每年訓練兩次機器學習(ML)模型. 管理責任培訓和審計計劃提前數週進行。 哪些步驟的組合將以符合成本效益的方式滿足這些要求?(選二.
+一家制造公司擁有機器感測器,可以上傳.csv檔案到Amazon S3 bucket. 這些.csv檔案必須轉換成影象,必須儘快提供,以便自動生成圖形報告. 影象在1個月後變得無關緊要,但必須儲存.csv檔案,以便每年訓練兩次機器學習(ML)模型. 管理責任培訓和審計計劃提前數週進行。 哪些步驟的組合將以符合成本效益的方式滿足這些要求?(選二.
 
 **選項**
-- A. 推出Amazon EC2 Spot 執行個體,每小時下載.csv檔案,生成影象檔案,並將影象上傳到S3 儲存桶(S3 bucket).
-- B. 設計一個AWS Lambda功能,將.csv檔案轉換成影象,並將影象儲存在S3 儲存桶(S3 bucket)中. 當一個 .csv 檔案被上傳時, 請啟用 Lambda 函式。
-- C. 在S3 儲存桶(S3 bucket)中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3冰川. 30天后終止影象檔案。
-- D. 在S3 儲存桶(S3 bucket)中為.csv檔案和影象檔案建立S3生命週期規則. 將.csv檔案從S3標準轉換為S3 One Zone-不經常存取(S3 One Zone-IA),在上傳1天后. 30天后終止影象檔案。
-- E. 在S3 儲存桶(S3 bucket)中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3標準不頻繁存取(S3 Standard-IA). 將影象檔案儲存在減少冗餘儲存(RRS)中.
+- A. 推出Amazon EC2 Spot 執行個體,每小時下載.csv檔案,生成影象檔案,並將影象上傳到S3 bucket.
+- B. 設計一個AWS Lambda功能,將.csv檔案轉換成影象,並將影象儲存在S3 bucket中. 當一個 .csv 檔案被上傳時, 請啟用 Lambda 函式。
+- C. 在S3 bucket中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3冰川. 30天后終止影象檔案。
+- D. 在S3 bucket中為.csv檔案和影象檔案建立S3生命週期規則. 將.csv檔案從S3標準轉換為S3 One Zone-不經常存取(S3 One Zone-IA),在上傳1天后. 30天后終止影象檔案。
+- E. 在S3 bucket中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3標準不頻繁存取(S3 Standard-IA). 將影象檔案儲存在減少冗餘儲存(RRS)中.
 
 **答案**
 B,C
@@ -11756,12 +11756,12 @@ B,C
 
 **詳解**
 正確答案是 **B, C**。
-- B：設計一個AWS Lambda功能,將.csv檔案轉換成影象,並將影象儲存在S3 儲存桶(S3 bucket)中. 當一個 .csv 檔案被上傳時, 請啟用 Lambda 函式。用 S3 上傳事件觸發 AWS Lambda 函式即時把 CSV 轉成圖片並寫回 S3，屬於事件驅動的無伺服器架構，只有檔案上傳時才會執行並付費，既能滿足「盡快產生圖形報告」的即時性，也不需要維運任何常駐運算資源。
-- C：在S3 儲存桶(S3 bucket)中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3冰川. 30天后終止影象檔案。對 CSV 檔案設定生命週期規則，上傳 1 天後轉存到 S3 Glacier，符合「一年只需存取兩次做 ML 訓練」的低頻長期保存需求，Glacier 的儲存成本遠低於標準儲存層；圖片檔案 30 天後直接到期刪除，對應「1 個月後就不再重要」的需求，兩者都達到降低長期儲存成本的目的。
+- B：設計一個AWS Lambda功能,將.csv檔案轉換成影象,並將影象儲存在S3 bucket中. 當一個 .csv 檔案被上傳時, 請啟用 Lambda 函式。用 S3 上傳事件觸發 AWS Lambda 函式即時把 CSV 轉成圖片並寫回 S3，屬於事件驅動的無伺服器架構，只有檔案上傳時才會執行並付費，既能滿足「盡快產生圖形報告」的即時性，也不需要維運任何常駐運算資源。
+- C：在S3 bucket中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3冰川. 30天后終止影象檔案。對 CSV 檔案設定生命週期規則，上傳 1 天後轉存到 S3 Glacier，符合「一年只需存取兩次做 ML 訓練」的低頻長期保存需求，Glacier 的儲存成本遠低於標準儲存層；圖片檔案 30 天後直接到期刪除，對應「1 個月後就不再重要」的需求，兩者都達到降低長期儲存成本的目的。
 - 其餘選項比較：
-- A：推出Amazon EC2 Spot 執行個體,每小時下載.csv檔案,生成影象檔案,並將影象上傳到S3 儲存桶(S3 bucket)。用 EC2 Spot 執行個體每小時輪詢下載 CSV 再產生圖片，Spot 執行個體隨時可能被中斷，且以小時為單位的批次輪詢無法達到「儘快產生報告」的即時性要求，還得自行維運伺服器，維運負擔比事件觸發架構高。
-- D：在S3 儲存桶(S3 bucket)中為.csv檔案和影象檔案建立S3生命週期規則. 將.csv檔案從S3標準轉換為S3 One Zone-不經常存取(S3 One Zone-IA),在上傳1天后. 30天后終止影象檔案。把 CSV 轉存到 S3 One Zone-IA 只放在單一可用區，對於還要用於年度稽核與訓練 ML 模型、需要長期保存的資料而言耐用性不足，也不像 Glacier 那樣針對「一年僅存取兩次」的存取頻率最佳化成本。
-- E：在S3 儲存桶(S3 bucket)中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3標準不頻繁存取(S3 Standard-IA). 將影象檔案儲存在減少冗餘儲存(RRS)中。把圖片放進減少冗餘儲存（RRS）是 AWS 已不建議用於新資料的舊世代儲存類別，耐用性明顯低於標準選項；CSV 只轉到 Standard-IA 而非 Glacier，對一年僅需存取兩次的資料而言，儲存成本會高於使用 Glacier。
+- A：推出Amazon EC2 Spot 執行個體,每小時下載.csv檔案,生成影象檔案,並將影象上傳到S3 bucket。用 EC2 Spot 執行個體每小時輪詢下載 CSV 再產生圖片，Spot 執行個體隨時可能被中斷，且以小時為單位的批次輪詢無法達到「儘快產生報告」的即時性要求，還得自行維運伺服器，維運負擔比事件觸發架構高。
+- D：在S3 bucket中為.csv檔案和影象檔案建立S3生命週期規則. 將.csv檔案從S3標準轉換為S3 One Zone-不經常存取(S3 One Zone-IA),在上傳1天后. 30天后終止影象檔案。把 CSV 轉存到 S3 One Zone-IA 只放在單一可用區，對於還要用於年度稽核與訓練 ML 模型、需要長期保存的資料而言耐用性不足，也不像 Glacier 那樣針對「一年僅存取兩次」的存取頻率最佳化成本。
+- E：在S3 bucket中為.csv檔案和影象檔案建立S3生命週期規則. .csv檔案在上傳1天后從S3標準轉換為S3標準不頻繁存取(S3 Standard-IA). 將影象檔案儲存在減少冗餘儲存(RRS)中。把圖片放進減少冗餘儲存（RRS）是 AWS 已不建議用於新資料的舊世代儲存類別，耐用性明顯低於標準選項；CSV 只轉到 Standard-IA 而非 Glacier，對一年僅需存取兩次的資料而言，儲存成本會高於使用 Glacier。
 
 **分類：** 無伺服器
 
@@ -11961,8 +11961,8 @@ B
 
 **選項**
 - A. 建立資料庫(database)的讀取複製品. 配置IAM標準資料庫(database)認證,允許審計師存取.
-- B. 匯出 資料庫(database) 內容到文字檔案。 在Amazon S3桶裡儲存檔案. 為審計員建立一個新的IAM使用者. 允許使用者存取S3 儲存桶(S3 bucket).
-- C. 將資料庫(database)的快照(snapshot)複製到Amazon S3桶中. 建立 IAM 使用者。 與審計師共享使用者金鑰,允許存取S3 儲存桶(S3 bucket)中的物件.
+- B. 匯出 資料庫(database) 內容到文字檔案。 在Amazon S3 bucket裡儲存檔案. 為審計員建立一個新的IAM使用者. 允許使用者存取S3 bucket.
+- C. 將資料庫(database)的快照(snapshot)複製到Amazon S3 bucket中. 建立 IAM 使用者。 與審計師共享使用者金鑰,允許存取S3 bucket中的物件.
 - D. 在資料庫(database)中建立加密的快照(snapshot). 與審計師共享快照(snapshot). 允許存取 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵.
 
 **答案**
@@ -11976,8 +11976,8 @@ D
 - D：在資料庫(database)中建立加密的快照(snapshot). 與審計師共享快照(snapshot). 允許存取 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵。先在資料庫建立加密快照，透過 RDS 原生的快照跨帳戶分享功能將快照分享給稽核師的 AWS 帳戶，並另外授予稽核師存取加密快照所用 KMS 金鑰的權限，稽核師便能在自己的帳戶中用該快照還原出獨立的資料庫副本；資料全程保持加密狀態，且不需要開放公司私有子網的網路存取或交換長期憑證，是風險最低的做法。
 - 其餘選項比較：
 - A：建立資料庫(database)的讀取複製品. 配置IAM標準資料庫(database)認證,允許審計師存取。建立讀取複本仍是公司帳戶內、位於私有子網中的資源，要讓外部帳戶的稽核師存取，必須開放跨帳戶的網路連線或對外曝露端點，且稽核師拿到的是即時同步的複本而非獨立擁有的資料庫，風險與依賴性都比較高。
-- B：匯出 資料庫(database) 內容到文字檔案。 在Amazon S3桶裡儲存檔案. 為審計員建立一個新的IAM使用者. 允許使用者存取S3 儲存桶(S3 bucket)。將資料庫內容匯出成明文文字檔案並存放在 S3，資料在傳輸與儲存過程中都沒有加密保護，屬於明文外流風險最高的做法，不符合「MOST 安全」的要求。
-- C：將資料庫(database)的快照(snapshot)複製到Amazon S3桶中. 建立 IAM 使用者。 與審計師共享使用者金鑰,允許存取S3 儲存桶(S3 bucket)中的物件。與稽核師共享 IAM 使用者的存取金鑰違反最小權限與憑證不共用的基本安全原則，金鑰一旦外洩難以個別追蹤與撤銷，也無法對存取範圍做精細控管。
+- B：匯出 資料庫(database) 內容到文字檔案。 在Amazon S3 bucket裡儲存檔案. 為審計員建立一個新的IAM使用者. 允許使用者存取S3 bucket。將資料庫內容匯出成明文文字檔案並存放在 S3，資料在傳輸與儲存過程中都沒有加密保護，屬於明文外流風險最高的做法，不符合「MOST 安全」的要求。
+- C：將資料庫(database)的快照(snapshot)複製到Amazon S3 bucket中. 建立 IAM 使用者。 與審計師共享使用者金鑰,允許存取S3 bucket中的物件。與稽核師共享 IAM 使用者的存取金鑰違反最小權限與憑證不共用的基本安全原則，金鑰一旦外洩難以個別追蹤與撤銷，也無法對存取範圍做精細控管。
 
 **分類：** 安全、身分與合規
 
@@ -12046,7 +12046,7 @@ A,D
 **選項**
 - A. 更新 Auto Scaling 群組(Auto Scaling group) 以使用 預留執行個體 而不是 隨需執行個體（On-Demand）。
 - B. 更新Auto Scaling 群組(Auto Scaling group),透過發射Spot 執行個體而不是隨需執行個體（On-Demand）來放大.
-- C. 建立 Amazon CloudFront 發行版,以託管 Amazon S3 桶中的靜態網路內容.
+- C. 建立 Amazon CloudFront 發行版,以託管 Amazon S3 bucket中的靜態網路內容.
 - D. 在 Amazon API Gateway API 後方建立 AWS Lambda 功能,以託管靜態網站內容.
 
 **答案**
@@ -12057,7 +12057,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立 Amazon CloudFront 發行版,以託管 Amazon S3 桶中的靜態網路內容。把靜態網站內容改存放在 Amazon S3，再透過 Amazon CloudFront 發行版對外分發，讓終端使用者的靜態內容請求由 CDN 邊緣節點直接回應，不再需要打到後端的 EC2 執行個體；如此一來 Auto Scaling 群組就不會因為大量靜態內容請求而被觸發放大，進而降低 隨需執行個體（On-Demand）的使用量與成本。
+- C：建立 Amazon CloudFront 發行版,以託管 Amazon S3 bucket中的靜態網路內容。把靜態網站內容改存放在 Amazon S3，再透過 Amazon CloudFront 發行版對外分發，讓終端使用者的靜態內容請求由 CDN 邊緣節點直接回應，不再需要打到後端的 EC2 執行個體；如此一來 Auto Scaling 群組就不會因為大量靜態內容請求而被觸發放大，進而降低 隨需執行個體（On-Demand）的使用量與成本。
 - 其餘選項比較：
 - A：更新 Auto Scaling 群組(Auto Scaling group) 以使用 預留執行個體 而不是 隨需執行個體（On-Demand）。只是把 Auto Scaling 群組原本要啟動的 隨需執行個體（On-Demand）換成 預留執行個體（Reserved Instance, RI），並沒有改變靜態內容仍由 EC2 提供服務的架構，觸發放大的根本原因（大量靜態內容請求）依然存在，且 預留執行個體（Reserved Instance, RI） 通常需要承諾期與固定容量，不適合搭配彈性伸縮的 Auto Scaling 群組。
 - B：更新Auto Scaling 群組(Auto Scaling group),透過發射Spot 執行個體而不是隨需執行個體（On-Demand）來放大。改用 Spot 執行個體 因應放大需求雖然單價較低，但 Spot 執行個體可能隨時被中斷回收，用來承載直接面向終端使用者的網站流量會有可用性風險，也沒有從根本上減少需要放大的執行個體數量。
@@ -12152,10 +12152,10 @@ B
 一家公司正在將700兆位元組的資料儲存在其公司資料中心內一個大型網路附屬儲存系統上。 該公司擁有10Gbps AWS Direct Connect連線的混合環境. 在從一個監管機構得到稽核(audit)後,公司有90天的時間將資料移動到雲端. 公司需要高效和不間斷地移動資料. 公司仍然需要能夠在轉移視窗期間存取和更新資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在公司資料中心建立 AWS 資料同步代理。 建立資料傳輸任務 啟動傳輸到 Amazon S3 桶。
-- B. 將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3桶在promess檔案系統上.
-- C. 使用 rsync 將資料從本地儲存直接複製到指定的 Amazon S3 桶,透過直接連線連線.
-- D. 備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3桶在promess檔案系統上.
+- A. 在公司資料中心建立 AWS 資料同步代理。 建立資料傳輸任務 啟動傳輸到 Amazon S3 bucket。
+- B. 將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3 bucket在promess檔案系統上.
+- C. 使用 rsync 將資料從本地儲存直接複製到指定的 Amazon S3 bucket,透過直接連線連線.
+- D. 備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3 bucket在promess檔案系統上.
 
 **答案**
 A
@@ -12165,24 +12165,24 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：在公司資料中心建立 AWS 資料同步代理。 建立資料傳輸任務 啟動傳輸到 Amazon S3 桶。AWS DataSync 是設計用於在地端與 AWS 之間透過網路持續傳輸大量資料的服務，可以在既有的 10Gbps Direct Connect 專線上以代理程式增量同步資料，且傳輸過程中來源端仍可持續存取與更新資料，符合題目「90 天內搬遷、不中斷、傳輸期間仍需存取與更新資料」的限制。DataSync 本身會處理傳輸排程、頻寬使用與資料驗證，比手動指令碼更能有效率地運用現有連線完成大量資料搬遷。
+- A：在公司資料中心建立 AWS 資料同步代理。 建立資料傳輸任務 啟動傳輸到 Amazon S3 bucket。AWS DataSync 是設計用於在地端與 AWS 之間透過網路持續傳輸大量資料的服務，可以在既有的 10Gbps Direct Connect 專線上以代理程式增量同步資料，且傳輸過程中來源端仍可持續存取與更新資料，符合題目「90 天內搬遷、不中斷、傳輸期間仍需存取與更新資料」的限制。DataSync 本身會處理傳輸排程、頻寬使用與資料驗證，比手動指令碼更能有效率地運用現有連線完成大量資料搬遷。
 - 其餘選項比較：
-- B：將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3桶在promess檔案系統上。Snowball Edge Storage Optimized 是離線實體裝置搬遷方案，資料要先寫入裝置再寄送到 AWS 機房，裝置在途期間該部分資料的更新無法即時反映到雲端，與題目要求「轉移期間仍可存取並更新資料」相衝突；且公司已有 10Gbps 的 Direct Connect 專線，捨棄現成網路連線改用實體裝置並不合理。
-- C：使用 rsync 將資料從本地儲存直接複製到指定的 Amazon S3 桶,透過直接連線連線。用 rsync 直接透過 Direct Connect 把地端儲存複製到 S3 儲存桶，但 rsync 是設計給檔案系統對檔案系統同步的工具，並非原生支援 S3 物件儲存的語意，缺乏 AWS 原生傳輸服務具備的自動重試、頻寬調節與傳輸驗證機制，用在 700 TB 規模的持續同步上失敗風險偏高。
-- D：備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3桶在promess檔案系統上。把資料備份到磁帶再寄送到 AWS 機房，屬於離線且一次性的搬遷方式，磁帶寄送與掛載完成前這段期間資料無法被存取或更新，同樣不符合「轉移視窗期間仍需存取與更新資料」的要求，且製作與寄送磁帶的作業時間也難以掌握是否能在 90 天內確實完成。
+- B：將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3 bucket在promess檔案系統上。Snowball Edge Storage Optimized 是離線實體裝置搬遷方案，資料要先寫入裝置再寄送到 AWS 機房，裝置在途期間該部分資料的更新無法即時反映到雲端，與題目要求「轉移期間仍可存取並更新資料」相衝突；且公司已有 10Gbps 的 Direct Connect 專線，捨棄現成網路連線改用實體裝置並不合理。
+- C：使用 rsync 將資料從本地儲存直接複製到指定的 Amazon S3 bucket,透過直接連線連線。用 rsync 直接透過 Direct Connect 把地端儲存複製到 S3 bucket，但 rsync 是設計給檔案系統對檔案系統同步的工具，並非原生支援 S3 物件儲存的語意，缺乏 AWS 原生傳輸服務具備的自動重試、頻寬調節與傳輸驗證機制，用在 700 TB 規模的持續同步上失敗風險偏高。
+- D：備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3 bucket在promess檔案系統上。把資料備份到磁帶再寄送到 AWS 機房，屬於離線且一次性的搬遷方式，磁帶寄送與掛載完成前這段期間資料無法被存取或更新，同樣不符合「轉移視窗期間仍需存取與更新資料」的要求，且製作與寄送磁帶的作業時間也難以掌握是否能在 90 天內確實完成。
 
 **分類：** 移轉和傳輸
 
 ## Question #446
 
 **題目**
-一家公司用Amazon S3桶儲存PDF格式的資料. 公司必須遵守法律要求,將Amazon S3中的所有新資料和現有資料保留7年。 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司用Amazon S3 bucket儲存PDF格式的資料. 公司必須遵守法律要求,將Amazon S3中的所有新資料和現有資料保留7年。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 開啟S3 儲存桶(S3 bucket)的S3版本功能. 配置 S3 生命週期以刪除7 年後的資料。 為所有 S3 物件配置多要素認證( MFA) 刪除。
-- B. 為S3 儲存桶(S3 bucket)開啟具有治理保留模式的S3 Object Lock. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance).
-- C. 為S3 儲存桶(S3 bucket)開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance).
-- D. 為S3 儲存桶(S3 bucket)開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 使用S3 Batch Operations將現有資料帶入合規(compliance).
+- A. 開啟S3 bucket的S3版本功能. 配置 S3 生命週期以刪除7 年後的資料。 為所有 S3 物件配置多要素認證( MFA) 刪除。
+- B. 為S3 bucket開啟具有治理保留模式的S3 Object Lock. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance).
+- C. 為S3 bucket開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance).
+- D. 為S3 bucket開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 使用S3 Batch Operations將現有資料帶入合規(compliance).
 
 **答案**
 C
@@ -12192,11 +12192,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：為S3 儲存桶(S3 bucket)開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance)。S3 Object Lock 的合規（compliance）保留模式會讓物件在保留期限內無法被任何人（包含帳戶根使用者）刪除或覆寫，符合法規要求的最嚴格保護層級。由於 Object Lock 的保留設定是在物件版本寫入時才套用，既有物件必須先複製一次以產生具備鎖定中繼資料的新版本，才能讓既有資料也真正納入 7 年合規保留範圍，因此需要複製既有物件並搭配合規模式保留期設定。
+- C：為S3 bucket開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance)。S3 Object Lock 的合規（compliance）保留模式會讓物件在保留期限內無法被任何人（包含帳戶根使用者）刪除或覆寫，符合法規要求的最嚴格保護層級。由於 Object Lock 的保留設定是在物件版本寫入時才套用，既有物件必須先複製一次以產生具備鎖定中繼資料的新版本，才能讓既有資料也真正納入 7 年合規保留範圍，因此需要複製既有物件並搭配合規模式保留期設定。
 - 其餘選項比較：
-- A：開啟S3 儲存桶(S3 bucket)的S3版本功能. 配置 S3 生命週期以刪除7 年後的資料。 為所有 S3 物件配置多要素認證( MFA) 刪除。這個做法設定 S3 生命週期規則在 7 年後「刪除」資料，方向與題目要求的「保留 7 年」正好相反；MFA Delete 只是要求刪除物件時多一道多重要素驗證，並不會讓物件具備不可竄改、不可提前刪除的保留效力，無法滿足法規對保留期限的強制要求。
-- B：為S3 儲存桶(S3 bucket)開啟具有治理保留模式的S3 Object Lock. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance)。治理（governance）保留模式雖然能設定保留期限，但具備特殊權限（如 s3:BypassGovernanceRetention）的使用者仍可以在保留期限屆滿前刪除或覆寫物件，這種可被繞過的保護層級不足以滿足稽核機關要求的強制法規保留。
-- D：為S3 儲存桶(S3 bucket)開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 使用S3 Batch Operations將現有資料帶入合規(compliance)。合規模式的方向正確，但單純使用 S3 Batch Operations 對既有物件套用保留設定，並不會讓那些在啟用 Object Lock 之前就已寫入的舊版本物件得到與新寫入版本相同的鎖定保護；要讓既有資料真正受合規模式保護，仍需要透過複製物件重新產生新版本，而非僅以批次作業套用中繼資料設定。
+- A：開啟S3 bucket的S3版本功能. 配置 S3 生命週期以刪除7 年後的資料。 為所有 S3 物件配置多要素認證( MFA) 刪除。這個做法設定 S3 生命週期規則在 7 年後「刪除」資料，方向與題目要求的「保留 7 年」正好相反；MFA Delete 只是要求刪除物件時多一道多重要素驗證，並不會讓物件具備不可竄改、不可提前刪除的保留效力，無法滿足法規對保留期限的強制要求。
+- B：為S3 bucket開啟具有治理保留模式的S3 Object Lock. 規定保留期在7年後屆滿。 複製所有現有物件,將現有資料帶入合規(compliance)。治理（governance）保留模式雖然能設定保留期限，但具備特殊權限（如 s3:BypassGovernanceRetention）的使用者仍可以在保留期限屆滿前刪除或覆寫物件，這種可被繞過的保護層級不足以滿足稽核機關要求的強制法規保留。
+- D：為S3 bucket開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 使用S3 Batch Operations將現有資料帶入合規(compliance)。合規模式的方向正確，但單純使用 S3 Batch Operations 對既有物件套用保留設定，並不會讓那些在啟用 Object Lock 之前就已寫入的舊版本物件得到與新寫入版本相同的鎖定保護；要讓既有資料真正受合規模式保護，仍需要透過複製物件重新產生新版本，而非僅以批次作業套用中繼資料設定。
 
 **分類：** 儲存
 
@@ -12375,7 +12375,7 @@ B
 ## Question #453
 
 **題目**
-一家公司希望針對Amazon EC2資料和多個Amazon S3桶實施備份(backup)策略. 由於監管要求,公司必須保留備份(backup)檔案一段時間. 公司在保留期內不得變更檔案. 哪種解決辦法能滿足這些要求?
+一家公司希望針對Amazon EC2資料和多個Amazon S3 bucket實施備份(backup)策略. 由於監管要求,公司必須保留備份(backup)檔案一段時間. 公司在保留期內不得變更檔案. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用AWS Backup來建立備份(backup)金庫,在治理模式下設有金庫鎖. 建立所需的備份(backup)計劃.
@@ -12653,7 +12653,7 @@ B
 ## Question #463
 
 **題目**
-一家IoT公司正在釋放一個床墊,它有感測器來收集使用者睡眠的資料。 感測器將把資料傳送到一個Amazon S3桶. 感測器每晚為每個床墊收集大約2MB的資料. 公司必須處理和彙總每個床墊的資料。 需要儘快提供結果。 資料處理需要1GB的記憶體,並在30秒內完成. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家IoT公司正在釋放一個床墊,它有感測器來收集使用者睡眠的資料。 感測器將把資料傳送到一個Amazon S3 bucket. 感測器每晚為每個床墊收集大約2MB的資料. 公司必須處理和彙總每個床墊的資料。 需要儘快提供結果。 資料處理需要1GB的記憶體,並在30秒內完成. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 使用帶有 Scala 任務的 AWS Glue
@@ -12815,7 +12815,7 @@ B
 ## Question #469
 
 **題目**
-一家公司將收集的原始資料儲存在Amazon S3桶中。 資料用於代表公司客戶的幾類分析. 所要求的分析型別決定了S3物件上的存取模式. 公司無法預測或控制存取模式. 公司希望降低其S3成本. 哪種解決辦法能滿足這些要求?
+一家公司將收集的原始資料儲存在Amazon S3 bucket中。 資料用於代表公司客戶的幾類分析. 所要求的分析型別決定了S3物件上的存取模式. 公司無法預測或控制存取模式. 公司希望降低其S3成本. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用 S3 複寫(replication) 向 S3 標準- 不經常存取( S3 Standard-IA) 過渡
@@ -12869,11 +12869,11 @@ D
 ## Question #471
 
 **題目**
-一家公司正在建立一種在VPC容器上執行的應用程式。 應用程式在Amazon S3桶中儲存並存取資料. 在開發階段,該應用程式將每天儲存並存取Amazon S3中的1 TB資料. 公司希望儘量降低成本, 哪種解決辦法能滿足這些要求?
+一家公司正在建立一種在VPC容器上執行的應用程式。 應用程式在Amazon S3 bucket中儲存並存取資料. 在開發階段,該應用程式將每天儲存並存取Amazon S3中的1 TB資料. 公司希望儘量降低成本, 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 為 S3 儲存桶(S3 bucket) 啟用 S3 Intelligent-Tiering
-- B. 為 S3 儲存桶(S3 bucket) 啟用 S3 Transfer Acceleration
+- A. 為 S3 bucket 啟用 S3 Intelligent-Tiering
+- B. 為 S3 bucket 啟用 S3 Transfer Acceleration
 - C. 為Amazon S3建立閘道器VPC 端點(VPC endpoint). 將此端點與 VPC 中的所有路由表關聯
 - D. 在VPC中為Amazon S3建立介面端點. 將此端點與 VPC 中的所有路由表關聯
 
@@ -12887,8 +12887,8 @@ C
 正確答案是 **C**。
 - C：為Amazon S3建立閘道器VPC 端點(VPC endpoint). 將此端點與 VPC 中的所有路由表關聯。S3 的閘道器 VPC 端點可讓 VPC 內資源透過 AWS 私有網路直接存取 S3，不必經過 NAT 閘道器或網際網路，本身不收取額外費用，將端點與路由表關聯後即可省下每天 1 TB 資料經 NAT 閘道器產生的資料處理費用，直接達成降低成本的目標。
 - 其餘選項比較：
-- A：為 S3 儲存桶(S3 bucket) 啟用 S3 Intelligent-Tiering。S3 Intelligent-Tiering 是物件儲存類別的最佳化機制，處理的是物件本身在儲存桶內的儲存費用，與題目真正的成本來源（透過 NAT 閘道器或公有網路存取 S3 所產生的資料處理與傳輸費用）無關。
-- B：為 S3 儲存桶(S3 bucket) 啟用 S3 Transfer Acceleration。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速長距離、跨地區的檔案上傳/下載速度，屬於額外收費的加速服務，用於加快傳輸而非降低成本，與題目「儘量降低成本」的目標相反。
+- A：為 S3 bucket 啟用 S3 Intelligent-Tiering。S3 Intelligent-Tiering 是物件儲存類別的最佳化機制，處理的是物件本身在儲存桶內的儲存費用，與題目真正的成本來源（透過 NAT 閘道器或公有網路存取 S3 所產生的資料處理與傳輸費用）無關。
+- B：為 S3 bucket 啟用 S3 Transfer Acceleration。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速長距離、跨地區的檔案上傳/下載速度，屬於額外收費的加速服務，用於加快傳輸而非降低成本，與題目「儘量降低成本」的目標相反。
 - D：在VPC中為Amazon S3建立介面端點. 將此端點與 VPC 中的所有路由表關聯。S3 的介面端點是以 Elastic Network Interface 及 PrivateLink 技術實作，會依連線時數與處理資料量計費，對於原生支援免費閘道器端點的 S3 而言，改用介面端點反而成本更高，不符合降低成本的需求。
 
 **分類：** 網路連結和內容交付
@@ -13029,7 +13029,7 @@ C
 ## Question #477
 
 **題目**
-一個組需要許可權來列出一個 Amazon S3 桶並刪除該桶中的物品. 一個管理員建立了以下IAM 政策(IAM policy),以提供對水桶的存取,並將這一政策應用於該組. 組無法刪除桶中的物件。 公司遵循最低特權准入規則.
+一個組需要許可權來列出一個 Amazon S3 bucket並刪除該桶中的物品. 一個管理員建立了以下IAM 政策(IAM policy),以提供對水桶的存取,並將這一政策應用於該組. 組無法刪除桶中的物件。 公司遵循最低特權准入規則.
 
 現有IAM 政策(IAM policy):
 
@@ -13105,10 +13105,10 @@ C
 律師事務所需要與公眾分享資訊. 資訊包括數百個必須公開閱讀的檔案. 禁止任何人在指定的未來日期之前修改或刪除檔案。 哪種解決辦法能以安全的方式滿足這些要求?
 
 **選項**
-- A. 上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 桶。 向任何存取S3 儲存桶(S3 bucket)的AWS主機授予只讀的IAM許可權,直到指定日期.
-- B. 建立新的 Amazon S3 桶, 啟用 S3 版本。 使用S3 Object Lock,按照指定日期保留期。 為靜態網站託管配置 S3 儲存桶(S3 bucket)。 設定一個 S3 儲存桶政策(bucket policy) 允許只讀存取物件。
-- C. 建立新的 Amazon S3 桶, 啟用 S3 版本。 配置一個事件觸發器,以便在物件修改或刪除時執行 AWS Lambda 函式. 配置 Lambda 函式,以私人S3 儲存桶(S3 bucket)的原始版本取代物件.
-- D. 上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 桶。 選擇包含檔案的資料夾。 使用S3 Object Lock,按照指定日期保留期。 向任何存取S3 儲存桶(S3 bucket)的AWS主機授予只讀的IAM許可權.
+- A. 上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 bucket。 向任何存取S3 bucket的AWS主機授予只讀的IAM許可權,直到指定日期.
+- B. 建立新的 Amazon S3 bucket, 啟用 S3 版本。 使用S3 Object Lock,按照指定日期保留期。 為靜態網站託管配置 S3 bucket。 設定一個 S3 bucket政策(bucket policy) 允許只讀存取物件。
+- C. 建立新的 Amazon S3 bucket, 啟用 S3 版本。 配置一個事件觸發器,以便在物件修改或刪除時執行 AWS Lambda 函式. 配置 Lambda 函式,以私人S3 bucket的原始版本取代物件.
+- D. 上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 bucket。 選擇包含檔案的資料夾。 使用S3 Object Lock,按照指定日期保留期。 向任何存取S3 bucket的AWS主機授予只讀的IAM許可權.
 
 **答案**
 B
@@ -13118,11 +13118,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立新的 Amazon S3 桶, 啟用 S3 版本。 使用S3 Object Lock,按照指定日期保留期。 為靜態網站託管配置 S3 儲存桶(S3 bucket)。 設定一個 S3 儲存桶政策(bucket policy) 允許只讀存取物件。先啟用 S3 版本控制（Object Lock 的必要前提），再用 S3 Object Lock 設定保留期至指定日期，可確保保留期內物件無法被覆寫或刪除（即使是帳戶擁有者也不行），同時搭配靜態網站託管與允許唯讀存取的 bucket 政策，能讓公眾直接讀取檔案，正好同時滿足「公開唯讀」與「指定日期前禁止修改刪除」兩項要求。
+- B：建立新的 Amazon S3 bucket, 啟用 S3 版本。 使用S3 Object Lock,按照指定日期保留期。 為靜態網站託管配置 S3 bucket。 設定一個 S3 bucket政策(bucket policy) 允許只讀存取物件。先啟用 S3 版本控制（Object Lock 的必要前提），再用 S3 Object Lock 設定保留期至指定日期，可確保保留期內物件無法被覆寫或刪除（即使是帳戶擁有者也不行），同時搭配靜態網站託管與允許唯讀存取的 bucket 政策，能讓公眾直接讀取檔案，正好同時滿足「公開唯讀」與「指定日期前禁止修改刪除」兩項要求。
 - 其餘選項比較：
-- A：上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 桶。 向任何存取S3 儲存桶(S3 bucket)的AWS主機授予只讀的IAM許可權,直到指定日期。只授予 IAM 唯讀許可權，限制的對象是「透過 AWS 帳戶登入的身分」，但題目要求向社會大眾公開分享檔案，一般大眾沒有該公司的 AWS 帳戶或 IAM 身分，這個限制對公眾完全不生效，也無法真正鎖定物件本身不被修改或刪除。
-- C：建立新的 Amazon S3 桶, 啟用 S3 版本。 配置一個事件觸發器,以便在物件修改或刪除時執行 AWS Lambda 函式. 配置 Lambda 函式,以私人S3 儲存桶(S3 bucket)的原始版本取代物件。用 Lambda 監聽物件修改或刪除事件、事後以舊版本覆蓋回去，屬於事後補救而非事前阻擋，物件在被還原完成之前仍曾經被實際修改或刪除過，無法滿足「在指定日期之前禁止修改或刪除」的強制要求。
-- D：上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 桶。 選擇包含檔案的資料夾。 使用S3 Object Lock,按照指定日期保留期。 向任何存取S3 儲存桶(S3 bucket)的AWS主機授予只讀的IAM許可權。「選擇包含檔案的資料夾」在 S3 這種扁平式物件儲存中並非可鎖定的實體，Object Lock 是套用在物件版本上，而非介面呈現的資料夾前綴；且同樣只用 IAM 唯讀許可權限制的對象是 AWS 身分，無法阻止一般公眾修改，做法在概念與執行面都不成立。
+- A：上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 bucket。 向任何存取S3 bucket的AWS主機授予只讀的IAM許可權,直到指定日期。只授予 IAM 唯讀許可權，限制的對象是「透過 AWS 帳戶登入的身分」，但題目要求向社會大眾公開分享檔案，一般大眾沒有該公司的 AWS 帳戶或 IAM 身分，這個限制對公眾完全不生效，也無法真正鎖定物件本身不被修改或刪除。
+- C：建立新的 Amazon S3 bucket, 啟用 S3 版本。 配置一個事件觸發器,以便在物件修改或刪除時執行 AWS Lambda 函式. 配置 Lambda 函式,以私人S3 bucket的原始版本取代物件。用 Lambda 監聽物件修改或刪除事件、事後以舊版本覆蓋回去，屬於事後補救而非事前阻擋，物件在被還原完成之前仍曾經被實際修改或刪除過，無法滿足「在指定日期之前禁止修改或刪除」的強制要求。
+- D：上傳所有檔案到一個配置用於靜態網站託管的 Amazon S3 bucket。 選擇包含檔案的資料夾。 使用S3 Object Lock,按照指定日期保留期。 向任何存取S3 bucket的AWS主機授予只讀的IAM許可權。「選擇包含檔案的資料夾」在 S3 這種扁平式物件儲存中並非可鎖定的實體，Object Lock 是套用在物件版本上，而非介面呈現的資料夾前綴；且同樣只用 IAM 唯讀許可權限制的對象是 AWS 身分，無法阻止一般公眾修改，做法在概念與執行面都不成立。
 
 **分類：** 儲存
 
@@ -13210,13 +13210,13 @@ B
 ## Question #482
 
 **題目**
-一家公司希望將100GB的歷史資料從一個presimes位置遷移到一個Amazon S3桶. 該公司擁有100兆位元每秒(Mbps)的網際網路連線。 公司需要加密傳輸中的資料到S3 儲存桶(S3 bucket). 該公司將在Amazon S3直接儲存新資料. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司希望將100GB的歷史資料從一個presimes位置遷移到一個Amazon S3 bucket. 該公司擁有100兆位元每秒(Mbps)的網際網路連線。 公司需要加密傳輸中的資料到S3 bucket. 該公司將在Amazon S3直接儲存新資料. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 使用 AWS CLI 中的 s3 同步命令將資料直接移動到 S3 儲存桶(S3 bucket)
-- B. 使用 AWS 資料同步將資料從預設位置遷移到 S3 儲存桶(S3 bucket)
-- C. 使用 AWS Snowball 移動資料到 S3 儲存桶(S3 bucket)
-- D. 設定一個IPsec VPN,從presimes位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 儲存桶(S3 bucket)
+- A. 使用 AWS CLI 中的 s3 同步命令將資料直接移動到 S3 bucket
+- B. 使用 AWS 資料同步將資料從預設位置遷移到 S3 bucket
+- C. 使用 AWS Snowball 移動資料到 S3 bucket
+- D. 設定一個IPsec VPN,從presimes位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 bucket
 
 **答案**
 B
@@ -13226,11 +13226,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 AWS 資料同步將資料從預設位置遷移到 S3 儲存桶(S3 bucket)。AWS DataSync 專門用來自動化地將地端資料遷移到 S3，傳輸過程使用 TLS 加密資料，並內建重試、頻寬管控與增量同步機制，不需要自行撰寫或維運同步腳本；以題目的資料量與 100 Mbps 頻寬估算，線上傳輸即可在合理時間內完成，是維運負擔最低的方案。
+- B：使用 AWS 資料同步將資料從預設位置遷移到 S3 bucket。AWS DataSync 專門用來自動化地將地端資料遷移到 S3，傳輸過程使用 TLS 加密資料，並內建重試、頻寬管控與增量同步機制，不需要自行撰寫或維運同步腳本；以題目的資料量與 100 Mbps 頻寬估算，線上傳輸即可在合理時間內完成，是維運負擔最低的方案。
 - 其餘選項比較：
-- A：使用 AWS CLI 中的 s3 同步命令將資料直接移動到 S3 儲存桶(S3 bucket)。AWS CLI 的 s3 sync 指令雖然也能透過 HTTPS 加密傳輸並完成資料搬移，但需要自行在地端維護執行環境、排程、監控與失敗重試機制，遇到中斷需要人工介入，維運負擔明顯高於全代管服務。
-- C：使用 AWS Snowball 移動資料到 S3 儲存桶(S3 bucket)。AWS Snowball 是透過實體裝置離線寄送資料，通常用於資料量極為龐大或現有頻寬完全不足以線上傳輸的情境；本題資料量不大且已有可用的網際網路頻寬可直接加密傳輸，改用實體裝置寄送反而增加不必要的作業與等待時間。
-- D：設定一個IPsec VPN,從presimes位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 儲存桶(S3 bucket)。自行建立 IPsec VPN 再搭配 CLI 的 s3 cp 指令，需要額外設定與維運 VPN 閘道、金鑰交換與連線監控，操作與維運複雜度遠高於直接透過 HTTPS 加密傳輸的代管服務，對單純的資料遷移需求而言是過度複雜的做法。
+- A：使用 AWS CLI 中的 s3 同步命令將資料直接移動到 S3 bucket。AWS CLI 的 s3 sync 指令雖然也能透過 HTTPS 加密傳輸並完成資料搬移，但需要自行在地端維護執行環境、排程、監控與失敗重試機制，遇到中斷需要人工介入，維運負擔明顯高於全代管服務。
+- C：使用 AWS Snowball 移動資料到 S3 bucket。AWS Snowball 是透過實體裝置離線寄送資料，通常用於資料量極為龐大或現有頻寬完全不足以線上傳輸的情境；本題資料量不大且已有可用的網際網路頻寬可直接加密傳輸，改用實體裝置寄送反而增加不必要的作業與等待時間。
+- D：設定一個IPsec VPN,從presimes位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 bucket。自行建立 IPsec VPN 再搭配 CLI 的 s3 cp 指令，需要額外設定與維運 VPN 閘道、金鑰交換與連線監控，操作與維運複雜度遠高於直接透過 HTTPS 加密傳輸的代管服務，對單純的資料遷移需求而言是過度複雜的做法。
 
 **分類：** 移轉和傳輸
 
@@ -13429,12 +13429,12 @@ C
 ## Question #490
 
 **題目**
-一個遊戲公司使用Amazon DynamoDB儲存使用者資訊,如地理位置,玩家資料,以及領導板. 公司需要配置一個Amazon S3桶的連續備份,並配有最小的編碼. 備份不得影響應用程式的可用性,也不得影響表中定義的讀容量單位(RCU). 哪種解決辦法符合這些要求?
+一個遊戲公司使用Amazon DynamoDB儲存使用者資訊,如地理位置,玩家資料,以及領導板. 公司需要配置一個Amazon S3 bucket的連續備份,並配有最小的編碼. 備份不得影響應用程式的可用性,也不得影響表中定義的讀容量單位(RCU). 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 使用Amazon EMR叢集. 建立 Apache 蜂巢任務,將資料備份到 Amazon S3。
 - B. 資料直接從DynamoDB匯出至Amazon S3,並有連續備份. 開啟時間點恢復臺。
-- C. 配置 Amazon DynamoDB 流線. 建立一個 AWS Lambda 函式來消耗流,並將資料匯出到 Amazon S3 桶中.
+- C. 配置 Amazon DynamoDB 流線. 建立一個 AWS Lambda 函式來消耗流,並將資料匯出到 Amazon S3 bucket中.
 - D. 建立一個 AWS Lambda 函式,將資料從 資料庫(database) 表格匯出到 Amazon S3。 開啟時間點恢復臺。
 
 **答案**
@@ -13448,7 +13448,7 @@ B
 - B：資料直接從DynamoDB匯出至Amazon S3,並有連續備份. 開啟時間點恢復臺。DynamoDB 原生的「匯出到 S3」（Export to S3）功能是建立在持續備份（point-in-time recovery, PITR）機制之上，直接讀取的是底層儲存引擎的備份資料，而不是對資料表發出一般的讀取請求，因此完全不會消耗資料表設定的讀取容量單位（RCU），也不影響應用程式對資料表的正常存取；只需開啟 PITR 並執行匯出，幾乎不需撰寫程式碼，滿足「最少程式碼、不影響可用性與 RCU」的所有條件。
 - 其餘選項比較：
 - A：使用Amazon EMR叢集. 建立 Apache 蜂巢任務,將資料備份到 Amazon S3。透過 Amazon EMR 叢集執行 Apache Hive 任務來讀取 DynamoDB 資料，本質上是對資料表發出大量讀取請求，會直接消耗資料表的讀取容量單位（RCU）並可能影響線上應用程式的效能，違反題目「不得影響 RCU」的限制，而且還需要建置與維運 EMR 叢集，增加了額外複雜度。
-- C：配置 Amazon DynamoDB 流線. 建立一個 AWS Lambda 函式來消耗流,並將資料匯出到 Amazon S3 桶中。DynamoDB Streams 只能捕捉「之後發生」的異動事件，並不是完整的連續備份機制，若要用它來實作備份，必須自行撰寫並維護 Lambda 函式來消費串流、轉換資料並寫入 S3，程式撰寫與維運成本明顯高於原生匯出功能，不符合「最小編碼」的要求。
+- C：配置 Amazon DynamoDB 流線. 建立一個 AWS Lambda 函式來消耗流,並將資料匯出到 Amazon S3 bucket中。DynamoDB Streams 只能捕捉「之後發生」的異動事件，並不是完整的連續備份機制，若要用它來實作備份，必須自行撰寫並維護 Lambda 函式來消費串流、轉換資料並寫入 S3，程式撰寫與維運成本明顯高於原生匯出功能，不符合「最小編碼」的要求。
 - D：建立一個 AWS Lambda 函式,將資料從 資料庫(database) 表格匯出到 Amazon S3。 開啟時間點恢復臺。自訂 Lambda 函式從資料表匯出資料，通常需要對資料表執行掃描（Scan）或查詢操作，一樣會消耗讀取容量單位並可能影響資料表的效能與可用性，同時還得自行開發匯出邏輯，無法滿足「不影響 RCU 且最小編碼」的要求。
 
 **分類：** 資料庫
@@ -13569,13 +13569,13 @@ D
 ## Question #495
 
 **題目**
-一家公司正在進行內部稽核(audit). 該公司希望確保Amazon S3桶中與該公司的AWS Lake Formation 資料湖(data lake)相關的資料不包含敏感的客戶或僱員資料. 公司希望發現個人可識別的資訊(PII)或金融資訊,包括護照號碼和信用卡號碼. 哪種解決辦法能滿足這些要求?
+一家公司正在進行內部稽核(audit). 該公司希望確保Amazon S3 bucket中與該公司的AWS Lake Formation 資料湖(data lake)相關的資料不包含敏感的客戶或僱員資料. 公司希望發現個人可識別的資訊(PII)或金融資訊,包括護照號碼和信用卡號碼. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 AWS 稽核(Audit) 經理在帳上。 選擇支付卡行業資料安全標準用於審計。
-- B. 在 S3 儲存桶(S3 bucket) 上配置 Amazon S3 庫存 配置 Amazon Athena 查詢庫存.
+- B. 在 S3 bucket 上配置 Amazon S3 庫存 配置 Amazon Athena 查詢庫存.
 - C. 配置 Amazon Macie 以執行一個資料發現任務,該任務對所需的資料型別使用管理識別符號.
-- D. 使用 Amazon S3 選擇在 S3 儲存桶(S3 bucket) 執行一個報告。
+- D. 使用 Amazon S3 選擇在 S3 bucket 執行一個報告。
 
 **答案**
 C
@@ -13588,8 +13588,8 @@ C
 - C：配置 Amazon Macie 以執行一個資料發現任務,該任務對所需的資料型別使用管理識別符號。Amazon Macie 是專為資料安全與隱私設計的服務，可建立資料探索任務並使用其內建的受管識別項（managed data identifiers）自動掃描 S3 物件內容，精準辨識出護照號碼、信用卡號等 PII 與金融資訊，正好對應題目的稽核需求。
 - 其餘選項比較：
 - A：配置 AWS 稽核(Audit) 經理在帳上。 選擇支付卡行業資料安全標準用於審計。AWS Audit Manager 是用來持續評估帳戶是否符合特定法規框架（例如 PCI DSS）控制項的合規稽核工具，它評估的是控制措施是否到位，並不會掃描 S3 物件的實際內容找出護照號碼、信用卡號等 PII/財務資訊。
-- B：在 S3 儲存桶(S3 bucket) 上配置 Amazon S3 庫存 配置 Amazon Athena 查詢庫存。S3 Inventory 只能產出儲存桶內物件的中繼資料清單（如物件大小、儲存類別、最後修改時間等），並不會檢視或分析物件內容，因此無法用來偵測物件內是否含有敏感資料。
-- D：使用 Amazon S3 選擇在 S3 儲存桶(S3 bucket) 執行一個報告。S3 Select 只能對單一物件以 SQL 語法擷取部分欄位內容以提升查詢效率，並非設計用來對整個資料湖大規模掃描並分類敏感資料。
+- B：在 S3 bucket 上配置 Amazon S3 庫存 配置 Amazon Athena 查詢庫存。S3 Inventory 只能產出儲存桶內物件的中繼資料清單（如物件大小、儲存類別、最後修改時間等），並不會檢視或分析物件內容，因此無法用來偵測物件內是否含有敏感資料。
+- D：使用 Amazon S3 選擇在 S3 bucket 執行一個報告。S3 Select 只能對單一物件以 SQL 語法擷取部分欄位內容以提升查詢效率，並非設計用來對整個資料湖大規模掃描並分類敏感資料。
 
 **分類：** 安全、身分與合規
 
@@ -13626,7 +13626,7 @@ B,D
 ## Question #497
 
 **題目**
-一家公司有一個服務,從Amazon S3 儲存桶的同一個AWS 區域(Region)中讀寫大量資料. 這項服務是在一個VPC的私人子網中部署的。 該服務透過公共子網的NAT閘道器與Amazon S3通訊. 然而,公司希望有一個能夠降低資料輸出成本的解決方案. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司有一個服務,從Amazon S3 bucket的同一個AWS 區域(Region)中讀寫大量資料. 這項服務是在一個VPC的私人子網中部署的。 該服務透過公共子網的NAT閘道器與Amazon S3通訊. 然而,公司希望有一個能夠降低資料輸出成本的解決方案. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 在公共子網提供專門的EC2 NAT例項。 配置私有子網的路由表以使用此例項的彈性網路介面作為所有S3流量的目的地.
@@ -13653,13 +13653,13 @@ C
 ## Question #498
 
 **題目**
-一家公司使用Amazon S3在S3 儲存桶(S3 bucket)中儲存高解析度圖片. 為了儘量減少應用更改,公司將圖片作為S3物件的最新版本儲存. 公司只需保留兩個最新版本的圖片. 公司希望降低成本. 公司將S3 儲存桶(S3 bucket)確定為鉅額支出. 哪種解決辦法將用LEAST 營運開銷(operational overhead)降低S3的成本?
+一家公司使用Amazon S3在S3 bucket中儲存高解析度圖片. 為了儘量減少應用更改,公司將圖片作為S3物件的最新版本儲存. 公司只需保留兩個最新版本的圖片. 公司希望降低成本. 公司將S3 bucket確定為鉅額支出. 哪種解決辦法將用LEAST 營運開銷(operational overhead)降低S3的成本?
 
 **選項**
 - A. 使用S3生命週期刪除過期物件版本並保留最近的兩個版本.
 - B. 使用一個 AWS Lambda 函式來檢查舊版本,並刪除除最近兩個版本外的所有版本.
 - C. 使用S3 Batch Operations刪除非當前物件版本,只保留最近兩個版本.
-- D. 在S3 儲存桶(S3 bucket)上解除版本功能,保留最近兩個版本.
+- D. 在S3 bucket上解除版本功能,保留最近兩個版本.
 
 **答案**
 A
@@ -13673,7 +13673,7 @@ A
 - 其餘選項比較：
 - B：使用一個 AWS Lambda 函式來檢查舊版本,並刪除除最近兩個版本外的所有版本。自行撰寫 Lambda 函式檢查並刪除舊版本，需要額外開發程式邏輯、排程觸發與持續監控維護，維運開銷明顯高於原生的生命週期規則。
 - C：使用S3 Batch Operations刪除非當前物件版本,只保留最近兩個版本。S3 Batch Operations 需要先產生物件清單（manifest）並手動建立、執行批次工作，屬於一次性且需要人工介入的操作，無法像生命週期規則一樣持續自動套用版本保留策略。
-- D：在S3 儲存桶(S3 bucket)上解除版本功能,保留最近兩個版本。直接關閉儲存桶的版本控制並不會刪除既有的舊版本物件，這些版本仍會持續佔用儲存空間並產生費用，無法達成「只保留最近兩個版本並降低成本」的目標。
+- D：在S3 bucket上解除版本功能,保留最近兩個版本。直接關閉儲存桶的版本控制並不會刪除既有的舊版本物件，這些版本仍會持續佔用儲存空間並產生費用，無法達成「只保留最近兩個版本並降低成本」的目標。
 
 **分類：** 儲存
 
@@ -13711,7 +13711,7 @@ B
 
 **選項**
 - A. 在現場部署AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
-- B. 透過使用AWS CLI,將每個檔案伺服器上的股份複製成Amazon S3桶. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
+- B. 透過使用AWS CLI,將每個檔案伺服器上的股份複製成Amazon S3 bucket. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
 - C. 從每個檔案伺服器中刪除驅動器。 將驅動器運送到AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
 - D. 訂購 AWS 斯諾科內裝置。 連線裝置到promises網路. 在裝置上發射AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
 - E. 訂購AWS Snowball Edge Storage Optimized裝置. 連線裝置到promises網路. 使用 AWS CLI 將資料複製到裝置中. 將裝置運回AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
@@ -13728,7 +13728,7 @@ A,D
 - A：在現場部署AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。AWS DataSync 原生支援以 SMB 通訊協定直接讀取現場 Windows 檔案伺服器上的共用資料夾，並可直接寫入 FSx for Windows File Server 作為目的端，傳輸過程中會保留 NTFS 檔案與資料夾層級的權限、擁有者與時間戳記，正好對應題目「必須儲存檔案許可權」的要求。
 - D：訂購 AWS 斯諾科內裝置。 連線裝置到promises網路. 在裝置上發射AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。AWS Snowcone 是可攜式邊緣運算裝置，能在現場網路環境中執行 AWS DataSync 代理程式，適合用來取代在既有伺服器上安裝代理的做法；透過 DataSync 排程任務將資料寫入 FSx for Windows File Server，同樣能完整保留來源檔案的 NTFS 權限設定。
 - 其餘選項比較：
-- B：透過使用AWS CLI,將每個檔案伺服器上的股份複製成Amazon S3桶. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。先用 AWS CLI 把共用資料夾複製到一般的 Amazon S3 儲存桶，S3 物件並沒有對應 Windows NTFS ACL 的權限模型，這個步驟就已經遺失原始的檔案存取權限資訊，即使後續再用 DataSync 轉到 FSx，權限也無法還原。
+- B：透過使用AWS CLI,將每個檔案伺服器上的股份複製成Amazon S3 bucket. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。先用 AWS CLI 把共用資料夾複製到一般的 Amazon S3 bucket，S3 物件並沒有對應 Windows NTFS ACL 的權限模型，這個步驟就已經遺失原始的檔案存取權限資訊，即使後續再用 DataSync 轉到 FSx，權限也無法還原。
 - C：從每個檔案伺服器中刪除驅動器。 將驅動器運送到AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。把磁碟機從現場伺服器拆下後自行運送到 AWS 以匯入 S3，並非 AWS 提供的標準遷移服務，而是自行拆裝硬體的克難做法，既不保證資料完整性，也同樣無法保留原始的檔案權限設定。
 - E：訂購AWS Snowball Edge Storage Optimized裝置. 連線裝置到promises網路. 使用 AWS CLI 將資料複製到裝置中. 將裝置運回AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。Snowball Edge Storage Optimized 在此方案中仍是先用 AWS CLI 把資料複製進裝置、運回 AWS 匯入 S3，資料落地在 S3 時一樣會遺失 NTFS 權限資訊，且比起現場直接執行 DataSync 代理多了裝置寄送的時間與流程複雜度。
 
@@ -13767,7 +13767,7 @@ A
 一個公司在Amazon EC2上執行一個使用內容管理系統(CMS)的網站. CMS執行在單一EC2例項上,並對資料層採用Amazon Aurora MySQL 多AZ DB例項. 網站影象儲存在Amazon Elastic Block Store(Amazon EBS)體積上,在EC2例項中掛載. 設計師應採取何種綜合行動來提高網站的效能和復原力?(選二.
 
 **選項**
-- A. 將網站影象移動到安裝在每個 EC2 例項上的 Amazon S3 桶中
+- A. 將網站影象移動到安裝在每個 EC2 例項上的 Amazon S3 bucket中
 - B. 透過使用來自初級EC2例項的 NFS 共享共享網站影象. 在其它EC2 例項上掛載此共享。
 - C. 將網站影象移動到每個EC2例項上掛載的Amazon Elastic File System (Amazon EFS)上.
 - D. 從現有的 EC2 例項建立一個 Amazon 機器影象( AMI)。 使用AMI作為Auto Scaling 群組(Auto Scaling group)的一部分,提供應用程式負載平衡器(Application Load Balancer)背後的新例項. 配置 Auto Scaling 群組(Auto Scaling group) 以保持至少兩個例項。 為網站配置 AWS 全球加速器
@@ -13785,7 +13785,7 @@ D,E
 - D：從現有的 EC2 例項建立一個 Amazon 機器影象( AMI)。 使用AMI作為Auto Scaling 群組(Auto Scaling group)的一部分,提供應用程式負載平衡器(Application Load Balancer)背後的新例項. 配置 Auto Scaling 群組(Auto Scaling group) 以保持至少兩個例項。 為網站配置 AWS 全球加速器。從現有執行個體建立 AMI 後放入 Auto Scaling 群組，並在 Application Load Balancer 後方維持至少兩個執行個體，去除了單一 EC2 執行個體故障即全站中斷的風險；再加上 AWS Global Accelerator 利用 AWS 全球骨幹網路與 Anycast 靜態 IP，將使用者流量導向最近且健康的端點，同時提升效能與容錯移轉能力。
 - E：從現有的 EC2 例項建立一個 Amazon 機器影象( AMI)。 使用AMI作為Auto Scaling 群組(Auto Scaling group)的一部分,提供應用程式負載平衡器(Application Load Balancer)背後的新例項. 配置 Auto Scaling 群組(Auto Scaling group) 以保持至少兩個例項。 為網站配置 Amazon CloudFront 發行版。同樣以 AMI 建立 Auto Scaling 群組並置於 ALB 之後維持最少兩個執行個體以消除單點故障，再加上 Amazon CloudFront 發行版，可將網站的靜態影像內容快取到邊緣節點，讓使用者就近取得影像、減少來源伺服器負載與延遲，直接提升影像密集網站的效能。
 - 其餘選項比較：
-- A：將網站影象移動到安裝在每個 EC2 例項上的 Amazon S3 桶中。Amazon S3 儲存桶並不是可直接掛載到每個 EC2 例項的區塊或檔案系統，若無額外的第三方掛載工具，這個做法在架構上不成立，也完全沒有處理 CMS 執行在單一例項上的容錯風險。
+- A：將網站影象移動到安裝在每個 EC2 例項上的 Amazon S3 bucket中。Amazon S3 bucket並不是可直接掛載到每個 EC2 例項的區塊或檔案系統，若無額外的第三方掛載工具，這個做法在架構上不成立，也完全沒有處理 CMS 執行在單一例項上的容錯風險。
 - B：透過使用來自初級EC2例項的 NFS 共享共享網站影象. 在其它EC2 例項上掛載此共享。透過主要 EC2 例項對外分享 NFS 共用，其他例項再掛載此共用，這個主要例項本身仍是單一失效點，一旦它故障，所有仰賴這個共用的例項都會失去影像存取能力，並未提升復原力。
 - C：將網站影象移動到每個EC2例項上掛載的Amazon Elastic File System (Amazon EFS)上。將影像搬到 Amazon EFS 雖然解決了多台例項共用檔案的問題，但完全沒有處理 CMS 目前只跑在單一 EC2 例項上的問題，執行個體本身故障時網站仍會中斷，無法達到題目要求的整體復原力提升。
 
@@ -13878,9 +13878,9 @@ C
 一家社交媒體公司正在為其網站建立一個功能。 該功能將賦予使用者上傳照片的能力. 公司預計大型活動期間的需求會大幅增加,必須確保網站能夠處理使用者的上傳流量. 用MOST 可擴展性(scalability)滿足這些要求的解決方案是什麼?
 
 **選項**
-- A. 從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3桶裡
+- A. 從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3 bucket裡
 - B. 提供AWS Storage Gateway檔案閘道器. 從使用者瀏覽器直接上傳檔案到檔案閘道器.
-- C. 在應用程式中生成 Amazon S3 預先簽名的 URL。 從使用者瀏覽器直接上傳檔案到S3 儲存桶(S3 bucket).
+- C. 在應用程式中生成 Amazon S3 預先簽名的 URL。 從使用者瀏覽器直接上傳檔案到S3 bucket.
 - D. 提供Amazon Elastic File System (Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統.
 
 **答案**
@@ -13891,9 +13891,9 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在應用程式中生成 Amazon S3 預先簽名的 URL。 從使用者瀏覽器直接上傳檔案到S3 儲存桶(S3 bucket)。在應用程式端產生 Amazon S3 預先簽名 URL，讓使用者瀏覽器憑此 URL 直接把照片上傳到 S3 儲存桶，上傳流量完全不經過應用程式伺服器，其擴充能力等同於 S3 本身近乎無限的吞吐能力，不受應用程式伺服器數量限制，因此在大型活動流量暴增時最具擴充性。
+- C：在應用程式中生成 Amazon S3 預先簽名的 URL。 從使用者瀏覽器直接上傳檔案到S3 bucket。在應用程式端產生 Amazon S3 預先簽名 URL，讓使用者瀏覽器憑此 URL 直接把照片上傳到 S3 bucket，上傳流量完全不經過應用程式伺服器，其擴充能力等同於 S3 本身近乎無限的吞吐能力，不受應用程式伺服器數量限制，因此在大型活動流量暴增時最具擴充性。
 - 其餘選項比較：
-- A：從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3桶裡。先讓瀏覽器把檔案上傳到應用程式伺服器、再由伺服器轉存到 S3，應用程式層會成為所有上傳流量的必經瓶頸，活動流量暴增時就必須連帶擴充應用程式伺服器叢集，擴充彈性遠不如直接上傳到 S3。
+- A：從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3 bucket裡。先讓瀏覽器把檔案上傳到應用程式伺服器、再由伺服器轉存到 S3，應用程式層會成為所有上傳流量的必經瓶頸，活動流量暴增時就必須連帶擴充應用程式伺服器叢集，擴充彈性遠不如直接上傳到 S3。
 - B：提供AWS Storage Gateway檔案閘道器. 從使用者瀏覽器直接上傳檔案到檔案閘道器。AWS Storage Gateway 檔案閘道器的設計目的是讓現場（on-premises）應用程式透過 NFS/SMB 存取 S3，並非提供公開網際網路上一般使用者瀏覽器可直接上傳檔案的介面，不適合這個面向終端使用者的上傳情境。
 - D：提供Amazon Elastic File System (Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統。Amazon EFS 是提供給 VPC 內 EC2 執行個體掛載使用的網路檔案系統，一般使用者的瀏覽器無法透過網際網路直接掛載或寫入 EFS 檔案系統，完全不符合『從使用者瀏覽器直接上傳』的需求。
 
@@ -14070,9 +14070,9 @@ A
 一家社交媒體公司希望允許其使用者在AWS雲託管的應用程式中上傳影象. 公司需要一種自動調整影象大小的解決方案,以便影象可以在多個裝置型別上顯示. 該應用在全天都經歷了無法預測的交通模式. 該公司正在尋求一個能最大限度地實現可擴展性(scalability). 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 建立一個以 Amazon S3 託管的靜態網站,該網站引用 AWS Lambda 功能來調整影象大小,並將影象儲存在 Amazon S3 桶中.
+- A. 建立一個以 Amazon S3 託管的靜態網站,該網站引用 AWS Lambda 功能來調整影象大小,並將影象儲存在 Amazon S3 bucket中.
 - B. 建立一個在 Amazon CloudFront 中託管的靜態網站,以引用 AWS Step 函式來調整影象大小,並將影象儲存在 Amazon RDS 資料庫(database) 中.
-- C. 在執行於 Amazon EC2 例項的網路伺服器上建立一個動態網站。 配置一個執行在 EC2 例項上的程序,以調整影象大小並將影象儲存在 Amazon S3 桶中.
+- C. 在執行於 Amazon EC2 例項的網路伺服器上建立一個動態網站。 配置一個執行在 EC2 例項上的程序,以調整影象大小並將影象儲存在 Amazon S3 bucket中.
 - D. 在自動縮放的Amazon Elastic Container Service (Amazon ECS)叢集上建立一個動態網站,在Amazon Simple Queue Service (Amazon SQS)中建立一個大小調整的工作. 設定一個在 Amazon EC2 例項上執行的影象恢復程式, 以處理更改大小的工作。
 
 **答案**
@@ -14083,10 +14083,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個以 Amazon S3 託管的靜態網站,該網站引用 AWS Lambda 功能來調整影象大小,並將影象儲存在 Amazon S3 桶中。S3 靜態網站負責前端頁面，圖片上傳事件觸發 Lambda 進行縮放後仍存回 S3；Lambda 依請求數量自動平行擴展並在無流量時完全不產生運算成本，剛好對應題目「全天流量難以預測」與「最大化可擴展性」的要求，且不需要管理任何伺服器容量。
+- A：建立一個以 Amazon S3 託管的靜態網站,該網站引用 AWS Lambda 功能來調整影象大小,並將影象儲存在 Amazon S3 bucket中。S3 靜態網站負責前端頁面，圖片上傳事件觸發 Lambda 進行縮放後仍存回 S3；Lambda 依請求數量自動平行擴展並在無流量時完全不產生運算成本，剛好對應題目「全天流量難以預測」與「最大化可擴展性」的要求，且不需要管理任何伺服器容量。
 - 其餘選項比較：
 - B：建立一個在 Amazon CloudFront 中託管的靜態網站,以引用 AWS Step 函式來調整影象大小,並將影象儲存在 Amazon RDS 資料庫(database) 中。把圖片這類二進位物件存進 Amazon RDS 關聯式資料庫並不合適，RDS 是為結構化資料表設計，存放大量圖片檔案效率差、成本高；此外 AWS Step Functions 是流程協調服務，本身不具備影像縮放運算能力，仍需呼叫實際的運算服務才能完成縮放。
-- C：在執行於 Amazon EC2 例項的網路伺服器上建立一個動態網站。 配置一個執行在 EC2 例項上的程序,以調整影象大小並將影象儲存在 Amazon S3 桶中。在 EC2 執行個體上跑動態網站與縮放程序，選項中沒有提到自動擴展機制，容量必須依人工評估或另外設定，在全天流量難以預測的情況下無法像事件驅動的無伺服器架構那樣即時隨請求量彈性增減，也仍需負擔閒置時的執行個體成本。
+- C：在執行於 Amazon EC2 例項的網路伺服器上建立一個動態網站。 配置一個執行在 EC2 例項上的程序,以調整影象大小並將影象儲存在 Amazon S3 bucket中。在 EC2 執行個體上跑動態網站與縮放程序，選項中沒有提到自動擴展機制，容量必須依人工評估或另外設定，在全天流量難以預測的情況下無法像事件驅動的無伺服器架構那樣即時隨請求量彈性增減，也仍需負擔閒置時的執行個體成本。
 - D：在自動縮放的Amazon Elastic Container Service (Amazon ECS)叢集上建立一個動態網站,在Amazon Simple Queue Service (Amazon SQS)中建立一個大小調整的工作. 設定一個在 Amazon EC2 例項上執行的影象恢復程式, 以處理更改大小的工作。此架構需要同時維運自動擴展的 ECS 叢集與另一組跑在 EC2 上、消耗 SQS 佇列訊息的縮放程式，等於管理兩層運算資源與其擴展策略，對於單純的圖片縮放需求而言架構複雜度遠高於直接用 Lambda 處理，維運負擔明顯增加。
 
 **分類：** 無伺服器
@@ -14180,12 +14180,12 @@ B
 ## Question #517
 
 **題目**
-一家公司希望將AWS Systems Manager會話經理日誌全部傳送到一個Amazon S3桶進行存檔. 以何種辦法滿足這一需要?
+一家公司希望將AWS Systems Manager會話經理日誌全部傳送到一個Amazon S3 bucket進行存檔. 以何種辦法滿足這一需要?
 
 **選項**
-- A. 在系統管理器控制檯中啟用 S3 記錄。 選擇 S3 儲存桶(S3 bucket) 將會話資料傳送到。
-- B. 安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 將日誌匯出至該組的S3 儲存桶(S3 bucket),以便存檔。
-- C. 建立系統管理器文件,將所有伺服器日誌上傳到中央S3 儲存桶(S3 bucket)。 使用 Amazon EventBridge 執行系統管理器文件,以對抗帳戶中每天的所有伺服器.
+- A. 在系統管理器控制檯中啟用 S3 記錄。 選擇 S3 bucket 將會話資料傳送到。
+- B. 安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 將日誌匯出至該組的S3 bucket,以便存檔。
+- C. 建立系統管理器文件,將所有伺服器日誌上傳到中央S3 bucket。 使用 Amazon EventBridge 執行系統管理器文件,以對抗帳戶中每天的所有伺服器.
 - D. 安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 建立 CloudWatch 日誌訂閱, 將任何日誌事件推向 Amazon Kinesis Data Firehose 傳送流。 將Amazon S3設定為目的地.
 
 **答案**
@@ -14198,9 +14198,9 @@ D
 正確答案是 **D**。
 - D：安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 建立 CloudWatch 日誌訂閱, 將任何日誌事件推向 Amazon Kinesis Data Firehose 傳送流。 將Amazon S3設定為目的地。CloudWatch 代理程式會把 Session Manager 的工作階段日誌持續送進 CloudWatch Logs 日誌群組，再透過訂閱過濾器把日誌事件即時串流至 Kinesis Data Firehose，由 Firehose 以緩衝批次的方式可靠地寫入 S3；這種「CloudWatch Logs → Firehose → S3」是持續、自動化彙整並歸檔大量日誌的標準架構。
 - 其餘選項比較：
-- A：在系統管理器控制檯中啟用 S3 記錄。 選擇 S3 儲存桶(S3 bucket) 將會話資料傳送到。在 Session Manager 偏好設定中直接指定 S3 儲存貯體，只能將工作階段紀錄以單次、直接寫入的方式送到 S3，沒有經過 CloudWatch Logs 這層，因此無法對日誌做集中監控、篩選或建立告警，架構彈性不足。
-- B：安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 將日誌匯出至該組的S3 儲存桶(S3 bucket),以便存檔。將日誌送進 CloudWatch Logs 之後再用「匯出至 S3」功能取出歸檔，是一次性、需要人工觸發的批次匯出動作，不是持續、自動化的即時歸檔流程，維運負擔較高。
-- C：建立系統管理器文件,將所有伺服器日誌上傳到中央S3 儲存桶(S3 bucket)。 使用 Amazon EventBridge 執行系統管理器文件,以對抗帳戶中每天的所有伺服器。自行寫 Systems Manager 文件上傳日誌，再用 EventBridge 排程每日執行，等於是自建腳本與排程機制，開發與維護成本都高於使用 AWS 原生的日誌串流功能。
+- A：在系統管理器控制檯中啟用 S3 記錄。 選擇 S3 bucket 將會話資料傳送到。在 Session Manager 偏好設定中直接指定 S3 儲存貯體，只能將工作階段紀錄以單次、直接寫入的方式送到 S3，沒有經過 CloudWatch Logs 這層，因此無法對日誌做集中監控、篩選或建立告警，架構彈性不足。
+- B：安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 將日誌匯出至該組的S3 bucket,以便存檔。將日誌送進 CloudWatch Logs 之後再用「匯出至 S3」功能取出歸檔，是一次性、需要人工觸發的批次匯出動作，不是持續、自動化的即時歸檔流程，維運負擔較高。
+- C：建立系統管理器文件,將所有伺服器日誌上傳到中央S3 bucket。 使用 Amazon EventBridge 執行系統管理器文件,以對抗帳戶中每天的所有伺服器。自行寫 Systems Manager 文件上傳日誌，再用 EventBridge 排程每日執行，等於是自建腳本與排程機制，開發與維護成本都高於使用 AWS 原生的日誌串流功能。
 
 **分類：** 管理與控管
 
@@ -14618,7 +14618,7 @@ C,F,D
 ## Question #533
 
 **題目**
-一家公司在Amazon S3儲存資料. 根據規定,資料不得包含個人識別資訊(PII)。 該公司最近發現,S3桶有一些含有PII的物體. 公司需要自動檢測S3桶中的PII,並通知公司的安全團隊. 哪種解決辦法能滿足這些要求?
+一家公司在Amazon S3儲存資料. 根據規定,資料不得包含個人識別資訊(PII)。 該公司最近發現,S3 bucket有一些含有PII的物體. 公司需要自動檢測S3 bucket中的PII,並通知公司的安全團隊. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用Amazon Macie. 建立 Amazon EventBridge 規則,從 Macie 發現中過濾敏感資料事件型別,並向安全團隊傳送Amazon Simple Notification Service (Amazon SNS)通知.
@@ -14645,7 +14645,7 @@ C
 ## Question #534
 
 **題目**
-一家公司希望為其多個AWS帳戶建立一個伐木解決方案. 該公司目前將所有帳戶的日誌儲存在一個集中帳戶中。 公司在集中帳戶中建立了Amazon S3桶,用於儲存VPC的無線日誌和AWS CloudTrail日誌. 所有日誌必須高度可用30天進行頻繁分析,為備份(backup)目的保留60天,並在建立90天后刪除。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司希望為其多個AWS帳戶建立一個伐木解決方案. 該公司目前將所有帳戶的日誌儲存在一個集中帳戶中。 公司在集中帳戶中建立了Amazon S3 bucket,用於儲存VPC的無線日誌和AWS CloudTrail日誌. 所有日誌必須高度可用30天進行頻繁分析,為備份(backup)目的保留60天,並在建立90天后刪除。 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 建立後30天向S3標準儲存類轉換物件. 寫入一個過期動作,指示 Amazon S3 在90天后刪除物件.
@@ -14866,7 +14866,7 @@ A,C,E
 ## Question #542
 
 **題目**
-一家媒體公司使用Amazon CloudFront發行,透過網際網路傳送內容. 公司只希望溢價客戶能夠存取媒體流和檔案內容. 公司將所有內容儲存在Amazon S3桶中. 公司還為特定目的,如電影出租或音樂下載,按需向客戶交付內容. 哪種解決辦法能滿足這些要求?
+一家媒體公司使用Amazon CloudFront發行,透過網際網路傳送內容. 公司只希望溢價客戶能夠存取媒體流和檔案內容. 公司將所有內容儲存在Amazon S3 bucket中. 公司還為特定目的,如電影出租或音樂下載,按需向客戶交付內容. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 生成並向溢價客戶提供S3簽名餅乾.
@@ -14953,8 +14953,8 @@ A
 一家公司希望將其使用者引導到一個備份(backup)靜態錯誤頁面,如果公司的主要網站沒有. 主要網站的DNS記錄以Amazon Route 53為主機. 域指應用程式負載平衡器(Application Load Balancer)(ALB). 公司需要一種解決辦法,儘量減少變化和基礎設施的間接費用。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 更新53路的記錄,使用延遲(latency)路由政策. 將Amazon S3桶內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點.
-- B. 設定53路活動被動故障配置. 當53路健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3桶內託管的靜態錯誤頁.
+- A. 更新53路的記錄,使用延遲(latency)路由政策. 將Amazon S3 bucket內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點.
+- B. 設定53路活動被動故障配置. 當53路健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3 bucket內託管的靜態錯誤頁.
 - C. 設定一條帶有 ALB 的 Route 53 活動式配置, 以及一個 Amazon EC2 例項, 以一個靜態錯誤頁面作為端點。 在 ALB 健康檢查失敗的情況下, 配置53 路向例項傳送請求。
 - D. 更新"路53"記錄使用多值解答路由政策. 建立健康檢查。 如果健康檢查透過,直接存取網站。 如果健康檢查沒有透過,直接存取Amazon S3中託管的靜態錯誤頁。
 
@@ -14966,9 +14966,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：設定53路活動被動故障配置. 當53路健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3桶內託管的靜態錯誤頁。Route 53 的主動-被動容錯移轉路由正是為此情境設計：對主要記錄（指向 ALB）設定健康檢查，一旦判定 ALB 不健康，DNS 解析會自動改指向次要記錄（S3 託管的靜態錯誤頁面），全程不需額外運算資源或人工介入，符合儘量減少變化和基礎設施間接費用的要求。
+- B：設定53路活動被動故障配置. 當53路健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3 bucket內託管的靜態錯誤頁。Route 53 的主動-被動容錯移轉路由正是為此情境設計：對主要記錄（指向 ALB）設定健康檢查，一旦判定 ALB 不健康，DNS 解析會自動改指向次要記錄（S3 託管的靜態錯誤頁面），全程不需額外運算資源或人工介入，符合儘量減少變化和基礎設施間接費用的要求。
 - 其餘選項比較：
-- A：更新53路的記錄,使用延遲(latency)路由政策. 將Amazon S3桶內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點。延遲路由政策是依照使用者與各端點之間的網路延遲高低來分配流量，並非依端點是否健康來決定路由；即使 ALB 完全正常運作，只要 S3 端點延遲較低，流量仍可能被導向錯誤頁面，這與「主要網站故障時才顯示備援頁」的需求不符。
+- A：更新53路的記錄,使用延遲(latency)路由政策. 將Amazon S3 bucket內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點。延遲路由政策是依照使用者與各端點之間的網路延遲高低來分配流量，並非依端點是否健康來決定路由；即使 ALB 完全正常運作，只要 S3 端點延遲較低，流量仍可能被導向錯誤頁面，這與「主要網站故障時才顯示備援頁」的需求不符。
 - C：設定一條帶有 ALB 的 Route 53 活動式配置, 以及一個 Amazon EC2 例項, 以一個靜態錯誤頁面作為端點。 在 ALB 健康檢查失敗的情況下, 配置53 路向例項傳送請求。這個做法把原本可以直接用 S3 託管的靜態錯誤頁面，改成需要另外建置與維護一台執行中的 EC2 執行個體，這正是題目要求盡量避免的額外基礎設施間接費用。
 - D：更新"路53"記錄使用多值解答路由政策. 建立健康檢查。 如果健康檢查透過,直接存取網站。 如果健康檢查沒有透過,直接存取Amazon S3中託管的靜態錯誤頁。多值回應路由政策的設計目的是在一次 DNS 查詢中回傳多筆健康的 IP 位址以分散流量、達到用戶端層級的簡易容錯，並非為單一主要／次要的容錯移轉情境設計，也無法保證在主站故障時能乾淨地把全部流量切到備援頁面。
 
@@ -15169,7 +15169,7 @@ D
 ## Question #553
 
 **題目**
-一個解決方案架構師需要審查公司的Amazon S3桶,以發現個人識別資訊(PII). 公司將PII資料儲存在我們東-1區域(Region)和西-2區域(Region)中. 哪個解決方案能以最少的營運開銷達成這些要求？
+一個解決方案架構師需要審查公司的Amazon S3 bucket,以發現個人識別資訊(PII). 公司將PII資料儲存在我們東-1區域(Region)和西-2區域(Region)中. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 在每個 區域(Region) 中配置 Amazon Macie。 建立一個工作來分析Amazon S3中的資料.
@@ -15277,7 +15277,7 @@ B
 ## Question #557
 
 **題目**
-一個解決方案架構師管理一個分析應用程式. 應用程式將大量半結構資料儲存在Amazon S3桶中. 解決方案架構師希望使用並行的資料處理來更快地處理資料. 解決方案架構師還希望使用儲存在Amazon Redshift 資料庫(database)中的資訊來豐富資料. 哪種解決辦法能滿足這些要求?
+一個解決方案架構師管理一個分析應用程式. 應用程式將大量半結構資料儲存在Amazon S3 bucket中. 解決方案架構師希望使用並行的資料處理來更快地處理資料. 解決方案架構師還希望使用儲存在Amazon Redshift 資料庫(database)中的資訊來豐富資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用Amazon Athena處理S3資料. 使用AWS Glue與Amazon Redshift資料來豐富S3資料.
@@ -15477,7 +15477,7 @@ B
 **選項**
 - A. 將敏感資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 使用EBS 加密(encryption)加密資料. 使用IAM例項角色來限制存取.
 - B. 為MySQL在Amazon RDS中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)客戶端-加密(encryption)加密資料.
-- C. 在Amazon S3中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)伺服器側加密(encryption)加密資料. 使用S3 儲存桶(S3 bucket)政策限制存取.
+- C. 在Amazon S3中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)伺服器側加密(encryption)加密資料. 使用S3 bucket政策限制存取.
 - D. 為Windows Server在Amazon FSx中儲存敏感資料. 在應用程式伺服器上掛載檔案共享。 使用Windows檔案許可權限制存取.
 
 **答案**
@@ -15491,7 +15491,7 @@ B
 - B：為MySQL在Amazon RDS中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)客戶端-加密(encryption)加密資料。應用程式在資料送進資料庫之前，先用 AWS KMS 產生的資料金鑰在用戶端完成加密（client-side encryption），寫入 Amazon RDS for MySQL 的是已加密的密文，資料庫服務本身與具備資料庫管理權限的 DBA 都沒有金鑰、看不到明文內容，符合「連資料庫管理員都無法存取」的嚴格要求；同時仍使用受管的關聯式資料庫，能滿足電商交易處理需要的結構化查詢與交易能力。
 - 其餘選項比較：
 - A：將敏感資料儲存在Amazon Elastic Block Store (Amazon EBS)的體積中. 使用EBS 加密(encryption)加密資料. 使用IAM例項角色來限制存取。Amazon EBS 加密是磁碟區層級的透明加密，資料寫入時自動加密、讀取時自動解密，任何具備存取執行個體權限的程序（包括資料庫引擎與具管理權限的人員）仍能看到解密後的明文，無法達到「連資料庫管理員都看不到明文」的要求；EBS 本身也只是區塊儲存，不是關聯式資料庫服務，不適合直接存放交易資料。
-- C：在Amazon S3中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)伺服器側加密(encryption)加密資料. 使用S3 儲存桶(S3 bucket)政策限制存取。SSE-KMS 是伺服器端加密，由 S3 服務在物件寫入時自動加密、授權讀取時自動解密，只要帳號或角色通過 IAM 與 bucket policy 的授權就能取得解密後的內容，管理該儲存體或具備足夠權限的人員仍可讀到明文，無法阻絕資料庫管理員存取；此外 S3 是物件儲存，缺乏交易型資料庫所需的 ACID 交易與結構化查詢能力。
+- C：在Amazon S3中儲存敏感資料. 使用AWS Key Management Service(AWS KMS)伺服器側加密(encryption)加密資料. 使用S3 bucket政策限制存取。SSE-KMS 是伺服器端加密，由 S3 服務在物件寫入時自動加密、授權讀取時自動解密，只要帳號或角色通過 IAM 與 bucket policy 的授權就能取得解密後的內容，管理該儲存體或具備足夠權限的人員仍可讀到明文，無法阻絕資料庫管理員存取；此外 S3 是物件儲存，缺乏交易型資料庫所需的 ACID 交易與結構化查詢能力。
 - D：為Windows Server在Amazon FSx中儲存敏感資料. 在應用程式伺服器上掛載檔案共享。 使用Windows檔案許可權限制存取。Amazon FSx for Windows 提供的是檔案共享服務，僅靠作業系統層級的檔案權限（ACL）做存取控管，並未對資料本身加密，也不是設計來儲存電商交易紀錄的資料庫服務，無法同時滿足「加密保護敏感資料」與「處理購買交易」兩項需求。
 
 **分類：** 資料庫
@@ -15529,7 +15529,7 @@ C
 一家公司在一個VPC中執行多個Amazon EC2 Linux例項,跨越兩個可用區(Availability Zones). 使用層次目錄結構的應用程式主機例項。 應用程式需要快速讀寫,並同時進行共享儲存. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 建立 Amazon S3 桶. 允許從 VPC 中的所有 EC2 例項存取。
+- A. 建立 Amazon S3 bucket. 允許從 VPC 中的所有 EC2 例項存取。
 - B. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 從每個EC2例項中掛載 EFS 檔案系統。
 - C. 在一個備註的IOPS SSD(io2) Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在所有 EC2 例項中附加 EBS 磁碟區。
 - D. 在每個EC2例項上附加的Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在不同的EC2例項中同步 EBS 磁碟區.
@@ -15542,7 +15542,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立 Amazon S3 桶. 允許從 VPC 中的所有 EC2 例項存取。Amazon S3 是物件儲存服務，採用扁平命名空間，只能用 key 前綴模擬資料夾外觀，並非真正支援目錄操作、檔案鎖定等 POSIX 語意的階層式檔案系統，一般應用程式也無法把 S3 當成本機檔案系統掛載讀寫，不符合題目「使用階層式目錄結構的應用程式」這項條件。
+- A：建立 Amazon S3 bucket. 允許從 VPC 中的所有 EC2 例項存取。Amazon S3 是物件儲存服務，採用扁平命名空間，只能用 key 前綴模擬資料夾外觀，並非真正支援目錄操作、檔案鎖定等 POSIX 語意的階層式檔案系統，一般應用程式也無法把 S3 當成本機檔案系統掛載讀寫，不符合題目「使用階層式目錄結構的應用程式」這項條件。
 - 其餘選項比較：
 - B：建立Amazon Elastic File System (Amazon EFS)檔案系統. 從每個EC2例項中掛載 EFS 檔案系統。Amazon EFS 是完全受管的 NFS 檔案系統，原生提供 POSIX 相容的階層式目錄結構，並且可以在同一個檔案系統下於每個可用區建立掛載目標（mount target），讓跨兩個可用區的多台 EC2 執行個體同時掛載、並行讀寫同一份共享資料，直接對應題目「快速讀寫」與「同時共享儲存」的需求。
 - C：在一個備註的IOPS SSD(io2) Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在所有 EC2 例項中附加 EBS 磁碟區。Amazon EBS 的 Multi-Attach 功能雖可讓 io1/io2 磁碟區被多個執行個體同時掛接，但僅限於「同一個可用區」內使用，無法跨越題目所描述的兩個可用區；即使在同一 AZ 內，一般 ext4/xfs 檔案系統也不具備多主機並行寫入的安全機制，仍需額外導入叢集感知檔案系統才能避免資料損毀。
@@ -15557,7 +15557,7 @@ A
 
 **選項**
 - A. 使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並將資料儲存在Amazon DynamoDB表中.
-- B. 使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用 Amazon S3 桶儲存已處理的資料.
+- B. 使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用 Amazon S3 bucket儲存已處理的資料.
 - C. 使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並在Amazon EC2例項上將資料儲存在Microsoft SQL Server Express 資料庫(database)中.
 - D. 使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用Amazon Elastic File System (Amazon EFS)共享檔案系統來儲存已處理的資料.
 
@@ -15571,7 +15571,7 @@ A
 正確答案是 **A**。
 - A：使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並將資料儲存在Amazon DynamoDB表中。Amazon API Gateway 搭配 AWS Lambda 屬於完全受管的無伺服器架構，不需要佈建、修補或擴充任何伺服器，感測器以 HTTP 呼叫送入的資料由 API Gateway 接收、Lambda 進行處理；Amazon DynamoDB 同樣是全受管的 NoSQL 資料庫，能依每個租戶、每小時的用量紀錄自動擴充吞吐量。三者皆為受管服務且彼此鬆散耦合，符合題目「儘量使用受管服務」「最少營運開銷」以及未來能再插入獨立元件擴充功能的需求。
 - 其餘選項比較：
-- B：使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用 Amazon S3 桶儲存已處理的資料。使用彈性負載平衡器搭配 EC2 Auto Scaling 群組，仍必須負責執行個體的作業系統修補、容量規劃與擴縮設定，營運負擔明顯高於無伺服器架構；而 Amazon S3 是物件儲存，不利於針對每個租戶、每小時用量做結構化查詢與彙總，不是儲存這類時序用量資料的合適選擇。
+- B：使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用 Amazon S3 bucket儲存已處理的資料。使用彈性負載平衡器搭配 EC2 Auto Scaling 群組，仍必須負責執行個體的作業系統修補、容量規劃與擴縮設定，營運負擔明顯高於無伺服器架構；而 Amazon S3 是物件儲存，不利於針對每個租戶、每小時用量做結構化查詢與彙總，不是儲存這類時序用量資料的合適選擇。
 - C：使用帶有AWS Lambda功能的Amazon API Gateway接收感測器的資料,處理資料,並在Amazon EC2例項上將資料儲存在Microsoft SQL Server Express 資料庫(database)中。在 Amazon EC2 執行個體上自行架設 Microsoft SQL Server Express，仍須負責作業系統與資料庫軟體的修補、備份與容量管理，且 SQL Server Express 版本本身有資料庫大小上限，不利於用量持續累積的情境，這與題目「儘可能使用受管服務」的要求相違背。
 - D：使用具有彈性的負載平衡器(Load Balancer),由Amazon EC2的Auto Scaling 群組(Auto Scaling group)例項支援,接收和處理感測器的資料。 使用Amazon Elastic File System (Amazon EFS)共享檔案系統來儲存已處理的資料。彈性負載平衡器加上 EC2 Auto Scaling 群組一樣需要自行管理運算資源；Amazon EFS 是共享檔案系統，用來存放需要依租戶、時間彙總查詢的結構化用量資料並不合適，且整體方案的營運複雜度也高於無伺服器方案。
 
@@ -16095,8 +16095,8 @@ C
 
 **選項**
 - A. 在Amazon彈性容器服務(Amazon ECS)容器例項前,在Amazon彈性檔案系統(Amazon EFS)中儲存公司收到的資訊。 授權由GWLB解決.
-- B. 在Amazon Kinesis資料流前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3桶中. 使用 AWS Lambda 函式解決授權.
-- C. 在Amazon Kinesis Data Firehose前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3桶中. 使用API Gateway Lambda授權程式解決授權問題.
+- B. 在Amazon Kinesis資料流前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3 bucket中. 使用 AWS Lambda 函式解決授權.
+- C. 在Amazon Kinesis Data Firehose前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3 bucket中. 使用API Gateway Lambda授權程式解決授權問題.
 - D. 在Amazon彈性集裝箱服務(Amazon ECS)集裝箱例項前,在Amazon彈性檔案系統(Amazon EFS)上儲存公司收到的資訊。 使用 AWS Lambda 函式解決授權.
 
 **答案**
@@ -16110,8 +16110,8 @@ D
 - D：在Amazon彈性集裝箱服務(Amazon ECS)集裝箱例項前,在Amazon彈性檔案系統(Amazon EFS)上儲存公司收到的資訊。 使用 AWS Lambda 函式解決授權。以 ECS 容器例項承載應用邏輯、掛載 Amazon EFS 作為多個容器共用的持久化共享儲存，讓來自不同網路應用程式的客戶活動資料可以集中存放並供應用程式邏輯直接整合處理；搭配 AWS Lambda 函式在存取前執行授權判斷，滿足題目要求的安全授權步驟，同時 ECS 服務可透過 Auto Scaling 因應突發流量。
 - 其餘選項比較：
 - A：在Amazon彈性容器服務(Amazon ECS)容器例項前,在Amazon彈性檔案系統(Amazon EFS)中儲存公司收到的資訊。 授權由GWLB解決。架構同樣是以 EFS 供 ECS 容器例項存取，但改用 Gateway Load Balancer（GWLB）處理授權。GWLB 的功能是把流量透明導向第三方虛擬設備（如防火牆、入侵偵測系統）進行檢測，本身並不提供身分驗證或授權判斷的能力，無法滿足題目要求的授權步驟。
-- B：在Amazon Kinesis資料流前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3桶中. 使用 AWS Lambda 函式解決授權。在 Kinesis Data Streams 前架設 API Gateway 端點、資料存入 S3，但 Kinesis Data Streams 只負責承接即時串流資料，仍需要額外開發消費端程式（例如透過 Lambda 或 KCL 讀取分片資料）才能把資料寫入 S3，不像 Firehose 具備原生交付 S3 的能力，會增加額外的整合與維運負擔。
-- C：在Amazon Kinesis Data Firehose前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3桶中. 使用API Gateway Lambda授權程式解決授權問題。在 Kinesis Data Firehose 前架設 API Gateway 端點並用 Lambda authorizer 處理授權，雖然能原生把資料批次交付到 S3，但這個架構的用途僅止於被動收集資料供後續分析，缺乏讓其他網路應用程式即時對接、雙向整合的能力，無法滿足題目「需要與其他網路應用程式整合」的要求。
+- B：在Amazon Kinesis資料流前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3 bucket中. 使用 AWS Lambda 函式解決授權。在 Kinesis Data Streams 前架設 API Gateway 端點、資料存入 S3，但 Kinesis Data Streams 只負責承接即時串流資料，仍需要額外開發消費端程式（例如透過 Lambda 或 KCL 讀取分片資料）才能把資料寫入 S3，不像 Firehose 具備原生交付 S3 的能力，會增加額外的整合與維運負擔。
+- C：在Amazon Kinesis Data Firehose前配置一個Amazon API Gateway端點,將公司收到的資訊儲存在Amazon S3 bucket中. 使用API Gateway Lambda授權程式解決授權問題。在 Kinesis Data Firehose 前架設 API Gateway 端點並用 Lambda authorizer 處理授權，雖然能原生把資料批次交付到 S3，但這個架構的用途僅止於被動收集資料供後續分析，缺乏讓其他網路應用程式即時對接、雙向整合的能力，無法滿足題目「需要與其他網路應用程式整合」的要求。
 
 **分類：** 應用程式整合
 
@@ -16123,7 +16123,7 @@ D
 **選項**
 - A. 建立跨區域(Region)讀取複製品,並將讀取複製品推廣到初級例項.
 - B. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)建立 RDS 跨 區域(Region) 複寫(replication).
-- C. 每24小時使用跨區域(Region) 複寫(replication),將本地備份複製到一個Amazon S3桶中.
+- C. 每24小時使用跨區域(Region) 複寫(replication),將本地備份複製到一個Amazon S3 bucket中.
 - D. 每24小時將自動快照複製到另一個區域(Region).
 
 **答案**
@@ -16137,7 +16137,7 @@ B
 - B：使用 AWS 資料庫(Database) 遷移服務(AWS DS)建立 RDS 跨 區域(Region) 複寫(replication)。AWS Database Migration Service（AWS DMS）可針對執行中的 RDS SQL Server 執行個體，以持續性複寫（CDC，變更資料擷取）方式，把異動資料即時同步到位於另一區域的目標資料庫；由於 SQL Server 引擎沒有原生跨區域唯讀複本功能，DMS 是官方建議的跨區複寫作法。持續同步能把資料落差壓在遠低於 24 小時的水準，故障時只需切換到目標資料庫即可完成復原，同時符合 RPO/RTO 24 小時與成本效益的要求。
 - 其餘選項比較：
 - A：建立跨區域(Region)讀取複製品,並將讀取複製品推廣到初級例項。Amazon RDS for SQL Server 目前並未提供像 MySQL、MariaDB、PostgreSQL 或 Aurora 那樣的原生跨區域唯讀複本(cross-region read replica)機制，此選項描述的做法在 SQL Server 引擎上無法直接建立，技術上不可行。
-- C：每24小時使用跨區域(Region) 複寫(replication),將本地備份複製到一個Amazon S3桶中。此方案要求先把資料庫備份匯出到地端環境再複寫回 S3，等於讓已經跑在雲端 RDS 上的工作負載繞經地端備份流程，架構本末倒置，也增加不必要的搬移步驟與延遲。
+- C：每24小時使用跨區域(Region) 複寫(replication),將本地備份複製到一個Amazon S3 bucket中。此方案要求先把資料庫備份匯出到地端環境再複寫回 S3，等於讓已經跑在雲端 RDS 上的工作負載繞經地端備份流程，架構本末倒置，也增加不必要的搬移步驟與延遲。
 - D：每24小時將自動快照複製到另一個區域(Region)。僅每 24 小時複製一次自動快照，代表發生故障當下遺失的資料量最差可能逼近 24 小時；而且復原時還需從快照重建全新執行個體、還原資料再切換應用程式連線，資料量較大時實際 RTO 很容易超過 24 小時的目標。
 
 **分類：** 資料庫
@@ -16177,7 +16177,7 @@ D
 **選項**
 - A. 建立資料庫(database)的讀取複製品. 引導查詢到讀取的複製品.
 - B. 在資料庫(database)中建立一個備份(backup). 將 備份(backup) 恢復到另一個 DB 例項。 直接查詢新的資料庫(database).
-- C. 將資料匯出至 Amazon S3. 使用Amazon Athena查詢S3 儲存桶(S3 bucket).
+- C. 將資料匯出至 Amazon S3. 使用Amazon Athena查詢S3 bucket.
 - D. 調整 DB 例項大小,以適應額外的工作量。
 
 **答案**
@@ -16191,7 +16191,7 @@ A
 - A：建立資料庫(database)的讀取複製品. 引導查詢到讀取的複製品。Amazon RDS 讀取複製品(read replica)透過非同步複寫，從主資料庫持續同步出一份可獨立查詢的唯讀副本。把每月報表這類讀取密集且會拖慢效能的查詢導向複製品執行，能讓報表運算與日常交易負載彼此隔離，主資料庫的日常效能就不會被報表查詢拖累。
 - 其餘選項比較：
 - B：在資料庫(database)中建立一個備份(backup). 將 備份(backup) 恢復到另一個 DB 例項。 直接查詢新的資料庫(database)。從備份還原到新的 DB 執行個體只是某個時間點的靜態快照，之後每次要跑報表都得重新備份、還原一輪，資料時效性差且維運步驟繁瑣，不是可長期沿用的解決方案。
-- C：將資料匯出至 Amazon S3. 使用Amazon Athena查詢S3 儲存桶(S3 bucket)。把資料匯出到 S3 再用 Athena 查詢，需要額外建置匯出/轉檔的資料管線，資料只會在匯出當下同步、無法反映匯出後的即時異動，架構複雜度也高於直接建立讀取複製品。
+- C：將資料匯出至 Amazon S3. 使用Amazon Athena查詢S3 bucket。把資料匯出到 S3 再用 Athena 查詢，需要額外建置匯出/轉檔的資料管線，資料只會在匯出當下同步、無法反映匯出後的即時異動，架構複雜度也高於直接建立讀取複製品。
 - D：調整 DB 例項大小,以適應額外的工作量。直接把 DB 執行個體規格調大，是針對「每月一次」的短暫尖峰負載做全時段升級，代表其餘時間都要多付出用不到的運算成本，不符合維持成本效益的要求。
 
 **分類：** 資料庫
@@ -16229,8 +16229,8 @@ C
 一家公司使用AWS並出售對版權影象的存取. 該公司的全球客戶基礎需要能夠快速存取這些影象. 該公司必須拒絕特定國家的使用者進入。 公司希望儘可能降低成本. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用Amazon S3儲存影象. 開啟多要素認證(MFA)和公共桶存取. 向客戶提供S3 儲存桶(S3 bucket)的連結.
-- B. 使用Amazon S3儲存影象. 為每個客戶建立 IAM 使用者。 將使用者新增到擁有存取S3 儲存桶(S3 bucket)許可權的組中.
+- A. 使用Amazon S3儲存影象. 開啟多要素認證(MFA)和公共桶存取. 向客戶提供S3 bucket的連結.
+- B. 使用Amazon S3儲存影象. 為每個客戶建立 IAM 使用者。 將使用者新增到擁有存取S3 bucket許可權的組中.
 - C. 使用位於應用程式負載平衡器(ALB)後面的 Amazon EC2 例項來儲存影象。 只在公司服務的國家部署這些例項。 向客戶提供與ALB的連結,以瞭解其具體國家的情況。
 - D. 使用Amazon S3儲存影象. 使用Amazon CloudFront以地理限制方式分發影象. 為每個客戶在 CloudFront 中存取資料提供簽名的 URL。
 
@@ -16244,8 +16244,8 @@ C
 正確答案是 **C**。
 - C：使用位於應用程式負載平衡器(ALB)後面的 Amazon EC2 例項來儲存影象。 只在公司服務的國家部署這些例項。 向客戶提供與ALB的連結,以瞭解其具體國家的情況。將應用程式伺服器只部署在公司實際提供服務的國家(地區)，等於直接從基礎設施佈署範圍排除需要拒絕的國家，不需要另外導入存取控制或內容分發服務；在該地區內以 ALB 對外提供服務，也能讓當地客戶以較低延遲存取，達到用最少服務組合完成需求限制並控制成本。
 - 其餘選項比較：
-- A：使用Amazon S3儲存影象. 開啟多要素認證(MFA)和公共桶存取. 向客戶提供S3 儲存桶(S3 bucket)的連結。開啟 S3 儲存桶的公開存取(public access)等於讓全世界任何人都能取得影像，完全無法依國家限制存取，不符合「拒絕特定國家使用者」的要求；MFA 管的是登入時的身分驗證強化，與依地理位置的存取限制無關。
-- B：使用Amazon S3儲存影象. 為每個客戶建立 IAM 使用者。 將使用者新增到擁有存取S3 儲存桶(S3 bucket)許可權的組中。為每個客戶建立獨立 IAM 使用者並加入群組管理 S3 存取權限，是以「使用者身分」而非「使用者所在地理位置」做存取控制，無法依國家別拒絕特定地區的請求，客戶數一多，IAM 使用者的建立與管理也會造成沉重的維運負擔。
+- A：使用Amazon S3儲存影象. 開啟多要素認證(MFA)和公共桶存取. 向客戶提供S3 bucket的連結。開啟 S3 bucket的公開存取(public access)等於讓全世界任何人都能取得影像，完全無法依國家限制存取，不符合「拒絕特定國家使用者」的要求；MFA 管的是登入時的身分驗證強化，與依地理位置的存取限制無關。
+- B：使用Amazon S3儲存影象. 為每個客戶建立 IAM 使用者。 將使用者新增到擁有存取S3 bucket許可權的組中。為每個客戶建立獨立 IAM 使用者並加入群組管理 S3 存取權限，是以「使用者身分」而非「使用者所在地理位置」做存取控制，無法依國家別拒絕特定地區的請求，客戶數一多，IAM 使用者的建立與管理也會造成沉重的維運負擔。
 - D：使用Amazon S3儲存影象. 使用Amazon CloudFront以地理限制方式分發影象. 為每個客戶在 CloudFront 中存取資料提供簽名的 URL。CloudFront 的地理限制(geo-restriction)功能確實能依國家封鎖存取，並可用簽名 URL(signed URL)控管每位客戶的存取權限，但這代表除了 S3 儲存外，還要額外建置並持續維運一個 CloudFront 發佈與簽名 URL 產生機制，相較於單純限縮部署範圍的做法，多了一層服務與管理成本。
 
 **分類：** 網路連結和內容交付
@@ -16646,7 +16646,7 @@ B
 **選項**
 - A. 減小 RDS DB 例項大小。 將儲存容量提高到24 TiB. 將儲存型別更改為磁性。
 - B. 增加 RDS DB 例項大小。 將儲存容量提高到24 TiChange 儲存型別以提供 IOPS.
-- C. 建立 Amazon S3 桶. 更新在 S3 儲存桶(S3 bucket) 中儲存文件的應用程式。 在現有的資料庫(database)中儲存物件後設資料.
+- C. 建立 Amazon S3 bucket. 更新在 S3 bucket 中儲存文件的應用程式。 在現有的資料庫(database)中儲存物件後設資料.
 - D. 建立 Amazon DynamoDB 表格。 更新應用程式以使用 DynamoDB。 使用AWS 資料庫(Database) 遷移服務(AWS DS)將資料從甲骨文資料庫(database)遷移到DynamoDB.
 
 **答案**
@@ -16657,7 +16657,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立 Amazon S3 桶. 更新在 S3 儲存桶(S3 bucket) 中儲存文件的應用程式。 在現有的資料庫(database)中儲存物件後設資料。把平均 6 MB 的二進位大型物件搬到 Amazon S3 存放，資料庫只保留物件的參照 metadata，可以大幅縮小 RDS 資料庫的儲存量與 I/O 負擔，讓資料庫回到處理結構化交易資料的角色。S3 本身針對大型物件儲存做了優化、具備 11 個 9 耐用性且依用量計費，整體成本遠低於持續擴充 RDS 儲存空間，應用程式只需異動儲存文件的邏輯，資料庫仍保留 Multi-AZ 的高可用性架構，符合題目「改善效能、高可用、具成本效益」的要求。
+- C：建立 Amazon S3 bucket. 更新在 S3 bucket 中儲存文件的應用程式。 在現有的資料庫(database)中儲存物件後設資料。把平均 6 MB 的二進位大型物件搬到 Amazon S3 存放，資料庫只保留物件的參照 metadata，可以大幅縮小 RDS 資料庫的儲存量與 I/O 負擔，讓資料庫回到處理結構化交易資料的角色。S3 本身針對大型物件儲存做了優化、具備 11 個 9 耐用性且依用量計費，整體成本遠低於持續擴充 RDS 儲存空間，應用程式只需異動儲存文件的邏輯，資料庫仍保留 Multi-AZ 的高可用性架構，符合題目「改善效能、高可用、具成本效益」的要求。
 - 其餘選項比較：
 - A：減小 RDS DB 例項大小。 將儲存容量提高到24 TiB. 將儲存型別更改為磁性。縮小 RDS 執行個體規格反而會降低運算資源，且把儲存型別改成磁性儲存的 IOPS 效能遠低於通用型 SSD，只會讓原本就因大型 BLOB 導致的效能問題更嚴重，並非「改善效能」的做法。
 - B：增加 RDS DB 例項大小。 將儲存容量提高到24 TiChange 儲存型別以提供 IOPS。持續放大 RDS 執行個體與儲存容量、改用佈建 IOPS 只是垂直擴充，能暫時緩解效能問題，但沒有解決 BLOB 資料持續增長推高資料庫儲存成本與 I/O 負擔的根本原因，長期而言不符合「具成本效益」的要求。
@@ -16722,12 +16722,12 @@ C
 ## Question #610
 
 **題目**
-一個連部署了在VPC中執行的Amazon EC2 執行個體. EC2例項將源資料載入到Amazon S3桶中,以便將來可以處理資料. 根據合規(compliance)法律,資料不得透過公共網際網路傳輸。 公司的premise資料中心中的伺服器會消耗執行在EC2例項上的應用程式的輸出. 哪種解決辦法能滿足這些要求?
+一個連部署了在VPC中執行的Amazon EC2 執行個體. EC2例項將源資料載入到Amazon S3 bucket中,以便將來可以處理資料. 根據合規(compliance)法律,資料不得透過公共網際網路傳輸。 公司的premise資料中心中的伺服器會消耗執行在EC2例項上的應用程式的輸出. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為Amazon EC2部署一個介面VPC 端點(VPC endpoint). 建立公司與VPC之間的AWS站點對站點VPN連線.
 - B. 為Amazon S3部署一個閘道器VPC 端點(VPC endpoint). 搭建AWS Direct Connect連線在premise網路和VPC之間.
-- C. 設定從VPC到S3桶的AWS Transit Gateway連線. 建立公司與VPC之間的AWS站點對站點VPN連線.
+- C. 設定從VPC到S3 bucket的AWS Transit Gateway連線. 建立公司與VPC之間的AWS站點對站點VPN連線.
 - D. 設定有通往NAT閘道器的路由的代理 EC2 例項。 配置代理 EC2 例項以獲取 S3 資料並反饋應用程式例項。
 
 **答案**
@@ -16741,7 +16741,7 @@ B
 - B：為Amazon S3部署一個閘道器VPC 端點(VPC endpoint). 搭建AWS Direct Connect連線在premise網路和VPC之間。S3 的閘道器 VPC 端點讓 VPC 內的 EC2 執行個體透過 AWS 私有網路直接存取 S3，完全不經過公共網際網路，滿足資料不得透過公共網路傳輸的合規要求。再透過 AWS Direct Connect 建立地端資料中心與 VPC 之間的專線連線，讓地端伺服器消費 EC2 應用程式的輸出，同樣走專屬實體線路而非公共網際網路，兩段路徑都符合合規限制。
 - 其餘選項比較：
 - A：為Amazon EC2部署一個介面VPC 端點(VPC endpoint). 建立公司與VPC之間的AWS站點對站點VPN連線。Amazon EC2 本身是運算服務，並非需要透過 VPC 端點存取的 AWS 公開服務端點，「為 EC2 部署介面 VPC 端點」在概念上不成立；此選項也只處理了地端到 VPC 的連線，並未解決 EC2 存取 S3 這段流量如何避開公共網際網路。
-- C：設定從VPC到S3桶的AWS Transit Gateway連線. 建立公司與VPC之間的AWS站點對站點VPN連線。AWS Transit Gateway 是用來串接多個 VPC 與地端網路的路由樞紐，並不能直接「連到 S3 桶」，S3 存取仍需透過閘道器或介面端點；此外方案中地端是用 Site-to-Site VPN（走公共網際網路的 IPSec 通道）連接，與題目「資料不得經過公共網際網路」的限制相牴觸。
+- C：設定從VPC到S3 bucket的AWS Transit Gateway連線. 建立公司與VPC之間的AWS站點對站點VPN連線。AWS Transit Gateway 是用來串接多個 VPC 與地端網路的路由樞紐，並不能直接「連到 S3 bucket」，S3 存取仍需透過閘道器或介面端點；此外方案中地端是用 Site-to-Site VPN（走公共網際網路的 IPSec 通道）連接，與題目「資料不得經過公共網際網路」的限制相牴觸。
 - D：設定有通往NAT閘道器的路由的代理 EC2 例項。 配置代理 EC2 例項以獲取 S3 資料並反饋應用程式例項。代理 EC2 執行個體透過 NAT 閘道器對外存取 S3，流量最終仍會經由網際網路閘道器離開並進入公共網際網路，並未真正避開公共網路路徑，不符合合規要求，還多增加一台需要維運的代理伺服器。
 
 **分類：** 網路連結和內容交付
@@ -16776,13 +16776,13 @@ A
 ## Question #612
 
 **題目**
-一家公司有一個在一傢俬人子網中執行Amazon EC2 執行個體的應用程式. 應用程式需要處理Amazon S3桶的敏感資訊. 該應用程式不得使用網際網路連線S3 儲存桶(S3 bucket). 哪種解決辦法能滿足這些要求?
+一家公司有一個在一傢俬人子網中執行Amazon EC2 執行個體的應用程式. 應用程式需要處理Amazon S3 bucket的敏感資訊. 該應用程式不得使用網際網路連線S3 bucket. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 配置網際網路閘道器。 更新S3 儲存桶政策(bucket policy),允許從網際網路閘道器存取. 更新應用程式以使用新的網際網路閘道器。
-- B. 配置 VPN 連線。 更新S3 儲存桶政策(bucket policy),允許從VPN連線存取. 更新應用程式以使用新的 VPN 連線。
-- C. 配置 NAT 閘道器。 更新S3 儲存桶政策(bucket policy),允許從NAT閘道器存取. 更新應用程式以使用新的NAT閘道器。
-- D. 配置一個VPC 端點(VPC endpoint). 更新S3 儲存桶政策(bucket policy),允許從VPC 端點(VPC endpoint)進入. 更新應用程式以使用新的 VPC 端點(VPC endpoint).
+- A. 配置網際網路閘道器。 更新S3 bucket政策(bucket policy),允許從網際網路閘道器存取. 更新應用程式以使用新的網際網路閘道器。
+- B. 配置 VPN 連線。 更新S3 bucket政策(bucket policy),允許從VPN連線存取. 更新應用程式以使用新的 VPN 連線。
+- C. 配置 NAT 閘道器。 更新S3 bucket政策(bucket policy),允許從NAT閘道器存取. 更新應用程式以使用新的NAT閘道器。
+- D. 配置一個VPC 端點(VPC endpoint). 更新S3 bucket政策(bucket policy),允許從VPC 端點(VPC endpoint)進入. 更新應用程式以使用新的 VPC 端點(VPC endpoint).
 
 **答案**
 A
@@ -16792,11 +16792,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：配置網際網路閘道器。 更新S3 儲存桶政策(bucket policy),允許從網際網路閘道器存取. 更新應用程式以使用新的網際網路閘道器。設定網際網路閘道器會讓流量透過公有網際網路路由，這與題目明確要求「應用程式不得使用網際網路連線S3」的限制直接牴觸，也違背將運算資源放在私有子網的設計初衷。
+- A：配置網際網路閘道器。 更新S3 bucket政策(bucket policy),允許從網際網路閘道器存取. 更新應用程式以使用新的網際網路閘道器。設定網際網路閘道器會讓流量透過公有網際網路路由，這與題目明確要求「應用程式不得使用網際網路連線S3」的限制直接牴觸，也違背將運算資源放在私有子網的設計初衷。
 - 其餘選項比較：
-- B：配置 VPN 連線。 更新S3 儲存桶政策(bucket policy),允許從VPN連線存取. 更新應用程式以使用新的 VPN 連線。VPN 連線用於將公司內部網路或其他私有網路對接進 VPC，並不會提供私有子網通往 S3 這類 AWS 公有服務的路徑，在同一帳戶內要存取 S3 屬於不必要且無關的設計。
-- C：配置 NAT 閘道器。 更新S3 儲存桶政策(bucket policy),允許從NAT閘道器存取. 更新應用程式以使用新的NAT閘道器。NAT 閘道器只讓私有子網對外發起連線（例如下載更新），其流量仍會經過網際網路閘道器與公有網路路徑，並未消除對網際網路的依賴，不符合題目「不得使用網際網路連線」的限制。
-- D：配置一個VPC 端點(VPC endpoint). 更新S3 儲存桶政策(bucket policy),允許從VPC 端點(VPC endpoint)進入. 更新應用程式以使用新的 VPC 端點(VPC endpoint)。Gateway 型 VPC 端點讓私有子網內的 EC2 執行個體透過 AWS 的私有網路直接存取 S3，完全不經過網際網路閘道器、NAT 或公有 IP 位址；搭配儲存桶政策中的 aws:sourceVpce 條件，還能限制只有透過該端點的請求才能存取，精準符合題目「不得使用網際網路」與存取控管的雙重要求。
+- B：配置 VPN 連線。 更新S3 bucket政策(bucket policy),允許從VPN連線存取. 更新應用程式以使用新的 VPN 連線。VPN 連線用於將公司內部網路或其他私有網路對接進 VPC，並不會提供私有子網通往 S3 這類 AWS 公有服務的路徑，在同一帳戶內要存取 S3 屬於不必要且無關的設計。
+- C：配置 NAT 閘道器。 更新S3 bucket政策(bucket policy),允許從NAT閘道器存取. 更新應用程式以使用新的NAT閘道器。NAT 閘道器只讓私有子網對外發起連線（例如下載更新），其流量仍會經過網際網路閘道器與公有網路路徑，並未消除對網際網路的依賴，不符合題目「不得使用網際網路連線」的限制。
+- D：配置一個VPC 端點(VPC endpoint). 更新S3 bucket政策(bucket policy),允許從VPC 端點(VPC endpoint)進入. 更新應用程式以使用新的 VPC 端點(VPC endpoint)。Gateway 型 VPC 端點讓私有子網內的 EC2 執行個體透過 AWS 的私有網路直接存取 S3，完全不經過網際網路閘道器、NAT 或公有 IP 位址；搭配儲存桶政策中的 aws:sourceVpce 條件，還能限制只有透過該端點的請求才能存取，精準符合題目「不得使用網際網路」與存取控管的雙重要求。
 
 **分類：** 網路連結和內容交付
 
@@ -16884,7 +16884,7 @@ C
 ## Question #616
 
 **題目**
-一家公司在AWS上部署了最新產品. 該產品在網路負載平衡器(Network Load Balancer)後方的Auto Scaling 群組(Auto Scaling group)中執行. 公司將產品物品存放在Amazon S3桶中。 該公司最近經歷了對其系統的惡意攻擊。 公司需要一個解決方案,持續監控AWS帳戶中的惡意活動,工作量,以及S3 儲存桶(S3 bucket)的存取模式. 解決方案還必須報告可疑活動並在儀表板上顯示資訊。 哪種解決辦法能滿足這些要求?
+一家公司在AWS上部署了最新產品. 該產品在網路負載平衡器(Network Load Balancer)後方的Auto Scaling 群組(Auto Scaling group)中執行. 公司將產品物品存放在Amazon S3 bucket中。 該公司最近經歷了對其系統的惡意攻擊。 公司需要一個解決方案,持續監控AWS帳戶中的惡意活動,工作量,以及S3 bucket的存取模式. 解決方案還必須報告可疑活動並在儀表板上顯示資訊。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 Amazon Macie 監控結果並向 AWS Config 報告.
@@ -16916,7 +16916,7 @@ A
 **選項**
 - A. 為 Lustre 檔案系統建立 Amazon FSx。
 - B. 建立Amazon Elastic File System (Amazon EFS)檔案系統.
-- C. 建立 Amazon S3 桶接收資料.
+- C. 建立 Amazon S3 bucket接收資料.
 - D. 手動使用作業系統複製命令將資料推向AWS目的地.
 - E. 在預設資料中心安裝 AWS 資料同步代理。 使用預設位置和 AWS 之間的資料同步任務。
 
@@ -16932,7 +16932,7 @@ A,B
 - A：為 Lustre 檔案系統建立 Amazon FSx。Amazon FSx for Lustre 主要針對高效能運算（HPC）等需要極高吞吐量、可與 S3 緊密整合做批次資料處理的場景設計，對於單純需要多個 AWS 資源以 NFS 協定存取的 200GB 一般檔案共享而言，屬於成本較高且用途錯置的選擇。
 - B：建立Amazon Elastic File System (Amazon EFS)檔案系統。Amazon EFS 是完全受管、相容 NFSv4 的彈性檔案系統，可讓多個 AWS 運算資源同時以 NFS 協定掛載存取，直接滿足題目「多種資源必須能透過 NFS 協定存取」的要求。
 - 其餘選項比較：
-- C：建立 Amazon S3 桶接收資料。Amazon S3 是透過 API/HTTP 存取的物件儲存服務，並非 NFS 協定，若不額外部署如 AWS Storage Gateway 的檔案閘道，掛載的資源將無法以 NFS 方式讀寫 S3 中的資料。
+- C：建立 Amazon S3 bucket接收資料。Amazon S3 是透過 API/HTTP 存取的物件儲存服務，並非 NFS 協定，若不額外部署如 AWS Storage Gateway 的檔案閘道，掛載的資源將無法以 NFS 方式讀寫 S3 中的資料。
 - D：手動使用作業系統複製命令將資料推向AWS目的地。手動使用作業系統複製命令只能完成一次性、非受管的搬移，缺乏持續同步、自動重試與資料驗證機制，不符合題目「不間斷地將資料遷移」的持續同步需求，且大量手動操作也不具成本效益。
 - E：在預設資料中心安裝 AWS 資料同步代理。 使用預設位置和 AWS 之間的資料同步任務。在原資料中心部署 AWS DataSync 代理程式，並建立資料同步任務，可自動、持續地將 NFS 來源與 AWS 目的地之間的資料進行加密傳輸與同步，且會自動處理重試與頻寬控管，是不間斷遷移 200GB 資料的低維運、具成本效益做法。
 
@@ -17022,13 +17022,13 @@ C
 ## Question #621
 
 **題目**
-一個線上照片分享公司將其照片儲存在Amazon S3 儲存桶中,該水桶存在於我們西-1 區域(Region). 公司需要將所有新照片的複製存放在我們東1區域(Region)上. 以何種辦法滿足這一要求?
+一個線上照片分享公司將其照片儲存在Amazon S3 bucket中,該水桶存在於我們西-1 區域(Region). 公司需要將所有新照片的複製存放在我們東1區域(Region)上. 以何種辦法滿足這一要求?
 
 **選項**
-- A. 使用 S3 Cross-Region Replication 從現有的 S3 儲存桶(S3 bucket) 複製到第二個 S3 儲存桶(S3 bucket)。
-- B. 建立現有S3 儲存桶(S3 bucket)的跨源資源共享配置. 在 CORS 規則的允許的Origin 元素中指定 us- east - 1。
-- C. 建立第二個S3 儲存桶(S3 bucket),我們東-1跨多個可用區(Availability Zones). 建立 S3 生命週期規則,將照片儲存到第二個 S3 儲存桶(S3 bucket).
-- D. 在 Our-east-1 中建立第二個 S3 儲存桶(S3 bucket)。 配置關於物件建立的 S3 事件通知並更新事件, 以引用 AWS Lambda 函式, 將現有的 S3 儲存桶(S3 bucket) 照片複製到第二個 S3 儲存桶(S3 bucket)。
+- A. 使用 S3 Cross-Region Replication 從現有的 S3 bucket 複製到第二個 S3 bucket。
+- B. 建立現有S3 bucket的跨源資源共享配置. 在 CORS 規則的允許的Origin 元素中指定 us- east - 1。
+- C. 建立第二個S3 bucket,我們東-1跨多個可用區(Availability Zones). 建立 S3 生命週期規則,將照片儲存到第二個 S3 bucket.
+- D. 在 Our-east-1 中建立第二個 S3 bucket。 配置關於物件建立的 S3 事件通知並更新事件, 以引用 AWS Lambda 函式, 將現有的 S3 bucket 照片複製到第二個 S3 bucket。
 
 **答案**
 A
@@ -17038,11 +17038,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用 S3 Cross-Region Replication 從現有的 S3 儲存桶(S3 bucket) 複製到第二個 S3 儲存桶(S3 bucket)。S3 Cross-Region Replication（CRR）會在來源與目的地儲存桶之間建立非同步複寫規則，新建立的物件會自動被複製到指定的另一個區域的儲存桶，完全對應題目「所有新照片自動複製到另一個區域」的需求，且屬於 S3 原生受管功能，不需額外撰寫程式。
+- A：使用 S3 Cross-Region Replication 從現有的 S3 bucket 複製到第二個 S3 bucket。S3 Cross-Region Replication（CRR）會在來源與目的地儲存桶之間建立非同步複寫規則，新建立的物件會自動被複製到指定的另一個區域的儲存桶，完全對應題目「所有新照片自動複製到另一個區域」的需求，且屬於 S3 原生受管功能，不需額外撰寫程式。
 - 其餘選項比較：
-- B：建立現有S3 儲存桶(S3 bucket)的跨源資源共享配置. 在 CORS 規則的允許的Origin 元素中指定 us- east - 1。CORS（跨來源資源共享）設定是用來控制瀏覽器端 JavaScript 能否對不同網域的儲存桶發出請求，與把物件資料實際複製到另一個地理區域完全無關。
-- C：建立第二個S3 儲存桶(S3 bucket),我們東-1跨多個可用區(Availability Zones). 建立 S3 生命週期規則,將照片儲存到第二個 S3 儲存桶(S3 bucket)。S3 儲存桶本身在同一區域內即已跨多個可用區儲存，不需要額外建立；而生命週期規則的用途是在同一儲存桶內轉換儲存類別或到期刪除物件，並不會把物件複製到另一個區域的另一個儲存桶。
-- D：在 Our-east-1 中建立第二個 S3 儲存桶(S3 bucket)。 配置關於物件建立的 S3 事件通知並更新事件, 以引用 AWS Lambda 函式, 將現有的 S3 儲存桶(S3 bucket) 照片複製到第二個 S3 儲存桶(S3 bucket)。透過 S3 事件通知觸發 Lambda 複製物件雖然技術上可行，但須自行撰寫並維運程式碼、處理重試與例外情況，維運複雜度遠高於原生的 CRR 功能，不是最直接的做法。
+- B：建立現有S3 bucket的跨源資源共享配置. 在 CORS 規則的允許的Origin 元素中指定 us- east - 1。CORS（跨來源資源共享）設定是用來控制瀏覽器端 JavaScript 能否對不同網域的儲存桶發出請求，與把物件資料實際複製到另一個地理區域完全無關。
+- C：建立第二個S3 bucket,我們東-1跨多個可用區(Availability Zones). 建立 S3 生命週期規則,將照片儲存到第二個 S3 bucket。S3 bucket本身在同一區域內即已跨多個可用區儲存，不需要額外建立；而生命週期規則的用途是在同一儲存桶內轉換儲存類別或到期刪除物件，並不會把物件複製到另一個區域的另一個儲存桶。
+- D：在 Our-east-1 中建立第二個 S3 bucket。 配置關於物件建立的 S3 事件通知並更新事件, 以引用 AWS Lambda 函式, 將現有的 S3 bucket 照片複製到第二個 S3 bucket。透過 S3 事件通知觸發 Lambda 複製物件雖然技術上可行，但須自行撰寫並維運程式碼、處理重試與例外情況，維運複雜度遠高於原生的 CRR 功能，不是最直接的做法。
 
 **分類：** 儲存
 
@@ -17055,7 +17055,7 @@ A
 - A. 部署Amazon DynamoDB作為資料庫(database)解決方案. 提供需求能力。
 - B. 部署Amazon Aurora作為資料庫(database)解決方案. 選擇無伺服器 DB 引擎模式。
 - C. 部署Amazon DynamoDB作為資料庫(database)解決方案. 確保DynamoDB自動縮放啟用.
-- D. 將靜態內容放入Amazon S3桶中. 提供以S3 儲存桶(S3 bucket)為原產地的Amazon CloudFront分銷.
+- D. 將靜態內容放入Amazon S3 bucket中. 提供以S3 bucket為原產地的Amazon CloudFront分銷.
 - E. 在Auto Usization 組中的Amazon EC2例項中,為靜態內容部署網路伺服器。 配置例項, 以定期重新整理 Amazon 彈性檔案系統( Amazon EFS) 卷的內容。
 
 **答案**
@@ -17068,7 +17068,7 @@ C,D
 **詳解**
 正確答案是 **C, D**。
 - C：部署Amazon DynamoDB作為資料庫(database)解決方案. 確保DynamoDB自動縮放啟用。DynamoDB 是全受管的 NoSQL 資料庫，搭配 Auto Scaling 可依照實際讀寫流量自動調整佈建容量，能因應題目描述「凌晨尖峰數百萬使用者、其餘時段僅數千使用者」這種劇烈流量變化，同時 NoSQL 無固定 schema 的特性也符合資料架構師「需要能快速調整資料模型」的要求。
-- D：將靜態內容放入Amazon S3桶中. 提供以S3 儲存桶(S3 bucket)為原產地的Amazon CloudFront分銷。將靜態內容放進 S3 並以 CloudFront 作為前端分發，S3 對物件儲存與讀取請求量幾乎沒有規模上限，CloudFront 則在全球邊緣節點快取內容、分散尖峰流量對原始來源的壓力，兩者搭配可讓單頁靜態內容承受尖峰百萬級使用者存取，而不需自行管理伺服器。
+- D：將靜態內容放入Amazon S3 bucket中. 提供以S3 bucket為原產地的Amazon CloudFront分銷。將靜態內容放進 S3 並以 CloudFront 作為前端分發，S3 對物件儲存與讀取請求量幾乎沒有規模上限，CloudFront 則在全球邊緣節點快取內容、分散尖峰流量對原始來源的壓力，兩者搭配可讓單頁靜態內容承受尖峰百萬級使用者存取，而不需自行管理伺服器。
 - 其餘選項比較：
 - A：部署Amazon DynamoDB作為資料庫(database)解決方案. 提供需求能力。DynamoDB 搭配「佈建容量」而非自動擴縮，代表容量必須事先手動設定，面對每天僅特定 4 小時出現的劇烈尖峰流量，容易因容量不足被節流（throttle），或為了應付尖峰而長期佈建過多容量造成浪費，不符合「MOST 可擴展性」的要求。
 - B：部署Amazon Aurora作為資料庫(database)解決方案. 選擇無伺服器 DB 引擎模式。Aurora 屬於關聯式資料庫，即使採用 Serverless 模式仍需維持固定的資料表結構（schema），資料模型變更需要透過 migration，擴縮也是以資料庫容量單位（ACU）為粒度，彈性與擴充速度不如 NoSQL，不符合架構師要求「能迅速演進資料模型」的條件。
@@ -17160,13 +17160,13 @@ A
 ## Question #626
 
 **題目**
-一家公司將其資料儲存在房地。 資料數量正在超過公司現有能力。 公司希望將其資料從現場位置遷移到Amazon S3桶. 公司需要一種在傳輸後自動驗證資料完整性的解決方案. 哪種解決辦法能滿足這些要求?
+一家公司將其資料儲存在房地。 資料數量正在超過公司現有能力。 公司希望將其資料從現場位置遷移到Amazon S3 bucket. 公司需要一種在傳輸後自動驗證資料完整性的解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 訂購AWS Snowball Edge裝置. 配置 Snowball 邊緣裝置, 執行線上資料傳輸到 S3 儲存桶(S3 bucket)
-- B. 在辦公地點部署AWS資料同步代理. 配置 DataSync 代理以進行線上資料傳輸到 S3 儲存桶(S3 bucket)。
-- C. 在房地上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 儲存桶(S3 bucket)
-- D. 在 Amazon 配置 S3 Transfer Acceleration 的加速器。 配置加速器進行線上資料傳輸到S3 儲存桶(S3 bucket).
+- A. 訂購AWS Snowball Edge裝置. 配置 Snowball 邊緣裝置, 執行線上資料傳輸到 S3 bucket
+- B. 在辦公地點部署AWS資料同步代理. 配置 DataSync 代理以進行線上資料傳輸到 S3 bucket。
+- C. 在房地上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 bucket
+- D. 在 Amazon 配置 S3 Transfer Acceleration 的加速器。 配置加速器進行線上資料傳輸到S3 bucket.
 
 **答案**
 B
@@ -17176,11 +17176,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在辦公地點部署AWS資料同步代理. 配置 DataSync 代理以進行線上資料傳輸到 S3 儲存桶(S3 bucket)。AWS DataSync 是全受管的線上資料傳輸服務，在地端部署代理程式後，可透過網路將檔案資料自動同步到 Amazon S3；DataSync 內建傳輸完成後的資料完整性驗證機制，會自動比對來源與目的地的內容，直接對應題目要求「傳輸後自動驗證資料完整性」的核心需求。
+- B：在辦公地點部署AWS資料同步代理. 配置 DataSync 代理以進行線上資料傳輸到 S3 bucket。AWS DataSync 是全受管的線上資料傳輸服務，在地端部署代理程式後，可透過網路將檔案資料自動同步到 Amazon S3；DataSync 內建傳輸完成後的資料完整性驗證機制，會自動比對來源與目的地的內容，直接對應題目要求「傳輸後自動驗證資料完整性」的核心需求。
 - 其餘選項比較：
-- A：訂購AWS Snowball Edge裝置. 配置 Snowball 邊緣裝置, 執行線上資料傳輸到 S3 儲存桶(S3 bucket)。AWS Snowball Edge 的典型用途是透過實體裝置離線搬運大量資料，適合網路頻寬不足或資料量極大時使用；用它執行「線上」資料傳輸並不符合其設計定位，也不是題目強調「自動驗證資料完整性」流程中的標準工具。
-- C：在房地上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 儲存桶(S3 bucket)。Amazon S3 File Gateway 提供地端的 NFS/SMB 檔案介面，將寫入的檔案以物件形式非同步上傳至 S3，主要用於需要持續存取、快取熱資料的混合雲情境，而非針對一次性大量遷移設計的自動完整性驗證流程。
-- D：在 Amazon 配置 S3 Transfer Acceleration 的加速器。 配置加速器進行線上資料傳輸到S3 儲存桶(S3 bucket)。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速長距離的上傳速度，純粹是傳輸效能最佳化功能，本身不具備遷移排程、代理程式部署或資料完整性驗證的能力。
+- A：訂購AWS Snowball Edge裝置. 配置 Snowball 邊緣裝置, 執行線上資料傳輸到 S3 bucket。AWS Snowball Edge 的典型用途是透過實體裝置離線搬運大量資料，適合網路頻寬不足或資料量極大時使用；用它執行「線上」資料傳輸並不符合其設計定位，也不是題目強調「自動驗證資料完整性」流程中的標準工具。
+- C：在房地上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 bucket。Amazon S3 File Gateway 提供地端的 NFS/SMB 檔案介面，將寫入的檔案以物件形式非同步上傳至 S3，主要用於需要持續存取、快取熱資料的混合雲情境，而非針對一次性大量遷移設計的自動完整性驗證流程。
+- D：在 Amazon 配置 S3 Transfer Acceleration 的加速器。 配置加速器進行線上資料傳輸到S3 bucket。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速長距離的上傳速度，純粹是傳輸效能最佳化功能，本身不具備遷移排程、代理程式部署或資料完整性驗證的能力。
 
 **分類：** 移轉和傳輸
 
@@ -17214,7 +17214,7 @@ A
 ## Question #628
 
 **題目**
-一家全球性公司在AWS Organizations的多個AWS帳戶中執行其應用. 公司的應用程式使用多段上傳,將資料上傳到跨AWS區域的多個Amazon S3桶. 公司希望為成本合規(compliance)目的報告不完整的多段上傳. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家全球性公司在AWS Organizations的多個AWS帳戶中執行其應用. 公司的應用程式使用多段上傳,將資料上傳到跨AWS區域的多個Amazon S3 bucket. 公司希望為成本合規(compliance)目的報告不完整的多段上傳. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 配置 AWS Config 以規則報告不完整的多段上傳物件計數。
@@ -17376,13 +17376,13 @@ C
 ## Question #634
 
 **題目**
-一家公司每天從各種機器收集10GB的遙測資料. 公司將資料儲存在Amazon S3桶中,在一個源資料帳戶中. 公司聘請了多個諮詢機構使用這些資料進行分析. 每個機構都需要讀取其分析員的資料。 公司必須透過選擇一個能最大限度地提高安全性和可操作性的解決方案來分享來源資料帳戶的資料. 哪種解決辦法能滿足這些要求?
+一家公司每天從各種機器收集10GB的遙測資料. 公司將資料儲存在Amazon S3 bucket中,在一個源資料帳戶中. 公司聘請了多個諮詢機構使用這些資料進行分析. 每個機構都需要讀取其分析員的資料。 公司必須透過選擇一個能最大限度地提高安全性和可操作性的解決方案來分享來源資料帳戶的資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 S3 全球表格以複製每個機構的資料。
-- B. 限時將S3 儲存桶(S3 bucket)公開. 只通知各機構。
-- C. 配置S3 儲存桶(S3 bucket)對各機構擁有的帳戶的交叉帳戶存取。
-- D. 在源資料帳戶中為每個分析師設定一個IAM使用者. 允許每個使用者存取S3 儲存桶(S3 bucket).
+- B. 限時將S3 bucket公開. 只通知各機構。
+- C. 配置S3 bucket對各機構擁有的帳戶的交叉帳戶存取。
+- D. 在源資料帳戶中為每個分析師設定一個IAM使用者. 允許每個使用者存取S3 bucket.
 
 **答案**
 C
@@ -17392,11 +17392,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：配置S3 儲存桶(S3 bucket)對各機構擁有的帳戶的交叉帳戶存取。透過 S3 儲存貯體政策設定跨帳戶存取，可直接授權各機構自己的 AWS 帳戶讀取來源資料，不需複製或搬移資料，也不需在來源帳戶中建立與管理外部人員的身分，兼顧安全性（權限集中於資源政策管理）與維運簡便性。
+- C：配置S3 bucket對各機構擁有的帳戶的交叉帳戶存取。透過 S3 儲存貯體政策設定跨帳戶存取，可直接授權各機構自己的 AWS 帳戶讀取來源資料，不需複製或搬移資料，也不需在來源帳戶中建立與管理外部人員的身分，兼顧安全性（權限集中於資源政策管理）與維運簡便性。
 - 其餘選項比較：
 - A：配置 S3 全球表格以複製每個機構的資料。跨區域複寫（題目中譯的「全球表格」）會把資料實際複製一份到各機構帳戶，不僅增加儲存成本與資料重複管理的負擔，也不是單純的存取權限分享機制。
-- B：限時將S3 儲存桶(S3 bucket)公開. 只通知各機構。限時將 S3 儲存桶公開等於把資料暴露在整個網際網路上，任何人都可能存取，完全違反最小權限與資料安全要求，僅靠口頭通知機構並不能限制實際存取範圍。
-- D：在源資料帳戶中為每個分析師設定一個IAM使用者. 允許每個使用者存取S3 儲存桶(S3 bucket)。在來源帳戶中為每一位外部分析師建立個別 IAM 使用者，代表公司必須自行建立、輪替並管理大量外部人員的憑證，隨機構與分析師數量增加，維運負擔與帳號外洩風險都會顯著提高。
+- B：限時將S3 bucket公開. 只通知各機構。限時將 S3 bucket公開等於把資料暴露在整個網際網路上，任何人都可能存取，完全違反最小權限與資料安全要求，僅靠口頭通知機構並不能限制實際存取範圍。
+- D：在源資料帳戶中為每個分析師設定一個IAM使用者. 允許每個使用者存取S3 bucket。在來源帳戶中為每一位外部分析師建立個別 IAM 使用者，代表公司必須自行建立、輪替並管理大量外部人員的憑證，隨機構與分析師數量增加，維運負擔與帳號外洩風險都會顯著提高。
 
 **分類：** 儲存
 
@@ -17406,7 +17406,7 @@ C
 一家公司在其初級AWS 區域(Region)中將Amazon FSx用於NetApp ONTAP用於CIFS和NFS檔案股份. 在 Amazon EC2 例項上執行的應用程式存取檔案共享。 該公司需要在二級區域(Region)中安裝儲存災難復原(disaster recovery)(DR)溶液. 二級區域(Region)中複製的資料需要使用與主區域(Region)相同的協議來存取. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 建立 AWS Lambda 函式將資料複製到 Amazon S3 桶中. 將S3 儲存桶(S3 bucket)複製到二級區域(Region).
+- A. 建立 AWS Lambda 函式將資料複製到 Amazon S3 bucket中. 將S3 bucket複製到二級區域(Region).
 - B. 透過使用AWS Backup為ONTAP卷建立備份(backup)FSx. 將卷子複製到二級區域(Region). 從 備份(backup) 為 ONTAP 例項建立新的 FSx。
 - C. 在二級 區域(Region) 為 ONTAP 例項建立 FSx。 使用NetApp SnapMirror來複制主要區域(Region)到次要區域(Region)的資料.
 - D. 建立Amazon Elastic File System (Amazon EFS)卷. 將當前資料移到磁碟區中。 將磁碟區複製到二級區域(Region).
@@ -17421,7 +17421,7 @@ C
 正確答案是 **C**。
 - C：在二級 區域(Region) 為 ONTAP 例項建立 FSx。 使用NetApp SnapMirror來複制主要區域(Region)到次要區域(Region)的資料。在次要區域建立 FSx for NetApp ONTAP 執行個體，並使用 NetApp SnapMirror 進行跨區域持續複寫，是 ONTAP 原生支援的災難復原機制，複寫後的資料仍存放在 FSx for ONTAP 上，因此次要區域可繼續使用相同的 CIFS 與 NFS 協定存取，達成最少維運開銷的 DR 需求。
 - 其餘選項比較：
-- A：建立 AWS Lambda 函式將資料複製到 Amazon S3 桶中. 將S3 儲存桶(S3 bucket)複製到二級區域(Region)。將資料透過 Lambda 複製到 S3 並跨區複寫，會讓資料脫離原本的檔案系統形態，Amazon S3 不支援 CIFS 或 NFS 協定存取，次要區域的 EC2 應用程式將無法用原本的協定存取這些資料。
+- A：建立 AWS Lambda 函式將資料複製到 Amazon S3 bucket中. 將S3 bucket複製到二級區域(Region)。將資料透過 Lambda 複製到 S3 並跨區複寫，會讓資料脫離原本的檔案系統形態，Amazon S3 不支援 CIFS 或 NFS 協定存取，次要區域的 EC2 應用程式將無法用原本的協定存取這些資料。
 - B：透過使用AWS Backup為ONTAP卷建立備份(backup)FSx. 將卷子複製到二級區域(Region). 從 備份(backup) 為 ONTAP 例項建立新的 FSx。使用 AWS Backup 建立 FSx for ONTAP 的備份並複製到次要區域、再從備份還原成新的 FSx 執行個體，屬於定期備份還原流程而非持續複寫，復原時間與資料落後程度都較大，且每次都需人工介入還原，維運開銷高於原生複寫機制。
 - D：建立Amazon Elastic File System (Amazon EFS)卷. 將當前資料移到磁碟區中。 將磁碟區複製到二級區域(Region)。Amazon EFS 僅支援 NFS 協定，並不支援 CIFS/SMB，若將資料搬移到 EFS 磁碟區，原本需要透過 CIFS 存取的應用程式將無法沿用相同協定，不符合題目「使用相同協議存取」的限制。
 
@@ -17430,7 +17430,7 @@ C
 ## Question #636
 
 **題目**
-一個開發團隊正在建立基於事件的應用程式,使用AWS Lambda功能. 當檔案被新增到 Amazon S3 桶中時, 將會生成事件。 開發團隊目前將Amazon Simple Notification Service (Amazon SNS)配置為來自Amazon S3的事件目標. 一個解決方案設計師應該做些什麼來以可擴充套件的方式處理來自Amazon S3的事件?
+一個開發團隊正在建立基於事件的應用程式,使用AWS Lambda功能. 當檔案被新增到 Amazon S3 bucket中時, 將會生成事件。 開發團隊目前將Amazon Simple Notification Service (Amazon SNS)配置為來自Amazon S3的事件目標. 一個解決方案設計師應該做些什麼來以可擴充套件的方式處理來自Amazon S3的事件?
 
 **選項**
 - A. 在Amazon Elastic Construction Services(Amazon ECS)中,
@@ -17487,7 +17487,7 @@ B,C
 ## Question #638
 
 **題目**
-一家公司與公司員工在世界各地收集並共享研究資料. 公司希望將資料收集和儲存在Amazon S3桶中,並在AWS雲中處理資料. 公司將與公司員工共享資料. 公司需要在AWS雲中找到安全解決方案,將營運開銷(operational overhead)最小化. 哪種解決辦法能滿足這些要求?
+一家公司與公司員工在世界各地收集並共享研究資料. 公司希望將資料收集和儲存在Amazon S3 bucket中,並在AWS雲中處理資料. 公司將與公司員工共享資料. 公司需要在AWS雲中找到安全解決方案,將營運開銷(operational overhead)最小化. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用 AWS Lambda 函式建立 S3 預先簽名的 URL。 指示員工使用URL.
@@ -17713,9 +17713,9 @@ B
 
 **選項**
 - A. 使用Amazon Elastic File System (Amazon EFS)作為共享檔案系統. 從Amazon EFS存取資料集.
-- B. 掛載一個 Amazon S3 桶作為共享檔案系統. 從S3 儲存桶(S3 bucket)直接進行後處理.
-- C. 使用Amazon FSx作為Lustre共享檔案系統. 將檔案系統連結到一個Amazon S3桶進行後處理.
-- D. 配置 AWS 資源存取管理器以共享一個 Amazon S3 桶,從而可以掛載到所有處理和後處理的場合.
+- B. 掛載一個 Amazon S3 bucket作為共享檔案系統. 從S3 bucket直接進行後處理.
+- C. 使用Amazon FSx作為Lustre共享檔案系統. 將檔案系統連結到一個Amazon S3 bucket進行後處理.
+- D. 配置 AWS 資源存取管理器以共享一個 Amazon S3 bucket,從而可以掛載到所有處理和後處理的場合.
 
 **答案**
 C
@@ -17725,11 +17725,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：使用Amazon FSx作為Lustre共享檔案系統. 將檔案系統連結到一個Amazon S3桶進行後處理。Amazon FSx for Lustre 是專為高效能運算設計的平行檔案系統，能提供次毫秒等級的存取延遲與數百 GB/s 等級的高吞吐量，並可與 S3 儲存貯體建立資料儲存庫關聯，讓數百個 EC2 執行個體同時掛載並平行處理同一份大型資料集，運算完成後資料自動同步回 S3，方便工程師直接在 S3 上進行人工後處理。
+- C：使用Amazon FSx作為Lustre共享檔案系統. 將檔案系統連結到一個Amazon S3 bucket進行後處理。Amazon FSx for Lustre 是專為高效能運算設計的平行檔案系統，能提供次毫秒等級的存取延遲與數百 GB/s 等級的高吞吐量，並可與 S3 儲存貯體建立資料儲存庫關聯，讓數百個 EC2 執行個體同時掛載並平行處理同一份大型資料集，運算完成後資料自動同步回 S3，方便工程師直接在 S3 上進行人工後處理。
 - 其餘選項比較：
 - A：使用Amazon Elastic File System (Amazon EFS)作為共享檔案系統. 從Amazon EFS存取資料集。Amazon EFS 是通用型 NFS 檔案系統，設計取向是一般應用程式共用儲存，延遲通常在個位數毫秒等級且吞吐量規模遠不及 FSx for Lustre，無法穩定滿足 HPC 工作負載要求的 1 毫秒內延遲。
-- B：掛載一個 Amazon S3 桶作為共享檔案系統. 從S3 儲存桶(S3 bucket)直接進行後處理。Amazon S3 是物件儲存服務，不具備 POSIX 檔案系統語意，無法被作業系統直接掛載成傳統共用檔案系統供數百個執行個體平行讀寫存取，不符合題目「並行使用共享檔案系統」的架構要求。
-- D：配置 AWS 資源存取管理器以共享一個 Amazon S3 桶,從而可以掛載到所有處理和後處理的場合。AWS Resource Access Manager 的功能是跨帳戶共享 VPC 子網路、Transit Gateway 等 AWS 資源，並不能把 S3 儲存貯體轉變成可掛載的共用檔案系統，無法提供 HPC 所需的低延遲平行檔案存取能力。
+- B：掛載一個 Amazon S3 bucket作為共享檔案系統. 從S3 bucket直接進行後處理。Amazon S3 是物件儲存服務，不具備 POSIX 檔案系統語意，無法被作業系統直接掛載成傳統共用檔案系統供數百個執行個體平行讀寫存取，不符合題目「並行使用共享檔案系統」的架構要求。
+- D：配置 AWS 資源存取管理器以共享一個 Amazon S3 bucket,從而可以掛載到所有處理和後處理的場合。AWS Resource Access Manager 的功能是跨帳戶共享 VPC 子網路、Transit Gateway 等 AWS 資源，並不能把 S3 儲存貯體轉變成可掛載的共用檔案系統，無法提供 HPC 所需的低延遲平行檔案存取能力。
 
 **分類：** 儲存
 
@@ -17844,7 +17844,7 @@ A
 ## Question #651
 
 **題目**
-一家公司在一個Amazon S3桶中儲存了大量的影象檔案. 頭180天需要隨時提供影象。 在接下來的180天裡,影象很少存取. 360天后,影象需要存檔,但必須應要求立即提供。 5年後,只有審計員才能存取這些影象。 審計員必須在12小時內取回影象。 在此過程中無法丟失影象。 開發者將使用S3 Standard儲存頭180天. 開發者需要配置一個S3生命週期規則. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司在一個Amazon S3 bucket中儲存了大量的影象檔案. 頭180天需要隨時提供影象。 在接下來的180天裡,影象很少存取. 360天后,影象需要存檔,但必須應要求立即提供。 5年後,只有審計員才能存取這些影象。 審計員必須在12小時內取回影象。 在此過程中無法丟失影象。 開發者將使用S3 Standard儲存頭180天. 開發者需要配置一個S3生命週期規則. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 在180天后將物件過渡到S3 One Zone-不經常存取(S3 One Zone-IA)。 360天后為S3 Glacier Instant Retrieval,5年後為S3 Glacier Deep Archive.
@@ -17931,7 +17931,7 @@ B
 - A. 使用 AWS 彈性 Beanstalk 託管靜態內容和 PHP 應用程式。 配置 Elastic Beanstalk 將其 EC2 例項應用到公共子網中。 指定一個公共IP地址.
 - B. 使用AWS Lambda託管靜態內容和PHP應用程式. 使用 Amazon API Gateway REST API來代理 Lambda 函式的請求. 設定 API 閘道器 CORS 配置以響應域名。 配置 Amazon ElastiCache 供 Redis 處理會話資訊。
 - C. 保留EC2例項上的後端程式碼. 為已啟用多AZ的 Redis 叢集建立 Amazon ElastiCache。 在叢集模式下配置 Redis 叢集的 ElastiCache。 將前端資源複製到Amazon S3. 配置後端程式碼以引用 EC2 例項。
-- D. 配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 儲存桶(S3 bucket),該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為Amazon Elastic Container Service (Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache。
+- D. 配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 bucket,該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為Amazon Elastic Container Service (Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache。
 
 **答案**
 D
@@ -17941,7 +17941,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 儲存桶(S3 bucket),該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為Amazon Elastic Container Service (Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache。CloudFront 搭配 S3 端點可以將靜態內容以邊緣快取方式高效交付，卸除伺服器負擔；ALB 將流量導向執行在 AWS Fargate 上的 ECS 服務，讓 PHP 應用程式以容器化、無需管理伺服器的方式水平擴充；把原本綁定單一主機的本地 Redis 換成跨多個可用區的 Amazon ElastiCache，讓所有應用程式任務共用同一份會話狀態，這正是重新設計為大規模、全受管架構的標準做法。
+- D：配置一個 Amazon CloudFront 分散式,並配有一個 Amazon S3 端點到一個S3 bucket,該端點被配置為主機靜態內容. 配置一個應用程式負載平衡器(Application Load Balancer),目標為Amazon Elastic Container Service (Amazon ECS)服務,為PHP應用程式執行AWS Fargate任務. 配置 PHP 應用程式,用於執行在多個 可用區(Availability Zones) 中的 Redis 叢集的 Amazon ElastiCache。CloudFront 搭配 S3 端點可以將靜態內容以邊緣快取方式高效交付，卸除伺服器負擔；ALB 將流量導向執行在 AWS Fargate 上的 ECS 服務，讓 PHP 應用程式以容器化、無需管理伺服器的方式水平擴充；把原本綁定單一主機的本地 Redis 換成跨多個可用區的 Amazon ElastiCache，讓所有應用程式任務共用同一份會話狀態，這正是重新設計為大規模、全受管架構的標準做法。
 - 其餘選項比較：
 - A：使用 AWS 彈性 Beanstalk 託管靜態內容和 PHP 應用程式。 配置 Elastic Beanstalk 將其 EC2 例項應用到公共子網中。 指定一個公共IP地址。Elastic Beanstalk 仍然是把靜態內容與 PHP 應用程式一起跑在 EC2 執行個體上，並未將靜態內容與運算層拆開，也沒有以受管服務取代本地 Redis 做會話管理，無法達到公司要求的大規模、AWS 受管架構重新設計。
 - B：使用AWS Lambda託管靜態內容和PHP應用程式. 使用 Amazon API Gateway REST API來代理 Lambda 函式的請求. 設定 API 閘道器 CORS 配置以響應域名。 配置 Amazon ElastiCache 供 Redis 處理會話資訊。PHP 應用程式並非設計來在 Lambda 上以事件驅動方式執行，透過 API Gateway 代理來跑傳統 PHP 應用程式會大幅增加架構複雜度與相容性問題；用 Lambda 服務靜態內容也不是最合適的做法，S3 才是靜態內容的原生選擇。
@@ -18174,13 +18174,13 @@ D
 ## Question #663
 
 **題目**
-一家公司正在開發關於AWS的新應用程式。 該應用程式包括一個Amazon Elastic Container Service (Amazon ECS)叢集,一個包含應用程式資產的Amazon S3桶,以及一個包含應用程式資料集的MySQL 資料庫(database)的Amazon RDS. 資料集包含敏感資訊. 公司希望確保只有ECS叢集才能存取MySQL 資料庫(database)的RDS中的資料和S3 儲存桶(S3 bucket)中的資料. 哪種解決辦法能滿足這些要求?
+一家公司正在開發關於AWS的新應用程式。 該應用程式包括一個Amazon Elastic Container Service (Amazon ECS)叢集,一個包含應用程式資產的Amazon S3 bucket,以及一個包含應用程式資料集的MySQL 資料庫(database)的Amazon RDS. 資料集包含敏感資訊. 公司希望確保只有ECS叢集才能存取MySQL 資料庫(database)的RDS中的資料和S3 bucket中的資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個新的 AWS Key Management Service(AWS KMS) 客戶端管理金鑰,為 MySQL 資料庫(database) 加密 S3 儲存桶(S3 bucket) 和 RDS. 確保 KMS 關鍵政策包括加密和解密ECS任務執行角色的許可權.
-- B. 建立 AWS Key Management Service(AWS KMS) AWS 管理金鑰,為 MySQL 資料庫(database) 加密 S3 儲存桶(S3 bucket) 和 RDS. 確保S3 儲存桶政策(bucket policy)指定ECS任務執行角色為使用者.
-- C. 建立一個S3 儲存桶政策(bucket policy),限制桶存取ECS任務執行角色. 為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取.
-- D. 為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取. 為 Amazon S3 建立 VPC 端點(VPC endpoint)。 更新S3 儲存桶政策(bucket policy),只允許從S3 VPC 端點(VPC endpoint)進入.
+- A. 建立一個新的 AWS Key Management Service(AWS KMS) 客戶端管理金鑰,為 MySQL 資料庫(database) 加密 S3 bucket 和 RDS. 確保 KMS 關鍵政策包括加密和解密ECS任務執行角色的許可權.
+- B. 建立 AWS Key Management Service(AWS KMS) AWS 管理金鑰,為 MySQL 資料庫(database) 加密 S3 bucket 和 RDS. 確保S3 bucket政策(bucket policy)指定ECS任務執行角色為使用者.
+- C. 建立一個S3 bucket政策(bucket policy),限制桶存取ECS任務執行角色. 為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取.
+- D. 為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取. 為 Amazon S3 建立 VPC 端點(VPC endpoint)。 更新S3 bucket政策(bucket policy),只允許從S3 VPC 端點(VPC endpoint)進入.
 
 **答案**
 A
@@ -18190,11 +18190,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個新的 AWS Key Management Service(AWS KMS) 客戶端管理金鑰,為 MySQL 資料庫(database) 加密 S3 儲存桶(S3 bucket) 和 RDS. 確保 KMS 關鍵政策包括加密和解密ECS任務執行角色的許可權。建立客戶自管的 KMS 金鑰為 S3 與 RDS 加密後，能否讀取資料的關鍵在於是否擁有該金鑰的加密/解密許可權；只要金鑰政策明確只授予 ECS 任務執行角色使用該金鑰，其他身分即使能觸及底層儲存的密文，沒有解密授權也無法還原出可用資料，等於把存取控制落實到金鑰層級。
+- A：建立一個新的 AWS Key Management Service(AWS KMS) 客戶端管理金鑰,為 MySQL 資料庫(database) 加密 S3 bucket 和 RDS. 確保 KMS 關鍵政策包括加密和解密ECS任務執行角色的許可權。建立客戶自管的 KMS 金鑰為 S3 與 RDS 加密後，能否讀取資料的關鍵在於是否擁有該金鑰的加密/解密許可權；只要金鑰政策明確只授予 ECS 任務執行角色使用該金鑰，其他身分即使能觸及底層儲存的密文，沒有解密授權也無法還原出可用資料，等於把存取控制落實到金鑰層級。
 - 其餘選項比較：
-- B：建立 AWS Key Management Service(AWS KMS) AWS 管理金鑰,為 MySQL 資料庫(database) 加密 S3 儲存桶(S3 bucket) 和 RDS. 確保S3 儲存桶政策(bucket policy)指定ECS任務執行角色為使用者。AWS 受管金鑰（如 aws/s3、aws/rds）的金鑰政策由 AWS 統一管理，使用者無法自訂政策把加密/解密許可權精確限定給單一的 ECS 任務執行角色，達不到題目要求的專屬存取控制。
-- C：建立一個S3 儲存桶政策(bucket policy),限制桶存取ECS任務執行角色. 為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取。這個做法只在網路層以儲存桶政策與安全群組限制存取來源，並未對儲存的敏感資料本身加密；為 MySQL 建立的所謂 RDS VPC 端點實際上只涵蓋 RDS 控制平面 API 呼叫，並不能管控應用程式對資料庫引擎的實際查詢連線。
-- D：為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取. 為 Amazon S3 建立 VPC 端點(VPC endpoint)。 更新S3 儲存桶政策(bucket policy),只允許從S3 VPC 端點(VPC endpoint)進入。同樣誤把 RDS 的 VPC 端點當作資料庫查詢流量的存取控制機制，整個方案僅靠網路路徑限制，沒有對資料進行加密與金鑰層級的存取管控，無法確保只有 ECS 叢集才能真正解讀資料內容。
+- B：建立 AWS Key Management Service(AWS KMS) AWS 管理金鑰,為 MySQL 資料庫(database) 加密 S3 bucket 和 RDS. 確保S3 bucket政策(bucket policy)指定ECS任務執行角色為使用者。AWS 受管金鑰（如 aws/s3、aws/rds）的金鑰政策由 AWS 統一管理，使用者無法自訂政策把加密/解密許可權精確限定給單一的 ECS 任務執行角色，達不到題目要求的專屬存取控制。
+- C：建立一個S3 bucket政策(bucket policy),限制桶存取ECS任務執行角色. 為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取。這個做法只在網路層以儲存桶政策與安全群組限制存取來源，並未對儲存的敏感資料本身加密；為 MySQL 建立的所謂 RDS VPC 端點實際上只涵蓋 RDS 控制平面 API 呼叫，並不能管控應用程式對資料庫引擎的實際查詢連線。
+- D：為 MySQL 建立 Amazon RDS 的 VPC 端點(VPC endpoint)。 更新MySQL 安全群組(security group)的RDS,只允許從ECS叢集將生成任務的子網存取. 為 Amazon S3 建立 VPC 端點(VPC endpoint)。 更新S3 bucket政策(bucket policy),只允許從S3 VPC 端點(VPC endpoint)進入。同樣誤把 RDS 的 VPC 端點當作資料庫查詢流量的存取控制機制，整個方案僅靠網路路徑限制，沒有對資料進行加密與金鑰層級的存取管控，無法確保只有 ECS 叢集才能真正解讀資料內容。
 
 **分類：** 安全、身分與合規
 
@@ -18612,11 +18612,11 @@ A
 ## Question #679
 
 **題目**
-一家公司想將自己的虛擬機器(VMs)備份到AWS. 該公司的備份(backup)解決方案將備份出口到一個Amazon S3桶作為物品. S3備份必須保留30天,30天后必須自動刪除. 哪些步驟的組合將滿足這些要求?(選三.
+一家公司想將自己的虛擬機器(VMs)備份到AWS. 該公司的備份(backup)解決方案將備份出口到一個Amazon S3 bucket作為物品. S3備份必須保留30天,30天后必須自動刪除. 哪些步驟的組合將滿足這些要求?(選三.
 
 **選項**
-- A. 建立已啟用 S3 Object Lock 的 S3 儲存桶(S3 bucket)。
-- B. 建立已啟用物件版本的 S3 儲存桶(S3 bucket)。
+- A. 建立已啟用 S3 Object Lock 的 S3 bucket。
+- B. 建立已啟用物件版本的 S3 bucket。
 - C. 為物件配置30天的預設保留期。
 - D. 配置一個 S3 生命週期政策(Lifecycle policy) 來保護物件30天。
 - E. 配置一個 S3 生命週期政策(Lifecycle policy) 以在30天后過期。
@@ -18635,8 +18635,8 @@ C,E,F
 - E：配置一個 S3 生命週期政策(Lifecycle policy) 以在30天后過期。透過設定 Expiration 動作的生命週期規則，S3 會在物件達到 30 天後自動將其刪除，直接對應「30 天后必須自動刪除」的要求，且完全由 S3 原生機制執行、不需額外維運。
 - F：配置 備份(backup) 解決方案, 以保留30天的時間標記物件。讓備份工具在匯出物件時一併標記代表保留期限的時間戳記標籤，可讓生命週期規則依標籤篩選出真正需要到期的備份物件，確保刪除時機是根據備份當下的時間計算，強化 30 天保留規則套用的準確性。
 - 其餘選項比較：
-- A：建立已啟用 S3 Object Lock 的 S3 儲存桶(S3 bucket)。啟用 Object Lock 只是打開防止刪除或覆寫能力的一次性、不可逆儲存桶設定，本身並未指定實際的保留天數或到期後刪除的行為，單獨啟用無法達成 30 天後自動刪除的目標。
-- B：建立已啟用物件版本的 S3 儲存桶(S3 bucket)。物件版本控制的作用是保留物件的歷史版本，並非以時間為基礎的保留或到期刪除機制，啟用後反而需要額外處理歷史版本的生命週期，無助於滿足 30 天後自動刪除的需求。
+- A：建立已啟用 S3 Object Lock 的 S3 bucket。啟用 Object Lock 只是打開防止刪除或覆寫能力的一次性、不可逆儲存桶設定，本身並未指定實際的保留天數或到期後刪除的行為，單獨啟用無法達成 30 天後自動刪除的目標。
+- B：建立已啟用物件版本的 S3 bucket。物件版本控制的作用是保留物件的歷史版本，並非以時間為基礎的保留或到期刪除機制，啟用後反而需要額外處理歷史版本的生命週期，無助於滿足 30 天後自動刪除的需求。
 - D：配置一個 S3 生命週期政策(Lifecycle policy) 來保護物件30天。S3 生命週期政策的動作類型是儲存類別轉換或到期刪除，並沒有「保護物件 N 天」這種動作，此選項描述的功能在 S3 生命週期規則中並不存在。
 
 **分類：** 儲存
@@ -18644,13 +18644,13 @@ C,E,F
 ## Question #680
 
 **題目**
-一個解決方案架構師需要將檔案從一個Amazon S3桶複製到一個Amazon Elastic File System (Amazon EFS)和一個S3 儲存桶(S3 bucket). 檔案必須連續複製。 新的檔案被一致地新增到原來的S3 儲存桶(S3 bucket)中. 複製的檔案只有在原始檔更改時才會被覆蓋. 哪個解決方案能以最少的營運開銷達成這些要求？
+一個解決方案架構師需要將檔案從一個Amazon S3 bucket複製到一個Amazon Elastic File System (Amazon EFS)和一個S3 bucket. 檔案必須連續複製。 新的檔案被一致地新增到原來的S3 bucket中. 複製的檔案只有在原始檔更改時才會被覆蓋. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立AWS資料同步位置. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立任務. 設定傳輸模式只傳輸已更改的資料。
-- B. 建立 AWS Lambda 函式。 把檔案系統掛載到函式中。 在 Amazon S3 檔案建立和更改時設定 S3 事件通知以引用函式. 配置將檔案複製到檔案系統和目的地S3 儲存桶(S3 bucket)的功能.
-- C. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立AWS資料同步位置. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立任務. 設定傳輸模式以傳輸所有資料。
-- D. 在與檔案系統相同的 VPC 中啟動 Amazon EC2 例項。 掛載檔案系統。 建立一個指令碼,以例行同步起源S3 儲存桶(S3 bucket)中更改的所有物件到目的地S3 儲存桶(S3 bucket)和掛載的檔案系統.
+- A. 為目的地S3 bucket和EFS檔案系統建立AWS資料同步位置. 為目的地S3 bucket和EFS檔案系統建立任務. 設定傳輸模式只傳輸已更改的資料。
+- B. 建立 AWS Lambda 函式。 把檔案系統掛載到函式中。 在 Amazon S3 檔案建立和更改時設定 S3 事件通知以引用函式. 配置將檔案複製到檔案系統和目的地S3 bucket的功能.
+- C. 為目的地S3 bucket和EFS檔案系統建立AWS資料同步位置. 為目的地S3 bucket和EFS檔案系統建立任務. 設定傳輸模式以傳輸所有資料。
+- D. 在與檔案系統相同的 VPC 中啟動 Amazon EC2 例項。 掛載檔案系統。 建立一個指令碼,以例行同步起源S3 bucket中更改的所有物件到目的地S3 bucket和掛載的檔案系統.
 
 **答案**
 D
@@ -18660,11 +18660,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在與檔案系統相同的 VPC 中啟動 Amazon EC2 例項。 掛載檔案系統。 建立一個指令碼,以例行同步起源S3 儲存桶(S3 bucket)中更改的所有物件到目的地S3 儲存桶(S3 bucket)和掛載的檔案系統。在與 EFS 相同 VPC 中啟動 EC2 執行個體並掛載檔案系統後，自訂指令碼可同時把來源儲存桶中新增或變更的物件同步寫入目的地 S3 儲存桶與掛載的 EFS 檔案系統，並透過比對變更時間或內容雜湊來判斷是否需要覆寫，再搭配排程持續執行即可符合連續複製與僅在變更時覆寫的需求。
+- D：在與檔案系統相同的 VPC 中啟動 Amazon EC2 例項。 掛載檔案系統。 建立一個指令碼,以例行同步起源S3 bucket中更改的所有物件到目的地S3 bucket和掛載的檔案系統。在與 EFS 相同 VPC 中啟動 EC2 執行個體並掛載檔案系統後，自訂指令碼可同時把來源儲存桶中新增或變更的物件同步寫入目的地 S3 bucket與掛載的 EFS 檔案系統，並透過比對變更時間或內容雜湊來判斷是否需要覆寫，再搭配排程持續執行即可符合連續複製與僅在變更時覆寫的需求。
 - 其餘選項比較：
-- A：為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立AWS資料同步位置. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立任務. 設定傳輸模式只傳輸已更改的資料。AWS DataSync 任務屬於排程或手動觸發的批次傳輸作業，並非持續監看來源儲存桶的事件驅動機制，兩次任務執行之間新增到來源儲存桶的檔案不會立即被複製，與題目要求的連續複製有落差。
-- B：建立 AWS Lambda 函式。 把檔案系統掛載到函式中。 在 Amazon S3 檔案建立和更改時設定 S3 事件通知以引用函式. 配置將檔案複製到檔案系統和目的地S3 儲存桶(S3 bucket)的功能。以 Lambda 掛載 EFS 需在同一個 VPC 內設定掛載目標，且必須自行撰寫程式邏輯來同時處理寫入 EFS 與寫入目的地 S3 儲存桶兩種不同的複製流程，並自行判斷原始檔是否變更才覆寫，開發與維護的邏輯複雜度較高。
-- C：為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立AWS資料同步位置. 為目的地S3 儲存桶(S3 bucket)和EFS檔案系統建立任務. 設定傳輸模式以傳輸所有資料。傳輸模式設定為傳輸所有資料，代表每次執行任務都會重新複製來源端的全部內容，而非只同步異動的部分，這與題目「複製的檔案只有在原始檔更改時才會被覆寫」的要求不符，會造成不必要的重複傳輸。
+- A：為目的地S3 bucket和EFS檔案系統建立AWS資料同步位置. 為目的地S3 bucket和EFS檔案系統建立任務. 設定傳輸模式只傳輸已更改的資料。AWS DataSync 任務屬於排程或手動觸發的批次傳輸作業，並非持續監看來源儲存桶的事件驅動機制，兩次任務執行之間新增到來源儲存桶的檔案不會立即被複製，與題目要求的連續複製有落差。
+- B：建立 AWS Lambda 函式。 把檔案系統掛載到函式中。 在 Amazon S3 檔案建立和更改時設定 S3 事件通知以引用函式. 配置將檔案複製到檔案系統和目的地S3 bucket的功能。以 Lambda 掛載 EFS 需在同一個 VPC 內設定掛載目標，且必須自行撰寫程式邏輯來同時處理寫入 EFS 與寫入目的地 S3 bucket兩種不同的複製流程，並自行判斷原始檔是否變更才覆寫，開發與維護的邏輯複雜度較高。
+- C：為目的地S3 bucket和EFS檔案系統建立AWS資料同步位置. 為目的地S3 bucket和EFS檔案系統建立任務. 設定傳輸模式以傳輸所有資料。傳輸模式設定為傳輸所有資料，代表每次執行任務都會重新複製來源端的全部內容，而非只同步異動的部分，這與題目「複製的檔案只有在原始檔更改時才會被覆寫」的要求不符，會造成不必要的重複傳輸。
 
 **分類：** 移轉和傳輸
 
@@ -18836,14 +18836,14 @@ D
 ## Question #687
 
 **題目**
-一個使用AWS的公司需要一個解決方案來預測每個月製造工藝所需的資源. 解決方案必須使用目前儲存在Amazon S3桶中的歷史值. 公司沒有機器學習(ML)經驗,希望使用管理服務進行訓練和預測. 哪些步驟的組合將滿足這些要求?(選二.
+一個使用AWS的公司需要一個解決方案來預測每個月製造工藝所需的資源. 解決方案必須使用目前儲存在Amazon S3 bucket中的歷史值. 公司沒有機器學習(ML)經驗,希望使用管理服務進行訓練和預測. 哪些步驟的組合將滿足這些要求?(選二.
 
 **選項**
 - A. 部署Amazon SageMaker模型。 為推斷建立 SageMaker 端點。
-- B. 使用Amazon SageMaker透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個模型.
+- B. 使用Amazon SageMaker透過使用S3 bucket中的歷史資料來訓練一個模型.
 - C. 配置一個 AWS Lambda 函式,其功能URL使用亞馬遜 SageMaker 端點來根據輸入建立預測.
 - D. 配置一個 AWS Lambda 函式,其功能URL使用Amazon Forecast 預測器根據輸入來建立預測.
-- E. 透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個Amazon Forecast 預測器.
+- E. 透過使用S3 bucket中的歷史資料來訓練一個Amazon Forecast 預測器.
 
 **答案**
 C,D
@@ -18858,8 +18858,8 @@ C,D
 - D：配置一個 AWS Lambda 函式,其功能URL使用Amazon Forecast 預測器根據輸入來建立預測。Amazon Forecast 是受管理的時間序列預測服務，能根據 S3 中的歷史資料建立預測器，Lambda 再呼叫預測器產生需求預測。這不需要公司自行設計與維護機器學習模型。
 - 其餘選項比較：
 - A：部署Amazon SageMaker模型。 為推斷建立 SageMaker 端點。SageMaker 模型與端點可以提供預測，但此選項沒有說明如何使用 S3 歷史資料訓練模型，且題目要求的是可直接使用的時間序列管理服務。
-- B：使用Amazon SageMaker透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個模型。SageMaker 確實能從 S3 取用訓練資料，但仍需要選擇演算法、設定訓練工作與部署流程，不符合希望以無機器學習經驗使用專用管理服務的情境。
-- E：透過使用S3 儲存桶(S3 bucket)中的歷史資料來訓練一個Amazon Forecast 預測器。使用 S3 歷史資料訓練 Forecast 預測器是合理的第一步，但單獨建立預測器不會讓應用程式能根據輸入取得預測，還需要題目中所述的推論呼叫方式。
+- B：使用Amazon SageMaker透過使用S3 bucket中的歷史資料來訓練一個模型。SageMaker 確實能從 S3 取用訓練資料，但仍需要選擇演算法、設定訓練工作與部署流程，不符合希望以無機器學習經驗使用專用管理服務的情境。
+- E：透過使用S3 bucket中的歷史資料來訓練一個Amazon Forecast 預測器。使用 S3 歷史資料訓練 Forecast 預測器是合理的第一步，但單獨建立預測器不會讓應用程式能根據輸入取得預測，還需要題目中所述的推論呼叫方式。
 
 **分類：** 機器學習
 
@@ -18923,8 +18923,8 @@ C
 一家公司定期上傳GB大小的檔案到Amazon S3. 公司上傳檔案後,公司使用Amazon EC2 Spot 執行個體的fieet來轉碼檔案格式. 公司需要將吞吐量(throughput)的尺度,當公司將資料從presimes資料中心上傳到Amazon S3,當公司將資料從Amazon S3下載到EC2例項時. 哪些解決辦法能滿足這些要求?(選二.
 
 **選項**
-- A. 使用S3 儲存桶(S3 bucket)存取點,而不是直接存取S3 儲存桶(S3 bucket).
-- B. 上傳檔案到多個 S3 桶。
+- A. 使用S3 bucket存取點,而不是直接存取S3 bucket.
+- B. 上傳檔案到多個 S3 bucket。
 - C. 使用 S3 多段上傳。
 - D. 獲取平行物件的多個位元組範圍。
 - E. 上傳檔案時在每個物件中新增隨機字首.
@@ -18938,10 +18938,10 @@ A,C
 
 **詳解**
 正確答案是 **A, C**。
-- A：使用S3 儲存桶(S3 bucket)存取點,而不是直接存取S3 儲存桶(S3 bucket)。S3 Access Point 可針對不同應用程式提供獨立端點與政策，讓大量平行請求分散到不同的存取點，改善從資料中心與 EC2 fleet 存取 S3 的可擴充性。
+- A：使用S3 bucket存取點,而不是直接存取S3 bucket。S3 Access Point 可針對不同應用程式提供獨立端點與政策，讓大量平行請求分散到不同的存取點，改善從資料中心與 EC2 fleet 存取 S3 的可擴充性。
 - C：使用 S3 多段上傳。S3 Multipart Upload 會把大型檔案分成多個部分並平行上傳，能提高從現場資料中心到 S3 的吞吐量，也適合 GB 等級檔案的可靠上傳。
 - 其餘選項比較：
-- B：上傳檔案到多個 S3 桶。把資料分散到多個儲存貯體會增加資料管理與轉碼流程的複雜度，不能取代 S3 對單一物件採用多段上傳的吞吐量最佳化。
+- B：上傳檔案到多個 S3 bucket。把資料分散到多個儲存貯體會增加資料管理與轉碼流程的複雜度，不能取代 S3 對單一物件採用多段上傳的吞吐量最佳化。
 - D：獲取平行物件的多個位元組範圍。平行取得單一物件的多個位元組範圍主要是下載最佳化，不能同時改善題目要求的現場資料中心上傳吞吐量。
 - E：上傳檔案時在每個物件中新增隨機字首。隨機前綴曾用於避免舊式 S3 分割區熱點，但現代 S3 已可自動處理高請求率，新增前綴也不是這個上傳與下載情境的主要最佳化方法。
 
@@ -18957,7 +18957,7 @@ A,C
 - B. 建立Amazon Elastic File System (Amazon EFS)檔案系統. 在單個EC2例項上掛載 EFS 檔案系統。
 - C. 建立共享的Amazon Elastic Block Store (Amazon EBS)磁碟區. 在單個EC2例項上掛載 EBS 磁碟區。
 - D. 使用AWS DataSync在Auto Scaling 群組(Auto Scaling group)中實現EC2主機之間的資料連續同步.
-- E. 建立 Amazon S3 桶儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容.
+- E. 建立 Amazon S3 bucket儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容.
 
 **答案**
 A,D
@@ -18973,7 +18973,7 @@ A,D
 - 其餘選項比較：
 - B：建立Amazon Elastic File System (Amazon EFS)檔案系統. 在單個EC2例項上掛載 EFS 檔案系統。EFS 可跨可用區掛載並提供強一致檔案存取，但此選項只在單一 EC2 執行個體掛載檔案系統，沒有形成多執行個體共享的部署方式。
 - C：建立共享的Amazon Elastic Block Store (Amazon EBS)磁碟區. 在單個EC2例項上掛載 EBS 磁碟區。EBS 磁碟區通常只能掛載到同一可用區的執行個體，且此選項限制在單一執行個體，不能提供跨可用區的共享內容。
-- E：建立 Amazon S3 桶儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容。S3 搭配 CloudFront 的無快取標頭可降低快取陳舊問題，但它不是多個 EC2 執行個體的檔案系統共享方案，也不能保證應用程式讀取時的檔案系統強一致性。
+- E：建立 Amazon S3 bucket儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容。S3 搭配 CloudFront 的無快取標頭可降低快取陳舊問題，但它不是多個 EC2 執行個體的檔案系統共享方案，也不能保證應用程式讀取時的檔案系統強一致性。
 
 **分類：** 儲存
 
@@ -19088,11 +19088,11 @@ A
 ## Question #696
 
 **題目**
-公司需要向客戶提供安全查閱其資料的機會。 公司處理客戶資料,並將結果儲存在Amazon S3桶中. 所有資料都須遵守嚴格的條例和安全要求。 資料必須在休息時加密。 每個客戶必須能夠只從其AWS帳戶中獲取資料. 公司職工不得查閱資料. 哪種解決辦法能滿足這些要求?
+公司需要向客戶提供安全查閱其資料的機會。 公司處理客戶資料,並將結果儲存在Amazon S3 bucket中. 所有資料都須遵守嚴格的條例和安全要求。 資料必須在休息時加密。 每個客戶必須能夠只從其AWS帳戶中獲取資料. 公司職工不得查閱資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為每個客戶提供AWS Certificate Manager(ACM)憑證。 加密資料客戶端。 在私人憑證政策中,除客戶提供的IAM角色外,拒絕所有委託人獲得憑證.
-- B. 為每個客戶提供單獨的AWS Key Management Service(AWS KMS)金鑰. 加密資料伺服器側。 在S3 儲存桶政策(bucket policy)中,除客戶提供的IAM角色外,拒絕提供解密(decryption)所有主資料.
+- B. 為每個客戶提供單獨的AWS Key Management Service(AWS KMS)金鑰. 加密資料伺服器側。 在S3 bucket政策(bucket policy)中,除客戶提供的IAM角色外,拒絕提供解密(decryption)所有主資料.
 - C. 為每個客戶提供單獨的AWS Key Management Service(AWS KMS)金鑰. 加密資料伺服器側。 在每一KMS關鍵政策中,除客戶提供的IAM作用外,拒絕提供解密(decryption)所有主資料。
 - D. 為每個客戶提供AWS Certificate Manager(ACM)憑證。 加密資料客戶端。 在公共憑證政策中,除客戶提供的IAM角色外,拒絕所有負責人獲得憑證。
 
@@ -19107,7 +19107,7 @@ D
 - D：為每個客戶提供AWS Certificate Manager(ACM)憑證。 加密資料客戶端。 在公共憑證政策中,除客戶提供的IAM角色外,拒絕所有負責人獲得憑證。ACM 憑證不是資料加密金鑰，無法用來保護 S3 物件或控制解密權限。客戶隔離靜態資料應使用每客戶獨立的 KMS 金鑰，並在 KMS 金鑰政策中只授權該客戶角色。
 - 其餘選項比較：
 - A：為每個客戶提供AWS Certificate Manager(ACM)憑證。 加密資料客戶端。 在私人憑證政策中,除客戶提供的IAM角色外,拒絕所有委託人獲得憑證。ACM 憑證用於 TLS 身分驗證與加密傳輸，不是用於加密 S3 靜態資料或授權客戶解密資料的金鑰。
-- B：為每個客戶提供單獨的AWS Key Management Service(AWS KMS)金鑰. 加密資料伺服器側。 在S3 儲存桶政策(bucket policy)中,除客戶提供的IAM角色外,拒絕提供解密(decryption)所有主資料。S3 儲存貯體政策可以限制請求者，但不能取代每個客戶 KMS 金鑰的金鑰政策；而且僅在 bucket policy 中描述解密權限不足以控制 KMS 解密操作。
+- B：為每個客戶提供單獨的AWS Key Management Service(AWS KMS)金鑰. 加密資料伺服器側。 在S3 bucket政策(bucket policy)中,除客戶提供的IAM角色外,拒絕提供解密(decryption)所有主資料。S3 儲存貯體政策可以限制請求者，但不能取代每個客戶 KMS 金鑰的金鑰政策；而且僅在 bucket policy 中描述解密權限不足以控制 KMS 解密操作。
 - C：為每個客戶提供單獨的AWS Key Management Service(AWS KMS)金鑰. 加密資料伺服器側。 在每一KMS關鍵政策中,除客戶提供的IAM作用外,拒絕提供解密(decryption)所有主資料。分別使用 KMS 金鑰能隔離客戶資料，但 KMS 金鑰政策需授權客戶角色並拒絕公司員工的解密權限；此選項的隔離方向正確，卻仍把授權主體放在不完整的資料庫式政策描述中。
 
 **分類：** 安全、身分與合規
@@ -19174,7 +19174,7 @@ A
 **選項**
 - A. 使用Amazon Elastic Kubernetes Service(Amazon EKS),並設有自控節點. 在 Amazon EC2 例項中建立一個 Amazon 彈性塊儲存器( Amazon EBS)。 使用EBS體積作為容器中掛載的永續性體積.
 - B. 使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積.
-- C. 使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 桶. 將S3 儲存桶(S3 bucket)標註為安裝在容器中的持久儲存量。
+- C. 使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 bucket. 將S3 bucket標註為安裝在容器中的持久儲存量。
 - D. 使用帶有Amazon EC2發射型的Amazon Elastic Container Service (Amazon ECS). 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積.
 
 **答案**
@@ -19188,7 +19188,7 @@ B
 - B：使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積。ECS on Fargate 不需要管理容器主機，EFS 則提供可持久化且可由多個容器掛載的檔案儲存。兩者結合能取代本地容器主機上的持久卷，並維持較低營運負擔。
 - 其餘選項比較：
 - A：使用Amazon Elastic Kubernetes Service(Amazon EKS),並設有自控節點. 在 Amazon EC2 例項中建立一個 Amazon 彈性塊儲存器( Amazon EBS)。 使用EBS體積作為容器中掛載的永續性體積。EKS 自控節點仍需要管理 EC2 伺服器與 EBS 儲存，違反公司不想維護伺服器或儲存基礎設施的要求。
-- C：使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 桶. 將S3 儲存桶(S3 bucket)標註為安裝在容器中的持久儲存量。S3 是物件儲存，不能直接以檔案系統卷的方式掛載到容器；將 S3 標註為容器持久卷不是 ECS Fargate 支援的儲存方式。
+- C：使用Amazon Elastic Container Service (Amazon ECS),具有AWS Fargate發射型. 建立 Amazon S3 bucket. 將S3 bucket標註為安裝在容器中的持久儲存量。S3 是物件儲存，不能直接以檔案系統卷的方式掛載到容器；將 S3 標註為容器持久卷不是 ECS Fargate 支援的儲存方式。
 - D：使用帶有Amazon EC2發射型的Amazon Elastic Container Service (Amazon ECS). 建立Amazon Elastic File System (Amazon EFS)卷. 新增EFS體積,作為容器中掛載的持久儲存體積。ECS EC2 launch type 仍需公司管理 EC2 容器主機，雖然 EFS 可提供持久儲存，但不符合完全受管理且不維護伺服器的要求。
 
 **分類：** 容器
@@ -19256,9 +19256,9 @@ B
 一家公司將最近海洋調查的200TB資料複製到AWS Snowball Edge Storage Optimized裝置上。 該公司有一個高效能運算(HPC)叢集,託管在AWS上尋找石油和天然氣礦藏. 一個解決方案架構師必須為叢集提供一致的次毫升延遲(latency)和高吞吐量(throughput)存取雪球邊緣儲存最佳化裝置的資料. 公司將裝置發回AWS. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 配置 AWS Storage Gateway 檔案閘道器使用 S3 儲存桶(S3 bucket). 從 HPC 叢集例項存取檔案閘道器。
-- B. 建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 為Lustre檔案系統配置一個Amazon FSx,並將其與S3 儲存桶(S3 bucket)整合. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。
-- C. 建立一個Amazon S3桶和一個Amazon Elastic File System (Amazon EFS)檔案系統. 將資料匯入S3 儲存桶(S3 bucket). 將S3 儲存桶(S3 bucket)的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統.
+- A. 建立 Amazon S3 bucket. 將資料匯入S3 bucket. 配置 AWS Storage Gateway 檔案閘道器使用 S3 bucket. 從 HPC 叢集例項存取檔案閘道器。
+- B. 建立 Amazon S3 bucket. 將資料匯入S3 bucket. 為Lustre檔案系統配置一個Amazon FSx,並將其與S3 bucket整合. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。
+- C. 建立一個Amazon S3 bucket和一個Amazon Elastic File System (Amazon EFS)檔案系統. 將資料匯入S3 bucket. 將S3 bucket的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統.
 - D. 為 Lustre 檔案系統建立 Amazon FSx。 直接將資料匯入FSx用於Lustre檔案系統. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。
 
 **答案**
@@ -19269,10 +19269,10 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立一個Amazon S3桶和一個Amazon Elastic File System (Amazon EFS)檔案系統. 將資料匯入S3 儲存桶(S3 bucket). 將S3 儲存桶(S3 bucket)的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統。先將 Snowball Edge 的資料匯入 S3，再複製到 EFS，可讓 HPC 叢集透過可跨可用區的檔案系統存取資料。EFS 由 AWS 管理並提供持久性，符合把裝置資料帶回雲端後共享使用的要求。
+- C：建立一個Amazon S3 bucket和一個Amazon Elastic File System (Amazon EFS)檔案系統. 將資料匯入S3 bucket. 將S3 bucket的資料複製到EFS檔案系統. 從HPC叢集例項存取 EFS 檔案系統。先將 Snowball Edge 的資料匯入 S3，再複製到 EFS，可讓 HPC 叢集透過可跨可用區的檔案系統存取資料。EFS 由 AWS 管理並提供持久性，符合把裝置資料帶回雲端後共享使用的要求。
 - 其餘選項比較：
-- A：建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 配置 AWS Storage Gateway 檔案閘道器使用 S3 儲存桶(S3 bucket). 從 HPC 叢集例項存取檔案閘道器。File Gateway 透過檔案介面提供 S3 物件，且依賴快取與網路路徑，不能保證 HPC 所需的一致次毫秒延遲與高吞吐量。
-- B：建立 Amazon S3 桶. 將資料匯入S3 儲存桶(S3 bucket). 為Lustre檔案系統配置一個Amazon FSx,並將其與S3 儲存桶(S3 bucket)整合. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。FSx for Lustre 與 S3 整合很適合 HPC，但題目要求先把 Snowball Edge 資料送回 AWS 後使用；此選項沒有說明如何將裝置資料匯入 S3 的必要流程。
+- A：建立 Amazon S3 bucket. 將資料匯入S3 bucket. 配置 AWS Storage Gateway 檔案閘道器使用 S3 bucket. 從 HPC 叢集例項存取檔案閘道器。File Gateway 透過檔案介面提供 S3 物件，且依賴快取與網路路徑，不能保證 HPC 所需的一致次毫秒延遲與高吞吐量。
+- B：建立 Amazon S3 bucket. 將資料匯入S3 bucket. 為Lustre檔案系統配置一個Amazon FSx,並將其與S3 bucket整合. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。FSx for Lustre 與 S3 整合很適合 HPC，但題目要求先把 Snowball Edge 資料送回 AWS 後使用；此選項沒有說明如何將裝置資料匯入 S3 的必要流程。
 - D：為 Lustre 檔案系統建立 Amazon FSx。 直接將資料匯入FSx用於Lustre檔案系統. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。FSx for Lustre 直接寫入可以提供 HPC 效能，但 Snowball Edge 返還後不能把裝置內容直接當作 FSx 檔案系統的匯入目標，缺少資料落地與轉移步驟。
 
 **分類：** 儲存
@@ -19478,10 +19478,10 @@ D,E
 在Amazon EC2例項上託管的一家公司網站處理儲存在Amazon S3的分類資料. 出於安全考慮,該公司需要在其EC2資源與Amazon S3之間建立私人和安全的聯絡。 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 設定S3 儲存桶(S3 bucket)政策,允許從VPC 端點(VPC endpoint)進入.
-- B. 設定一個IAM 政策(IAM policy),允許讀寫存取S3 儲存桶(S3 bucket).
+- A. 設定S3 bucket政策,允許從VPC 端點(VPC endpoint)進入.
+- B. 設定一個IAM 政策(IAM policy),允許讀寫存取S3 bucket.
 - C. 設定一個NAT閘道器以存取私人子網以外的資源.
-- D. 設定存取金鑰ID和秘密存取金鑰以存取S3 儲存桶(S3 bucket).
+- D. 設定存取金鑰ID和秘密存取金鑰以存取S3 bucket.
 
 **答案**
 A
@@ -19491,11 +19491,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：設定S3 儲存桶(S3 bucket)政策,允許從VPC 端點(VPC endpoint)進入。S3 VPC Gateway Endpoint 讓 VPC 內的 EC2 透過 AWS 私有網路存取 S3，不需要經過公有網際網路或 NAT Gateway；搭配 bucket policy 限制只能從該端點進入，可同時滿足私有與安全要求。
+- A：設定S3 bucket政策,允許從VPC 端點(VPC endpoint)進入。S3 VPC Gateway Endpoint 讓 VPC 內的 EC2 透過 AWS 私有網路存取 S3，不需要經過公有網際網路或 NAT Gateway；搭配 bucket policy 限制只能從該端點進入，可同時滿足私有與安全要求。
 - 其餘選項比較：
-- B：設定一個IAM 政策(IAM policy),允許讀寫存取S3 儲存桶(S3 bucket)。IAM 政策只能控制身分的 S3 許可權，不能建立 EC2 到 S3 的私人網路路徑，也不能單獨防止流量經過網際網路。
+- B：設定一個IAM 政策(IAM policy),允許讀寫存取S3 bucket。IAM 政策只能控制身分的 S3 許可權，不能建立 EC2 到 S3 的私人網路路徑，也不能單獨防止流量經過網際網路。
 - C：設定一個NAT閘道器以存取私人子網以外的資源。NAT Gateway 會讓私人子網流量經過公有 IP 通往網際網路，與題目要求的 EC2 到 S3 私人連線相反。
-- D：設定存取金鑰ID和秘密存取金鑰以存取S3 儲存桶(S3 bucket)。長期使用存取金鑰會增加憑證管理風險，且存取金鑰只負責身分驗證，不會提供 EC2 與 S3 之間的私有網路路徑。
+- D：設定存取金鑰ID和秘密存取金鑰以存取S3 bucket。長期使用存取金鑰會增加憑證管理風險，且存取金鑰只負責身分驗證，不會提供 EC2 與 S3 之間的私有網路路徑。
 
 **分類：** 網路連結和內容交付
 
@@ -19697,7 +19697,7 @@ A
 - A. 使用 AWS 站點對站點 VPN 存取 promises Hadoop 分佈檔案系統(HDFS)的資料和應用. 使用 Amazon EMR 叢集處理資料.
 - B. 使用AWS DataSync連線到premises Hadoop分散式檔案系統(HDFS)叢集. 建立 Amazon EMR 群集處理資料.
 - C. 將Apache Hadoop應用程式和Apache Spark應用程式遷移到Amazon EMR的AWS Outposits上. 使用EMR叢集處理資料.
-- D. 使用AWS Snowball裝置將資料遷移到Amazon S3桶. 建立 Amazon EMR 群集處理資料.
+- D. 使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 建立 Amazon EMR 群集處理資料.
 
 **答案**
 A
@@ -19711,7 +19711,7 @@ A
 - 其餘選項比較：
 - B：使用AWS DataSync連線到premises Hadoop分散式檔案系統(HDFS)叢集. 建立 Amazon EMR 群集處理資料。DataSync 主要用於檔案資料搬移與同步，不能把 HDFS 直接變成 EMR 可管理的處理環境，且增加資料複製流程。
 - C：將Apache Hadoop應用程式和Apache Spark應用程式遷移到Amazon EMR的AWS Outposits上. 使用EMR叢集處理資料。Outposts 仍需在現場部署與維護硬體，並沒有以最少營運工作量處理既有 Hadoop 與 Spark 基礎設施。
-- D：使用AWS Snowball裝置將資料遷移到Amazon S3桶. 建立 Amazon EMR 群集處理資料。Snowball 將資料搬到 S3 會改變資料處理位置，違反必須留在現場處理的限制。
+- D：使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 建立 Amazon EMR 群集處理資料。Snowball 將資料搬到 S3 會改變資料處理位置，違反必須留在現場處理的限制。
 
 **分類：** 分析
 
@@ -19723,7 +19723,7 @@ A
 **選項**
 - A. 建立使用 EFS Intelligent-Tiering 的 Amazon 彈性檔案系統(Amazon EFS)卷. 使用AWS DataSync將資料遷移到EFS卷.
 - B. 為 ONTAP 例項建立 Amazon FSx。 為 ONTAP 檔案系統建立 FSx,其根卷使用自動分級策略. 將資料遷移到FSx,以獲取ONTAP磁碟區.
-- C. 建立使用Amazon S3 儲存桶. 透過使用AWS Storage Gateway Amazon S3檔案閘道器將資料遷移到S3 儲存桶(S3 bucket).
+- C. 建立使用Amazon S3 bucket. 透過使用AWS Storage Gateway Amazon S3檔案閘道器將資料遷移到S3 bucket.
 - D. 為 OpenZFS 檔案系統建立 Amazon FSx. 將資料遷移到新卷.
 
 **答案**
@@ -19734,7 +19734,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立使用Amazon S3 儲存桶. 透過使用AWS Storage Gateway Amazon S3檔案閘道器將資料遷移到S3 儲存桶(S3 bucket)。S3 File Gateway 對現場或 EC2 用戶端呈現 SMB/NFS 檔案介面，後端則以 S3 儲存資料。快取與 S3 的受管理整合可讓常用資料快速取用、低頻資料降低成本，並省去管理檔案伺服器的工作。
+- C：建立使用Amazon S3 bucket. 透過使用AWS Storage Gateway Amazon S3檔案閘道器將資料遷移到S3 bucket。S3 File Gateway 對現場或 EC2 用戶端呈現 SMB/NFS 檔案介面，後端則以 S3 儲存資料。快取與 S3 的受管理整合可讓常用資料快速取用、低頻資料降低成本，並省去管理檔案伺服器的工作。
 - 其餘選項比較：
 - A：建立使用 EFS Intelligent-Tiering 的 Amazon 彈性檔案系統(Amazon EFS)卷. 使用AWS DataSync將資料遷移到EFS卷。EFS 可同時支援 NFS 用戶端，但不提供 SMB，無法滿足 Windows 與混合協定存取。
 - B：為 ONTAP 例項建立 Amazon FSx。 為 ONTAP 檔案系統建立 FSx,其根卷使用自動分級策略. 將資料遷移到FSx,以獲取ONTAP磁碟區。FSx for ONTAP 的自動分層需要管理檔案系統與分層策略，且不能以最少工作量直接涵蓋題目要求的 SMB、NFS 混合存取。
@@ -20101,8 +20101,8 @@ D
 **選項**
 - A. 將服務控制策略(SCP)附加到組織的根上,以識別失敗的登入嘗試.
 - B. 在Amazon GuardDuty為組織成員帳戶啟用Amazon RDS保護功能.
-- C. 在Amazon CloudWatch Logs中將Aurora一般日誌釋出給一個日誌組. 將日誌資料匯出為中央 Amazon S3 桶.
-- D. 將AWS CloudTrail中的所有Aurora PostgreSQL 資料庫(database)事件釋出給中央Amazon S3桶.
+- C. 在Amazon CloudWatch Logs中將Aurora一般日誌釋出給一個日誌組. 將日誌資料匯出為中央 Amazon S3 bucket.
+- D. 將AWS CloudTrail中的所有Aurora PostgreSQL 資料庫(database)事件釋出給中央Amazon S3 bucket.
 
 **答案**
 B
@@ -20115,8 +20115,8 @@ B
 - B：在Amazon GuardDuty為組織成員帳戶啟用Amazon RDS保護功能。GuardDuty RDS Protection 能分析支援的 Aurora 登入活動，協助識別異常或可疑的資料庫存取行為。以組織方式為成員帳戶啟用後，可集中套用偵測能力並減少逐帳戶維護。
 - 其餘選項比較：
 - A：將服務控制策略(SCP)附加到組織的根上,以識別失敗的登入嘗試。SCP 只限制組織帳戶可執行的 API 動作，不會分析 Aurora 的登入失敗或不完整登入資料。
-- C：在Amazon CloudWatch Logs中將Aurora一般日誌釋出給一個日誌組. 將日誌資料匯出為中央 Amazon S3 桶。一般日誌集中到 CloudWatch Logs 可供查詢，但需要自行建置日誌分析與異常偵測，無法以受管理的威脅偵測功能直接識別可疑登入。
-- D：將AWS CloudTrail中的所有Aurora PostgreSQL 資料庫(database)事件釋出給中央Amazon S3桶。CloudTrail 主要記錄 AWS API 活動，未必包含 Aurora PostgreSQL 內部登入失敗細節，不能取代資料庫專用的保護功能。
+- C：在Amazon CloudWatch Logs中將Aurora一般日誌釋出給一個日誌組. 將日誌資料匯出為中央 Amazon S3 bucket。一般日誌集中到 CloudWatch Logs 可供查詢，但需要自行建置日誌分析與異常偵測，無法以受管理的威脅偵測功能直接識別可疑登入。
+- D：將AWS CloudTrail中的所有Aurora PostgreSQL 資料庫(database)事件釋出給中央Amazon S3 bucket。CloudTrail 主要記錄 AWS API 活動，未必包含 Aurora PostgreSQL 內部登入失敗細節，不能取代資料庫專用的保護功能。
 
 **分類：** 安全、身分與合規
 
@@ -20177,13 +20177,13 @@ C
 ## Question #736
 
 **題目**
-一個連擁有多個AWS帳戶,其應用部署在我們西-2區域(Region). 應用程式日誌儲存在每個帳戶的Amazon S3桶內. 公司希望建立一個使用單一S3 儲存桶(S3 bucket)的集中日誌分析解決方案. 日誌不能離開我們 西部2, 公司想要 最低營運開銷(operational overhead)。 哪種解決辦法符合這些要求,並且最符合成本效益?
+一個連擁有多個AWS帳戶,其應用部署在我們西-2區域(Region). 應用程式日誌儲存在每個帳戶的Amazon S3 bucket內. 公司希望建立一個使用單一S3 bucket的集中日誌分析解決方案. 日誌不能離開我們 西部2, 公司想要 最低營運開銷(operational overhead)。 哪種解決辦法符合這些要求,並且最符合成本效益?
 
 **選項**
-- A. 建立一個 S3 生命週期政策(Lifecycle policy),從一個應用程式 S3 桶複製物件到集中的 S3 儲存桶(S3 bucket).
-- B. 使用 S3 Same-Region Replication 從 S3 桶複製日誌到另一個 S3 儲存桶(S3 bucket)。 使用這個 S3 儲存桶(S3 bucket) 進行日誌分析。
-- C. 寫入一個指令碼, 每天使用 Putobject API 操作將桶的全部內容複製到另一個 S3 儲存桶(S3 bucket) 的 us- West-2。 使用這個 S3 儲存桶(S3 bucket) 進行日誌分析。
-- D. 在這些帳戶中寫 AWS Lambda 函式,每次向 S3 桶傳送日誌時都會觸發(s3:ObjectCreated:*事件). 將日誌複製到西-2 中的另一個 S3 儲存桶(S3 bucket)。 使用這個 S3 儲存桶(S3 bucket) 進行日誌分析。
+- A. 建立一個 S3 生命週期政策(Lifecycle policy),從一個應用程式 S3 bucket複製物件到集中的 S3 bucket.
+- B. 使用 S3 Same-Region Replication 從 S3 bucket複製日誌到另一個 S3 bucket。 使用這個 S3 bucket 進行日誌分析。
+- C. 寫入一個指令碼, 每天使用 Putobject API 操作將桶的全部內容複製到另一個 S3 bucket 的 us- West-2。 使用這個 S3 bucket 進行日誌分析。
+- D. 在這些帳戶中寫 AWS Lambda 函式,每次向 S3 bucket傳送日誌時都會觸發(s3:ObjectCreated:*事件). 將日誌複製到西-2 中的另一個 S3 bucket。 使用這個 S3 bucket 進行日誌分析。
 
 **答案**
 B
@@ -20193,23 +20193,23 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 S3 Same-Region Replication 從 S3 桶複製日誌到另一個 S3 儲存桶(S3 bucket)。 使用這個 S3 儲存桶(S3 bucket) 進行日誌分析。S3 Same-Region Replication 可在同一 AWS 區域內把多個來源桶的日誌複製到集中桶，資料不會離開指定區域。複寫是受管理的持續流程，適合取代每日自製腳本並降低集中分析的營運成本。
+- B：使用 S3 Same-Region Replication 從 S3 bucket複製日誌到另一個 S3 bucket。 使用這個 S3 bucket 進行日誌分析。S3 Same-Region Replication 可在同一 AWS 區域內把多個來源桶的日誌複製到集中桶，資料不會離開指定區域。複寫是受管理的持續流程，適合取代每日自製腳本並降低集中分析的營運成本。
 - 其餘選項比較：
-- A：建立一個 S3 生命週期政策(Lifecycle policy),從一個應用程式 S3 桶複製物件到集中的 S3 儲存桶(S3 bucket)。S3 生命週期規則只能在同一個儲存桶內轉換或過期物件，不能作為跨帳戶集中複製機制。
-- C：寫入一個指令碼, 每天使用 Putobject API 操作將桶的全部內容複製到另一個 S3 儲存桶(S3 bucket) 的 us- West-2。 使用這個 S3 儲存桶(S3 bucket) 進行日誌分析。每日腳本會產生重複掃描、API 呼叫與維護工作，而且題目要求資料留在 us-west-2，跨區域複製不符合限制。
-- D：在這些帳戶中寫 AWS Lambda 函式,每次向 S3 桶傳送日誌時都會觸發(s3:ObjectCreated:*事件). 將日誌複製到西-2 中的另一個 S3 儲存桶(S3 bucket)。 使用這個 S3 儲存桶(S3 bucket) 進行日誌分析。Lambda 逐筆複製雖可由 ObjectCreated 觸發，但每個帳戶都要維護函式、權限與錯誤重試，營運負擔高於原生 S3 複寫。
+- A：建立一個 S3 生命週期政策(Lifecycle policy),從一個應用程式 S3 bucket複製物件到集中的 S3 bucket。S3 生命週期規則只能在同一個儲存桶內轉換或過期物件，不能作為跨帳戶集中複製機制。
+- C：寫入一個指令碼, 每天使用 Putobject API 操作將桶的全部內容複製到另一個 S3 bucket 的 us- West-2。 使用這個 S3 bucket 進行日誌分析。每日腳本會產生重複掃描、API 呼叫與維護工作，而且題目要求資料留在 us-west-2，跨區域複製不符合限制。
+- D：在這些帳戶中寫 AWS Lambda 函式,每次向 S3 bucket傳送日誌時都會觸發(s3:ObjectCreated:*事件). 將日誌複製到西-2 中的另一個 S3 bucket。 使用這個 S3 bucket 進行日誌分析。Lambda 逐筆複製雖可由 ObjectCreated 觸發，但每個帳戶都要維護函式、權限與錯誤重試，營運負擔高於原生 S3 複寫。
 
 **分類：** 儲存
 
 ## Question #737
 
 **題目**
-一家公司有一個應用程式,向世界各地的學生提供點播培訓影片。 該應用程式還允許授權的內容開發者上傳影片. 資料儲存在我們東-2 區域(Region)的Amazon S3桶中. 該公司在eu-West-2 區域(Region)中建立了S3 儲存桶(S3 bucket),在Ap-東南-1 區域(Region)中建立了S3 儲存桶(S3 bucket). 公司希望將資料複製到新的S3 儲存桶上. 公司需要將延遲(latency)最小化,適用於上傳影片的開發者和在eu-west-2和AP-Southeast-1附近流傳影片的學生. FEWEST修改應用程式後,哪些步驟組合將滿足這些要求?(選二.
+一家公司有一個應用程式,向世界各地的學生提供點播培訓影片。 該應用程式還允許授權的內容開發者上傳影片. 資料儲存在我們東-2 區域(Region)的Amazon S3 bucket中. 該公司在eu-West-2 區域(Region)中建立了S3 bucket,在Ap-東南-1 區域(Region)中建立了S3 bucket. 公司希望將資料複製到新的S3 bucket上. 公司需要將延遲(latency)最小化,適用於上傳影片的開發者和在eu-west-2和AP-Southeast-1附近流傳影片的學生. FEWEST修改應用程式後,哪些步驟組合將滿足這些要求?(選二.
 
 **選項**
-- A. 配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置從我們東-2 S3 儲存桶(S3 bucket)到Ap-東南-1 S3 儲存桶(S3 bucket)的單向複寫(replication).
-- B. 配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置單向複寫(replication)從eu-west - 2 S3 儲存桶(S3 bucket)到AP-東南-1 S3 儲存桶(S3 bucket).
-- C. 在所有三個大區的S3桶中配置雙向(雙向)複寫(replication)。
+- A. 配置單向複寫(replication)從我們東-2S3 bucket到eu西-2S3 bucket. 配置從我們東-2 S3 bucket到Ap-東南-1 S3 bucket的單向複寫(replication).
+- B. 配置單向複寫(replication)從我們東-2S3 bucket到eu西-2S3 bucket. 配置單向複寫(replication)從eu-west - 2 S3 bucket到AP-東南-1 S3 bucket.
+- C. 在所有三個大區的S3 bucket中配置雙向(雙向)複寫(replication)。
 - D. 建立 S3 Multi-Region Access Point. 修改應用程式,以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流. 不修改影片上傳應用程式。
 - E. 建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流和上傳.
 
@@ -20222,10 +20222,10 @@ A,B
 
 **詳解**
 正確答案是 **A, B**。
-- A：配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置從我們東-2 S3 儲存桶(S3 bucket)到Ap-東南-1 S3 儲存桶(S3 bucket)的單向複寫(replication)。從主要來源桶分別設定到兩個目標區域的複寫，可讓上傳者仍寫入原有桶，並把內容送到歐洲與亞太的本地副本。應用程式不必改變上傳路徑，且各地播放可由鄰近區域取用。
-- B：配置單向複寫(replication)從我們東-2S3 儲存桶(S3 bucket)到eu西-2S3 儲存桶(S3 bucket). 配置單向複寫(replication)從eu-west - 2 S3 儲存桶(S3 bucket)到AP-東南-1 S3 儲存桶(S3 bucket)。串接來源到歐洲、再由歐洲到亞太的複寫鏈，可建立目標區域的資料副本並保留原上傳流程。S3 Replication 由服務管理，應用程式只需維持主要寫入位置即可降低修改量。
+- A：配置單向複寫(replication)從我們東-2S3 bucket到eu西-2S3 bucket. 配置從我們東-2 S3 bucket到Ap-東南-1 S3 bucket的單向複寫(replication)。從主要來源桶分別設定到兩個目標區域的複寫，可讓上傳者仍寫入原有桶，並把內容送到歐洲與亞太的本地副本。應用程式不必改變上傳路徑，且各地播放可由鄰近區域取用。
+- B：配置單向複寫(replication)從我們東-2S3 bucket到eu西-2S3 bucket. 配置單向複寫(replication)從eu-west - 2 S3 bucket到AP-東南-1 S3 bucket。串接來源到歐洲、再由歐洲到亞太的複寫鏈，可建立目標區域的資料副本並保留原上傳流程。S3 Replication 由服務管理，應用程式只需維持主要寫入位置即可降低修改量。
 - 其餘選項比較：
-- C：在所有三個大區的S3桶中配置雙向(雙向)複寫(replication)。三個桶的雙向複寫會增加複寫規則、衝突處理與回圈風險，超過以最少修改完成需求的必要程度。
+- C：在所有三個大區的S3 bucket中配置雙向(雙向)複寫(replication)。三個桶的雙向複寫會增加複寫規則、衝突處理與回圈風險，超過以最少修改完成需求的必要程度。
 - D：建立 S3 Multi-Region Access Point. 修改應用程式,以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流. 不修改影片上傳應用程式。Multi-Region Access Point 可改善跨區讀取，但只修改播放端而不修改上傳端，無法保證新上傳內容會依需求寫入合適的複本。
 - E：建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流和上傳。同時修改上傳與串流應用程式會增加改造範圍，並非題目要求的最少應用程式修改。
 
@@ -20252,7 +20252,7 @@ A
 正確答案是 **A**。
 - A：上傳並儲存內容於Amazon S3. 上傳時使用Amazon CloudFront。CloudFront 的邊緣網路可讓上傳請求就近進入 AWS，並把內容送往 S3 origin，降低全球使用者的上傳路徑延遲。對頻繁更新且快取壽命短的新聞內容，可透過快取與失效策略改善整體體驗。
 - 其餘選項比較：
-- B：上傳並儲存內容於Amazon S3. 上傳時使用S3 Transfer Acceleration。S3 Transfer Acceleration 適合跨距離直接上傳到單一 S3 桶，但題目中 90% 使用者位於上傳區域，CloudFront 入口更能同時支援內容傳遞與邊緣接入。
+- B：上傳並儲存內容於Amazon S3. 上傳時使用S3 Transfer Acceleration。S3 Transfer Acceleration 適合跨距離直接上傳到單一 S3 bucket，但題目中 90% 使用者位於上傳區域，CloudFront 入口更能同時支援內容傳遞與邊緣接入。
 - C：上傳內容到最接近使用者的區域(Region)中的 Amazon EC2 例. 將資料複製到Amazon S3。在 EC2 上自行接收與保存媒體會增加伺服器管理和資料複製流程，且沒有利用 S3 的耐久性與受管理擴展。
 - D：在最接近使用者的區域(Region)中上傳並儲存Amazon S3中的內容. 使用Amazon CloudFront的多個分佈。在多個區域建立桶與多個分佈會增加複寫及快取管理，對主要在單一上傳區域消費的內容不具最低延遲與最低維運優勢。
 
@@ -20292,7 +20292,7 @@ D
 
 **選項**
 - A. 透過過濾 Amazon S3 編目報告來建立未加密物件列表. 配置 S3 Batch Operations 任務,以伺服器側加密(encryption) 加密列表中的物件,並帶有客戶提供的金鑰(SSE-C). 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 並帶有客戶提供的金鑰(SSE-C).
-- B. 使用 S3 Storage Lens 度量衡來識別未加密的S3桶. 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS).
+- B. 使用 S3 Storage Lens 度量衡來識別未加密的S3 bucket. 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS).
 - C. 透過過濾Amazon S3的AWS使用報告,建立未加密物件列表. 配置 AWS 批次任務, 以伺服器側的 加密(encryption) 加密列表中的物件。 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 並帶有 AWS KMS 金鑰(SSE-KMS).
 - D. 透過過濾Amazon S3的AWS使用報告,建立未加密物件列表. 配置 S3 預設的 加密(encryption) 特性,使用伺服器側的 加密(encryption) 並帶有客戶提供的金鑰(SSE-C).
 
@@ -20304,7 +20304,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 S3 Storage Lens 度量衡來識別未加密的S3桶. 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS)。S3 Storage Lens 可協助找出未套用加密的儲存桶，S3 預設 SSE-KMS 則能讓後續上傳物件自動加密。使用受管理的 KMS 金鑰可集中控管金鑰政策與稽核，降低自行處理金鑰的負擔。
+- B：使用 S3 Storage Lens 度量衡來識別未加密的S3 bucket. 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 與 AWS KMS 金鑰(SSE-KMS)。S3 Storage Lens 可協助找出未套用加密的儲存桶，S3 預設 SSE-KMS 則能讓後續上傳物件自動加密。使用受管理的 KMS 金鑰可集中控管金鑰政策與稽核，降低自行處理金鑰的負擔。
 - 其餘選項比較：
 - A：透過過濾 Amazon S3 編目報告來建立未加密物件列表. 配置 S3 Batch Operations 任務,以伺服器側加密(encryption) 加密列表中的物件,並帶有客戶提供的金鑰(SSE-C). 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 並帶有客戶提供的金鑰(SSE-C)。S3 Batch Operations 可批次處理既有物件，但 SSE-C 金鑰不適合作為 S3 預設加密設定，且需要在每次請求中管理客戶提供的金鑰。
 - C：透過過濾Amazon S3的AWS使用報告,建立未加密物件列表. 配置 AWS 批次任務, 以伺服器側的 加密(encryption) 加密列表中的物件。 配置 S3 預設的 加密(encryption) 特性,以使用伺服器側的 加密(encryption) 並帶有 AWS KMS 金鑰(SSE-KMS)。雖然批次加密概念可處理既有物件，但 AWS 使用報告不是可靠的物件加密清單來源，而且未說明所需的 KMS 權限與完整批次範圍。
@@ -20651,7 +20651,7 @@ A,D
 - A. 為 SFTP 部署 AWS 傳輸和 Amazon 彈性檔案系統(Amazon EFS) 檔案系統進行儲存. 在Auto Scaling 群組(Auto Scaling group)中使用一個Amazon EC2例項,並有預定的縮放政策來執行批次操作.
 - B. 部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用一個Amazon Elastic Block Store (Amazon EBS)的容量進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。
 - C. 部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用Amazon Elastic File System (Amazon EFS)檔案系統進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。
-- D. 部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 桶儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作.
+- D. 部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 bucket儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作.
 
 **答案**
 B
@@ -20665,7 +20665,7 @@ B
 - 其餘選項比較：
 - A：為 SFTP 部署 AWS 傳輸和 Amazon 彈性檔案系統(Amazon EFS) 檔案系統進行儲存. 在Auto Scaling 群組(Auto Scaling group)中使用一個Amazon EC2例項,並有預定的縮放政策來執行批次操作。Transfer Family 與 EFS 可提供檔案服務，但以單一 EC2 執行批次工作仍會形成故障點，無法同時以最少工作量達到高可用。
 - C：部署執行 Linux 和 SFTP 服務的 Amazon EC2 例項。 使用Amazon Elastic File System (Amazon EFS)檔案系統進行儲存. 使用 Auto Scaling 群組(Auto Scaling group),最小例項數和理想例項數設定為 1。EFS 提供跨可用區檔案儲存，但單一 EC2 仍是 SFTP 與批次處理的故障點，且自管 SFTP 服務增加維護工作。
-- D：部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 桶儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作。Transfer Family 加 S3 具備受管理的高可用性，但需要修改批次程式與新增資料搬移流程，業務改造量高於選項 B。
+- D：部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 bucket儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作。Transfer Family 加 S3 具備受管理的高可用性，但需要修改批次程式與新增資料搬移流程，業務改造量高於選項 B。
 
 **分類：** 移轉和傳輸
 
@@ -20730,7 +20730,7 @@ A
 
 **選項**
 - A. 建立物件 Lambda 存取點。 建立一個 AWS Lambda 函式,當函式讀取檔案時會編輯 PII。 指示外部服務提供商存取Object Lambda存取點.
-- B. 在 Amazon EC2 例項上建立批次程序,定期讀取所有新檔案,從檔案中編輯PII,並將編輯的檔案寫入不同的S3 儲存桶(S3 bucket). 指示外部服務提供商存取不含PII的桶.
+- B. 在 Amazon EC2 例項上建立批次程序,定期讀取所有新檔案,從檔案中編輯PII,並將編輯的檔案寫入不同的S3 bucket. 指示外部服務提供商存取不含PII的桶.
 - C. 在 Amazon EC2 例項上建立網路應用程式,以顯示檔案列表,從檔案中編輯PII,並允許外部服務提供商下載已編輯PII的檔案的新版本.
 - D. 建立 Amazon DynamoDB 表格。 建立 AWS Lambda 函式,只讀取檔案中不包含PII的資料. 配置 Lambda 函式,在向 Amazon S3 寫入新檔案時,將非 PII 資料儲存在 DynamoDB 表中. 允許外部服務提供商存取DynamomDB表格.
 
@@ -20745,7 +20745,7 @@ D
 - D：建立 Amazon DynamoDB 表格。 建立 AWS Lambda 函式,只讀取檔案中不包含PII的資料. 配置 Lambda 函式,在向 Amazon S3 寫入新檔案時,將非 PII 資料儲存在 DynamoDB 表中. 允許外部服務提供商存取DynamomDB表格。S3 事件觸發 Lambda 後，只把已去除 PII 的必要欄位寫入 DynamoDB，外部服務商便不會接觸原始聊天內容。DynamoDB 可依時間與抽樣索引快速查詢，Lambda 會隨新檔案數量自動擴展而不需管理伺服器。
 - 其餘選項比較：
 - A：建立物件 Lambda 存取點。 建立一個 AWS Lambda 函式,當函式讀取檔案時會編輯 PII。 指示外部服務提供商存取Object Lambda存取點。S3 Object Lambda 可在讀取時轉換物件，但外部服務商仍需處理檔案清單與隨機抽樣，且每次轉換可能增加延遲與函式管理。
-- B：在 Amazon EC2 例項上建立批次程序,定期讀取所有新檔案,從檔案中編輯PII,並將編輯的檔案寫入不同的S3 儲存桶(S3 bucket). 指示外部服務提供商存取不含PII的桶。EC2 批次程序需要管理主機、排程、重試與所有新增檔案的掃描，不能以最低營運開銷隨對話量彈性擴展。
+- B：在 Amazon EC2 例項上建立批次程序,定期讀取所有新檔案,從檔案中編輯PII,並將編輯的檔案寫入不同的S3 bucket. 指示外部服務提供商存取不含PII的桶。EC2 批次程序需要管理主機、排程、重試與所有新增檔案的掃描，不能以最低營運開銷隨對話量彈性擴展。
 - C：在 Amazon EC2 例項上建立網路應用程式,以顯示檔案列表,從檔案中編輯PII,並允許外部服務提供商下載已編輯PII的檔案的新版本。自建 EC2 網路應用程式需要管理伺服器、下載權限與 PII 編輯流程，並增加外部服務商整合的攻擊面。
 
 **分類：** 儲存
@@ -20894,7 +20894,7 @@ C
 - A. 建立Amazon Elastic Block Store(Amazon EBS) AMIs的快照. 將快照儲存在單獨的 AWS 帳戶中。
 - B. 定期將所有 AMI 複製到另一個 AWS 帳戶。
 - C. 在 Recycle Bin 中建立保留規則。
-- D. 將AMIs上傳到一個擁有Cross-區域(Region) 複寫(Replication)的Amazon S3桶.
+- D. 將AMIs上傳到一個擁有Cross-區域(Region) 複寫(Replication)的Amazon S3 bucket.
 
 **答案**
 D
@@ -20904,7 +20904,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將AMIs上傳到一個擁有Cross-區域(Region) 複寫(Replication)的Amazon S3桶。將 AMI 備份映像放在啟用跨區域複寫的 S3 儲存桶，可由 S3 自動維護另一個區域的副本，避免另行撰寫複製排程。發生刪除時可使用複本重新匯入或建立 AMI，提升恢復速度與耐久性。
+- D：將AMIs上傳到一個擁有Cross-區域(Region) 複寫(Replication)的Amazon S3 bucket。將 AMI 備份映像放在啟用跨區域複寫的 S3 bucket，可由 S3 自動維護另一個區域的副本，避免另行撰寫複製排程。發生刪除時可使用複本重新匯入或建立 AMI，提升恢復速度與耐久性。
 - 其餘選項比較：
 - A：建立Amazon Elastic Block Store(Amazon EBS) AMIs的快照. 將快照儲存在單獨的 AWS 帳戶中。只備份 EBS 快照並跨帳戶保存，仍需額外管理快照與 AMI 重建流程，不能直接提供 AMI 的快速刪除復原。
 - B：定期將所有 AMI 複製到另一個 AWS 帳戶。定期複製所有 AMI 會持續消耗快照儲存與複製成本，也需要排程及保留策略，營運工作比原生保護機制更多。
@@ -21026,9 +21026,9 @@ B
 一家制藥公司正在研製一種新藥。 在過去幾個月裡,該公司生成的資料量成指數增長。 公司的研究者們經常要求整個資料集的子集以最小的滯後速度立即提供. 然而,整個資料集不需要每天存取. 目前所有資料都存於房地儲存陣列中,公司希望減少持續資本支出. 哪個儲存解決方案應該由設計師建議滿足這些要求?
 
 **選項**
-- A. 執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 桶中.
-- B. 部署AWS Storage Gateway檔案閘道器,以Amazon S3桶作為目標儲存. 將資料遷移到儲存閘道器的電器。
-- C. 部署一個AWS Storage Gateway卷閘道器,以一個Amazon S3桶作為目標儲存器的快取卷. 將資料遷移到儲存閘道器的電器。
+- A. 執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 bucket中.
+- B. 部署AWS Storage Gateway檔案閘道器,以Amazon S3 bucket作為目標儲存. 將資料遷移到儲存閘道器的電器。
+- C. 部署一個AWS Storage Gateway卷閘道器,以一個Amazon S3 bucket作為目標儲存器的快取卷. 將資料遷移到儲存閘道器的電器。
 - D. 配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個Amazon Elastic File System (Amazon EFS)的檔案系統.
 
 **答案**
@@ -21039,10 +21039,10 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：部署AWS Storage Gateway檔案閘道器,以Amazon S3桶作為目標儲存. 將資料遷移到儲存閘道器的電器。S3 File Gateway 以標準檔案介面呈現資料，並將檔案持久化到 S3，同時在本機快取近期或常用內容。研究者可快速讀取資料子集，而完整資料不必每天從現場儲存陣列取用，並能以雲端儲存取代持續擴充的資本設備。
+- B：部署AWS Storage Gateway檔案閘道器,以Amazon S3 bucket作為目標儲存. 將資料遷移到儲存閘道器的電器。S3 File Gateway 以標準檔案介面呈現資料，並將檔案持久化到 S3，同時在本機快取近期或常用內容。研究者可快速讀取資料子集，而完整資料不必每天從現場儲存陣列取用，並能以雲端儲存取代持續擴充的資本設備。
 - 其餘選項比較：
-- A：執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 桶中。DataSync 排程複製會週期性搬移整批資料，不能以檔案閘道的本機快取提供低延遲讀取，也會增加同步工作的管理量。
-- C：部署一個AWS Storage Gateway卷閘道器,以一個Amazon S3桶作為目標儲存器的快取卷. 將資料遷移到儲存閘道器的電器。Volume Gateway 提供區塊儲存語意，較適合需要 iSCSI 磁碟的應用；題目是以檔案與資料集讀取為主，File Gateway 更符合介面需求。
+- A：執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 bucket中。DataSync 排程複製會週期性搬移整批資料，不能以檔案閘道的本機快取提供低延遲讀取，也會增加同步工作的管理量。
+- C：部署一個AWS Storage Gateway卷閘道器,以一個Amazon S3 bucket作為目標儲存器的快取卷. 將資料遷移到儲存閘道器的電器。Volume Gateway 提供區塊儲存語意，較適合需要 iSCSI 磁碟的應用；題目是以檔案與資料集讀取為主，File Gateway 更符合介面需求。
 - D：配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個Amazon Elastic File System (Amazon EFS)的檔案系統。EFS 是區域內的受管檔案系統，仍需透過 AWS 網路存取且未提供現場檔案閘道快取；它不會直接把既有陣列轉成低延遲的本機快取架構。
 
 **分類：** 儲存
@@ -21056,7 +21056,7 @@ B
 - A. 為表格配置時間點恢復。
 - B. 表格使用 AWS Backup。
 - C. 使用一個 AWS Lambda 函式,每小時製作一個按需的 備份(backup) 表格.
-- D. 開啟表上的流來捕捉過去24小時裡對錶的所有更改的日誌. 在Amazon S3桶中儲存流水副本.
+- D. 開啟表上的流來捕捉過去24小時裡對錶的所有更改的日誌. 在Amazon S3 bucket中儲存流水副本.
 
 **答案**
 C
@@ -21070,18 +21070,18 @@ C
 - 其餘選項比較：
 - A：為表格配置時間點恢復。DynamoDB point-in-time recovery 是原生的低維護還原能力，但此選項沒有表明啟用涵蓋最近 24 小時的需求。
 - B：表格使用 AWS Backup。AWS Backup 可集中管理 DynamoDB 備份與保留政策，但要進行任意時間點還原仍需搭配持續備份設定，單獨使用並非最直接的表級設定。
-- D：開啟表上的流來捕捉過去24小時裡對錶的所有更改的日誌. 在Amazon S3桶中儲存流水副本。DynamoDB Streams 只保留有限時間的變更事件，將事件自行寫入 S3 後還要建置重播與一致性還原流程，維運工作遠高於受管備份。
+- D：開啟表上的流來捕捉過去24小時裡對錶的所有更改的日誌. 在Amazon S3 bucket中儲存流水副本。DynamoDB Streams 只保留有限時間的變更事件，將事件自行寫入 S3 後還要建置重播與一致性還原流程，維運工作遠高於受管備份。
 
 **分類：** 資料庫
 
 ## Question #769
 
 **題目**
-一個公司託管一個用於上傳檔案到Amazon S3桶的應用程式. 一旦上傳,檔案會被處理以提取後設資料,這需要不到5秒的時間. 上傳的磁碟區和頻率從每小時幾個檔案到數百個同時上傳. 公司要求解決方案架構師設計符合這些要求的具有成本效益的建築. 解決方案設計師應該建議什麼?
+一個公司託管一個用於上傳檔案到Amazon S3 bucket的應用程式. 一旦上傳,檔案會被處理以提取後設資料,這需要不到5秒的時間. 上傳的磁碟區和頻率從每小時幾個檔案到數百個同時上傳. 公司要求解決方案架構師設計符合這些要求的具有成本效益的建築. 解決方案設計師應該建議什麼?
 
 **選項**
 - A. 配置 AWS CloudTrail 線索以登入 S3 API 呼叫。 使用 AWS AppSync 處理檔案.
-- B. 在 S3 儲存桶(S3 bucket) 內配置一個物件建立的事件通知,以引用 AWS Lambda 函式處理檔案.
+- B. 在 S3 bucket 內配置一個物件建立的事件通知,以引用 AWS Lambda 函式處理檔案.
 - C. 配置 Amazon Kinesis 資料流處理併傳送資料給 Amazon S3. Invoke a AWS Lambda 函式處理檔案.
 - D. 配置一個 Amazon 簡單通知服務(Amazon SNS) 主題處理上傳到 Amazon S3 的檔案. Invoke a AWS Lambda 函式處理檔案.
 
@@ -21096,7 +21096,7 @@ C
 - C：配置 Amazon Kinesis 資料流處理併傳送資料給 Amazon S3. Invoke a AWS Lambda 函式處理檔案。Kinesis Data Streams 可接收並緩衝上傳事件或資料，再由 Lambda 消費處理，能在每小時少量到數百個同時事件之間彈性調整。Lambda 只在有資料時執行，配合串流的分片與重試能力，可在不長期運行伺服器的情況下完成數秒內的後設資料擷取。
 - 其餘選項比較：
 - A：配置 AWS CloudTrail 線索以登入 S3 API 呼叫。 使用 AWS AppSync 處理檔案。CloudTrail 用於記錄 API 活動，AppSync 是 GraphQL API 服務，兩者都不是觸發檔案後設資料處理的直接機制。
-- B：在 S3 儲存桶(S3 bucket) 內配置一個物件建立的事件通知,以引用 AWS Lambda 函式處理檔案。S3 事件通知觸發 Lambda 的確可處理檔案，但大量同時上傳時需自行處理併發、重試與節流；此選項未提出可吸收突發量的緩衝層。
+- B：在 S3 bucket 內配置一個物件建立的事件通知,以引用 AWS Lambda 函式處理檔案。S3 事件通知觸發 Lambda 的確可處理檔案，但大量同時上傳時需自行處理併發、重試與節流；此選項未提出可吸收突發量的緩衝層。
 - D：配置一個 Amazon 簡單通知服務(Amazon SNS) 主題處理上傳到 Amazon S3 的檔案. Invoke a AWS Lambda 函式處理檔案。SNS 可以廣播通知，但它不是用來承載或排序檔案處理工作流的串流緩衝；大量事件的重試與處理狀態仍需另行設計。
 
 **分類：** 無伺服器
@@ -21135,9 +21135,9 @@ D
 
 **選項**
 - A. 使用 AWS Schema 轉換工具(AWS SCT)將甲骨文計劃轉換為Aurora PostgreSQL 計劃. 使用 AWS 資料庫(Database) 遷移服務(AWS DSM)全載遷移任務來遷移資料.
-- B. 使用AWS DataSync將資料遷移到一個Amazon S3桶中. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中.
+- B. 使用AWS DataSync將資料遷移到一個Amazon S3 bucket中. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中.
 - C. 使用 AWS Schema 轉換工具(AWS SCT)將甲骨文計劃轉換為Aurora PostgreSQL 計劃. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)遷移現有資料並複製正在進行的變化.
-- D. 使用AWS Snowball裝置將資料遷移到Amazon S3桶. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中.
+- D. 使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中.
 
 **答案**
 D
@@ -21147,10 +21147,10 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用AWS Snowball裝置將資料遷移到Amazon S3桶. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中。Snowball 可先將大量來源資料離線送到 S3，再利用 Aurora PostgreSQL 的 S3 匯入能力載入，降低 VPN 上傳資料量。將來源資料以可攜式批次方式匯入也能在遷移期間保留資料副本，適合既有資料量較大的情境。
+- D：使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中。Snowball 可先將大量來源資料離線送到 S3，再利用 Aurora PostgreSQL 的 S3 匯入能力載入，降低 VPN 上傳資料量。將來源資料以可攜式批次方式匯入也能在遷移期間保留資料副本，適合既有資料量較大的情境。
 - 其餘選項比較：
 - A：使用 AWS Schema 轉換工具(AWS SCT)將甲骨文計劃轉換為Aurora PostgreSQL 計劃. 使用 AWS 資料庫(Database) 遷移服務(AWS DSM)全載遷移任務來遷移資料。AWS DMS 只做 full load 不會持續捕捉來源端後續異動，因此在遷移期間可能遺失 Oracle 的變更。
-- B：使用AWS DataSync將資料遷移到一個Amazon S3桶中. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中。DataSync 搬移檔案或物件資料，不會進行 Oracle 到 Aurora PostgreSQL 的結構轉換與持續變更資料擷取。
+- B：使用AWS DataSync將資料遷移到一個Amazon S3 bucket中. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中。DataSync 搬移檔案或物件資料，不會進行 Oracle 到 Aurora PostgreSQL 的結構轉換與持續變更資料擷取。
 - C：使用 AWS Schema 轉換工具(AWS SCT)將甲骨文計劃轉換為Aurora PostgreSQL 計劃. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)遷移現有資料並複製正在進行的變化。SCT 加上 DMS full load 與 CDC 是典型的異質資料庫遷移方式，但此選項的服務名稱與持續複寫描述不完整，未清楚配置完整遷移工作。
 
 **分類：** 移轉和傳輸
@@ -21488,10 +21488,10 @@ D
 ## Question #784
 
 **題目**
-一家公司的營銷資料從多個來源上傳到Amazon S3桶. 一系列資料編制工作將資料彙總成報告。 資料編制工作需要定期平行進行。 少數工作需要以後按具體順序進行。 公司希望刪除營運開銷(operational overhead)的工作錯誤處理,重試邏輯,以及狀態管理. 哪種解決辦法能滿足這些要求?
+一家公司的營銷資料從多個來源上傳到Amazon S3 bucket. 一系列資料編制工作將資料彙總成報告。 資料編制工作需要定期平行進行。 少數工作需要以後按具體順序進行。 公司希望刪除營運開銷(operational overhead)的工作錯誤處理,重試邏輯,以及狀態管理. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用一個 AWS Lambda 函式,在資料上傳到S3 儲存桶(S3 bucket)後立即處理資料. 按照定期的間隔啟動其他Lambda功能。
+- A. 使用一個 AWS Lambda 函式,在資料上傳到S3 bucket後立即處理資料. 按照定期的間隔啟動其他Lambda功能。
 - B. 使用Amazon Athena處理資料. 使用 Amazon EventBridge 排程器在普通內部上引用雅典娜.
 - C. 使用AWS Glue DataBrew處理資料. 使用 AWS Step 函式狀態機來執行 DataBrew 資料準備任務.
 - D. 使用AWS資料管道處理資料. 安排資料管道在午夜處理資料一次.
@@ -21506,7 +21506,7 @@ C
 正確答案是 **C**。
 - C：使用AWS Glue DataBrew處理資料. 使用 AWS Step 函式狀態機來執行 DataBrew 資料準備任務。AWS Glue DataBrew 可執行受管的資料清理與轉換，Step Functions 則能用狀態機表達平行工作、順序相依、重試與錯誤分支。兩者整合後，工作流程狀態由服務保存，能減少自建協調程式的營運負擔。
 - 其餘選項比較：
-- A：使用一個 AWS Lambda 函式,在資料上傳到S3 儲存桶(S3 bucket)後立即處理資料. 按照定期的間隔啟動其他Lambda功能。分散啟動 Lambda 只能處理單一步驟，必須自行實作平行分支、依序相依、錯誤重試與狀態保存。
+- A：使用一個 AWS Lambda 函式,在資料上傳到S3 bucket後立即處理資料. 按照定期的間隔啟動其他Lambda功能。分散啟動 Lambda 只能處理單一步驟，必須自行實作平行分支、依序相依、錯誤重試與狀態保存。
 - B：使用Amazon Athena處理資料. 使用 Amazon EventBridge 排程器在普通內部上引用雅典娜。Athena 可查詢 S3 資料，但 EventBridge 排程器不會自動管理多個資料準備工作之間的平行與順序依賴。
 - D：使用AWS資料管道處理資料. 安排資料管道在午夜處理資料一次。AWS Data Pipeline 是較舊的資料工作流服務，選項只安排每日一次且未表達多個工作之間的平行與順序控制。
 
@@ -21518,7 +21518,7 @@ C
 一個解決方案架構師正在設計一個付款處理應用程式,該應用程式透過多個可用區(Availability Zones)的私人子網執行在AWS Lambda上. 該應用程式使用多個Lambda功能,每天處理數百萬的交易. 該架構必須確保應用程式不會處理重複付款。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 用Lambda來收回所有應得的付款. 公佈應付給Amazon S3桶的款項。 配置 S3 儲存桶(S3 bucket) 並附帶事件通知以引用另一個 Lambda 函式處理到期付款。
+- A. 用Lambda來收回所有應得的付款. 公佈應付給Amazon S3 bucket的款項。 配置 S3 bucket 並附帶事件通知以引用另一個 Lambda 函式處理到期付款。
 - B. 用Lambda來收回所有應得的付款. 釋出應向 Amazon 簡單佇列服務( Amazon SQS) 佇列支付的款項。 配置另一個 Lambda 函式以檢視 SQS 佇列並處理到期付款。
 - C. 用Lambda來收回所有應得的付款. 釋出到期支付給 Amazon 簡單佇列服務( Amazon SQS) FIFO 佇列。 配置另一個 Lambda 函式,以檢視 FIFO 佇列並處理到期支付.
 - D. 用Lambda來收回所有應得的付款. 將應付款存入Amazon DynamoDB表。 配置 DynamoDB 表格上的流以引用另一個 Lambda 函式來處理到期支付。
@@ -21533,7 +21533,7 @@ C
 正確答案是 **C**。
 - C：用Lambda來收回所有應得的付款. 釋出到期支付給 Amazon 簡單佇列服務( Amazon SQS) FIFO 佇列。 配置另一個 Lambda 函式,以檢視 FIFO 佇列並處理到期支付。SQS FIFO queue 支援以 MessageDeduplicationId 或內容雜湊進行去重，並可維持訊息順序，適合付款這類不可重複的工作。Lambda 從 FIFO 佇列消費時仍應設計冪等處理，但佇列的去重能力可大幅降低重複付款風險。
 - 其餘選項比較：
-- A：用Lambda來收回所有應得的付款. 公佈應付給Amazon S3桶的款項。 配置 S3 儲存桶(S3 bucket) 並附帶事件通知以引用另一個 Lambda 函式處理到期付款。S3 事件通知與一般 SQS 佇列不保證訊息去重；Lambda 重試或多次投遞可能導致同一付款被處理多次。
+- A：用Lambda來收回所有應得的付款. 公佈應付給Amazon S3 bucket的款項。 配置 S3 bucket 並附帶事件通知以引用另一個 Lambda 函式處理到期付款。S3 事件通知與一般 SQS 佇列不保證訊息去重；Lambda 重試或多次投遞可能導致同一付款被處理多次。
 - B：用Lambda來收回所有應得的付款. 釋出應向 Amazon 簡單佇列服務( Amazon SQS) 佇列支付的款項。 配置另一個 Lambda 函式以檢視 SQS 佇列並處理到期付款。標準 SQS 提供至少一次投遞，消費者需要自行實作冪等鍵與重複偵測，單靠佇列不能保證付款只處理一次。
 - D：用Lambda來收回所有應得的付款. 將應付款存入Amazon DynamoDB表。 配置 DynamoDB 表格上的流以引用另一個 Lambda 函式來處理到期支付。DynamoDB Streams 會保留變更事件並可能重新投遞，若沒有額外的條件寫入與冪等設計，仍不能保證付款只執行一次。
 
@@ -21596,13 +21596,13 @@ A
 ## Question #788
 
 **題目**
-一家公司以Apache Parquet格式用Amazon S3桶儲存了10個TB日誌檔案. 公司偶爾需要使用SQL來分析日誌檔案. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司以Apache Parquet格式用Amazon S3 bucket儲存了10個TB日誌檔案. 公司偶爾需要使用SQL來分析日誌檔案. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 建立 Amazon Aurora MySQL 資料庫(database). 透過使用AWS 資料庫(Database)遷移服務(AWS DS)將S3 儲存桶(S3 bucket)的資料遷移到Aurora. 向Aurora 資料庫(database)釋出SQL宣告.
-- B. 建立 Amazon Redshift 叢集。 使用Redshift Spectrum直接執行S3 儲存桶(S3 bucket)中的資料上的SQL語句.
-- C. 建立 AWS Glue 爬蟲,以儲存和檢索 S3 儲存桶(S3 bucket) 的表後設資料。 使用Amazon Athena直接在S3 儲存桶(S3 bucket)中的資料上執行SQL語句.
-- D. 建立 Amazon EMR 叢集。 使用Apache Spark SQL直接執行S3 儲存桶(S3 bucket)中的資料上的SQL語句.
+- A. 建立 Amazon Aurora MySQL 資料庫(database). 透過使用AWS 資料庫(Database)遷移服務(AWS DS)將S3 bucket的資料遷移到Aurora. 向Aurora 資料庫(database)釋出SQL宣告.
+- B. 建立 Amazon Redshift 叢集。 使用Redshift Spectrum直接執行S3 bucket中的資料上的SQL語句.
+- C. 建立 AWS Glue 爬蟲,以儲存和檢索 S3 bucket 的表後設資料。 使用Amazon Athena直接在S3 bucket中的資料上執行SQL語句.
+- D. 建立 Amazon EMR 叢集。 使用Apache Spark SQL直接執行S3 bucket中的資料上的SQL語句.
 
 **答案**
 C
@@ -21612,11 +21612,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立 AWS Glue 爬蟲,以儲存和檢索 S3 儲存桶(S3 bucket) 的表後設資料。 使用Amazon Athena直接在S3 儲存桶(S3 bucket)中的資料上執行SQL語句。Glue crawler 可從 Parquet 推導結構並把表格中繼資料寫入 Glue Data Catalog，Athena 再以 SQL 直接查詢 S3 中的資料。Athena 依掃描資料量計費，不需長時間維護叢集，適合偶爾分析 10 TB 日誌。
+- C：建立 AWS Glue 爬蟲,以儲存和檢索 S3 bucket 的表後設資料。 使用Amazon Athena直接在S3 bucket中的資料上執行SQL語句。Glue crawler 可從 Parquet 推導結構並把表格中繼資料寫入 Glue Data Catalog，Athena 再以 SQL 直接查詢 S3 中的資料。Athena 依掃描資料量計費，不需長時間維護叢集，適合偶爾分析 10 TB 日誌。
 - 其餘選項比較：
-- A：建立 Amazon Aurora MySQL 資料庫(database). 透過使用AWS 資料庫(Database)遷移服務(AWS DS)將S3 儲存桶(S3 bucket)的資料遷移到Aurora. 向Aurora 資料庫(database)釋出SQL宣告。先把 10 TB Parquet 匯入 Aurora 會產生資料庫儲存與載入維護成本，對偶爾的 SQL 查詢屬於過度配置。
-- B：建立 Amazon Redshift 叢集。 使用Redshift Spectrum直接執行S3 儲存桶(S3 bucket)中的資料上的SQL語句。Redshift Spectrum 能查詢 S3 外部資料，但通常需要管理或配置 Redshift 叢集；偶爾查詢的成本不如無伺服器 Athena。
-- D：建立 Amazon EMR 叢集。 使用Apache Spark SQL直接執行S3 儲存桶(S3 bucket)中的資料上的SQL語句。EMR 需要建立與管理叢集，對偶爾的 SQL 查詢會產生閒置與維運成本；Spark SQL 也不是此需求的最低成本選擇。
+- A：建立 Amazon Aurora MySQL 資料庫(database). 透過使用AWS 資料庫(Database)遷移服務(AWS DS)將S3 bucket的資料遷移到Aurora. 向Aurora 資料庫(database)釋出SQL宣告。先把 10 TB Parquet 匯入 Aurora 會產生資料庫儲存與載入維護成本，對偶爾的 SQL 查詢屬於過度配置。
+- B：建立 Amazon Redshift 叢集。 使用Redshift Spectrum直接執行S3 bucket中的資料上的SQL語句。Redshift Spectrum 能查詢 S3 外部資料，但通常需要管理或配置 Redshift 叢集；偶爾查詢的成本不如無伺服器 Athena。
+- D：建立 Amazon EMR 叢集。 使用Apache Spark SQL直接執行S3 bucket中的資料上的SQL語句。EMR 需要建立與管理叢集，對偶爾的 SQL 查詢會產生閒置與維運成本；Spark SQL 也不是此需求的最低成本選擇。
 
 **分類：** 分析
 
@@ -21899,12 +21899,12 @@ A
 ## Question #799
 
 **題目**
-一個公司需要從作為文字檔案儲存在Amazon S3桶中的食譜記錄中提取原料名稱. 一個網路應用程式將使用成分名稱查詢一個Amazon DynamoDB表,並確定營養分數. 該應用程式可以處理非食物記錄和錯誤. 公司沒有任何員工擁有機器學習知識來開發這種解決方案. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一個公司需要從作為文字檔案儲存在Amazon S3 bucket中的食譜記錄中提取原料名稱. 一個網路應用程式將使用成分名稱查詢一個Amazon DynamoDB表,並確定營養分數. 該應用程式可以處理非食物記錄和錯誤. 公司沒有任何員工擁有機器學習知識來開發這種解決方案. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱. 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中.
 - B. 在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon Forecast 來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中。
-- C. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 儲存桶(S3 bucket) 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中.
+- C. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 bucket 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中.
 - D. 當 Put Object 請求發生時,使用 Amazon EventBridge 規則引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon SageMaker來分析物件並提取成分名稱. 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中。
 
 **答案**
@@ -21919,7 +21919,7 @@ D
 - 其餘選項比較：
 - A：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱. 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中。Comprehend 可分析文字，但選項使用 S3 事件直接觸發且沒有明確處理非食物內容與推論錯誤的工作流控制。
 - B：在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon Forecast 來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中。Amazon Forecast 用於時間序列預測，不是從食譜文字擷取原料名稱的自然語言服務。
-- C：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 儲存桶(S3 bucket) 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中。Polly 只會把文字轉成語音，無法從食譜可靠擷取成分；要求員工人工聆聽也不具成本效益與可擴展性。
+- C：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 bucket 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中。Polly 只會把文字轉成語音，無法從食譜可靠擷取成分；要求員工人工聆聽也不具成本效益與可擴展性。
 
 **分類：** 機器學習
 
@@ -21953,13 +21953,13 @@ A
 ## Question #801
 
 **題目**
-一個金融公司需要處理高度敏感的資料. 公司將把資料儲存在Amazon S3桶中. 公司需要確保資料在中轉和休息時加密. 公司必須管理AWS雲外的加密(encryption)鍵. 哪種解決辦法能滿足這些要求?
+一個金融公司需要處理高度敏感的資料. 公司將把資料儲存在Amazon S3 bucket中. 公司需要確保資料在中轉和休息時加密. 公司必須管理AWS雲外的加密(encryption)鍵. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 用伺服器側式的加密(encryption)(SSE)加密S3 儲存桶(S3 bucket)中使用AWS Key Management Service(AWS KMS)客戶端管理的金鑰的資料.
-- B. 用伺服器側的加密(encryption)(SSE)加密S3 儲存桶(S3 bucket)中使用AWS Key Management Service(AWS KMS)AWS管理的金鑰的資料.
-- C. 用預設伺服器側加密(encryption)(SSE)加密S3 儲存桶(S3 bucket)中的資料.
-- D. 在S3 儲存桶(S3 bucket)中儲存資料之前先加密公司資料中心的資料.
+- A. 用伺服器側式的加密(encryption)(SSE)加密S3 bucket中使用AWS Key Management Service(AWS KMS)客戶端管理的金鑰的資料.
+- B. 用伺服器側的加密(encryption)(SSE)加密S3 bucket中使用AWS Key Management Service(AWS KMS)AWS管理的金鑰的資料.
+- C. 用預設伺服器側加密(encryption)(SSE)加密S3 bucket中的資料.
+- D. 在S3 bucket中儲存資料之前先加密公司資料中心的資料.
 
 **答案**
 A
@@ -21969,11 +21969,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：用伺服器側式的加密(encryption)(SSE)加密S3 儲存桶(S3 bucket)中使用AWS Key Management Service(AWS KMS)客戶端管理的金鑰的資料。S3 SSE-KMS 使用客戶管理的 KMS key，可由公司控制金鑰政策、輪替與撤銷；S3 會在儲存時加密物件。搭配 TLS 保護傳輸中的資料後，可同時滿足靜態與傳輸加密，並讓加密金鑰由 AWS 雲端外的公司管理系統掌控。
+- A：用伺服器側式的加密(encryption)(SSE)加密S3 bucket中使用AWS Key Management Service(AWS KMS)客戶端管理的金鑰的資料。S3 SSE-KMS 使用客戶管理的 KMS key，可由公司控制金鑰政策、輪替與撤銷；S3 會在儲存時加密物件。搭配 TLS 保護傳輸中的資料後，可同時滿足靜態與傳輸加密，並讓加密金鑰由 AWS 雲端外的公司管理系統掌控。
 - 其餘選項比較：
-- B：用伺服器側的加密(encryption)(SSE)加密S3 儲存桶(S3 bucket)中使用AWS Key Management Service(AWS KMS)AWS管理的金鑰的資料。AWS managed KMS key 由 AWS 管理金鑰生命週期，不能滿足公司必須在 AWS 外部管理加密金鑰的要求。
-- C：用預設伺服器側加密(encryption)(SSE)加密S3 儲存桶(S3 bucket)中的資料。S3 預設伺服器端加密使用 AWS 管理的加密機制，無法讓公司自行控制位於 AWS 外部的金鑰。
-- D：在S3 儲存桶(S3 bucket)中儲存資料之前先加密公司資料中心的資料。客戶端加密可保護靜態資料，但單獨描述在資料中心加密並未說明傳輸時的 TLS，也沒有整合 S3 的金鑰控制與使用稽核。
+- B：用伺服器側的加密(encryption)(SSE)加密S3 bucket中使用AWS Key Management Service(AWS KMS)AWS管理的金鑰的資料。AWS managed KMS key 由 AWS 管理金鑰生命週期，不能滿足公司必須在 AWS 外部管理加密金鑰的要求。
+- C：用預設伺服器側加密(encryption)(SSE)加密S3 bucket中的資料。S3 預設伺服器端加密使用 AWS 管理的加密機制，無法讓公司自行控制位於 AWS 外部的金鑰。
+- D：在S3 bucket中儲存資料之前先加密公司資料中心的資料。客戶端加密可保護靜態資料，但單獨描述在資料中心加密並未說明傳輸時的 TLS，也沒有整合 S3 的金鑰控制與使用稽核。
 
 **分類：** 安全、身分與合規
 
@@ -22146,9 +22146,9 @@ C
 
 **選項**
 - A. 使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存庫來儲存容器影象. 為 ECR 基本掃描指定按鍵過濾器的掃描。
-- B. 在Amazon S3桶中儲存容器影象. 使用Amazon Macie掃描影象. 使用 S3 事件通知啟動 Macie 掃描, 用於 s3: ObjectCreated 的每次事件 : 設定事件型別。
+- B. 在Amazon S3 bucket中儲存容器影象. 使用Amazon Macie掃描影象. 使用 S3 事件通知啟動 Macie 掃描, 用於 s3: ObjectCreated 的每次事件 : 設定事件型別。
 - C. 向Amazon Elastic Kubernetes Service(Amazon EKS)部署工作量。 使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存器. 為 ECR 增強的掃描指定按壓過濾器的掃描。
-- D. 將容器影象儲存在已啟用版本的 Amazon S3 桶中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描。
+- D. 將容器影象儲存在已啟用版本的 Amazon S3 bucket中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描。
 
 **答案**
 C
@@ -22161,8 +22161,8 @@ C
 - C：向Amazon Elastic Kubernetes Service(Amazon EKS)部署工作量。 使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存器. 為 ECR 增強的掃描指定按壓過濾器的掃描。ECR enhanced scanning 使用 Amazon Inspector 持續掃描容器映像中的套件與 CVE，能在新映像推送或弱點資料更新時產生結果。ECS 任務可直接從私人 ECR 取用映像，無需把工作負載改部署到 EKS。
 - 其餘選項比較：
 - A：使用Amazon Elastic Container Registry (Amazon ECR)作為私人影象儲存庫來儲存容器影象. 為 ECR 基本掃描指定按鍵過濾器的掃描。ECR basic scanning 的功能與掃描範圍較有限，且選項的過濾器描述無法確保任務定義使用的所有新映像都持續掃描。
-- B：在Amazon S3桶中儲存容器影象. 使用Amazon Macie掃描影象. 使用 S3 事件通知啟動 Macie 掃描, 用於 s3: ObjectCreated 的每次事件 : 設定事件型別。Amazon Macie 用於 S3 中的敏感資料發現，不是容器映像 CVE 掃描服務；把映像放進 S3 也偏離 ECS 的映像登錄流程。
-- D：將容器影象儲存在已啟用版本的 Amazon S3 桶中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描。把映像放在 S3 再由 Lambda 呼叫 Inspector 需要自行處理映像格式、事件重試與結果整合，並非 ECR 的原生容器掃描流程。
+- B：在Amazon S3 bucket中儲存容器影象. 使用Amazon Macie掃描影象. 使用 S3 事件通知啟動 Macie 掃描, 用於 s3: ObjectCreated 的每次事件 : 設定事件型別。Amazon Macie 用於 S3 中的敏感資料發現，不是容器映像 CVE 掃描服務；把映像放進 S3 也偏離 ECS 的映像登錄流程。
+- D：將容器影象儲存在已啟用版本的 Amazon S3 bucket中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描。把映像放在 S3 再由 Lambda 呼叫 Inspector 需要自行處理映像格式、事件重試與結果整合，並非 ECR 的原生容器掃描流程。
 
 **分類：** 容器
 
@@ -22250,7 +22250,7 @@ B
 ## Question #812
 
 **題目**
-一家公司在Amazon S3上擁有一臺資料湖(data lake). 資料湖(data lake)從各種資料來源以Apache Parquet格式吸收資料. 公司使用多個變換步驟來準備攝入的資料. 這些步驟包括過濾異常現象,使資料正常化,使之達到標準日期和時間值,以及產生分析所需的總量。 公司必須將轉換後的資料儲存在資料分析師存取的S3桶中. 公司需要預先構建一個不需要程式碼的資料轉換解決方案. 解決方案必須提供資料序列和資料剖析。 公司需要與全公司員工共享資料轉換步驟. 哪種解決辦法能滿足這些要求?
+一家公司在Amazon S3上擁有一臺資料湖(data lake). 資料湖(data lake)從各種資料來源以Apache Parquet格式吸收資料. 公司使用多個變換步驟來準備攝入的資料. 這些步驟包括過濾異常現象,使資料正常化,使之達到標準日期和時間值,以及產生分析所需的總量。 公司必須將轉換後的資料儲存在資料分析師存取的S3 bucket中. 公司需要預先構建一個不需要程式碼的資料轉換解決方案. 解決方案必須提供資料序列和資料剖析。 公司需要與全公司員工共享資料轉換步驟. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 AWS Glue Studio 視覺畫布來轉換資料. 透過使用AWS Glue崗位與員工共享轉型步驟.
@@ -22388,10 +22388,10 @@ B
 一個營銷團隊希望為即將到來的多體育賽事建立一場運動. 該小組有過去五年的PDF格式的新聞報道。 團隊需要一個解決方案,以獲取對新聞報道內容和情緒的深刻見解. 解決方案必須使用Amazon Textract處理新聞報道. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 向Amazon Athena提供所提取的見解以供分析。 在Amazon S3桶中儲存所提取的洞察力和分析.
+- A. 向Amazon Athena提供所提取的見解以供分析。 在Amazon S3 bucket中儲存所提取的洞察力和分析.
 - B. 在Amazon DynamoDB表格中儲存所提取的見解. 使用Amazon SageMaker來建立情感模型.
-- C. 向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 桶。
-- D. 在Amazon S3 儲存桶中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料.
+- C. 向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 bucket。
+- D. 在Amazon S3 bucket中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料.
 
 **答案**
 B
@@ -22403,22 +22403,22 @@ B
 正確答案是 **B**。
 - B：在Amazon DynamoDB表格中儲存所提取的見解. 使用Amazon SageMaker來建立情感模型。將 Textract 抽取的文字集中保存後，可用 SageMaker 建立並部署符合公司需求的情感模型。這種方式能針對新聞語料訓練模型並持續擴充分析，結果可存放在 DynamoDB 供應用程式查詢。
 - 其餘選項比較：
-- A：向Amazon Athena提供所提取的見解以供分析。 在Amazon S3桶中儲存所提取的洞察力和分析。Athena 適合以 SQL 查詢已整理的資料，但不負責從新聞文字抽取語意或情緒。僅把 Textract 結果交給 Athena，無法完成情緒分析。
-- C：向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 桶。Amazon Comprehend 是直接提供情緒與文字分析的受管服務，反而不需要自行建立模型；但題目答案指定採用 SageMaker 的自訂模型路徑。若需求是最低開銷的現成情緒分析，這個選項的服務組合才更直接。
-- D：在Amazon S3 儲存桶中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料。QuickSight 可以視覺化已整理的分析結果，卻不會從 Textract 文字本身產生情緒洞察。缺少文字分析或模型步驟，無法滿足核心需求。
+- A：向Amazon Athena提供所提取的見解以供分析。 在Amazon S3 bucket中儲存所提取的洞察力和分析。Athena 適合以 SQL 查詢已整理的資料，但不負責從新聞文字抽取語意或情緒。僅把 Textract 結果交給 Athena，無法完成情緒分析。
+- C：向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 bucket。Amazon Comprehend 是直接提供情緒與文字分析的受管服務，反而不需要自行建立模型；但題目答案指定採用 SageMaker 的自訂模型路徑。若需求是最低開銷的現成情緒分析，這個選項的服務組合才更直接。
+- D：在Amazon S3 bucket中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料。QuickSight 可以視覺化已整理的分析結果，卻不會從 Textract 文字本身產生情緒洞察。缺少文字分析或模型步驟，無法滿足核心需求。
 
 **分類：** 機器學習
 
 ## Question #818
 
 **題目**
-一家公司的應用程式執行於Amazon EC2的多個可用區(Availability Zones)例. 應用程式需要吸收第三方應用程式的實時資料. 公司需要資料攝入溶液,將攝入的原始資料放入Amazon S3桶中. 哪種解決辦法能滿足這些要求?
+一家公司的應用程式執行於Amazon EC2的多個可用區(Availability Zones)例. 應用程式需要吸收第三方應用程式的實時資料. 公司需要資料攝入溶液,將攝入的原始資料放入Amazon S3 bucket中. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立 Amazon Kinesis 資料流用於資料攝入. 建立 Amazon Kinesis 資料 Firehose 傳送流以消耗 Kinesis 資料流. 指定 S3 儲存桶(S3 bucket) 為傳送流的目的地。
-- B. 在 AWS 資料庫(Database) 遷移服務(AWS DSMS)中建立 資料庫(database) 遷移任務. 指定 EC2 的 複寫(replication) 例項為源端。 指定S3 儲存桶(S3 bucket)為目標終點。 設定遷移型別以遷移現有資料並複製正在進行的變化。
-- C. 在 EC2 例項上建立和配置 AWS 資料同步代理。 配置資料同步任務,將資料從EC2例項傳輸到S3 儲存桶(S3 bucket).
-- D. 建立與資料攝入應用程式的 AWS Direct Connect 連線。 建立 Amazon Kinesis 資料 Firehose 傳送流,從應用程式中直接消耗 PUT 操作. 指定 S3 儲存桶(S3 bucket) 為傳送流的目的地。
+- A. 建立 Amazon Kinesis 資料流用於資料攝入. 建立 Amazon Kinesis 資料 Firehose 傳送流以消耗 Kinesis 資料流. 指定 S3 bucket 為傳送流的目的地。
+- B. 在 AWS 資料庫(Database) 遷移服務(AWS DSMS)中建立 資料庫(database) 遷移任務. 指定 EC2 的 複寫(replication) 例項為源端。 指定S3 bucket為目標終點。 設定遷移型別以遷移現有資料並複製正在進行的變化。
+- C. 在 EC2 例項上建立和配置 AWS 資料同步代理。 配置資料同步任務,將資料從EC2例項傳輸到S3 bucket.
+- D. 建立與資料攝入應用程式的 AWS Direct Connect 連線。 建立 Amazon Kinesis 資料 Firehose 傳送流,從應用程式中直接消耗 PUT 操作. 指定 S3 bucket 為傳送流的目的地。
 
 **答案**
 A
@@ -22428,11 +22428,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立 Amazon Kinesis 資料流用於資料攝入. 建立 Amazon Kinesis 資料 Firehose 傳送流以消耗 Kinesis 資料流. 指定 S3 儲存桶(S3 bucket) 為傳送流的目的地。Kinesis Data Streams 可接收多個來源的即時資料，Firehose 再以受管方式緩衝、批次化並將資料交付到 S3。兩者結合可保留原始事件，且不需要自行管理消費者伺服器或資料上傳排程。
+- A：建立 Amazon Kinesis 資料流用於資料攝入. 建立 Amazon Kinesis 資料 Firehose 傳送流以消耗 Kinesis 資料流. 指定 S3 bucket 為傳送流的目的地。Kinesis Data Streams 可接收多個來源的即時資料，Firehose 再以受管方式緩衝、批次化並將資料交付到 S3。兩者結合可保留原始事件，且不需要自行管理消費者伺服器或資料上傳排程。
 - 其餘選項比較：
-- B：在 AWS 資料庫(Database) 遷移服務(AWS DSMS)中建立 資料庫(database) 遷移任務. 指定 EC2 的 複寫(replication) 例項為源端。 指定S3 儲存桶(S3 bucket)為目標終點。 設定遷移型別以遷移現有資料並複製正在進行的變化。DMS 的用途是資料庫、檔案或持續變更的遷移，不是通用第三方即時事件的串流攝入。以 EC2 複寫執行個體作為來源也無法自然接收題目描述的應用程式事件。
-- C：在 EC2 例項上建立和配置 AWS 資料同步代理。 配置資料同步任務,將資料從EC2例項傳輸到S3 儲存桶(S3 bucket)。DataSync 主要同步檔案系統、物件儲存或企業儲存設備的資料，並非即時事件串流服務。需要在 EC2 維護代理程式與任務，也增加了不必要的管理工作。
-- D：建立與資料攝入應用程式的 AWS Direct Connect 連線。 建立 Amazon Kinesis 資料 Firehose 傳送流,從應用程式中直接消耗 PUT 操作. 指定 S3 儲存桶(S3 bucket) 為傳送流的目的地。Direct Connect 是私有網路連線服務，不是第三方即時資料的必要攝入層。雖然 Firehose 可直接接受 PutRecord，但為了應用程式流量另建專線會增加成本與設計複雜度。
+- B：在 AWS 資料庫(Database) 遷移服務(AWS DSMS)中建立 資料庫(database) 遷移任務. 指定 EC2 的 複寫(replication) 例項為源端。 指定S3 bucket為目標終點。 設定遷移型別以遷移現有資料並複製正在進行的變化。DMS 的用途是資料庫、檔案或持續變更的遷移，不是通用第三方即時事件的串流攝入。以 EC2 複寫執行個體作為來源也無法自然接收題目描述的應用程式事件。
+- C：在 EC2 例項上建立和配置 AWS 資料同步代理。 配置資料同步任務,將資料從EC2例項傳輸到S3 bucket。DataSync 主要同步檔案系統、物件儲存或企業儲存設備的資料，並非即時事件串流服務。需要在 EC2 維護代理程式與任務，也增加了不必要的管理工作。
+- D：建立與資料攝入應用程式的 AWS Direct Connect 連線。 建立 Amazon Kinesis 資料 Firehose 傳送流,從應用程式中直接消耗 PUT 操作. 指定 S3 bucket 為傳送流的目的地。Direct Connect 是私有網路連線服務，不是第三方即時資料的必要攝入層。雖然 Firehose 可直接接受 PutRecord，但為了應用程式流量另建專線會增加成本與設計複雜度。
 
 **分類：** 分析
 
@@ -22443,7 +22443,7 @@ A
 
 **選項**
 - A. 建立一個 AWS Lambda 函式來過濾超過 DynatomDB 專案大小限制的資料. 將更大的資料儲存在Amazon DocumentDB(與MongoDB相容)資料庫(database)中.
-- B. 將大資料作為物件儲存在 Amazon S3 桶中。 在 DynamoDB 表格中,建立一個具有指向資料 S3 URL 屬性的專案.
+- B. 將大資料作為物件儲存在 Amazon S3 bucket中。 在 DynamoDB 表格中,建立一個具有指向資料 S3 URL 屬性的專案.
 - C. 將所有輸入的大資料分割為擁有相同分割槽金鑰的專案集合. 使用 BatchWrite 專案 API 操作,將資料寫入單個操作中的 DynamoDB 表格。
 - D. 建立一個 AWS Lambda 函式,使用 gzip 壓縮來壓縮大物件,因為它們被寫入一個 DynamoDB 表.
 
@@ -22458,7 +22458,7 @@ D
 - D：建立一個 AWS Lambda 函式,使用 gzip 壓縮來壓縮大物件,因為它們被寫入一個 DynamoDB 表。在寫入 DynamoDB 前由 Lambda 以 gzip 壓縮，可降低單項所占的位元組數，延後資料碰到 DynamoDB 400 KB 項目限制的時間。Lambda 也能在寫入與讀取邊界集中處理壓縮與解壓縮，應用程式不必自行維護多個資料庫。
 - 其餘選項比較：
 - A：建立一個 AWS Lambda 函式來過濾超過 DynatomDB 專案大小限制的資料. 將更大的資料儲存在Amazon DocumentDB(與MongoDB相容)資料庫(database)中。把超過 DynamoDB 限制的資料另存 DocumentDB 會引入第二種資料庫和額外資料模型，且仍需自行處理資料關聯。這不是最簡單的大物件儲存模式。
-- B：將大資料作為物件儲存在 Amazon S3 桶中。 在 DynamoDB 表格中,建立一個具有指向資料 S3 URL 屬性的專案。S3 加上 DynamoDB 中的物件位置通常是處理大型資料的標準設計，但本題答案指定以壓縮方式保留資料。若壓縮後仍超過 DynamoDB 單項上限，這個模式仍需額外分片或物件儲存。
+- B：將大資料作為物件儲存在 Amazon S3 bucket中。 在 DynamoDB 表格中,建立一個具有指向資料 S3 URL 屬性的專案。S3 加上 DynamoDB 中的物件位置通常是處理大型資料的標準設計，但本題答案指定以壓縮方式保留資料。若壓縮後仍超過 DynamoDB 單項上限，這個模式仍需額外分片或物件儲存。
 - C：將所有輸入的大資料分割為擁有相同分割槽金鑰的專案集合. 使用 BatchWrite 專案 API 操作,將資料寫入單個操作中的 DynamoDB 表格。把資料切成多個項目後仍使用相同分割區金鑰，可能造成熱分割區。BatchWriteItem 也有單次請求大小與項目數限制，不能單獨解決不斷增長的大型資料。
 
 **分類：** 資料庫
@@ -22523,10 +22523,10 @@ C
 一家公司最近將其應用程式遷移到AWS。 該應用程式執行在Amazon EC2 Linux例項上,在Auto Scaling 群組(Auto Scaling group)中跨越多個可用區(Availability Zones). 應用程式將資料儲存在使用EFS標準-不頻繁存取儲存的Amazon Elastic File System (Amazon EFS)中. 應用程式索引了公司的文件。 該索引儲存於Amazon RDS 資料庫(database). 公司需要透過一些應用和服務變化來最佳化儲存成本. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 建立一個Amazon S3 儲存桶,該水桶使用智慧-輪胎生命週期政策(lifecycle policy). 將所有檔案複製到 S3 儲存桶(S3 bucket)。 更新應用程式以使用Amazon S3 API來儲存和檢索檔案.
+- A. 建立一個Amazon S3 bucket,該水桶使用智慧-輪胎生命週期政策(lifecycle policy). 將所有檔案複製到 S3 bucket。 更新應用程式以使用Amazon S3 API來儲存和檢索檔案.
 - B. 為 Windows 檔案伺服器檔案共享部署 Amazon FSx。 更新應用程式以使用 CIFS 協議儲存和檢索檔案。
 - C. 為 OpenZFS 檔案系統共享部署 Amazon FSx。 更新應用程式以使用新的掛載點儲存和檢索檔案。
-- D. 建立使用 S3 Glacier Flexible Retrieval 的 Amazon S3 桶. 將所有檔案複製到 S3 儲存桶(S3 bucket)。 更新應用程式,以使用Amazon S3 API儲存和檢索檔案作為標準檢索.
+- D. 建立使用 S3 Glacier Flexible Retrieval 的 Amazon S3 bucket. 將所有檔案複製到 S3 bucket。 更新應用程式,以使用Amazon S3 API儲存和檢索檔案作為標準檢索.
 
 **答案**
 A
@@ -22536,11 +22536,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個Amazon S3 儲存桶,該水桶使用智慧-輪胎生命週期政策(lifecycle policy). 將所有檔案複製到 S3 儲存桶(S3 bucket)。 更新應用程式以使用Amazon S3 API來儲存和檢索檔案。將檔案移至 S3 後，S3 Intelligent-Tiering 會依存取模式自動在存取層之間移動物件，適合存取頻率不固定的文件。應用程式改用 S3 API，索引仍可留在 RDS，能降低 EFS 儲存成本而不必自行管理檔案伺服器。
+- A：建立一個Amazon S3 bucket,該水桶使用智慧-輪胎生命週期政策(lifecycle policy). 將所有檔案複製到 S3 bucket。 更新應用程式以使用Amazon S3 API來儲存和檢索檔案。將檔案移至 S3 後，S3 Intelligent-Tiering 會依存取模式自動在存取層之間移動物件，適合存取頻率不固定的文件。應用程式改用 S3 API，索引仍可留在 RDS，能降低 EFS 儲存成本而不必自行管理檔案伺服器。
 - 其餘選項比較：
 - B：為 Windows 檔案伺服器檔案共享部署 Amazon FSx。 更新應用程式以使用 CIFS 協議儲存和檢索檔案。FSx for Windows File Server 適合需要 SMB、Windows 語意或既有檔案伺服器相容性的工作負載，成本不一定低於 S3。題目沒有要求 CIFS，改用它也無法利用物件生命週期分層。
 - C：為 OpenZFS 檔案系統共享部署 Amazon FSx。 更新應用程式以使用新的掛載點儲存和檢索檔案。FSx for OpenZFS 仍是檔案系統，提供高效能檔案存取而非依存取頻率自動降價。將 EFS 改為另一種受管檔案系統，不能達成物件分層的成本目標。
-- D：建立使用 S3 Glacier Flexible Retrieval 的 Amazon S3 桶. 將所有檔案複製到 S3 儲存桶(S3 bucket)。 更新應用程式,以使用Amazon S3 API儲存和檢索檔案作為標準檢索。Glacier Flexible Retrieval 取回資料需要等待並可能產生取回費用，不適合應用程式頻繁即時讀取。把所有檔案放入封存層也不符合低延遲存取的要求。
+- D：建立使用 S3 Glacier Flexible Retrieval 的 Amazon S3 bucket. 將所有檔案複製到 S3 bucket。 更新應用程式,以使用Amazon S3 API儲存和檢索檔案作為標準檢索。Glacier Flexible Retrieval 取回資料需要等待並可能產生取回費用，不適合應用程式頻繁即時讀取。把所有檔案放入封存層也不符合低延遲存取的要求。
 
 **分類：** 儲存
 
@@ -22601,13 +22601,13 @@ B
 ## Question #825
 
 **題目**
-一個公司正計劃將資料遷移到一個Amazon S3桶. 資料必須在S3 儲存桶(S3 bucket)範圍內進行加密。 加密(encryption) 鍵必須每年自動輪換. 哪個解決方案能以最少的營運開銷達成這些要求？
+一個公司正計劃將資料遷移到一個Amazon S3 bucket. 資料必須在S3 bucket範圍內進行加密。 加密(encryption) 鍵必須每年自動輪換. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 將資料遷移到S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption)配有Amazon S3管理金鑰(SSE-S3). 使用SSE-S3 加密(encryption)鍵的內建金鑰旋轉行為.
-- B. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 儲存桶(S3 bucket).
-- C. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 儲存桶(S3 bucket). 每年手動旋轉KMS金鑰.
-- D. 使用客戶金鑰材料加密資料. 將資料遷移到S3 儲存桶(S3 bucket). 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。
+- A. 將資料遷移到S3 bucket. 使用伺服器側式加密(encryption)配有Amazon S3管理金鑰(SSE-S3). 使用SSE-S3 加密(encryption)鍵的內建金鑰旋轉行為.
+- B. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 bucket.
+- C. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 bucket. 每年手動旋轉KMS金鑰.
+- D. 使用客戶金鑰材料加密資料. 將資料遷移到S3 bucket. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。
 
 **答案**
 A
@@ -22617,11 +22617,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將資料遷移到S3 儲存桶(S3 bucket). 使用伺服器側式加密(encryption)配有Amazon S3管理金鑰(SSE-S3). 使用SSE-S3 加密(encryption)鍵的內建金鑰旋轉行為。SSE-S3 由 Amazon S3 管理加密金鑰，服務會自動處理金鑰輪換而不需建立自訂排程或管理金鑰材料。設定儲存桶預設使用 SSE-S3 後，新寫入物件即可在 S3 端加密。
+- A：將資料遷移到S3 bucket. 使用伺服器側式加密(encryption)配有Amazon S3管理金鑰(SSE-S3). 使用SSE-S3 加密(encryption)鍵的內建金鑰旋轉行為。SSE-S3 由 Amazon S3 管理加密金鑰，服務會自動處理金鑰輪換而不需建立自訂排程或管理金鑰材料。設定儲存桶預設使用 SSE-S3 後，新寫入物件即可在 S3 端加密。
 - 其餘選項比較：
-- B：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 儲存桶(S3 bucket)。客戶管理的 KMS 金鑰可啟用自動輪換，但會引入 KMS 金鑰政策、權限與請求成本的管理工作。題目要求最低營運負擔，使用 S3 受管金鑰更簡單。
-- C：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 儲存桶(S3 bucket) 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 儲存桶(S3 bucket). 每年手動旋轉KMS金鑰。手動每年輪換需要建立程序並承擔遺漏風險，沒有達成最低營運開銷。KMS 客戶管理金鑰應使用內建自動輪換，而非依賴人工。
-- D：使用客戶金鑰材料加密資料. 將資料遷移到S3 儲存桶(S3 bucket). 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。匯入客戶金鑰材料後，金鑰材料的生命週期、輪換與可用性都由公司負責。這會增加金鑰管理複雜度，且不是最少維運的 S3 加密方式。
+- B：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 啟用自動金鑰旋轉。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 bucket。客戶管理的 KMS 金鑰可啟用自動輪換，但會引入 KMS 金鑰政策、權限與請求成本的管理工作。題目要求最低營運負擔，使用 S3 受管金鑰更簡單。
+- C：建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 設定 S3 bucket 預設的 加密(encryption) 行為使用客戶管理的 KMS 金鑰. 將資料遷移到S3 bucket. 每年手動旋轉KMS金鑰。手動每年輪換需要建立程序並承擔遺漏風險，沒有達成最低營運開銷。KMS 客戶管理金鑰應使用內建自動輪換，而非依賴人工。
+- D：使用客戶金鑰材料加密資料. 將資料遷移到S3 bucket. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。匯入客戶金鑰材料後，金鑰材料的生命週期、輪換與可用性都由公司負責。這會增加金鑰管理複雜度，且不是最少維運的 S3 加密方式。
 
 **分類：** 儲存
 
@@ -22709,7 +22709,7 @@ D
 ## Question #829
 
 **題目**
-一家公司使用Amazon S3桶作為資料湖(data lake)儲存平臺. S3 儲存桶(S3 bucket)包含大量資料,被多個團隊和數百個應用程式隨機存取. 公司希望降低S3儲存成本,併為頻繁存取的物體提供即時可用. 滿足這些要求的MOST業務效率解決方案是什麼?
+一家公司使用Amazon S3 bucket作為資料湖(data lake)儲存平臺. S3 bucket包含大量資料,被多個團隊和數百個應用程式隨機存取. 公司希望降低S3儲存成本,併為頻繁存取的物體提供即時可用. 滿足這些要求的MOST業務效率解決方案是什麼?
 
 **選項**
 - A. 建立一個S3壽命週期規則,向 S3 Intelligent-Tiering 儲存類物件過渡.
@@ -22739,9 +22739,9 @@ A
 一家公司擁有5TB資料集. 資料集包括100萬使用者簡介和1000萬連線. 使用者配置檔案的連線與眾多的關係一樣多. 公司需要一種高效的效能方法來尋找高達五個層次的相互連線. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用Amazon S3桶儲存資料集. 使用 Amazon Athena 執行 SQL JOIN 查詢以查詢連線。
+- A. 使用Amazon S3 bucket儲存資料集. 使用 Amazon Athena 執行 SQL JOIN 查詢以查詢連線。
 - B. 使用Amazon Neptune來儲存帶有邊緣和頂點的資料集. 查詢資料查詢連線。
-- C. 使用Amazon S3桶儲存資料集. 使用Amazon QuickSight視覺化連線.
+- C. 使用Amazon S3 bucket儲存資料集. 使用Amazon QuickSight視覺化連線.
 - D. 使用Amazon RDS儲存多表的資料集. 執行 SQL JOIN 查詢以查詢連線。
 
 **答案**
@@ -22754,8 +22754,8 @@ B
 正確答案是 **B**。
 - B：使用Amazon Neptune來儲存帶有邊緣和頂點的資料集. 查詢資料查詢連線。Amazon Neptune 是受管圖形資料庫，能以頂點和邊直接表示使用者及其連線。圖形查詢語言可沿著關係遍歷多達五層，通常比在關聯式表格中反覆 JOIN 更適合這種高連接性資料集。
 - 其餘選項比較：
-- A：使用Amazon S3桶儲存資料集. 使用 Amazon Athena 執行 SQL JOIN 查詢以查詢連線。S3 與 Athena 能以 SQL 處理批次資料，但多層關聯查詢需要反覆 JOIN，難以有效表達使用者與連線的圖形遍歷。這不適合大量邊與多層關係的互動查詢。
-- C：使用Amazon S3桶儲存資料集. 使用Amazon QuickSight視覺化連線。QuickSight 主要用於報表和視覺化，不是執行五層關係遍歷的圖形查詢引擎。將資料放在 S3 也不會自動提供圖形索引。
+- A：使用Amazon S3 bucket儲存資料集. 使用 Amazon Athena 執行 SQL JOIN 查詢以查詢連線。S3 與 Athena 能以 SQL 處理批次資料，但多層關聯查詢需要反覆 JOIN，難以有效表達使用者與連線的圖形遍歷。這不適合大量邊與多層關係的互動查詢。
+- C：使用Amazon S3 bucket儲存資料集. 使用Amazon QuickSight視覺化連線。QuickSight 主要用於報表和視覺化，不是執行五層關係遍歷的圖形查詢引擎。將資料放在 S3 也不會自動提供圖形索引。
 - D：使用Amazon RDS儲存多表的資料集. 執行 SQL JOIN 查詢以查詢連線。RDS 可用多表 JOIN 表示關係，但面對大量連線與多層遍歷，查詢和索引維護會變得複雜。關聯式資料庫不是這個圖形查詢需求的專用資料模型。
 
 **分類：** 資料庫
@@ -22871,7 +22871,7 @@ C
 ## Question #835
 
 **題目**
-一家公司正在透過使用AWS Direct Connect的連線,將一個安全的前提網路擴充套件至AWS雲. 現場網路沒有直接的網際網路接入。 一個執行在premise網路上的應用程式需要使用Amazon S3桶. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司正在透過使用AWS Direct Connect的連線,將一個安全的前提網路擴充套件至AWS雲. 現場網路沒有直接的網際網路接入。 一個執行在premise網路上的應用程式需要使用Amazon S3 bucket. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 建立公共虛擬介面(VIF). 路由AWS交通透過公共VIF.
@@ -22928,7 +22928,7 @@ B
 一家公司在Amazon EC2 執行個體中執行其應用程式,由Amazon Elastic Block Store (Amazon EBS)支援. EC2例項執行最近的Amazon Linux釋出. 當公司的員工儲存和檢索25GB或更大的檔案時,應用程式的可用性出現問題. 公司需要一個不要求公司在EC2例項之間傳輸檔案的解決方案. 在許多EC2和多個可用區(Availability Zones)的案例中都必須有這些檔案。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 把所有檔案都移到一個Amazon S3桶上. 指示員工查閱S3 儲存桶(S3 bucket)的文件.
+- A. 把所有檔案都移到一個Amazon S3 bucket上. 指示員工查閱S3 bucket的文件.
 - B. 取一個快照(snapshot) 現有的EBS磁碟區. 將快照(snapshot)作為EBS的體積掛載,橫跨EC2例項. 指示僱員查閱EC2 執行個體的檔案。
 - C. 在所有 EC2 例項中掛載一個 Amazon 彈性檔案系統(Amazon EFS) 檔案系統。 指示僱員查閱EC2 執行個體的檔案。
 - D. 從 EC2 例項建立 Amazon 機器影象( AMI)。 配置使用例項儲存量的 AMI 中的新 EC2 例項。 指示僱員查閱EC2 執行個體的檔案。
@@ -22943,7 +22943,7 @@ C
 正確答案是 **C**。
 - C：在所有 EC2 例項中掛載一個 Amazon 彈性檔案系統(Amazon EFS) 檔案系統。 指示僱員查閱EC2 執行個體的檔案。Amazon EFS 是跨可用區的受管 NFS 檔案系統，可由多台 Linux EC2 同時掛載和存取同一份檔案。它不需要在執行個體間複製 25 GB 檔案，並能隨檔案容量成長而擴展。
 - 其餘選項比較：
-- A：把所有檔案都移到一個Amazon S3桶上. 指示員工查閱S3 儲存桶(S3 bucket)的文件。S3 能儲存大型物件，但要求員工改用物件 API，且不會呈現為多台 Linux EC2 可同時掛載的檔案系統。這會改變既有檔案存取方式。
+- A：把所有檔案都移到一個Amazon S3 bucket上. 指示員工查閱S3 bucket的文件。S3 能儲存大型物件，但要求員工改用物件 API，且不會呈現為多台 Linux EC2 可同時掛載的檔案系統。這會改變既有檔案存取方式。
 - B：取一個快照(snapshot) 現有的EBS磁碟區. 將快照(snapshot)作為EBS的體積掛載,橫跨EC2例項. 指示僱員查閱EC2 執行個體的檔案。EBS 磁碟區一次只能掛載到符合條件的單一執行個體，快照也只是建立新磁碟區的來源。它不能在多個可用區同時提供共享檔案。
 - D：從 EC2 例項建立 Amazon 機器影象( AMI)。 配置使用例項儲存量的 AMI 中的新 EC2 例項。 指示僱員查閱EC2 執行個體的檔案。AMI 只保存建立映像時的檔案狀態，新執行個體之間不會自動同步後續變更。Instance Store 也屬於執行個體本地且短暫的儲存，不適合跨可用區共享。
 
@@ -23039,7 +23039,7 @@ A
 - A. 將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)複製到Amazon S3 Glacier Deep Archive,保留期為7年.
 - B. 繼續現行EBS 快照(snapshot)政策. 新增政策將月度快照(snapshot)移動至Amazon EBS Snapshots Archive,保留期為7年.
 - C. 將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)在標準等級中保留7年. 使用遞增快照.
-- D. 將每日快照(snapshot)保留在EBS 快照(snapshot)標準等級. 使用EBS直接API每月拍攝所有EBS 磁碟區的快照. 將快照存放在Amazon S3 儲存桶中,在不頻繁存取層中儲存7年.
+- D. 將每日快照(snapshot)保留在EBS 快照(snapshot)標準等級. 使用EBS直接API每月拍攝所有EBS 磁碟區的快照. 將快照存放在Amazon S3 bucket中,在不頻繁存取層中儲存7年.
 
 **答案**
 A
@@ -23053,7 +23053,7 @@ A
 - 其餘選項比較：
 - B：繼續現行EBS 快照(snapshot)政策. 新增政策將月度快照(snapshot)移動至Amazon EBS Snapshots Archive,保留期為7年。EBS Snapshots Archive 適合長期保存，但題目要求將每月快照保存七年且以最低成本與管理工作完成；本選項沒有明確保留短期標準層的策略，也未說明自動生命週期管理。
 - C：將每日快照(snapshot)在EBS 快照(snapshot)標準等級保持1個月. 將每月快照(snapshot)在標準等級中保留7年. 使用遞增快照。標準快照層保存七年會產生不必要的長期儲存成本。即使快照是增量的，長期保留仍不如專用封存層經濟。
-- D：將每日快照(snapshot)保留在EBS 快照(snapshot)標準等級. 使用EBS直接API每月拍攝所有EBS 磁碟區的快照. 將快照存放在Amazon S3 儲存桶中,在不頻繁存取層中儲存7年。EBS 快照不能直接以一般 S3 物件方式手動搬到 S3 Standard-IA 來取代快照管理。自行呼叫 API、匯出和維護所有磁碟區會增加大量行政工作。
+- D：將每日快照(snapshot)保留在EBS 快照(snapshot)標準等級. 使用EBS直接API每月拍攝所有EBS 磁碟區的快照. 將快照存放在Amazon S3 bucket中,在不頻繁存取層中儲存7年。EBS 快照不能直接以一般 S3 物件方式手動搬到 S3 Standard-IA 來取代快照管理。自行呼叫 API、匯出和維護所有磁碟區會增加大量行政工作。
 
 **分類：** 儲存
 
@@ -23064,7 +23064,7 @@ A
 
 **選項**
 - A. 使用EFS-to-EFS 備份(backup)解決方案將資料複製到另一個區域(Region)中的EFS檔案系統.
-- B. 執行一個夜間指令碼,將EFS檔案系統的資料複製到一個Amazon S3桶. 啟用 S3 儲存桶(S3 bucket) 上的 S3 Cross-Region Replication。
+- B. 執行一個夜間指令碼,將EFS檔案系統的資料複製到一個Amazon S3 bucket. 啟用 S3 bucket 上的 S3 Cross-Region Replication。
 - C. 在另一個區域(Region)中建立一個 VPC. 建立跨區域(Region) VPC對等系統. 執行一個夜間的rsync,將原區域(Region)的資料複製到新的區域(Region).
 - D. 使用AWS Backup來建立備份(backup)計劃,其規則是每天使用備份(backup)並複製到另一個區域(Region). 將EFS檔案系統資源指派給備份(backup)計劃.
 
@@ -23079,7 +23079,7 @@ D
 - D：使用AWS Backup來建立備份(backup)計劃,其規則是每天使用備份(backup)並複製到另一個區域(Region). 將EFS檔案系統資源指派給備份(backup)計劃。AWS Backup 可建立集中式備份計劃，為 EFS 定義每日排程、保留期與跨區域複製規則。服務會管理備份生命週期與複製工作，能以較低的維運成本提供區域級資料保護。
 - 其餘選項比較：
 - A：使用EFS-to-EFS 備份(backup)解決方案將資料複製到另一個區域(Region)中的EFS檔案系統。EFS-to-EFS 備份解決方案通常需要自行部署與維護複製元件，並不是以 AWS 原生集中管理的備份政策完成跨區域複製。
-- B：執行一個夜間指令碼,將EFS檔案系統的資料複製到一個Amazon S3桶. 啟用 S3 儲存桶(S3 bucket) 上的 S3 Cross-Region Replication。夜間腳本、S3 匯出與 Cross-Region Replication 需要自行處理檔案一致性、失敗重試和排程。這不是最少營運負擔的 EFS 原生保護方案。
+- B：執行一個夜間指令碼,將EFS檔案系統的資料複製到一個Amazon S3 bucket. 啟用 S3 bucket 上的 S3 Cross-Region Replication。夜間腳本、S3 匯出與 Cross-Region Replication 需要自行處理檔案一致性、失敗重試和排程。這不是最少營運負擔的 EFS 原生保護方案。
 - C：在另一個區域(Region)中建立一個 VPC. 建立跨區域(Region) VPC對等系統. 執行一個夜間的rsync,將原區域(Region)的資料複製到新的區域(Region)。跨區域 VPC peering 只提供網路連通性，不能自動複製 EFS 資料。自行執行 rsync 還需管理權限、排程、差異同步和故障復原。
 
 **分類：** 儲存
@@ -23335,7 +23335,7 @@ C
 **選項**
 - A. 更新Auto Scaling 群組(Auto Scaling group)生命週期政策(lifecycle policy)中的EC2使用者資料,從最近啟動的EC2例項複製網站資產. 配置 ALB 僅在最新的 EC2 例項中更改網站資產。
 - B. 將網站資產複製到一個Amazon Elastic File System (Amazon EFS)檔案系統. 配置每個 EC2 例項以在本地掛載 EFS 檔案系統。 配置網站託管應用程式以引用儲存在EFS檔案系統中的網站資產.
-- C. 將網站資產複製到 Amazon S3 桶。 確保每個EC2例項將網站資產從S3 儲存桶(S3 bucket)下載到所附的Amazon Elastic Block Store(Amazon EBS)卷. 每小時執行一次 S3 同步命令以保持檔案的更新.
+- C. 將網站資產複製到 Amazon S3 bucket。 確保每個EC2例項將網站資產從S3 bucket下載到所附的Amazon Elastic Block Store(Amazon EBS)卷. 每小時執行一次 S3 同步命令以保持檔案的更新.
 - D. 以網站資產恢復一個Amazon Elastic Block Store(Amazon EBS 快照(snapshot)). 當啟動新的EC2例項時,將EBS 快照(snapshot)作為次要的EBS 磁碟區附後. 配置網站託管應用程式,以引用儲存在二級EBS 磁碟區中的網站資產.
 
 **答案**
@@ -23349,7 +23349,7 @@ B
 - B：將網站資產複製到一個Amazon Elastic File System (Amazon EFS)檔案系統. 配置每個 EC2 例項以在本地掛載 EFS 檔案系統。 配置網站託管應用程式以引用儲存在EFS檔案系統中的網站資產。EFS 提供跨可用區的共享檔案系統，多台 EC2 可同時掛載同一個檔案命名空間。使用者寫入的檔案和網站資產會立即由所有節點看到，不必週期性同步本地磁碟。
 - 其餘選項比較：
 - A：更新Auto Scaling 群組(Auto Scaling group)生命週期政策(lifecycle policy)中的EC2使用者資料,從最近啟動的EC2例項複製網站資產. 配置 ALB 僅在最新的 EC2 例項中更改網站資產。從最新 EC2 複製檔案只能處理啟動時或局部更新，無法讓所有執行個體即時共享使用者後續上傳的內容。ALB 也不會把檔案同步到每台主機。
-- C：將網站資產複製到 Amazon S3 桶。 確保每個EC2例項將網站資產從S3 儲存桶(S3 bucket)下載到所附的Amazon Elastic Block Store(Amazon EBS)卷. 每小時執行一次 S3 同步命令以保持檔案的更新。每小時從 S3 同步到 EBS 會造成最多一小時的內容延遲，且每台 EC2 都要維護同步命令和本地副本。它不能達成低延遲共享。
+- C：將網站資產複製到 Amazon S3 bucket。 確保每個EC2例項將網站資產從S3 bucket下載到所附的Amazon Elastic Block Store(Amazon EBS)卷. 每小時執行一次 S3 同步命令以保持檔案的更新。每小時從 S3 同步到 EBS 會造成最多一小時的內容延遲，且每台 EC2 都要維護同步命令和本地副本。它不能達成低延遲共享。
 - D：以網站資產恢復一個Amazon Elastic Block Store(Amazon EBS 快照(snapshot)). 當啟動新的EC2例項時,將EBS 快照(snapshot)作為次要的EBS 磁碟區附後. 配置網站託管應用程式,以引用儲存在二級EBS 磁碟區中的網站資產。EBS 快照是建立當下的區塊儲存副本，掛載到新執行個體後不會與其他節點同步更新。EBS 磁碟區也不是跨可用區共享檔案系統。
 
 **分類：** 儲存
@@ -23438,13 +23438,13 @@ A
 ## Question #856
 
 **題目**
-一家公司建立運營資料,並將資料儲存在Amazon S3桶中. 對於該公司的年度稽核(audit),一名外部顧問需要存取一份儲存在S3 儲存桶(S3 bucket)中的年度報告. 外部顧問需要查閱報告7天。 公司必須實施一項解決辦法,允許外部顧問只查閱報告。 哪種辦法能滿足這些要求?
+一家公司建立運營資料,並將資料儲存在Amazon S3 bucket中. 對於該公司的年度稽核(audit),一名外部顧問需要存取一份儲存在S3 bucket中的年度報告. 外部顧問需要查閱報告7天。 公司必須實施一項解決辦法,允許外部顧問只查閱報告。 哪種辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個新的S3 儲存桶(S3 bucket),配置為主機公共靜態網站. 將運算元據遷移到新的S3 儲存桶(S3 bucket). 與外部顧問共享S3網站URL.
-- B. 允許公眾存取S3 儲存桶(S3 bucket),持續7天. 外部顧問完成稽核(audit)後,取消對S3 儲存桶(S3 bucket)的存取.
-- C. 建立一個新的IAM使用者,在S3 儲存桶(S3 bucket)中存取報告. 向外部顧問提供存取鑰匙。 7天后撤銷存取金鑰.
-- D. 生成一個預簽名的URL,該URL可按規定存取S3 儲存桶(S3 bucket)上的報告位置. 與外部顧問共享預先簽名的 URL。
+- A. 建立一個新的S3 bucket,配置為主機公共靜態網站. 將運算元據遷移到新的S3 bucket. 與外部顧問共享S3網站URL.
+- B. 允許公眾存取S3 bucket,持續7天. 外部顧問完成稽核(audit)後,取消對S3 bucket的存取.
+- C. 建立一個新的IAM使用者,在S3 bucket中存取報告. 向外部顧問提供存取鑰匙。 7天后撤銷存取金鑰.
+- D. 生成一個預簽名的URL,該URL可按規定存取S3 bucket上的報告位置. 與外部顧問共享預先簽名的 URL。
 
 **答案**
 D
@@ -23454,11 +23454,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：生成一個預簽名的URL,該URL可按規定存取S3 儲存桶(S3 bucket)上的報告位置. 與外部顧問共享預先簽名的 URL。S3 預簽名 URL 可把特定物件的 GET 權限授予外部顧問，並設定七天後過期。顧問不需要 AWS 身分或長期金鑰，且不會取得整個儲存桶的列舉或寫入權限。
+- D：生成一個預簽名的URL,該URL可按規定存取S3 bucket上的報告位置. 與外部顧問共享預先簽名的 URL。S3 預簽名 URL 可把特定物件的 GET 權限授予外部顧問，並設定七天後過期。顧問不需要 AWS 身分或長期金鑰，且不會取得整個儲存桶的列舉或寫入權限。
 - 其餘選項比較：
-- A：建立一個新的S3 儲存桶(S3 bucket),配置為主機公共靜態網站. 將運算元據遷移到新的S3 儲存桶(S3 bucket). 與外部顧問共享S3網站URL。公開靜態網站會使整個網站端點暴露給所有人，並要求搬移資料。它不能只授予外部顧問單一報告的讀取權。
-- B：允許公眾存取S3 儲存桶(S3 bucket),持續7天. 外部顧問完成稽核(audit)後,取消對S3 儲存桶(S3 bucket)的存取。開放儲存桶公開讀取會讓任何人存取資料，而非只讓指定顧問讀取。事後撤銷公開權限也容易造成稽核期間的過度暴露。
-- C：建立一個新的IAM使用者,在S3 儲存桶(S3 bucket)中存取報告. 向外部顧問提供存取鑰匙。 7天后撤銷存取金鑰。把 IAM 存取金鑰交給外部人員會產生長期憑證管理與撤銷風險，也可能讓使用者取得超出單一物件的權限。這不是最小權限的臨時共享方式。
+- A：建立一個新的S3 bucket,配置為主機公共靜態網站. 將運算元據遷移到新的S3 bucket. 與外部顧問共享S3網站URL。公開靜態網站會使整個網站端點暴露給所有人，並要求搬移資料。它不能只授予外部顧問單一報告的讀取權。
+- B：允許公眾存取S3 bucket,持續7天. 外部顧問完成稽核(audit)後,取消對S3 bucket的存取。開放儲存桶公開讀取會讓任何人存取資料，而非只讓指定顧問讀取。事後撤銷公開權限也容易造成稽核期間的過度暴露。
+- C：建立一個新的IAM使用者,在S3 bucket中存取報告. 向外部顧問提供存取鑰匙。 7天后撤銷存取金鑰。把 IAM 存取金鑰交給外部人員會產生長期憑證管理與撤銷風險，也可能讓使用者取得超出單一物件的權限。這不是最小權限的臨時共享方式。
 
 **分類：** 儲存
 
@@ -23549,7 +23549,7 @@ B,C
 ## Question #860
 
 **題目**
-一個解決方案架構師正在建立一個應用程式. 該應用程式將在一個VPC中執行於跨越多個可用區(Availability Zones)的私人子網中的Amazon EC2 執行個體. EC2例項將經常查閱載有機密資訊的大型檔案。 這些檔案被儲存在Amazon S3桶中進行處理. 解決方案架構師必須最佳化網路架構,以儘量減少資料傳輸成本. 解決方案設計師應如何滿足這些要求?
+一個解決方案架構師正在建立一個應用程式. 該應用程式將在一個VPC中執行於跨越多個可用區(Availability Zones)的私人子網中的Amazon EC2 執行個體. EC2例項將經常查閱載有機密資訊的大型檔案。 這些檔案被儲存在Amazon S3 bucket中進行處理. 解決方案架構師必須最佳化網路架構,以儘量減少資料傳輸成本. 解決方案設計師應如何滿足這些要求?
 
 **選項**
 - A. 在 VPC 中建立 Amazon S3 的閘道器端點。 在私有子網的路由表中,新增一個閘道器端點的條目.
@@ -23603,13 +23603,13 @@ A
 ## Question #862
 
 **題目**
-一個公司在AWS Cloud執行一個應用程式,生成敏感的檔案資料檔案. 公司希望重新配置應用程式的資料儲存. 公司希望加密資料檔案,並確保第三方在資料加密併傳送給AWS之前無法存取資料. 該公司已經建立了Amazon S3 儲存桶. 哪種解決辦法能滿足這些要求?
+一個公司在AWS Cloud執行一個應用程式,生成敏感的檔案資料檔案. 公司希望重新配置應用程式的資料儲存. 公司希望加密資料檔案,並確保第三方在資料加密併傳送給AWS之前無法存取資料. 該公司已經建立了Amazon S3 bucket. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 配置S3 儲存桶(S3 bucket)使用客戶端的加密(encryption),並配有Amazon S3管理的加密(encryption)金鑰. 配置使用 S3 儲存桶(S3 bucket) 儲存歸檔檔案的應用程式。
-- B. 配置S3 儲存桶(S3 bucket),使用伺服器側式的加密(encryption),使用AWS KMS金鑰(SSE-KMS). 配置使用 S3 儲存桶(S3 bucket) 儲存歸檔檔案的應用程式。
-- C. 配置S3 儲存桶(S3 bucket),使用帶有AWS KMS金鑰(SSE-KMS)的雙層伺服器側式加密(encryption). 配置使用 S3 儲存桶(S3 bucket) 儲存歸檔檔案的應用程式。
-- D. 配置使用客戶端的加密(encryption)的應用程式,其金鑰儲存於AWS Key Management Service(AWS KMS). 配置將檔案檔案儲存在 S3 儲存桶(S3 bucket) 中的應用程式。
+- A. 配置S3 bucket使用客戶端的加密(encryption),並配有Amazon S3管理的加密(encryption)金鑰. 配置使用 S3 bucket 儲存歸檔檔案的應用程式。
+- B. 配置S3 bucket,使用伺服器側式的加密(encryption),使用AWS KMS金鑰(SSE-KMS). 配置使用 S3 bucket 儲存歸檔檔案的應用程式。
+- C. 配置S3 bucket,使用帶有AWS KMS金鑰(SSE-KMS)的雙層伺服器側式加密(encryption). 配置使用 S3 bucket 儲存歸檔檔案的應用程式。
+- D. 配置使用客戶端的加密(encryption)的應用程式,其金鑰儲存於AWS Key Management Service(AWS KMS). 配置將檔案檔案儲存在 S3 bucket 中的應用程式。
 
 **答案**
 D
@@ -23619,11 +23619,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：配置使用客戶端的加密(encryption)的應用程式,其金鑰儲存於AWS Key Management Service(AWS KMS). 配置將檔案檔案儲存在 S3 儲存桶(S3 bucket) 中的應用程式。用戶端加密會在應用程式把檔案上傳到 S3 之前先產生密文，因此資料途中不會以明文形式暴露。將加密金鑰儲存在 AWS KMS 可集中控管金鑰、輪替與授權，而 S3 只保存已加密的物件。
+- D：配置使用客戶端的加密(encryption)的應用程式,其金鑰儲存於AWS Key Management Service(AWS KMS). 配置將檔案檔案儲存在 S3 bucket 中的應用程式。用戶端加密會在應用程式把檔案上傳到 S3 之前先產生密文，因此資料途中不會以明文形式暴露。將加密金鑰儲存在 AWS KMS 可集中控管金鑰、輪替與授權，而 S3 只保存已加密的物件。
 - 其餘選項比較：
-- A：配置S3 儲存桶(S3 bucket)使用客戶端的加密(encryption),並配有Amazon S3管理的加密(encryption)金鑰. 配置使用 S3 儲存桶(S3 bucket) 儲存歸檔檔案的應用程式。即使採用用戶端加密，將金鑰描述為 S3 管理的金鑰並不符合由應用程式掌握加密金鑰的用戶端加密流程。SSE-S3 也只是在 S3 收到物件後才進行伺服器端加密。
-- B：配置S3 儲存桶(S3 bucket),使用伺服器側式的加密(encryption),使用AWS KMS金鑰(SSE-KMS). 配置使用 S3 儲存桶(S3 bucket) 儲存歸檔檔案的應用程式。SSE-KMS 是 S3 收到物件後執行的伺服器端加密，無法保證資料在送往 AWS 前已由應用程式完成加密。
-- C：配置S3 儲存桶(S3 bucket),使用帶有AWS KMS金鑰(SSE-KMS)的雙層伺服器側式加密(encryption). 配置使用 S3 儲存桶(S3 bucket) 儲存歸檔檔案的應用程式。雙層伺服器端加密會在 S3 端處理兩層保護，仍不符合第三方在資料傳送前就不能接觸明文的要求。
+- A：配置S3 bucket使用客戶端的加密(encryption),並配有Amazon S3管理的加密(encryption)金鑰. 配置使用 S3 bucket 儲存歸檔檔案的應用程式。即使採用用戶端加密，將金鑰描述為 S3 管理的金鑰並不符合由應用程式掌握加密金鑰的用戶端加密流程。SSE-S3 也只是在 S3 收到物件後才進行伺服器端加密。
+- B：配置S3 bucket,使用伺服器側式的加密(encryption),使用AWS KMS金鑰(SSE-KMS). 配置使用 S3 bucket 儲存歸檔檔案的應用程式。SSE-KMS 是 S3 收到物件後執行的伺服器端加密，無法保證資料在送往 AWS 前已由應用程式完成加密。
+- C：配置S3 bucket,使用帶有AWS KMS金鑰(SSE-KMS)的雙層伺服器側式加密(encryption). 配置使用 S3 bucket 儲存歸檔檔案的應用程式。雙層伺服器端加密會在 S3 端處理兩層保護，仍不符合第三方在資料傳送前就不能接觸明文的要求。
 
 **分類：** 儲存
 
@@ -23714,12 +23714,12 @@ A,B
 ## Question #866
 
 **題目**
-一家公司在VPC的多個Amazon EC2 執行個體中執行一個網路應用程式. 該應用程式需要將敏感資料寫入一個Amazon S3桶. 這些資料不能透過公共網際網路傳送。 哪種解決辦法能滿足這些要求?
+一家公司在VPC的多個Amazon EC2 執行個體中執行一個網路應用程式. 該應用程式需要將敏感資料寫入一個Amazon S3 bucket. 這些資料不能透過公共網際網路傳送。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為Amazon S3建立閘道器VPC 端點(VPC endpoint). 在 VPC 路由表中建立到終點的路由。
-- B. 建立以S3 儲存桶(S3 bucket)為目標的內部網路負載平衡器(Network Load Balancer).
-- C. 在VPC內部部署S3 儲存桶(S3 bucket),將VPC路由表中的一條路由設定到桶中.
+- B. 建立以S3 bucket為目標的內部網路負載平衡器(Network Load Balancer).
+- C. 在VPC內部部署S3 bucket,將VPC路由表中的一條路由設定到桶中.
 - D. 建立VPC和S3區域端點之間的AWS Direct Connect連線.
 
 **答案**
@@ -23732,8 +23732,8 @@ A
 正確答案是 **A**。
 - A：為Amazon S3建立閘道器VPC 端點(VPC endpoint). 在 VPC 路由表中建立到終點的路由。S3 Gateway VPC Endpoint 會在 VPC 路由表中提供通往 S3 的私有路徑，EC2 流量可經 AWS 網路送達 S3，不需經過 NAT 或公有網際網路。這也能搭配端點政策與 S3 bucket policy 限制存取範圍。
 - 其餘選項比較：
-- B：建立以S3 儲存桶(S3 bucket)為目標的內部網路負載平衡器(Network Load Balancer)。Network Load Balancer 不能把 S3 bucket 當成一般可註冊的目標，無法建立 EC2 到 S3 的服務路徑。
-- C：在VPC內部部署S3 儲存桶(S3 bucket),將VPC路由表中的一條路由設定到桶中。S3 是 AWS 區域服務，不能部署在 VPC 內，也不能在路由表中直接把 bucket 當成下一跳。
+- B：建立以S3 bucket為目標的內部網路負載平衡器(Network Load Balancer)。Network Load Balancer 不能把 S3 bucket 當成一般可註冊的目標，無法建立 EC2 到 S3 的服務路徑。
+- C：在VPC內部部署S3 bucket,將VPC路由表中的一條路由設定到桶中。S3 是 AWS 區域服務，不能部署在 VPC 內，也不能在路由表中直接把 bucket 當成下一跳。
 - D：建立VPC和S3區域端點之間的AWS Direct Connect連線。Direct Connect 可連接企業網路與 AWS，但不是 EC2 私有子網存取 S3 的成本最低做法；S3 Gateway Endpoint 已提供所需的私有路徑。
 
 **分類：** 網路連結和內容交付
@@ -23766,13 +23766,13 @@ D
 ## Question #868
 
 **題目**
-一個全球性公司在AWS上承擔其工作量. 該公司的應用使用跨AWS區域的Amazon S3桶進行敏感資料儲存和分析. 該公司每天在多個S3桶中儲存數百萬個物品. 公司希望識別所有沒有版本化的S3桶. 哪種解決辦法能滿足這些要求?
+一個全球性公司在AWS上承擔其工作量. 該公司的應用使用跨AWS區域的Amazon S3 bucket進行敏感資料儲存和分析. 該公司每天在多個S3 bucket中儲存數百萬個物品. 公司希望識別所有沒有版本化的S3 bucket. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3桶.
-- B. 使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3桶.
-- C. 啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 桶。
-- D. 建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 桶。
+- A. 設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3 bucket.
+- B. 使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3 bucket.
+- C. 啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 bucket。
+- D. 建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 bucket。
 
 **答案**
 B
@@ -23782,11 +23782,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3桶。Amazon S3 Storage Lens 能集中檢視組織與跨區域的 S3 使用狀態及資料保護指標，包含 bucket 的版本化相關資訊。用它可在不逐一掃描數百萬物件的情況下找出未啟用版本化的 bucket。
+- B：使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3 bucket。Amazon S3 Storage Lens 能集中檢視組織與跨區域的 S3 使用狀態及資料保護指標，包含 bucket 的版本化相關資訊。用它可在不逐一掃描數百萬物件的情況下找出未啟用版本化的 bucket。
 - 其餘選項比較：
-- A：設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3桶。CloudTrail 主要記錄 API 活動，不能自動盤點跨區域多個 bucket 的版本化設定並形成完整識別清單。
-- C：啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 桶。S3 IAM Access Analyzer 用於分析 bucket 政策造成的外部或跨帳戶存取，不是用來盤點版本化設定。
-- D：建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 桶。S3 Multi-Region Access Point 提供跨區域存取入口與路由，不會替公司盤點哪些 bucket 未啟用版本化。
+- A：設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3 bucket。CloudTrail 主要記錄 API 活動，不能自動盤點跨區域多個 bucket 的版本化設定並形成完整識別清單。
+- C：啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 bucket。S3 IAM Access Analyzer 用於分析 bucket 政策造成的外部或跨帳戶存取，不是用來盤點版本化設定。
+- D：建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 bucket。S3 Multi-Region Access Point 提供跨區域存取入口與路由，不會替公司盤點哪些 bucket 未啟用版本化。
 
 **分類：** 儲存
 
@@ -23955,13 +23955,13 @@ A
 ## Question #875
 
 **題目**
-一家公司在一個私人子網中執行Amazon EC2例項上的應用程式. 該應用程式需要在Amazon S3桶中儲存和檢索資料. 根據監管要求,資料不得穿越公共網際網路。 一個解決方案設計師應該做什麼才能以成本效益高的方式滿足這些要求?
+一家公司在一個私人子網中執行Amazon EC2例項上的應用程式. 該應用程式需要在Amazon S3 bucket中儲存和檢索資料. 根據監管要求,資料不得穿越公共網際網路。 一個解決方案設計師應該做什麼才能以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 部署一個NAT閘道器進入S3 儲存桶.
-- B. 部署AWS Storage Gateway進入S3 儲存桶.
-- C. 部署 S3 介面端點以存取 S3 桶。
-- D. 部署一個S3閘道器端點進入S3桶.
+- A. 部署一個NAT閘道器進入S3 bucket.
+- B. 部署AWS Storage Gateway進入S3 bucket.
+- C. 部署 S3 介面端點以存取 S3 bucket。
+- D. 部署一個S3閘道器端點進入S3 bucket.
 
 **答案**
 D
@@ -23971,11 +23971,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：部署一個S3閘道器端點進入S3桶。S3 Gateway Endpoint 直接以路由表提供 S3 的 AWS 私有網路路徑，不需 NAT，且不收取端點本身的每小時或資料處理費。對 EC2 存取 S3 的一般需求而言，這是成本效益最高的私有連線方式。
+- D：部署一個S3閘道器端點進入S3 bucket。S3 Gateway Endpoint 直接以路由表提供 S3 的 AWS 私有網路路徑，不需 NAT，且不收取端點本身的每小時或資料處理費。對 EC2 存取 S3 的一般需求而言，這是成本效益最高的私有連線方式。
 - 其餘選項比較：
-- A：部署一個NAT閘道器進入S3 儲存桶。NAT Gateway 會讓私人子網流量經由公有 IP 出站，成本也包含每 GB 處理費，並非不穿越公有網際網路的最佳選擇。
-- B：部署AWS Storage Gateway進入S3 儲存桶。Storage Gateway 是混合儲存整合服務，對單純從 EC2 私有子網存取 S3 來說配置過重且不必要。
-- C：部署 S3 介面端點以存取 S3 桶。S3 Interface Endpoint 雖然提供 PrivateLink 私有路徑，但會產生端點與資料處理費；對 EC2 一般存取 S3 的需求，成本高於 Gateway Endpoint。
+- A：部署一個NAT閘道器進入S3 bucket。NAT Gateway 會讓私人子網流量經由公有 IP 出站，成本也包含每 GB 處理費，並非不穿越公有網際網路的最佳選擇。
+- B：部署AWS Storage Gateway進入S3 bucket。Storage Gateway 是混合儲存整合服務，對單純從 EC2 私有子網存取 S3 來說配置過重且不必要。
+- C：部署 S3 介面端點以存取 S3 bucket。S3 Interface Endpoint 雖然提供 PrivateLink 私有路徑，但會產生端點與資料處理費；對 EC2 一般存取 S3 的需求，成本高於 Gateway Endpoint。
 
 **分類：** 網路連結和內容交付
 
@@ -24096,7 +24096,7 @@ A,C
 ## Question #880
 
 **題目**
-一家使用AWS Organizations的公司在30個不同的AWS帳戶中執行150個應用程式. 該公司使用AWS Cost and Usage Report在管理帳戶中建立了新報告. 報告送交一個Amazon S3桶,複製到資料收集帳戶的桶中。 公司高層領導希望從本月初開始, 哪種解決辦法能滿足這些要求?
+一家使用AWS Organizations的公司在30個不同的AWS帳戶中執行150個應用程式. 該公司使用AWS Cost and Usage Report在管理帳戶中建立了新報告. 報告送交一個Amazon S3 bucket,複製到資料收集帳戶的桶中。 公司高層領導希望從本月初開始, 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 共享包含要求的表格視覺功能的Amazon QuickSight儀表盤. 配置 QuickSight 以使用 AWS 資料同步查詢新報告。
@@ -24127,7 +24127,7 @@ B
 
 **選項**
 - A. 將CloudFront預設TTL設定為2分鐘.
-- B. 在S3 儲存桶(S3 bucket)上設定2分鐘的預設TTL.
+- B. 在S3 bucket上設定2分鐘的預設TTL.
 - C. 在 Amazon S3 中的物件中新增快取控制私人指令。
 - D. 建立一個 AWS Lambda@ Edge 函式,以便在 HTTP 回覆中新增一個過期頭。 配置在檢視器響應上執行的功能。
 - E. 向 Amazon S3 中的物件新增24小時的快取控制最大年齡指令。 部署時, 建立 CloudFront 無效, 以清除邊緣快取中任何更改的檔案。
@@ -24144,7 +24144,7 @@ A,E
 - A：將CloudFront預設TTL設定為2分鐘。將 CloudFront 預設 TTL 設為 2 分鐘，可在物件沒有明確快取標頭時仍啟用快取，並限制最多約兩分鐘的自然陳舊時間。這能顯著降低回源請求，同時比原本的 0 秒 TTL 提升效能。
 - E：向 Amazon S3 中的物件新增24小時的快取控制最大年齡指令。 部署時, 建立 CloudFront 無效, 以清除邊緣快取中任何更改的檔案。物件設定 24 小時 max-age 可讓穩定內容長時間由邊緣快取提供，降低大量回源流量。部署時針對變更物件建立 CloudFront invalidation，能立即清除舊版本，兼顧效能與部署後不提供陳舊內容。
 - 其餘選項比較：
-- B：在S3 儲存桶(S3 bucket)上設定2分鐘的預設TTL。S3 bucket 本身不是 CloudFront 的快取設定位置，設定所述預設 TTL 不會直接控制發行的邊緣快取行為。
+- B：在S3 bucket上設定2分鐘的預設TTL。S3 bucket 本身不是 CloudFront 的快取設定位置，設定所述預設 TTL 不會直接控制發行的邊緣快取行為。
 - C：在 Amazon S3 中的物件中新增快取控制私人指令。Cache-Control: private 會要求共享快取不要保存內容，與希望 CloudFront 快取靜態網站的目的相反。
 - D：建立一個 AWS Lambda@ Edge 函式,以便在 HTTP 回覆中新增一個過期頭。 配置在檢視器響應上執行的功能。只在 viewer response 階段加入 Expires 標頭太晚，無法可靠地控制 CloudFront 已建立快取物件的存留時間。
 
@@ -24353,13 +24353,13 @@ A
 ## Question #889
 
 **題目**
-一個全球性公司在AWS上承擔其工作量. 該公司的應用使用跨AWS區域的Amazon S3桶進行敏感資料儲存和分析. 該公司每天在多個S3桶中儲存數百萬個物品. 公司希望識別所有沒有版本化的S3桶. 哪種解決辦法能滿足這些要求?
+一個全球性公司在AWS上承擔其工作量. 該公司的應用使用跨AWS區域的Amazon S3 bucket進行敏感資料儲存和分析. 該公司每天在多個S3 bucket中儲存數百萬個物品. 公司希望識別所有沒有版本化的S3 bucket. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3桶.
-- B. 使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3桶.
-- C. 啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 桶。
-- D. 建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 桶。
+- A. 設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3 bucket.
+- B. 使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3 bucket.
+- C. 啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 bucket。
+- D. 建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 bucket。
 
 **答案**
 B
@@ -24369,11 +24369,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3桶。S3 Storage Lens 提供組織與跨區域的 bucket 使用與資料保護指標，可集中識別版本化設定缺失的 bucket。它不需要逐一處理每天數百萬個物件，因此適合這種資產盤點需求。
+- B：使用Amazon S3 Storage Lens識別所有沒有跨區域版本化的S3 bucket。S3 Storage Lens 提供組織與跨區域的 bucket 使用與資料保護指標，可集中識別版本化設定缺失的 bucket。它不需要逐一處理每天數百萬個物件，因此適合這種資產盤點需求。
 - 其餘選項比較：
-- A：設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3桶。CloudTrail 記錄 API 呼叫事件，不能有效盤點跨區域多個 S3 bucket 的版本化狀態。
-- C：啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 桶。IAM Access Analyzer 分析資源政策與外部存取路徑，不會列出哪些 bucket 未啟用 S3 Versioning。
-- D：建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 桶。Multi-Region Access Point 是統一端點與流量路由機制，不負責找出 bucket 的版本化設定。
+- A：設定一個 AWS CloudTrail 事件,該事件有一條規則來識別所有沒有版本啟用跨區域的S3 bucket。CloudTrail 記錄 API 呼叫事件，不能有效盤點跨區域多個 S3 bucket 的版本化狀態。
+- C：啟用 S3 的 IAM 存取分析器, 以識別所有沒有跨區域版本的 S3 bucket。IAM Access Analyzer 分析資源政策與外部存取路徑，不會列出哪些 bucket 未啟用 S3 Versioning。
+- D：建立 S3 Multi-Region Access Point , 以識別所有沒有跨區域版本的 S3 bucket。Multi-Region Access Point 是統一端點與流量路由機制，不負責找出 bucket 的版本化設定。
 
 **分類：** 儲存
 
@@ -24407,12 +24407,12 @@ D
 ## Question #891
 
 **題目**
-一家公司在AWS雲執行其關鍵儲存應用程式. 該應用程式在兩個AWS地區使用Amazon S3. 公司希望應用程式將遠端使用者資料傳送到最近的S3 儲存桶(S3 bucket),沒有公共網路擁堵. 公司還希望Amazon S3的管理量最小的應用程式失敗. 哪種解決辦法能滿足這些要求?
+一家公司在AWS雲執行其關鍵儲存應用程式. 該應用程式在兩個AWS地區使用Amazon S3. 公司希望應用程式將遠端使用者資料傳送到最近的S3 bucket,沒有公共網路擁堵. 公司還希望Amazon S3的管理量最小的應用程式失敗. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 在兩個大區之間實施積極的設計。 配置應用程式以使用最接近使用者的區域 S3 端點。
 - B. 使用S3 Multi-Region Access Points的主動被動配置. 為每個區域建立一個全球終點。
-- C. 將使用者資料傳送給最接近使用者的區域S3端點. 配置 S3 跨帳戶 複寫(replication) 規則,使 S3 桶保持同步。
+- C. 將使用者資料傳送給最接近使用者的區域S3端點. 配置 S3 跨帳戶 複寫(replication) 規則,使 S3 bucket保持同步。
 - D. 設定Amazon S3,使用多區域(Region)Access Points在具有單一全域性終點的活性配置中. 配置 S3 跨 區域(Region) 複寫(Replication).
 
 **答案**
@@ -24426,7 +24426,7 @@ B
 - B：使用S3 Multi-Region Access Points的主動被動配置. 為每個區域建立一個全球終點。S3 Multi-Region Access Points 可為多個區域提供受管理的全球入口；以 active-passive 配置可讓主要區域承接流量，故障時切換至另一區域。搭配跨區域複寫，可保留遠端資料副本並減少應用程式自行處理 S3 故障切換的工作。
 - 其餘選項比較：
 - A：在兩個大區之間實施積極的設計。 配置應用程式以使用最接近使用者的區域 S3 端點。由應用程式自行選擇區域端點需要自行處理延遲判斷、故障切換與同步，增加 S3 管理邏輯與維護負擔。
-- C：將使用者資料傳送給最接近使用者的區域S3端點. 配置 S3 跨帳戶 複寫(replication) 規則,使 S3 桶保持同步。跨區域複寫可同步物件，但仍需應用程式自行把使用者導向最近端點，不能自動提供單一入口和區域故障切換。
+- C：將使用者資料傳送給最接近使用者的區域S3端點. 配置 S3 跨帳戶 複寫(replication) 規則,使 S3 bucket保持同步。跨區域複寫可同步物件，但仍需應用程式自行把使用者導向最近端點，不能自動提供單一入口和區域故障切換。
 - D：設定Amazon S3,使用多區域(Region)Access Points在具有單一全域性終點的活性配置中. 配置 S3 跨 區域(Region) 複寫(Replication)。Active-active 會讓兩個區域同時承接流量，對關鍵儲存應用可能增加資料一致性與衝突處理責任；題目要求的主動區域與故障切換較適合 active-passive。
 
 **分類：** 儲存
@@ -24491,8 +24491,8 @@ A
 一家公司在應用程式負載平衡器(Application Load Balancer)(ALB)背後設有關於Amazon EC2例項的網站。 該網站服務於靜態內容. 網站流量在增加。 公司希望儘量減少網站託管費用. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 將網站移至Amazon S3桶. 配置 S3 儲存桶(S3 bucket) 的 Amazon CloudFront 分佈。
-- B. 將網站移至Amazon S3桶. 為 S3 儲存桶(S3 bucket) 配置 Amazon ElastiCache 叢集。
+- A. 將網站移至Amazon S3 bucket. 配置 S3 bucket 的 Amazon CloudFront 分佈。
+- B. 將網站移至Amazon S3 bucket. 為 S3 bucket 配置 Amazon ElastiCache 叢集。
 - C. 將網站移至 AWS 擴充套件。 配置 ALB 以解析到 Amplify 網站。
 - D. 將網站移至 AWS 擴充套件。 配置 EC2 例項以快取網站。
 
@@ -24504,9 +24504,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：將網站移至Amazon S3桶. 配置 S3 儲存桶(S3 bucket) 的 Amazon CloudFront 分佈。S3 以高耐久度儲存靜態物件，CloudFront 可在邊緣節點快取並就近服務全球請求，取代持續運作的 EC2 與 ALB。這同時降低主機、負載平衡器與擴展管理成本，並提高靜態網站的處理能力。
+- A：將網站移至Amazon S3 bucket. 配置 S3 bucket 的 Amazon CloudFront 分佈。S3 以高耐久度儲存靜態物件，CloudFront 可在邊緣節點快取並就近服務全球請求，取代持續運作的 EC2 與 ALB。這同時降低主機、負載平衡器與擴展管理成本，並提高靜態網站的處理能力。
 - 其餘選項比較：
-- B：將網站移至Amazon S3桶. 為 S3 儲存桶(S3 bucket) 配置 Amazon ElastiCache 叢集。ElastiCache 不是 S3 靜態網站的標準全球內容交付層，還需自行維護快取叢集，無法像 CloudFront 一樣提供邊緣節點服務。
+- B：將網站移至Amazon S3 bucket. 為 S3 bucket 配置 Amazon ElastiCache 叢集。ElastiCache 不是 S3 靜態網站的標準全球內容交付層，還需自行維護快取叢集，無法像 CloudFront 一樣提供邊緣節點服務。
 - C：將網站移至 AWS 擴充套件。 配置 ALB 以解析到 Amplify 網站。Amplify 可託管前端，但將 ALB 保留在路徑中仍會產生不必要的負載平衡器成本；純靜態內容由 S3 與 CloudFront 直接提供更簡單。
 - D：將網站移至 AWS 擴充套件。 配置 EC2 例項以快取網站。EC2 快取仍需維護執行個體與擴展機制，不能達到把靜態網站移至受管理儲存與邊緣快取後的成本降低效果。
 
@@ -24600,8 +24600,8 @@ A
 
 **選項**
 - A. 在 AWS 湖形成中配置一個 資料湖(data lake)。 使用AWS Glue爬蟲將安全資料攝入資料湖(data lake).
-- B. 配置 AWS Lambda 函式,以.csv格式收集安全資料. 上傳資料到 Amazon S3 桶中。
-- C. 在 Amazon 安全配置 資料湖(data lake) 湖來收集安全資料. 上傳資料到 Amazon S3 桶中。
+- B. 配置 AWS Lambda 函式,以.csv格式收集安全資料. 上傳資料到 Amazon S3 bucket中。
+- C. 在 Amazon 安全配置 資料湖(data lake) 湖來收集安全資料. 上傳資料到 Amazon S3 bucket中。
 - D. 配置 AWS 資料庫(Database) 遷移服務(AWS DMS) 複寫(replication) 例項,將安全資料載入到 Amazon RDS 叢集中.
 
 **答案**
@@ -24612,10 +24612,10 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在 Amazon 安全配置 資料湖(data lake) 湖來收集安全資料. 上傳資料到 Amazon S3 桶中。Amazon Security Lake 是專門的安全資料湖服務，可集中收集、正規化並管理來自 AWS 帳戶與安全工具的安全事件。使用其內建整合即可建立全公司的安全觀測基礎，比自行開發 Lambda、Glue 或 DMS 管線需要更少工作。
+- C：在 Amazon 安全配置 資料湖(data lake) 湖來收集安全資料. 上傳資料到 Amazon S3 bucket中。Amazon Security Lake 是專門的安全資料湖服務，可集中收集、正規化並管理來自 AWS 帳戶與安全工具的安全事件。使用其內建整合即可建立全公司的安全觀測基礎，比自行開發 Lambda、Glue 或 DMS 管線需要更少工作。
 - 其餘選項比較：
 - A：在 AWS 湖形成中配置一個 資料湖(data lake)。 使用AWS Glue爬蟲將安全資料攝入資料湖(data lake)。Lake Formation 能治理資料湖，但用 Glue 爬蟲自行蒐集各安全服務資料仍需建立多個來源與載入流程，開發工作較多。
-- B：配置 AWS Lambda 函式,以.csv格式收集安全資料. 上傳資料到 Amazon S3 桶中。以 Lambda 自訂 CSV 收集安全資料需要自行處理每個服務的格式、排程、錯誤與集中權限，營運開銷高且不完整。
+- B：配置 AWS Lambda 函式,以.csv格式收集安全資料. 上傳資料到 Amazon S3 bucket中。以 Lambda 自訂 CSV 收集安全資料需要自行處理每個服務的格式、排程、錯誤與集中權限，營運開銷高且不完整。
 - D：配置 AWS 資料庫(Database) 遷移服務(AWS DMS) 複寫(replication) 例項,將安全資料載入到 Amazon RDS 叢集中。DMS 針對資料庫來源的遷移與複寫，並不負責集中收集和正規化安全事件，也會把資料導向不適合此用途的 RDS。
 
 **分類：** 安全、身分與合規
@@ -24685,7 +24685,7 @@ A,B
 **選項**
 - A. 將資料庫遷移到 Amazon EC2 例項。 為加密(encryption)使用 AWS Key Management Service(AWS KMS) AWS管理金鑰.
 - B. 將資料庫遷移到 SQL 伺服器 DB 例項的多 AZ Amazon RDS。 為加密(encryption)使用 AWS Key Management Service(AWS KMS) AWS管理金鑰.
-- C. 將資料移動到一個Amazon S3桶. 使用Amazon Macie來確保資料安全.
+- C. 將資料移動到一個Amazon S3 bucket. 使用Amazon Macie來確保資料安全.
 - D. 將資料庫遷移到 Amazon DynamoDB 表格。 使用Amazon CloudWatch Logs來確保資料安全.
 
 **答案**
@@ -24699,7 +24699,7 @@ B
 - B：將資料庫遷移到 SQL 伺服器 DB 例項的多 AZ Amazon RDS。 為加密(encryption)使用 AWS Key Management Service(AWS KMS) AWS管理金鑰。Amazon RDS for SQL Server Multi-AZ 會由 AWS 管理資料庫修補、備份與故障切換，並在待命區域維持同步副本以提升可用性。啟用 KMS 儲存加密可保護靜態敏感資料，同時比 EC2 自行管理更少營運工作。
 - 其餘選項比較：
 - A：將資料庫遷移到 Amazon EC2 例項。 為加密(encryption)使用 AWS Key Management Service(AWS KMS) AWS管理金鑰。在 EC2 上自管 SQL Server 仍需自行負責作業系統、資料庫修補、備份與故障切換；KMS 加密本身不能降低這些營運負擔。
-- C：將資料移動到一個Amazon S3桶. 使用Amazon Macie來確保資料安全。S3 與 Macie 適合物件儲存和敏感資料發現，但把關聯式 SQL Server 搬成檔案物件會改變應用程式與查詢模型，不能直接滿足資料庫需求。
+- C：將資料移動到一個Amazon S3 bucket. 使用Amazon Macie來確保資料安全。S3 與 Macie 適合物件儲存和敏感資料發現，但把關聯式 SQL Server 搬成檔案物件會改變應用程式與查詢模型，不能直接滿足資料庫需求。
 - D：將資料庫遷移到 Amazon DynamoDB 表格。 使用Amazon CloudWatch Logs來確保資料安全。DynamoDB 是 NoSQL 表格服務，遷移 SQL Server 會需要重新設計 schema 與存取模式；CloudWatch Logs 也不是資料加密或資料庫安全控制。
 
 **分類：** 資料庫
@@ -24734,13 +24734,13 @@ A
 ## Question #903
 
 **題目**
-一家公司在眾多應用程式存取的Amazon S3桶中管理一臺資料湖(data lake). S3 儲存桶(S3 bucket)包含每個應用程式獨有的字首. 公司希望將每個應用程式限制在自己的特定字首,並對每個字首下的物件進行顆粒控制. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司在眾多應用程式存取的Amazon S3 bucket中管理一臺資料湖(data lake). S3 bucket包含每個應用程式獨有的字首. 公司希望將每個應用程式限制在自己的特定字首,並對每個字首下的物件進行顆粒控制. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 為每個應用程式建立專門的S3存取點和存取點政策.
-- B. 建立一個 S3 Batch Operations 任務,為 S3 儲存桶(S3 bucket) 中的每個物件設定 ACL 許可權。
-- C. 每個應用程式將 S3 儲存桶(S3 bucket) 中的物件複製到新的 S3 桶。 透過字首建立複寫(replication)規則.
-- D. 每個應用程式將 S3 儲存桶(S3 bucket) 中的物件複製到新的 S3 桶。 為每個應用程式建立專門的S3存取點.
+- B. 建立一個 S3 Batch Operations 任務,為 S3 bucket 中的每個物件設定 ACL 許可權。
+- C. 每個應用程式將 S3 bucket 中的物件複製到新的 S3 bucket。 透過字首建立複寫(replication)規則.
+- D. 每個應用程式將 S3 bucket 中的物件複製到新的 S3 bucket。 為每個應用程式建立專門的S3存取點.
 
 **答案**
 A
@@ -24752,16 +24752,16 @@ A
 正確答案是 **A**。
 - A：為每個應用程式建立專門的S3存取點和存取點政策。S3 Access Point 可為每個應用程式提供獨立的網路入口與資源政策，並在政策中以 prefix 條件限制只能存取自己的物件。這避免搬移或複製資料，能以集中且細粒度的政策達成隔離，維運量最低。
 - 其餘選項比較：
-- B：建立一個 S3 Batch Operations 任務,為 S3 儲存桶(S3 bucket) 中的每個物件設定 ACL 許可權。對每個物件設定 ACL 需要大量批次操作與持續同步，管理量高，也不如 Access Point 政策容易依應用程式維護。
-- C：每個應用程式將 S3 儲存桶(S3 bucket) 中的物件複製到新的 S3 桶。 透過字首建立複寫(replication)規則。把資料複製到不同 bucket 會增加儲存、複寫與資料生命週期管理成本；題目只要求存取隔離，不需要複製資料。
-- D：每個應用程式將 S3 儲存桶(S3 bucket) 中的物件複製到新的 S3 桶。 為每個應用程式建立專門的S3存取點。即使各應用程式使用專屬 Access Point，先複製到新 bucket 仍造成不必要的資料搬遷與雙份儲存，營運開銷高於直接限制原 bucket prefix。
+- B：建立一個 S3 Batch Operations 任務,為 S3 bucket 中的每個物件設定 ACL 許可權。對每個物件設定 ACL 需要大量批次操作與持續同步，管理量高，也不如 Access Point 政策容易依應用程式維護。
+- C：每個應用程式將 S3 bucket 中的物件複製到新的 S3 bucket。 透過字首建立複寫(replication)規則。把資料複製到不同 bucket 會增加儲存、複寫與資料生命週期管理成本；題目只要求存取隔離，不需要複製資料。
+- D：每個應用程式將 S3 bucket 中的物件複製到新的 S3 bucket。 為每個應用程式建立專門的S3存取點。即使各應用程式使用專屬 Access Point，先複製到新 bucket 仍造成不必要的資料搬遷與雙份儲存，營運開銷高於直接限制原 bucket prefix。
 
 **分類：** 儲存
 
 ## Question #904
 
 **題目**
-一家公司有一個客戶用來將影象上傳到Amazon S3桶的應用程式. 每天晚上,公司都會推出一個Amazon EC2 Spot Fleet,處理公司當天收到的所有影象. 每個影象的處理需要2分鐘,需要512 MB的記憶體. 一個解決方案架構師需要修改應用程式,在影象上傳時處理影象. 哪些變化將以符合成本效益的方式滿足這些要求?
+一家公司有一個客戶用來將影象上傳到Amazon S3 bucket的應用程式. 每天晚上,公司都會推出一個Amazon EC2 Spot Fleet,處理公司當天收到的所有影象. 每個影象的處理需要2分鐘,需要512 MB的記憶體. 一個解決方案架構師需要修改應用程式,在影象上傳時處理影象. 哪些變化將以符合成本效益的方式滿足這些要求?
 
 **選項**
 - A. 使用 S3 事件通知將帶有影象細節的訊息寫入一個Amazon Simple Queue Service (Amazon SQS)佇列. 配置 AWS Lambda 函式以讀取佇列中的訊息並處理影象。
@@ -24841,13 +24841,13 @@ A
 ## Question #907
 
 **題目**
-公司希望使用AWS CloudFormation堆疊在測試環境中應用. 公司將Cloud Formation模板儲存在Amazon S3桶中,阻礙公眾存取. 公司希望根據特定使用者建立測試環境的要求,允許CloudFormation存取S3 儲存桶(S3 bucket)中的模板. 解決辦法必須遵循安全最佳做法。 哪種解決辦法能滿足這些要求?
+公司希望使用AWS CloudFormation堆疊在測試環境中應用. 公司將Cloud Formation模板儲存在Amazon S3 bucket中,阻礙公眾存取. 公司希望根據特定使用者建立測試環境的要求,允許CloudFormation存取S3 bucket中的模板. 解決辦法必須遵循安全最佳做法。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為Amazon S3建立閘道器VPC 端點(VPC endpoint). 配置 CloudFormation 堆疊以使用 S3 物件 URL。
-- B. 建立一個以S3 儲存桶(S3 bucket)為目標的Amazon API Gateway REST API. 配置 CloudFormation 堆疊以使用 API Gateway URL。
+- B. 建立一個以S3 bucket為目標的Amazon API Gateway REST API. 配置 CloudFormation 堆疊以使用 API Gateway URL。
 - C. 為模板物件建立預先簽名的 URL。 配置 CloudFormation 堆疊以使用預先簽名的 URL。
-- D. 允許公眾存取S3 儲存桶(S3 bucket)中的模板物件. 在建立測試環境後遮蔽公眾存取.
+- D. 允許公眾存取S3 bucket中的模板物件. 在建立測試環境後遮蔽公眾存取.
 
 **答案**
 C
@@ -24858,8 +24858,8 @@ C
 - C：為模板物件建立預先簽名的 URL。 配置 CloudFormation 堆疊以使用預先簽名的 URL。S3 預簽名 URL 以產生者的權限建立限時、限物件的存取授權，bucket 可以維持封鎖公眾存取。將該 URL 提供給 CloudFormation，可讓特定部署在短時間內讀取模板而不暴露整個 bucket。
 - 其餘選項比較：
 - A：為Amazon S3建立閘道器VPC 端點(VPC endpoint). 配置 CloudFormation 堆疊以使用 S3 物件 URL。S3 Gateway Endpoint 只提供 VPC 內資源到 S3 的私有路徑，不能讓 CloudFormation 在指定使用者請求下自動取得私有物件的授權。
-- B：建立一個以S3 儲存桶(S3 bucket)為目標的Amazon API Gateway REST API. 配置 CloudFormation 堆疊以使用 API Gateway URL。用 API Gateway 代理 S3 物件會增加 API、授權與整合配置，對 CloudFormation 模板存取是不必要的額外元件。
-- D：允許公眾存取S3 儲存桶(S3 bucket)中的模板物件. 在建立測試環境後遮蔽公眾存取。短暫開啟物件公開存取仍會在部署期間暴露模板，且容易因忘記復原而造成資料外洩，不符合安全最佳做法。
+- B：建立一個以S3 bucket為目標的Amazon API Gateway REST API. 配置 CloudFormation 堆疊以使用 API Gateway URL。用 API Gateway 代理 S3 物件會增加 API、授權與整合配置，對 CloudFormation 模板存取是不必要的額外元件。
+- D：允許公眾存取S3 bucket中的模板物件. 在建立測試環境後遮蔽公眾存取。短暫開啟物件公開存取仍會在部署期間暴露模板，且容易因忘記復原而造成資料外洩，不符合安全最佳做法。
 
 **分類：** 儲存
 
@@ -24922,7 +24922,7 @@ D
 - A. 傳送Amazon CloudWatch日誌至Amazon Redshift. 使用Amazon QuickS ght進行進一步的分析.
 - B. 在所有 EC2 例項上啟用詳細的 監控(monitoring)。 使用Amazon CloudWatch度量衡進行進一步分析.
 - C. 建立 AWS Lambda 函式從 Amazon CloudWatch Logs 獲取 EC2 日誌。 使用Amazon CloudWatch度量衡進行進一步分析.
-- D. 將EC2日誌傳送到Amazon S3. 使用Amazon Redshift從S3 儲存桶(S3 bucket)獲取日誌處理原始資料,以便與Amazon QuickSight進行進一步分析.
+- D. 將EC2日誌傳送到Amazon S3. 使用Amazon Redshift從S3 bucket獲取日誌處理原始資料,以便與Amazon QuickSight進行進一步分析.
 
 **答案**
 B
@@ -24934,20 +24934,20 @@ B
 - 其餘選項比較：
 - A：傳送Amazon CloudWatch日誌至Amazon Redshift. 使用Amazon QuickS ght進行進一步的分析。把 CloudWatch Logs 搬到 Redshift 再用 QuickSight 分析會增加資料管線與查詢延遲，不能保證不超過兩分鐘的指標粒度。
 - C：建立 AWS Lambda 函式從 Amazon CloudWatch Logs 獲取 EC2 日誌。 使用Amazon CloudWatch度量衡進行進一步分析。Lambda 從 Logs 取回資料再產生分析會增加自訂程式與延遲，且 CloudWatch Logs 本身不等於細粒度的 EC2 效能指標。
-- D：將EC2日誌傳送到Amazon S3. 使用Amazon Redshift從S3 儲存桶(S3 bucket)獲取日誌處理原始資料,以便與Amazon QuickSight進行進一步分析。S3、Redshift 與 QuickSight 的批次分析流程適合歷史資料，不適合節慶尖峰期間需要兩分鐘內粒度的即時效能觀察。
+- D：將EC2日誌傳送到Amazon S3. 使用Amazon Redshift從S3 bucket獲取日誌處理原始資料,以便與Amazon QuickSight進行進一步分析。S3、Redshift 與 QuickSight 的批次分析流程適合歷史資料，不適合節慶尖峰期間需要兩分鐘內粒度的即時效能觀察。
 
 **分類：** 管理與控管
 
 ## Question #911
 
 **題目**
-一家公司執行一個儲存和分享照片的應用程式. 使用者將照片上傳到Amazon S3桶. 每天,使用者上傳大約150張照片. 公司希望設計一個解決方案,建立每張新照片的縮圖,並將縮圖儲存在第二張S3 儲存桶(S3 bucket)中. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司執行一個儲存和分享照片的應用程式. 使用者將照片上傳到Amazon S3 bucket. 每天,使用者上傳大約150張照片. 公司希望設計一個解決方案,建立每張新照片的縮圖,並將縮圖儲存在第二張S3 bucket中. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
-- A. 配置一個 Amazon EventBridge 預定規則,以便在一個長期執行的 Amazon EMR 叢集上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。
-- B. 配置 Amazon EventBridge 預定規則,在總是在執行的記憶體最佳化的 Amazon EC2 例項上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。
-- C. 配置 S3 事件通知以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖並將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。
-- D. 配置 S3 Storage Lens 以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖,並將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。
+- A. 配置一個 Amazon EventBridge 預定規則,以便在一個長期執行的 Amazon EMR 叢集上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 bucket。
+- B. 配置 Amazon EventBridge 預定規則,在總是在執行的記憶體最佳化的 Amazon EC2 例項上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 bucket。
+- C. 配置 S3 事件通知以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖並將縮圖上傳到第二個 S3 bucket。
+- D. 配置 S3 Storage Lens 以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖,並將縮圖上傳到第二個 S3 bucket。
 
 **答案**
 C
@@ -24955,18 +24955,18 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：配置 S3 事件通知以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖並將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。S3 事件通知可在新物件建立後立即觸發 Lambda，函式只為實際上傳的照片產生縮圖。Lambda 按請求計費且不需維護伺服器，再把結果寫入另一個 S3 儲存桶，適合低頻且突發的工作量。
+- C：配置 S3 事件通知以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖並將縮圖上傳到第二個 S3 bucket。S3 事件通知可在新物件建立後立即觸發 Lambda，函式只為實際上傳的照片產生縮圖。Lambda 按請求計費且不需維護伺服器，再把結果寫入另一個 S3 bucket，適合低頻且突發的工作量。
 - 其餘選項比較：
-- A：配置一個 Amazon EventBridge 預定規則,以便在一個長期執行的 Amazon EMR 叢集上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。長時間執行的 EMR 叢集需要持續支付叢集運算資源，對每天僅約 150 張圖片的工作量過度配置。排程輪詢也會增加延遲與維運工作。
-- B：配置 Amazon EventBridge 預定規則,在總是在執行的記憶體最佳化的 Amazon EC2 例項上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。常駐的記憶體最佳化 EC2 執行個體會產生持續的運算成本，且每分鐘掃描並不需要的檔案不是事件驅動設計。
-- D：配置 S3 Storage Lens 以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖,並將縮圖上傳到第二個 S3 儲存桶(S3 bucket)。S3 Storage Lens 用於儲存使用量、活動與成本分析，不是每次物件上傳時觸發處理函式的事件來源。
+- A：配置一個 Amazon EventBridge 預定規則,以便在一個長期執行的 Amazon EMR 叢集上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 bucket。長時間執行的 EMR 叢集需要持續支付叢集運算資源，對每天僅約 150 張圖片的工作量過度配置。排程輪詢也會增加延遲與維運工作。
+- B：配置 Amazon EventBridge 預定規則,在總是在執行的記憶體最佳化的 Amazon EC2 例項上每分鐘引用一個指令碼. 配置指令碼為沒有縮圖的照片生成縮圖。 配置指令碼將縮圖上傳到第二個 S3 bucket。常駐的記憶體最佳化 EC2 執行個體會產生持續的運算成本，且每分鐘掃描並不需要的檔案不是事件驅動設計。
+- D：配置 S3 Storage Lens 以引用 AWS Lambda 函式,每次使用者嚮應用程式上傳新照片. 配置 Lambda 函式生成縮圖,並將縮圖上傳到第二個 S3 bucket。S3 Storage Lens 用於儲存使用量、活動與成本分析，不是每次物件上傳時觸發處理函式的事件來源。
 
 **分類：** 無伺服器
 
 ## Question #912
 
 **題目**
-一家公司透過使用Amazon S3 Glacier Deep Archive儲存類,在Amazon S3桶中儲存了跨越多個字首的數百萬個物件. 公司需要刪除所有3年以上的資料,但必須保留的一個資料子集除外. 公司已經確定了必須保留的資料,並希望實施無伺服器解決方案. 哪種解決辦法能滿足這些要求?
+一家公司透過使用Amazon S3 Glacier Deep Archive儲存類,在Amazon S3 bucket中儲存了跨越多個字首的數百萬個物件. 公司需要刪除所有3年以上的資料,但必須保留的一個資料子集除外. 公司已經確定了必須保留的資料,並希望實施無伺服器解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用 S3 庫存來列出所有物件。 使用 AWS CLI 建立一個執行在 Amazon EC2 例項上的指令碼,從目錄列表中刪除物件.
@@ -24991,12 +24991,12 @@ D
 ## Question #913
 
 **題目**
-一家公司正在AWS上建立一個應用程式. 該應用程式使用多個AWS Lambda功能,從一個單一的Amazon S3桶中獲取敏感資料進行處理. 公司必須確保只有經授權的Lambda功能才能存取資料. 解決辦法必須符合最小權限(least privilege)原則。 哪種解決辦法能滿足這些要求?
+一家公司正在AWS上建立一個應用程式. 該應用程式使用多個AWS Lambda功能,從一個單一的Amazon S3 bucket中獲取敏感資料進行處理. 公司必須確保只有經授權的Lambda功能才能存取資料. 解決辦法必須符合最小權限(least privilege)原則。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 透過一個共享的IAM角色,給予所有LOSS0001功能的全部存取許可權.
 - B. 配置 Lambda 函式在一個 VPC 內執行。 配置一個儲存桶政策(bucket policy),以根據Lambda函式的VPC 端點(VPC endpoint) IP地址授予存取許可權.
-- C. 為每個Lambda函式建立單個IAM角色. 允許IAM角色進入S3 儲存桶(S3 bucket). 將每個IAM角色指定為Lambda執行角色,用於相應的Lambda功能.
+- C. 為每個Lambda函式建立單個IAM角色. 允許IAM角色進入S3 bucket. 將每個IAM角色指定為Lambda執行角色,用於相應的Lambda功能.
 - D. 配置一個 儲存桶政策(bucket policy), 根據其功能 ARNs 允許存取 Lambda 函式。
 
 **答案**
@@ -25005,7 +25005,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：為每個Lambda函式建立單個IAM角色. 允許IAM角色進入S3 儲存桶(S3 bucket). 將每個IAM角色指定為Lambda執行角色,用於相應的Lambda功能。每個 Lambda 函式使用獨立的執行角色，可以只授予它所需的 S3 bucket、prefix 和動作。Lambda 以對應角色取得臨時憑證，避免共用長期金鑰並符合最小權限原則。
+- C：為每個Lambda函式建立單個IAM角色. 允許IAM角色進入S3 bucket. 將每個IAM角色指定為Lambda執行角色,用於相應的Lambda功能。每個 Lambda 函式使用獨立的執行角色，可以只授予它所需的 S3 bucket、prefix 和動作。Lambda 以對應角色取得臨時憑證，避免共用長期金鑰並符合最小權限原則。
 - 其餘選項比較：
 - A：透過一個共享的IAM角色,給予所有LOSS0001功能的全部存取許可權。所有函式共用角色會把不必要的 S3 權限擴散給每個函式，違反最小權限並讓單一函式遭入侵時影響擴大。
 - B：配置 Lambda 函式在一個 VPC 內執行。 配置一個儲存桶政策(bucket policy),以根據Lambda函式的VPC 端點(VPC endpoint) IP地址授予存取許可權。把 Lambda 放進 VPC 並以端點 IP 授權，無法可靠地識別特定函式，而且會引入 ENI、路由與端點的額外管理。
@@ -25044,7 +25044,7 @@ B
 一個電子遊戲公司正在向其全球使用者部署一個新的遊戲應用程式。 公司需要一個解決方案,提供接近實時的評審和對玩家的排名. 一個解決方案架構師必須設計一個解決方案,以提供快速存取資料的機會. 解決方案還必須確保在公司重新啟動應用程式時,資料在磁碟上持續存在。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 配置一個 Amazon CloudFront 分散式,以 Amazon S3 桶作為來源. 在S3 儲存桶(S3 bucket)中儲存玩家資料.
+- A. 配置一個 Amazon CloudFront 分散式,以 Amazon S3 bucket作為來源. 在S3 bucket中儲存玩家資料.
 - B. 在多個 AWS 區域建立 Amazon EC2 例項。 在 EC2 例項中儲存玩家資料。 配置帶有地理定位記錄的Amazon Route 53,以引導使用者到最近的EC2例項.
 - C. 部署一個Amazon ElastiCache 為雷迪斯塵埃器。 將玩家資料儲存在 ElastiCache 叢集中。
 - D. 部署一臺Amazon ElastiCache型噴霧器 將玩家資料儲存在 ElastiCache 叢集中。
@@ -25057,7 +25057,7 @@ C
 正確答案是 **C**。
 - C：部署一個Amazon ElastiCache 為雷迪斯塵埃器。 將玩家資料儲存在 ElastiCache 叢集中。ElastiCache for Redis 提供記憶體內的低延遲讀寫，適合近即時排名與評審查詢。Redis 叢集可透過複寫、故障移轉與快照保留資料，且由 AWS 管理節點與可用性，符合低營運開銷需求。
 - 其餘選項比較：
-- A：配置一個 Amazon CloudFront 分散式,以 Amazon S3 桶作為來源. 在S3 儲存桶(S3 bucket)中儲存玩家資料。CloudFront 和 S3 適合快取靜態內容，不適合頻繁更新且要求持久保存的玩家排名資料。
+- A：配置一個 Amazon CloudFront 分散式,以 Amazon S3 bucket作為來源. 在S3 bucket中儲存玩家資料。CloudFront 和 S3 適合快取靜態內容，不適合頻繁更新且要求持久保存的玩家排名資料。
 - B：在多個 AWS 區域建立 Amazon EC2 例項。 在 EC2 例項中儲存玩家資料。 配置帶有地理定位記錄的Amazon Route 53,以引導使用者到最近的EC2例項。跨區域 EC2 和 Route 53 地理定位需要自行管理多區域伺服器、資料同步與故障處理，營運複雜度和成本都較高。
 - D：部署一臺Amazon ElastiCache型噴霧器 將玩家資料儲存在 ElastiCache 叢集中。ElastiCache for Memcached 主要是暫時性快取，沒有 Redis 那樣的持久化與複寫能力；節點重啟或故障後資料可能遺失。
 
@@ -25069,7 +25069,7 @@ C
 一家公司正在AWS上設計一個處理敏感資料的應用程式. 應用程式為多個客戶儲存和處理財務資料。 為了滿足合規(compliance)的要求,每個客戶的資料必須在休息時單獨加密,使用安全集中的金鑰管理解決方案. 公司希望使用AWS Key Management Service(AWS KMS)來實施加密(encryption). 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 為每個客戶生成一個獨特的加密(encryption)金鑰. 把鑰匙放在Amazon S3桶裡 啟用伺服器側 加密(encryption)。
+- A. 為每個客戶生成一個獨特的加密(encryption)金鑰. 把鑰匙放在Amazon S3 bucket裡 啟用伺服器側 加密(encryption)。
 - B. 在AWS環境中部署硬體安全裝置,安全儲存客戶提供的加密(encryption)金鑰. 將安全器械與AWS KMS整合,以加密應用程式中的敏感資料.
 - C. 建立一個單獨的 AWS KMS 金鑰來加密整個應用程式的所有敏感資料.
 - D. 為每個客戶的資料建立單獨的 AWS KMS 金鑰,這些金鑰具有顆粒存取控制(access control) 和登入功能.
@@ -25080,7 +25080,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為每個客戶生成一個獨特的加密(encryption)金鑰. 把鑰匙放在Amazon S3桶裡 啟用伺服器側 加密(encryption)。為每位客戶使用獨立的加密資料金鑰，可在靜態資料層形成租戶間的密文隔離。由 S3 伺服器端加密負責資料寫入與讀取時的加解密，應用程式不必自行管理加密流程，並可用 IAM 限制金鑰儲存位置的存取。
+- A：為每個客戶生成一個獨特的加密(encryption)金鑰. 把鑰匙放在Amazon S3 bucket裡 啟用伺服器側 加密(encryption)。為每位客戶使用獨立的加密資料金鑰，可在靜態資料層形成租戶間的密文隔離。由 S3 伺服器端加密負責資料寫入與讀取時的加解密，應用程式不必自行管理加密流程，並可用 IAM 限制金鑰儲存位置的存取。
 - 其餘選項比較：
 - B：在AWS環境中部署硬體安全裝置,安全儲存客戶提供的加密(encryption)金鑰. 將安全器械與AWS KMS整合,以加密應用程式中的敏感資料。自建硬體安全模組需要部署、修補、備援和容量管理，營運負擔遠高於直接使用 AWS KMS。
 - C：建立一個單獨的 AWS KMS 金鑰來加密整個應用程式的所有敏感資料。所有客戶共用一把 KMS 金鑰，無法在金鑰層級隔離各租戶，也難以實作客戶別的細粒度授權與稽核。
@@ -25294,12 +25294,12 @@ C
 ## Question #925
 
 **題目**
-一家公司需要為監管合規(compliance)實施新的資料保留政策(retention policy). 作為這項政策的一部分,必須保護存放在Amazon S3桶中的敏感檔案在固定時間內不被刪除或修改。 哪種解決辦法能滿足這些要求?
+一家公司需要為監管合規(compliance)實施新的資料保留政策(retention policy). 作為這項政策的一部分,必須保護存放在Amazon S3 bucket中的敏感檔案在固定時間內不被刪除或修改。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 在所需的物件上啟用S3 Object Lock,並啟用治理模式.
 - B. 在所需的物件上啟用S3 Object Lock,並啟用合規(compliance)模式.
-- C. 在S3 儲存桶(S3 bucket)上啟用版本. 設定一個 生命週期政策(lifecycle policy) 來刪除指定週期後的物件。
+- C. 在S3 bucket上啟用版本. 設定一個 生命週期政策(lifecycle policy) 來刪除指定週期後的物件。
 - D. 在保留期內配置一個S3 生命週期政策(Lifecycle policy)來轉換物件到S3 Glacier Flexible Retrieval.
 
 **答案**
@@ -25311,7 +25311,7 @@ B
 - B：在所需的物件上啟用S3 Object Lock,並啟用合規(compliance)模式。S3 Object Lock 的合規模式會在保留期間阻止任何使用者，包括根使用者，刪除或覆寫受保護物件。這能提供法規所需的不可變資料保存，而不必自行建立鎖定服務。
 - 其餘選項比較：
 - A：在所需的物件上啟用S3 Object Lock,並啟用治理模式。Object Lock 治理模式允許具有特定權限的使用者繞過保留設定，因此不適合監管要求的不可刪除、不可修改保護。
-- C：在S3 儲存桶(S3 bucket)上啟用版本. 設定一個 生命週期政策(lifecycle policy) 來刪除指定週期後的物件。版本控制只能保留舊版本，並不阻止具有權限的使用者刪除或修改物件；生命週期刪除反而可能違反保留要求。
+- C：在S3 bucket上啟用版本. 設定一個 生命週期政策(lifecycle policy) 來刪除指定週期後的物件。版本控制只能保留舊版本，並不阻止具有權限的使用者刪除或修改物件；生命週期刪除反而可能違反保留要求。
 - D：在保留期內配置一個S3 生命週期政策(Lifecycle policy)來轉換物件到S3 Glacier Flexible Retrieval。生命週期轉換只改變儲存類別，不會防止物件在保留期間遭刪除或覆寫。
 
 **分類：** 儲存
@@ -25349,7 +25349,7 @@ C
 **選項**
 - A. 啟用 AWS Config。 配置一個檢測 DDoS 攻擊的 AWS Config 管理規則。
 - B. 在ALCreate上啟用 AWS WAF 的 AWS WAF 網路ACL,其規則用於檢測和防止 DDoS 攻擊. 將ACL網路與ALB聯絡.
-- C. 在Amazon S3桶中儲存ALB存取日誌. 配置 Amazon GuardDuty 來檢測和採取針對 DDoS 攻擊的自動預防行動.
+- C. 在Amazon S3 bucket中儲存ALB存取日誌. 配置 Amazon GuardDuty 來檢測和採取針對 DDoS 攻擊的自動預防行動.
 - D. 訂閱至AWS Shield高階. 配置53路的託管區域. 新增 ALB 資源作為保護資源.
 
 **答案**
@@ -25362,7 +25362,7 @@ D
 - 其餘選項比較：
 - A：啟用 AWS Config。 配置一個檢測 DDoS 攻擊的 AWS Config 管理規則。AWS Config 管理規則檢查資源設定合規性，不是即時偵測並主動處理 DDoS 攻擊的防護服務。
 - B：在ALCreate上啟用 AWS WAF 的 AWS WAF 網路ACL,其規則用於檢測和防止 DDoS 攻擊. 將ACL網路與ALB聯絡。WAF 可針對 HTTP 請求執行第七層規則，但題目要求主動參與的受管理 DDoS 偵測與回應；僅配置 WAF 不包含 Shield Advanced 的專家支援。
-- C：在Amazon S3桶中儲存ALB存取日誌. 配置 Amazon GuardDuty 來檢測和採取針對 DDoS 攻擊的自動預防行動。GuardDuty 分析威脅與日誌訊號，不會直接成為 ALB 的 DDoS 防護或自動修復控制面。
+- C：在Amazon S3 bucket中儲存ALB存取日誌. 配置 Amazon GuardDuty 來檢測和採取針對 DDoS 攻擊的自動預防行動。GuardDuty 分析威脅與日誌訊號，不會直接成為 ALB 的 DDoS 防護或自動修復控制面。
 
 **分類：** 安全、身分與合規
 
@@ -25430,7 +25430,7 @@ A,D,F
 - A. 在Auto Scaling 群組(Auto Scaling group)中執行Amazon EC2 隨需執行個體（On-Demand）,用於網路門戶. 使用 AWS Lambda 函式來執行文件提取程式. 當員工上傳新的報銷檔案時, 請啟動 Lambda 功能。
 - B. 在Auto Scaling 群組(Auto Scaling group)中執行Amazon EC2 Spot 執行個體,用於網路門戶. 在 EC2 Spot 執行個體 上執行文件提取程式。 當員工上傳新的償還檔案時, 啟動文件提取程式例項。
 - C. 購買一個執行網頁門戶和檔案提取程式的Savings Plans（節省方案）。 在Auto Scaling 群組(Auto Scaling group)中執行網路門戶和文件提取程式.
-- D. 建立 Amazon S3 桶以託管網路門戶. 對現有功能使用Amazon API Gateway和AWS Lambda功能. 使用 Lambda 函式來執行文件提取程式. 在呼叫與新文件上傳關聯的API時, 啟動 Lambda 函式。
+- D. 建立 Amazon S3 bucket以託管網路門戶. 對現有功能使用Amazon API Gateway和AWS Lambda功能. 使用 Lambda 函式來執行文件提取程式. 在呼叫與新文件上傳關聯的API時, 啟動 Lambda 函式。
 
 **答案**
 A
@@ -25442,7 +25442,7 @@ A
 - 其餘選項比較：
 - B：在Auto Scaling 群組(Auto Scaling group)中執行Amazon EC2 Spot 執行個體,用於網路門戶. 在 EC2 Spot 執行個體 上執行文件提取程式。 當員工上傳新的償還檔案時, 啟動文件提取程式例項。Spot 執行個體可能在通知後被中斷，無法承諾入口網站 100% 可用；把文件擷取綁在 Spot 主機也增加重試和管理工作。
 - C：購買一個執行網頁門戶和檔案提取程式的Savings Plans（節省方案）。 在Auto Scaling 群組(Auto Scaling group)中執行網路門戶和文件提取程式。長期購買計畫並不能自動保證入口網站高可用，且為全天候常駐文件擷取資源付費，不符合按需使用的成本特性。
-- D：建立 Amazon S3 桶以託管網路門戶. 對現有功能使用Amazon API Gateway和AWS Lambda功能. 使用 Lambda 函式來執行文件提取程式. 在呼叫與新文件上傳關聯的API時, 啟動 Lambda 函式。把現有入口網站改成 S3、API Gateway 和 Lambda 會涉及架構與程式碼重寫，違反最小修改及不改程式碼的限制。
+- D：建立 Amazon S3 bucket以託管網路門戶. 對現有功能使用Amazon API Gateway和AWS Lambda功能. 使用 Lambda 函式來執行文件提取程式. 在呼叫與新文件上傳關聯的API時, 啟動 Lambda 函式。把現有入口網站改成 S3、API Gateway 和 Lambda 會涉及架構與程式碼重寫，違反最小修改及不改程式碼的限制。
 
 **分類：** 無伺服器
 
@@ -25456,7 +25456,7 @@ A
 - B. 在管理員帳戶中執行一個Amazon Simple Queue Service (Amazon SQS)佇列,以緩衝來自生產帳戶中SNS主題的資訊. 配置 SQS 佇列以引用 Lambda 函式。
 - C. 為 SNS 主題建立 IAM 政策(IAM policy),允許 Lambda 函式訂閱該主題.
 - D. 在生產帳戶中使用一個Amazon EventBridge規則來捕捉SNS主題通知. 配置 EventBridge 規則將通知轉發給管理員帳戶中的 Lambda 函式。
-- E. 將效能指標儲存在生產帳戶中的Amazon S3桶中。 使用 Amazon Athena 來分析管理員帳戶中的度量衡.
+- E. 將效能指標儲存在生產帳戶中的Amazon S3 bucket中。 使用 Amazon Athena 來分析管理員帳戶中的度量衡.
 
 **答案**
 A,C
@@ -25470,7 +25470,7 @@ A,C
 - 其餘選項比較：
 - B：在管理員帳戶中執行一個Amazon Simple Queue Service (Amazon SQS)佇列,以緩衝來自生產帳戶中SNS主題的資訊. 配置 SQS 佇列以引用 Lambda 函式。以 SQS 緩衝再觸發 Lambda 可以增加可靠性，但不是本題跨帳戶 SNS 訂閱所需的最少元件，且仍需額外建立跨帳戶佇列政策。
 - D：在生產帳戶中使用一個Amazon EventBridge規則來捕捉SNS主題通知. 配置 EventBridge 規則將通知轉發給管理員帳戶中的 Lambda 函式。EventBridge 可以轉送事件，但會引入額外規則、事件匯流排和目標授權；本題已有 SNS，直接跨帳戶訂閱更簡單。
-- E：將效能指標儲存在生產帳戶中的Amazon S3桶中。 使用 Amazon Athena 來分析管理員帳戶中的度量衡。把指標寫入 S3 再跨帳戶分析是批次資料管線，不是即時觸發 Lambda 的 SNS 整合，且需要額外儲存與 Athena 管理。
+- E：將效能指標儲存在生產帳戶中的Amazon S3 bucket中。 使用 Amazon Athena 來分析管理員帳戶中的度量衡。把指標寫入 S3 再跨帳戶分析是批次資料管線，不是即時觸發 Lambda 的 SNS 整合，且需要額外儲存與 Athena 管理。
 
 **分類：** 應用程式整合
 
@@ -25638,8 +25638,8 @@ C
 一家公司正在經營一家媒體商店,該商店遍佈多個Amazon EC2公司,分佈在多個可用區(Availability Zones)公司的一家VPC公司。 公司希望有一個高效能的解決方案,在所有EC2例項之間共享資料,更傾向於將資料儲存在VPC內部. 一個解決方案設計師應該推薦什麼?
 
 **選項**
-- A. 建立 Amazon S3 桶並呼叫每個例項應用程式的服務 API
-- B. 建立 Amazon S3 桶並配置所有例項以掛載磁碟區存取
+- A. 建立 Amazon S3 bucket並呼叫每個例項應用程式的服務 API
+- B. 建立 Amazon S3 bucket並配置所有例項以掛載磁碟區存取
 - C. 配置一個 Amazon 彈性塊儲存器( Amazon EBS) 磁碟區並掛載到所有例項中
 - D. 配置 Amazon 彈性檔案系統( Amazon EFS) 檔案系統, 並在所有情況下掛載
 
@@ -25651,8 +25651,8 @@ D
 正確答案是 **D**。
 - D：配置 Amazon 彈性檔案系統( Amazon EFS) 檔案系統, 並在所有情況下掛載。EFS 是區域型 NFS 檔案系統，可由不同可用區的 EC2 透過掛載目標同時存取。資料留在 VPC 內並由服務管理儲存容量與可用性，適合多執行個體共享檔案。
 - 其餘選項比較：
-- A：建立 Amazon S3 桶並呼叫每個例項應用程式的服務 API。S3 需要透過 API 存取物件，無法像共用檔案系統一樣提供 EC2 間低延遲、同時掛載的檔案語意。
-- B：建立 Amazon S3 桶並配置所有例項以掛載磁碟區存取。S3 bucket 不能直接以一般檔案系統磁碟區掛載到 EC2；若使用額外閘道或檔案工具，效能與一致性也不如原生共享檔案系統。
+- A：建立 Amazon S3 bucket並呼叫每個例項應用程式的服務 API。S3 需要透過 API 存取物件，無法像共用檔案系統一樣提供 EC2 間低延遲、同時掛載的檔案語意。
+- B：建立 Amazon S3 bucket並配置所有例項以掛載磁碟區存取。S3 bucket 不能直接以一般檔案系統磁碟區掛載到 EC2；若使用額外閘道或檔案工具，效能與一致性也不如原生共享檔案系統。
 - C：配置一個 Amazon 彈性塊儲存器( Amazon EBS) 磁碟區並掛載到所有例項中。EBS 磁碟區通常屬於單一可用區，且一般檔案系統不能同時由多個 EC2 安全掛載；它不適合跨可用區共享資料。
 
 **分類：** 儲存
@@ -25740,7 +25740,7 @@ D,E
 ## Question #942
 
 **題目**
-一家公司定期向Amazon S3桶上傳機密資料進行分析. 公司的安全政策規定,物體必須加密到休養狀態。 公司每年必須自動輪換加密(encryption)鍵. 公司必須能夠透過使用AWS CloudTrail跟蹤金鑰旋轉. 該公司還必須儘量減少加密(encryption)鑰匙的成本。 哪種解決辦法能滿足這些要求?
+一家公司定期向Amazon S3 bucket上傳機密資料進行分析. 公司的安全政策規定,物體必須加密到休養狀態。 公司每年必須自動輪換加密(encryption)鍵. 公司必須能夠透過使用AWS CloudTrail跟蹤金鑰旋轉. 該公司還必須儘量減少加密(encryption)鑰匙的成本。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用伺服器側的 加密(encryption) 與客戶提供的金鑰( SSE- C)
@@ -25996,13 +25996,13 @@ C
 ## Question #952
 
 **題目**
-一個公司想要將其應用程式移動到一個沒有伺服器的解決方案. 無伺服器解決方案需要透過使用SQL分析現有資料和新資料. 公司將資料儲存在Amazon S3桶中. 資料必須在休息時加密,並複製到不同的AWS 區域(Region). 哪個解決方案能以最少的營運開銷達成這些要求？
+一個公司想要將其應用程式移動到一個沒有伺服器的解決方案. 無伺服器解決方案需要透過使用SQL分析現有資料和新資料. 公司將資料儲存在Amazon S3 bucket中. 資料必須在休息時加密,並複製到不同的AWS 區域(Region). 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
-- A. 建立一個新的S3 儲存桶(S3 bucket),使用伺服器側式的加密(encryption),配有AWS KMS多區域(Region)鍵(SSE-KMS). 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 儲存桶(S3 bucket). 使用Amazon Athena查詢資料.
-- B. 使用 Amazon S3 管理的金鑰(SSE-S3)使用伺服器側式的 加密(encryption) 建立新的 S3 儲存桶(S3 bucket)。 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 儲存桶(S3 bucket). 使用Amazon RDS查詢資料.
-- C. 在現有的S3 儲存桶(S3 bucket)上配置跨區域(Region) 複寫(Replication)(CRR). 使用伺服器側式的加密(encryption)與 Amazon S3 管理金鑰(SSE-S3). 使用Amazon Athena查詢資料.
-- D. 在現有的S3 儲存桶(S3 bucket)上配置 S3 Cross-Region Replication(CRR). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料.
+- A. 建立一個新的S3 bucket,使用伺服器側式的加密(encryption),配有AWS KMS多區域(Region)鍵(SSE-KMS). 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 bucket. 使用Amazon Athena查詢資料.
+- B. 使用 Amazon S3 管理的金鑰(SSE-S3)使用伺服器側式的 加密(encryption) 建立新的 S3 bucket。 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 bucket. 使用Amazon RDS查詢資料.
+- C. 在現有的S3 bucket上配置跨區域(Region) 複寫(Replication)(CRR). 使用伺服器側式的加密(encryption)與 Amazon S3 管理金鑰(SSE-S3). 使用Amazon Athena查詢資料.
+- D. 在現有的S3 bucket上配置 S3 Cross-Region Replication(CRR). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料.
 
 **答案**
 A
@@ -26012,11 +26012,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立一個新的S3 儲存桶(S3 bucket),使用伺服器側式的加密(encryption),配有AWS KMS多區域(Region)鍵(SSE-KMS). 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 儲存桶(S3 bucket). 使用Amazon Athena查詢資料。SSE-KMS 可在 S3 中提供靜態加密，多區域 KMS 金鑰可讓複寫目的區域使用相容的金鑰材料。S3 CRR 負責跨區域複製，Athena 直接以 SQL 查詢 S3 物件，整體不需管理資料庫伺服器。
+- A：建立一個新的S3 bucket,使用伺服器側式的加密(encryption),配有AWS KMS多區域(Region)鍵(SSE-KMS). 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 bucket. 使用Amazon Athena查詢資料。SSE-KMS 可在 S3 中提供靜態加密，多區域 KMS 金鑰可讓複寫目的區域使用相容的金鑰材料。S3 CRR 負責跨區域複製，Athena 直接以 SQL 查詢 S3 物件，整體不需管理資料庫伺服器。
 - 其餘選項比較：
-- B：使用 Amazon S3 管理的金鑰(SSE-S3)使用伺服器側式的 加密(encryption) 建立新的 S3 儲存桶(S3 bucket)。 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 儲存桶(S3 bucket). 使用Amazon RDS查詢資料。Athena 才是直接以 SQL 查詢 S3 資料的無伺服器分析服務；RDS 需要額外載入、架構和維護，且方案沒有用正確的查詢引擎。
-- C：在現有的S3 儲存桶(S3 bucket)上配置跨區域(Region) 複寫(Replication)(CRR). 使用伺服器側式的加密(encryption)與 Amazon S3 管理金鑰(SSE-S3). 使用Amazon Athena查詢資料。SSE-S3 可滿足基本靜態加密，但方案沒有使用題目指定的跨區域 KMS 金鑰控制；對需要跨區域複寫的加密物件，金鑰和複寫權限必須明確配置。
-- D：在現有的S3 儲存桶(S3 bucket)上配置 S3 Cross-Region Replication(CRR). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料。RDS 不是直接查詢 S3 物件的無伺服器 SQL 引擎；此外僅在現有 bucket 上設定 CRR，若未建立目的區域可用的 KMS 金鑰與複寫權限，SSE-KMS 複製也可能失敗。
+- B：使用 Amazon S3 管理的金鑰(SSE-S3)使用伺服器側式的 加密(encryption) 建立新的 S3 bucket。 配置跨區域(Region) 複寫(Replication)(CRR). 將資料裝入新的S3 bucket. 使用Amazon RDS查詢資料。Athena 才是直接以 SQL 查詢 S3 資料的無伺服器分析服務；RDS 需要額外載入、架構和維護，且方案沒有用正確的查詢引擎。
+- C：在現有的S3 bucket上配置跨區域(Region) 複寫(Replication)(CRR). 使用伺服器側式的加密(encryption)與 Amazon S3 管理金鑰(SSE-S3). 使用Amazon Athena查詢資料。SSE-S3 可滿足基本靜態加密，但方案沒有使用題目指定的跨區域 KMS 金鑰控制；對需要跨區域複寫的加密物件，金鑰和複寫權限必須明確配置。
+- D：在現有的S3 bucket上配置 S3 Cross-Region Replication(CRR). 使用伺服器側式加密(encryption)與AWS KMS多區域(Region)鍵(SSE-KMS). 使用Amazon RDS查詢資料。RDS 不是直接查詢 S3 物件的無伺服器 SQL 引擎；此外僅在現有 bucket 上設定 CRR，若未建立目的區域可用的 KMS 金鑰與複寫權限，SSE-KMS 複製也可能失敗。
 
 **分類：** 分析
 
@@ -26201,13 +26201,13 @@ D
 ## Question #960
 
 **題目**
-一家消費者調查公司從特定的地理區域(region)收集了幾年的資料。 公司在AWS 區域(Region)的Amazon S3桶中儲存了這些資料. 該公司已經開始與一家營銷公司在一個新的地理區域(region)中分享這一資料. 公司已准許該公司的AWS帳戶進入S3 儲存桶(S3 bucket). 當營銷公司要求S3 儲存桶(S3 bucket)號資料時,公司希望將資料傳輸成本降到最低. 哪種解決辦法能滿足這些要求?
+一家消費者調查公司從特定的地理區域(region)收集了幾年的資料。 公司在AWS 區域(Region)的Amazon S3 bucket中儲存了這些資料. 該公司已經開始與一家營銷公司在一個新的地理區域(region)中分享這一資料. 公司已准許該公司的AWS帳戶進入S3 bucket. 當營銷公司要求S3 bucket號資料時,公司希望將資料傳輸成本降到最低. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在公司的S3 儲存桶(S3 bucket)上配置請求者付費功能.
-- B. 配置S3 Cross-Region Replication(CRR)從公司的S3 儲存桶(S3 bucket)到銷售公司的S3桶之一.
-- C. 配置AWS資源存取管理器,與營銷公司AWS帳戶共享S3 儲存桶(S3 bucket).
-- D. 配置公司的S3 儲存桶(S3 bucket)使用S3 Intelligent-Tiering同步S3 儲存桶(S3 bucket)到銷售公司的S3桶之一.
+- A. 在公司的S3 bucket上配置請求者付費功能.
+- B. 配置S3 Cross-Region Replication(CRR)從公司的S3 bucket到銷售公司的S3 bucket之一.
+- C. 配置AWS資源存取管理器,與營銷公司AWS帳戶共享S3 bucket.
+- D. 配置公司的S3 bucket使用S3 Intelligent-Tiering同步S3 bucket到銷售公司的S3 bucket之一.
 
 **答案**
 B
@@ -26215,11 +26215,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：配置S3 Cross-Region Replication(CRR)從公司的S3 儲存桶(S3 bucket)到銷售公司的S3桶之一。S3 Cross-Region Replication 可把資料預先複製到行銷公司的區域，後續讀取改由同區域 bucket 提供，避免每次跨區域傳輸。跨帳戶複寫還能以 IAM、bucket policy 和 KMS 權限限制資料只流向核准的目的地。
+- B：配置S3 Cross-Region Replication(CRR)從公司的S3 bucket到銷售公司的S3 bucket之一。S3 Cross-Region Replication 可把資料預先複製到行銷公司的區域，後續讀取改由同區域 bucket 提供，避免每次跨區域傳輸。跨帳戶複寫還能以 IAM、bucket policy 和 KMS 權限限制資料只流向核准的目的地。
 - 其餘選項比較：
-- A：在公司的S3 儲存桶(S3 bucket)上配置請求者付費功能。Requester Pays 會把請求與資料傳輸相關費用轉給請求者，但不會把資料放到對方區域，跨區域反覆讀取仍可能產生傳輸費用。
-- C：配置AWS資源存取管理器,與營銷公司AWS帳戶共享S3 儲存桶(S3 bucket)。AWS RAM 不會把一般 S3 bucket 以共享資源方式提供給另一帳戶；跨帳戶 S3 存取仍會從原區域讀取資料。
-- D：配置公司的S3 儲存桶(S3 bucket)使用S3 Intelligent-Tiering同步S3 儲存桶(S3 bucket)到銷售公司的S3桶之一。S3 Intelligent-Tiering 只會在同一 bucket 內調整儲存類別，不會把物件同步到行銷公司的區域，也不能消除跨區域傳輸。
+- A：在公司的S3 bucket上配置請求者付費功能。Requester Pays 會把請求與資料傳輸相關費用轉給請求者，但不會把資料放到對方區域，跨區域反覆讀取仍可能產生傳輸費用。
+- C：配置AWS資源存取管理器,與營銷公司AWS帳戶共享S3 bucket。AWS RAM 不會把一般 S3 bucket 以共享資源方式提供給另一帳戶；跨帳戶 S3 存取仍會從原區域讀取資料。
+- D：配置公司的S3 bucket使用S3 Intelligent-Tiering同步S3 bucket到銷售公司的S3 bucket之一。S3 Intelligent-Tiering 只會在同一 bucket 內調整儲存類別，不會把物件同步到行銷公司的區域，也不能消除跨區域傳輸。
 
 **分類：** 儲存
 
@@ -26307,7 +26307,7 @@ C
 - A. 在Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2例項來部署一個集裝箱化的應用程式. 使用應用程式負載平衡器(Application Load Balancer)來分配網路流量. 使用 Amazon RDS DB 例項儲存產品資料和產品影象.
 - B. 使用 AWS Lambda 函式來管理現有的單體應用程式. 使用Amazon DynamoDB儲存產品資料和產品影象. 使用Amazon簡單通知服務(Amazon SNS)進行Lambda函式之間的事件驅動通訊.
 - C. 使用Amazon Elastic Kubernetes Service(Amazon EKS),並部署Amazon EC2,以部署一個容器化的應用程式. 使用Amazon Aurora叢集儲存產品資料. 使用 AWS Step 函式來管理 workfiows。 將產品影象儲存在Amazon S3 Glacier Deep Archive.
-- D. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3桶中儲存產品影象.
+- D. 使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3 bucket中儲存產品影象.
 
 **答案**
 D
@@ -26315,7 +26315,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3桶中儲存產品影象。ECS with Fargate 以無伺服器容器執行工作，服務團隊只需管理映像與任務，不必維護 EC2 節點。多 AZ 的 RDS 保留結構化資料庫能力與高可用性，S3 則以高耐久度且可擴展的物件儲存承載產品影像。
+- D：使用帶有AWS Fargate的Amazon Elastic Container Service (Amazon ECS)部署一個集裝箱化應用. 使用帶有多AZ部署的Amazon RDS儲存產品資料. 在Amazon S3 bucket中儲存產品影象。ECS with Fargate 以無伺服器容器執行工作，服務團隊只需管理映像與任務，不必維護 EC2 節點。多 AZ 的 RDS 保留結構化資料庫能力與高可用性，S3 則以高耐久度且可擴展的物件儲存承載產品影像。
 - 其餘選項比較：
 - A：在Auto Scaling 群組(Auto Scaling group)中使用Amazon EC2例項來部署一個集裝箱化的應用程式. 使用應用程式負載平衡器(Application Load Balancer)來分配網路流量. 使用 Amazon RDS DB 例項儲存產品資料和產品影象。在 EC2 上自行維護容器叢集需要管理主機、修補與容量，RDS 也不適合同時存放產品影像這類大型物件。這會增加營運負擔並浪費關聯式資料庫儲存。
 - B：使用 AWS Lambda 函式來管理現有的單體應用程式. 使用Amazon DynamoDB儲存產品資料和產品影象. 使用Amazon簡單通知服務(Amazon SNS)進行Lambda函式之間的事件驅動通訊。Lambda 可協助拆分事件處理，但把結構化產品資料與產品影像都放在 DynamoDB，不能充分利用關聯式資料庫模型與物件儲存的成本優勢。
@@ -26408,7 +26408,7 @@ A
 一家金融公司使用premises搜尋應用程式從各生產商收集流資料. 該應用程式為搜尋和視覺化功能提供實時更新. 公司計劃向AWS遷移,希望使用AWS本地解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 桶的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化.
+- A. 使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 bucket的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化.
 - B. 使用Amazon EMR來攝取和處理資料流到Amazon Redshift進行儲存. 使用Amazon Redshift光譜搜尋資料. 使用Amazon QuickSight建立視覺化.
 - C. 使用Amazon Elastic Kubernetes Service(Amazon EKS)來攝取和處理資料流到Amazon DynamoDB進行儲存. 使用Amazon CloudWatch建立圖形儀表板搜尋和視覺化資料.
 - D. 使用Amazon Kinesis資料流來攝取和處理資料流到Amazon OpenSearch Service. 使用 OpenSearch 服務搜尋資料. 使用Amazon QuickSight建立視覺化.
@@ -26421,7 +26421,7 @@ D
 正確答案是 **D**。
 - D：使用Amazon Kinesis資料流來攝取和處理資料流到Amazon OpenSearch Service. 使用 OpenSearch 服務搜尋資料. 使用Amazon QuickSight建立視覺化。Kinesis Data Streams 能持續接收多來源事件並讓消費者平行處理，OpenSearch Service 可提供近即時索引與搜尋。QuickSight 可連接分析資料建立儀表板，形成從串流攝取到查詢與視覺化的受管服務鏈路。
 - 其餘選項比較：
-- A：使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 桶的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化。把串流先寫成 S3 物件再以 Athena 查詢，較適合批次資料湖，不能自然提供即時搜尋更新。且題目指定的原生串流搜尋與視覺化鏈路並非此組合。
+- A：使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 bucket的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化。把串流先寫成 S3 物件再以 Athena 查詢，較適合批次資料湖，不能自然提供即時搜尋更新。且題目指定的原生串流搜尋與視覺化鏈路並非此組合。
 - B：使用Amazon EMR來攝取和處理資料流到Amazon Redshift進行儲存. 使用Amazon Redshift光譜搜尋資料. 使用Amazon QuickSight建立視覺化。EMR、Redshift 與 Spectrum 主要用於批次或分析查詢，導入叢集與資料倉庫會增加延遲和管理工作。QuickSight 也不會自行把串流資料變成即時搜尋索引。
 - C：使用Amazon Elastic Kubernetes Service(Amazon EKS)來攝取和處理資料流到Amazon DynamoDB進行儲存. 使用Amazon CloudWatch建立圖形儀表板搜尋和視覺化資料。DynamoDB 適合鍵值與文件資料，但不是通用的全文或探索式搜尋引擎；CloudWatch 儀表板也不等同於搜尋平台。這組服務無法同時滿足即時搜尋與視覺化需求。
 
@@ -26483,10 +26483,10 @@ D
 一家位於Ap-東北-1區域(Region)的公司擁有數千個AWS外站伺服器. 公司在世界各地的偏遠地點部署了伺服器。 所有伺服器都定期下載包含100個檔案的新軟體版本. 在所有伺服器執行新軟體版本之前,有顯著的延遲(latency). 公司必須減少新軟體版本的延遲(latency)部署. LEAST 營運開銷(operational overhead)將滿足這一要求的哪一種解決方案?
 
 **選項**
-- A. 在 AP- 東北-1 中建立 Amazon S3 桶。 在 AP- 東北-1 中設定 Amazon CloudFront 分佈,其中包括 CachingDisabled 快取策略。 配置 S3 儲存桶(S3 bucket) 為源。 使用簽名的 URL 下載軟體。
-- B. 在 AP- 東北-1 中建立 Amazon S3 桶。 在 區域(Region) 中建立第二個 S3 儲存桶(S3 bucket)。 在桶之間配置 複寫(replication)。 建立Amazon CloudFront分佈,以東北-1為主源,我們東-1為次源. 使用簽名的 URL 下載軟體。
-- C. 在 AP- 東北-1 中建立 Amazon S3 桶。 配置 Amazon S3 Transfer Acceleration. 透過使用S3 Transfer Acceleration端點下載軟體.
-- D. 在 AP- 東北 1 中建立 Amazon S3 桶. 設定 Amazon CloudFront 分佈。 配置 S3 儲存桶(S3 bucket) 為源。 使用簽名的 URL 下載軟體。
+- A. 在 AP- 東北-1 中建立 Amazon S3 bucket。 在 AP- 東北-1 中設定 Amazon CloudFront 分佈,其中包括 CachingDisabled 快取策略。 配置 S3 bucket 為源。 使用簽名的 URL 下載軟體。
+- B. 在 AP- 東北-1 中建立 Amazon S3 bucket。 在 區域(Region) 中建立第二個 S3 bucket。 在桶之間配置 複寫(replication)。 建立Amazon CloudFront分佈,以東北-1為主源,我們東-1為次源. 使用簽名的 URL 下載軟體。
+- C. 在 AP- 東北-1 中建立 Amazon S3 bucket。 配置 Amazon S3 Transfer Acceleration. 透過使用S3 Transfer Acceleration端點下載軟體.
+- D. 在 AP- 東北 1 中建立 Amazon S3 bucket. 設定 Amazon CloudFront 分佈。 配置 S3 bucket 為源。 使用簽名的 URL 下載軟體。
 
 **答案**
 D
@@ -26494,11 +26494,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在 AP- 東北 1 中建立 Amazon S3 桶. 設定 Amazon CloudFront 分佈。 配置 S3 儲存桶(S3 bucket) 為源。 使用簽名的 URL 下載軟體。CloudFront 會把 S3 中的軟體檔案快取到全球邊緣節點，遠端伺服器可從較近的節點下載，減少跨洲延遲。以簽名 URL 控制檔案發行權限，既保護軟體版本又不必管理各地伺服器的下載基礎設施。
+- D：在 AP- 東北 1 中建立 Amazon S3 bucket. 設定 Amazon CloudFront 分佈。 配置 S3 bucket 為源。 使用簽名的 URL 下載軟體。CloudFront 會把 S3 中的軟體檔案快取到全球邊緣節點，遠端伺服器可從較近的節點下載，減少跨洲延遲。以簽名 URL 控制檔案發行權限，既保護軟體版本又不必管理各地伺服器的下載基礎設施。
 - 其餘選項比較：
-- A：在 AP- 東北-1 中建立 Amazon S3 桶。 在 AP- 東北-1 中設定 Amazon CloudFront 分佈,其中包括 CachingDisabled 快取策略。 配置 S3 儲存桶(S3 bucket) 為源。 使用簽名的 URL 下載軟體。CachingDisabled 會使每次下載都回源 S3，無法讓世界各地伺服器就近取得相同版本檔案。它反而放大跨區域與遠端下載延遲。
-- B：在 AP- 東北-1 中建立 Amazon S3 桶。 在 區域(Region) 中建立第二個 S3 儲存桶(S3 bucket)。 在桶之間配置 複寫(replication)。 建立Amazon CloudFront分佈,以東北-1為主源,我們東-1為次源. 使用簽名的 URL 下載軟體。跨區域複寫與主次來源能提供備援，但會新增儲存桶、複寫規則與來源切換的維運成本。題目只要求降低全球下載延遲，不需要這層複雜度。
-- C：在 AP- 東北-1 中建立 Amazon S3 桶。 配置 Amazon S3 Transfer Acceleration. 透過使用S3 Transfer Acceleration端點下載軟體。S3 Transfer Acceleration 主要改善把資料上傳到 S3 的路徑，並非用來讓大量遠端伺服器快取重複下載的軟體檔案。每次下載仍可能回到來源桶。
+- A：在 AP- 東北-1 中建立 Amazon S3 bucket。 在 AP- 東北-1 中設定 Amazon CloudFront 分佈,其中包括 CachingDisabled 快取策略。 配置 S3 bucket 為源。 使用簽名的 URL 下載軟體。CachingDisabled 會使每次下載都回源 S3，無法讓世界各地伺服器就近取得相同版本檔案。它反而放大跨區域與遠端下載延遲。
+- B：在 AP- 東北-1 中建立 Amazon S3 bucket。 在 區域(Region) 中建立第二個 S3 bucket。 在桶之間配置 複寫(replication)。 建立Amazon CloudFront分佈,以東北-1為主源,我們東-1為次源. 使用簽名的 URL 下載軟體。跨區域複寫與主次來源能提供備援，但會新增儲存桶、複寫規則與來源切換的維運成本。題目只要求降低全球下載延遲，不需要這層複雜度。
+- C：在 AP- 東北-1 中建立 Amazon S3 bucket。 配置 Amazon S3 Transfer Acceleration. 透過使用S3 Transfer Acceleration端點下載軟體。S3 Transfer Acceleration 主要改善把資料上傳到 S3 的路徑，並非用來讓大量遠端伺服器快取重複下載的軟體檔案。每次下載仍可能回到來源桶。
 
 **分類：** 網路連結和內容交付
 
@@ -26560,7 +26560,7 @@ A,C,E
 ## Question #974
 
 **題目**
-一家公司在AWS上託管一個應用程式. 該應用程式使使用者能夠上傳照片,並將照片儲存在Amazon S3桶中. 公司希望使用Amazon CloudFront和自定義域名,在eu-West-1 區域(Region)上傳照片檔案至S3 儲存桶(S3 bucket). 哪種解決辦法能滿足這些要求?(選二.
+一家公司在AWS上託管一個應用程式. 該應用程式使使用者能夠上傳照片,並將照片儲存在Amazon S3 bucket中. 公司希望使用Amazon CloudFront和自定義域名,在eu-West-1 區域(Region)上傳照片檔案至S3 bucket. 哪種解決辦法能滿足這些要求?(選二.
 
 **選項**
 - A. 使用AWS Certificate Manager(ACM)在我們東-1區域(Region)中建立公開憑證. 在 CloudFront 中使用憑證。
@@ -26578,7 +26578,7 @@ A,D
 
 **詳解**
 正確答案是 **A, D**。
-- A：使用AWS Certificate Manager(ACM)在我們東-1區域(Region)中建立公開憑證. 在 CloudFront 中使用憑證。CloudFront 的公開 ACM 憑證必須在 us-east-1 建立，CloudFront 才能使用自訂網域進行 HTTPS 終止。這是 CloudFront 憑證區域限制，與 S3 儲存桶所在的 eu-west-1 無關。
+- A：使用AWS Certificate Manager(ACM)在我們東-1區域(Region)中建立公開憑證. 在 CloudFront 中使用憑證。CloudFront 的公開 ACM 憑證必須在 us-east-1 建立，CloudFront 才能使用自訂網域進行 HTTPS 終止。這是 CloudFront 憑證區域限制，與 S3 bucket所在的 eu-west-1 無關。
 - D：配置 Amazon S3 允許從 CloudFront 起源 存取控制(access control)(OAC) 上傳。CloudFront Origin Access Control 可讓分佈以受控的簽名請求存取 S3，並在桶政策中只授權該 CloudFront distribution。如此可以保留桶的私有性，同時支援經由自訂網域上傳物件。
 - 其餘選項比較：
 - B：使用 AWS Certificate Manager(ACM) 在 eu-west-1 建立公開憑證,使用 CloudFront 中的憑證。eu-west-1 的 ACM 憑證不能直接附加到 CloudFront 分佈；CloudFront 要求憑證位於 us-east-1。
@@ -26590,7 +26590,7 @@ A,D
 ## Question #975
 
 **題目**
-天氣預報公司不斷從各種感測器收集溫度讀數。 一個現有的資料攝入過程收集讀數,並將讀數彙總為更大的Apache Parquet檔案. 之後的過程透過使用客戶端的加密(encryption)與KMS管理的金鑰(CSE-KMS)加密檔案. 最後,這一過程將檔案寫到一個Amazon S3桶上,每個日曆日都有單獨的字首. 公司希望偶爾對資料進行SQL查詢,為特定日曆日採集樣本移動平均值. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+天氣預報公司不斷從各種感測器收集溫度讀數。 一個現有的資料攝入過程收集讀數,並將讀數彙總為更大的Apache Parquet檔案. 之後的過程透過使用客戶端的加密(encryption)與KMS管理的金鑰(CSE-KMS)加密檔案. 最後,這一過程將檔案寫到一個Amazon S3 bucket上,每個日曆日都有單獨的字首. 公司希望偶爾對資料進行SQL查詢,為特定日曆日採集樣本移動平均值. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 配置 Amazon Athena 讀取加密檔案。 在Amazon S3中直接執行資料上的SQL查詢.
@@ -26715,7 +26715,7 @@ B
 ## Question #980
 
 **題目**
-一家公司在VPC內的若干Amazon EC2例項上託管其應用程式。 該公司為每個客戶建立了專用的Amazon S3桶,將相關資訊儲存在Amazon S3中. 公司希望確保執行在EC2例項上的應用程式只能安全地存取屬於公司AWS帳戶的S3桶. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司在VPC內的若干Amazon EC2例項上託管其應用程式。 該公司為每個客戶建立了專用的Amazon S3 bucket,將相關資訊儲存在Amazon S3中. 公司希望確保執行在EC2例項上的應用程式只能安全地存取屬於公司AWS帳戶的S3 bucket. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 為附在VPC上的Amazon S3建立一個閘道器端點. 更新IAM 執行個體設定檔(instance profile)政策,只提供對應用程式需要的特定桶的存取.
@@ -26731,7 +26731,7 @@ A
 正確答案是 **A**。
 - A：為附在VPC上的Amazon S3建立一個閘道器端點. 更新IAM 執行個體設定檔(instance profile)政策,只提供對應用程式需要的特定桶的存取。S3 Gateway Endpoint 讓 VPC 內的 EC2 透過 AWS 私有網路存取 S3，不需 NAT 或網際網路閘道器。再以 instance profile 的 IAM 政策限定允許的桶 ARN，可同時達成私有路徑與帳戶內桶的最小權限。
 - 其餘選項比較：
-- B：在公共子網中建立一個NAT閘道器,其安全群組(security group)只允許存取Amazon S3. 更新路由表以使用 NAT Gateway。NAT Gateway 只提供出站轉送，不會限制應用程式只能存取公司帳戶的特定 S3 桶；安全群組也不能以 S3 桶資源作為精細授權邊界。
+- B：在公共子網中建立一個NAT閘道器,其安全群組(security group)只允許存取Amazon S3. 更新路由表以使用 NAT Gateway。NAT Gateway 只提供出站轉送，不會限制應用程式只能存取公司帳戶的特定 S3 bucket；安全群組也不能以 S3 bucket資源作為精細授權邊界。
 - C：為 Amazon S3 建立一個閘道器端點,該端點附在 VPUpdate IAM 執行個體設定檔(instance profile) 政策上,帶有拒絕動作和以下條件金鑰:。選項中的 IAM 設定語意不完整且把拒絕條件放在執行個體政策，無法可靠地以資源 ARN 限定應用程式可用的桶。Gateway Endpoint 與明確允許政策才是清楚的控制面。
 - D：在公共子網中建立一個NAT Gateway. 更新路由表以使用NAT Gateway. 為所有桶指定桶保單,並帶有拒絕動作和下列條件:。透過 NAT 存取 S3 仍會走公有 AWS 服務端點，而且為每個桶維護拒絕政策增加管理量。這不能提供最簡單的私有 S3 存取路徑。
 
@@ -26765,11 +26765,11 @@ B
 ## Question #982
 
 **題目**
-一個公司有一個Amazon S3桶,裡面裝有敏感的資料檔案. 公司擁有一個在虛擬機器上執行的應用程式,位於一個premess資料中心. 該公司目前使用AWS IAM身份中心. 該應用程式需要臨時存取S3 儲存桶(S3 bucket)中的檔案. 公司希望讓應用程式安全地存取S3 儲存桶(S3 bucket)中的檔案. 哪種解決辦法能滿足這些要求?
+一個公司有一個Amazon S3 bucket,裡面裝有敏感的資料檔案. 公司擁有一個在虛擬機器上執行的應用程式,位於一個premess資料中心. 該公司目前使用AWS IAM身份中心. 該應用程式需要臨時存取S3 bucket中的檔案. 公司希望讓應用程式安全地存取S3 bucket中的檔案. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 建立一個 S3 儲存桶政策(bucket policy), 允許從公司在虛擬資料中心的公共IP地址範圍存取桶。
-- B. 任何地方使用IAM角色來獲取IAM身份中心允許存取S3 儲存桶(S3 bucket)的安全憑證. 配置虛擬機器,透過使用AWS CLI來承擔角色.
+- A. 建立一個 S3 bucket政策(bucket policy), 允許從公司在虛擬資料中心的公共IP地址範圍存取桶。
+- B. 任何地方使用IAM角色來獲取IAM身份中心允許存取S3 bucket的安全憑證. 配置虛擬機器,透過使用AWS CLI來承擔角色.
 - C. 在虛擬機器上安裝 AWS CLI。 配置 AWS CLI , 並配有存取桶的 IAM 使用者的存取金鑰。
 - D. 建立一個IAM使用者和政策,允許存取水桶. 在AWS Secrets Manager中為IAM使用者儲存存取金鑰和金鑰. 配置應用程式以在啟動時獲取存取金鑰和金鑰。
 
@@ -26779,9 +26779,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：任何地方使用IAM角色來獲取IAM身份中心允許存取S3 儲存桶(S3 bucket)的安全憑證. 配置虛擬機器,透過使用AWS CLI來承擔角色。IAM role 的臨時安全憑證有有限期限，應用程式可透過 AWS CLI 或 SDK 代入角色取得 S3 權限，不必保存長期 access key。把角色權限交給 IAM Identity Center 管理，能保留集中撤銷與最小權限控制。
+- B：任何地方使用IAM角色來獲取IAM身份中心允許存取S3 bucket的安全憑證. 配置虛擬機器,透過使用AWS CLI來承擔角色。IAM role 的臨時安全憑證有有限期限，應用程式可透過 AWS CLI 或 SDK 代入角色取得 S3 權限，不必保存長期 access key。把角色權限交給 IAM Identity Center 管理，能保留集中撤銷與最小權限控制。
 - 其餘選項比較：
-- A：建立一個 S3 儲存桶政策(bucket policy), 允許從公司在虛擬資料中心的公共IP地址範圍存取桶。桶政策依公司公共 IP 限制來源，沒有為應用程式提供臨時 AWS 憑證，且當來源網路或部署改變時需維護 IP 清單。網路來源限制也不能替代身份授權。
+- A：建立一個 S3 bucket政策(bucket policy), 允許從公司在虛擬資料中心的公共IP地址範圍存取桶。桶政策依公司公共 IP 限制來源，沒有為應用程式提供臨時 AWS 憑證，且當來源網路或部署改變時需維護 IP 清單。網路來源限制也不能替代身份授權。
 - C：在虛擬機器上安裝 AWS CLI。 配置 AWS CLI , 並配有存取桶的 IAM 使用者的存取金鑰。把 IAM 使用者的長期 access key 安裝在虛擬機器上，會造成憑證外洩與輪換風險。這不符合臨時存取與避免長期秘密的安全要求。
 - D：建立一個IAM使用者和政策,允許存取水桶. 在AWS Secrets Manager中為IAM使用者儲存存取金鑰和金鑰. 配置應用程式以在啟動時獲取存取金鑰和金鑰。把長期 IAM 使用者金鑰放進 Secrets Manager 仍然需要應用程式取用、輪換與撤銷這些金鑰，並未消除長期憑證風險。臨時 role credentials 更適合這個情境。
 
@@ -26820,7 +26820,7 @@ D
 **選項**
 - A. 建立 Amazon CloudFront 分佈。 配置已有的 ALB 為源。
 - B. 根據每個客戶的地理位置,使用Amazon Route 53為ALB和EC2的流量提供服務.
-- C. 建立 Amazon S3 桶, 並啟用公開讀取許可權。 將網路應用程式遷移到 S3 儲存桶(S3 bucket)。 為網站託管配置 S3 儲存桶(S3 bucket)。
+- C. 建立 Amazon S3 bucket, 並啟用公開讀取許可權。 將網路應用程式遷移到 S3 bucket。 為網站託管配置 S3 bucket。
 - D. 使用AWS Direct Connect直接服務內容從網路應用程式到每個客戶的所在地.
 
 **答案**
@@ -26832,7 +26832,7 @@ A
 - A：建立 Amazon CloudFront 分佈。 配置已有的 ALB 為源。CloudFront 可把 ALB 的動態與快取內容分發到全球邊緣位置，讓大量客戶就近連線，降低回到單一 AWS 區域的延遲與來源負載。沿用既有 ALB 作為來源，不必重建 EC2 應用程式層。
 - 其餘選項比較：
 - B：根據每個客戶的地理位置,使用Amazon Route 53為ALB和EC2的流量提供服務。Route 53 負責 DNS 流量導向，不會把單一 ALB 的動態內容快取到全球邊緣。只依地理位置提供 DNS 解析無法直接提升來源回應能力。
-- C：建立 Amazon S3 桶, 並啟用公開讀取許可權。 將網路應用程式遷移到 S3 儲存桶(S3 bucket)。 為網站託管配置 S3 儲存桶(S3 bucket)。S3 靜態網站託管只能承載靜態檔案，無法直接取代需要 EC2 執行的動態網路應用程式。遷移整個應用程式也超出成本最佳化快取的需求。
+- C：建立 Amazon S3 bucket, 並啟用公開讀取許可權。 將網路應用程式遷移到 S3 bucket。 為網站託管配置 S3 bucket。S3 靜態網站託管只能承載靜態檔案，無法直接取代需要 EC2 執行的動態網路應用程式。遷移整個應用程式也超出成本最佳化快取的需求。
 - D：使用AWS Direct Connect直接服務內容從網路應用程式到每個客戶的所在地。Direct Connect 是企業到 AWS 的專用網路連線，不是面向數百萬全球終端使用者的內容分發服務。為每個客戶位置提供專線既昂貴又不具可行性。
 
 **分類：** 網路連結和內容交付
@@ -26999,7 +26999,7 @@ C
 一家公司使用GPS追蹤器記錄數千只海龜的遷徙模式. 追蹤者每5分鐘檢查一次,看看一隻海龜是否移動了100多碼(91.4米). 如果龜類已經移動,其跟蹤器會將新的座標傳送到執行在3個Amazon EC2的網路應用上,在1個AWS 區域(Region)的多個可用區(Availability Zones)中執行. 最近,Web應用程式在處理一個出乎意料的追蹤器資料量時被淹沒. 資料丟失 無法重播事件。 解決方案設計師必須防止這個問題再次發生,並且需要至少使用營運開銷(operational overhead)的解決方案. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 建立 Amazon S3 桶儲存資料。 配置應用程式掃描桶中的新資料進行處理。
+- A. 建立 Amazon S3 bucket儲存資料。 配置應用程式掃描桶中的新資料進行處理。
 - B. 建立 Amazon API Gateway 端點處理傳輸位置座標. 使用 AWS Lambda 函式來同時處理每個專案。
 - C. 建立 Amazon 簡單佇列 服務( Amazon SQS) 佇列以儲存收到的資料。 配置用於對新訊息進行處理的民意測驗的應用程式。
 - D. 建立 Amazon DynamoDB 表格以儲存傳輸位置座標。 配置用於查詢表格的新資料處理的應用程式。 使用 TTL 刪除已處理的資料。
@@ -27012,7 +27012,7 @@ C
 正確答案是 **C**。
 - C：建立 Amazon 簡單佇列 服務( Amazon SQS) 佇列以儲存收到的資料。 配置用於對新訊息進行處理的民意測驗的應用程式。SQS 會把追蹤器事件持久化，消費者可按自己的速度輪詢處理，突發流量不會直接淹沒 EC2 Web 應用程式。訊息在處理確認前可重試與重播，因此能避免先前的資料遺失，同時只需配置既有應用程式的佇列消費。
 - 其餘選項比較：
-- A：建立 Amazon S3 桶儲存資料。 配置應用程式掃描桶中的新資料進行處理。S3 能耐久保存物件，但應用程式輪詢新檔案會增加延遲與掃描成本，還需要自行處理重複、排序與刪除。它不是此類短訊息事件的低維護佇列。
+- A：建立 Amazon S3 bucket儲存資料。 配置應用程式掃描桶中的新資料進行處理。S3 能耐久保存物件，但應用程式輪詢新檔案會增加延遲與掃描成本，還需要自行處理重複、排序與刪除。它不是此類短訊息事件的低維護佇列。
 - B：建立 Amazon API Gateway 端點處理傳輸位置座標. 使用 AWS Lambda 函式來同時處理每個專案。API Gateway 與 Lambda 可處理請求，但直接同步執行會讓突發資料量壓垮函式或入口，且沒有持久化重播緩衝。
 - D：建立 Amazon DynamoDB 表格以儲存傳輸位置座標。 配置用於查詢表格的新資料處理的應用程式。 使用 TTL 刪除已處理的資料。DynamoDB 適合保存目前狀態，但以查詢新資料取代事件佇列會增加掃描、去重與消費進度管理。TTL 只是過期刪除，不提供可靠的事件重播語意。
 
@@ -27046,7 +27046,7 @@ B
 ## Question #993
 
 **題目**
-一個解決方案架構師正在建立一個應用程式,將處理大量資料的批次處理. 輸入資料將儲存在Amazon S3中,輸出資料將儲存在不同的S3 儲存桶(S3 bucket)中. 為了處理,應用程式將在多個Amazon EC2例項之間透過網路傳輸資料. 解決方案設計師應如何降低資料傳輸總成本?
+一個解決方案架構師正在建立一個應用程式,將處理大量資料的批次處理. 輸入資料將儲存在Amazon S3中,輸出資料將儲存在不同的S3 bucket中. 為了處理,應用程式將在多個Amazon EC2例項之間透過網路傳輸資料. 解決方案設計師應如何降低資料傳輸總成本?
 
 **選項**
 - A. 將全部EC2 例項放在 Auto Scaling 群組(Auto Scaling group) 中。
@@ -27077,7 +27077,7 @@ C
 - A. 建立一個新的 AWS Key Management Service(AWS KMS) 加密(encryption) 鍵. 使用 AWS Secrets Manager 來建立一個新的秘密,使用 KMS 金鑰並配有適當的憑證. 把這個秘密與AuroraDB叢集聯絡起來. 配置自定義旋轉期14天.
 - B. 在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼.
 - C. 在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案.
-- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案.
+- D. 在AWS Key Management Service(AWS KMS)加密的Amazon S3 bucket中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 bucket中的檔案.
 
 **答案**
 A
@@ -27089,7 +27089,7 @@ A
 - 其餘選項比較：
 - B：在 AWS Systems Manager 引數儲存器中建立兩個引數:一個是使用者名稱作為字串引數,另一個是使用SafeString型別進行密碼. 為密碼引數選擇AWS Key Management Service(AWS KMS)加密(encryption),並將這些引數載入到應用級. 執行AWS Lambda功能,每14天旋轉密碼。Parameter Store 的 SecureString 只保存秘密，不會原生替 Aurora 執行資料庫憑證輪換；還需要自行維護 Lambda、更新資料庫與處理應用程式同步。
 - C：在AWS Key Management Service(AWS KMS)加密的Amazon Elastic File System (Amazon EFS)檔案系統中儲存一個包含憑證的檔案. 在應用程式級的所有 EC2 例項中掛載 EFS 檔案系統。 限制對檔案系統中檔案的存取,以便應用程式能夠讀取檔案,只有超級使用者可以修改檔案. 執行AWS Lambda功能,每14天在Aurora旋轉一次金鑰,並將新的憑證寫入檔案。把憑證放在 EFS 檔案中需要自行管理檔案權限、掛載、輪換與所有 EC2 節點的一致性。超級使用者限制不是完整的秘密生命週期控制。
-- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3桶中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 儲存桶(S3 bucket)中的檔案。S3 物件加密只保護檔案，不會自動輪換 Aurora 的資料庫憑證；應用程式還要定期下載並處理版本同步。這比 Secrets Manager 原生輪換複雜。
+- D：在AWS Key Management Service(AWS KMS)加密的Amazon S3 bucket中儲存包含憑證的檔案,應用程式用來載入憑證. 定期嚮應用程式下載檔案,以確保使用正確的憑證。 實施AWS Lambda功能,每14天旋轉一次Aurora憑證,並將這些憑證上傳到S3 bucket中的檔案。S3 物件加密只保護檔案，不會自動輪換 Aurora 的資料庫憑證；應用程式還要定期下載並處理版本同步。這比 Secrets Manager 原生輪換複雜。
 
 **分類：** 安全、身分與合規
 
@@ -27171,11 +27171,11 @@ C
 ## Question #998
 
 **題目**
-一家公司在AWS上執行其遺留的網路應用程式. 網路應用程式伺服器在一個VPC的公共子網中執行在Amazon EC2例項上. 網路應用伺服器收集客戶的影象,並將影象檔案儲存在本地附屬的Amazon Elastic Block Store (Amazon EBS)卷中. 影象檔案每晚都會上傳到備份(backup)的Amazon S3桶. 一個解決方案架構師發現影象檔案正在透過公共端點上傳到Amazon S3. 解決方案架構師需要確保到Amazon S3的流量不使用公共端點. 哪種解決辦法能滿足這些要求?
+一家公司在AWS上執行其遺留的網路應用程式. 網路應用程式伺服器在一個VPC的公共子網中執行在Amazon EC2例項上. 網路應用伺服器收集客戶的影象,並將影象檔案儲存在本地附屬的Amazon Elastic Block Store (Amazon EBS)卷中. 影象檔案每晚都會上傳到備份(backup)的Amazon S3 bucket. 一個解決方案架構師發現影象檔案正在透過公共端點上傳到Amazon S3. 解決方案架構師需要確保到Amazon S3的流量不使用公共端點. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 為S3 儲存桶(S3 bucket)建立閘道器VPC 端點(VPC endpoint),具有VPC的必要許可權. 配置子網路由表以使用閘道器 VPC 端點(VPC endpoint).
-- B. 將S3 儲存桶(S3 bucket)移動到VPC內部. 配置子網路由表透過私人IP地址存取S3 儲存桶(S3 bucket).
+- A. 為S3 bucket建立閘道器VPC 端點(VPC endpoint),具有VPC的必要許可權. 配置子網路由表以使用閘道器 VPC 端點(VPC endpoint).
+- B. 將S3 bucket移動到VPC內部. 配置子網路由表透過私人IP地址存取S3 bucket.
 - C. 在 VPConfit 內為 Amazon EC2 例項建立 Amazon S3 存取點,透過使用 Amazon S3 存取點上傳.
 - D. 配置具有Amazon EC2例項的VPC和Amazon S3之間的AWS Direct Connect連線,以提供專用的網路路徑.
 
@@ -27185,9 +27185,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為S3 儲存桶(S3 bucket)建立閘道器VPC 端點(VPC endpoint),具有VPC的必要許可權. 配置子網路由表以使用閘道器 VPC 端點(VPC endpoint)。S3 Gateway Endpoint 會把 VPC 內前往 S3 的路由導向 AWS 私有網路，不需經過 NAT Gateway 或公共 S3 端點。把 endpoint 關聯到應用程式子網的路由表後，夜間備份流量即可避免公網路徑。
+- A：為S3 bucket建立閘道器VPC 端點(VPC endpoint),具有VPC的必要許可權. 配置子網路由表以使用閘道器 VPC 端點(VPC endpoint)。S3 Gateway Endpoint 會把 VPC 內前往 S3 的路由導向 AWS 私有網路，不需經過 NAT Gateway 或公共 S3 端點。把 endpoint 關聯到應用程式子網的路由表後，夜間備份流量即可避免公網路徑。
 - 其餘選項比較：
-- B：將S3 儲存桶(S3 bucket)移動到VPC內部. 配置子網路由表透過私人IP地址存取S3 儲存桶(S3 bucket)。S3 桶不會部署在 VPC 內，也不能以一般私人 IP 路由表方式搬入 VPC。這個網路模型不符合 S3 的服務邊界。
+- B：將S3 bucket移動到VPC內部. 配置子網路由表透過私人IP地址存取S3 bucket。S3 bucket不會部署在 VPC 內，也不能以一般私人 IP 路由表方式搬入 VPC。這個網路模型不符合 S3 的服務邊界。
 - C：在 VPConfit 內為 Amazon EC2 例項建立 Amazon S3 存取點,透過使用 Amazon S3 存取點上傳。S3 Access Point 是針對桶的存取政策與端點名稱，不會自動讓 EC2 到 S3 的流量避開公共端點。題目要的是 VPC 路由層的 Gateway Endpoint。
 - D：配置具有Amazon EC2例項的VPC和Amazon S3之間的AWS Direct Connect連線,以提供專用的網路路徑。Direct Connect 是現場或專用網路到 AWS 的連線，為同一 VPC 的 EC2 備份流量建立它成本高且不必要。它也不是 S3 私有路由的標準方式。
 
@@ -27351,7 +27351,7 @@ B
 **選項**
 - A. 將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 建立一個 AWS Lambda 函式,以檢視 SQS 佇列,呼叫 Amazon Comprehend 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天.
 - B. 將調查結果資料傳送給一個正在執行於Amazon EC2例項的API。 配置API將調查結果儲存為Amazon DynamoDB表格中的新記錄,呼叫Amazon Comprehend進行情緒分析,並將結果儲存在第二個DynamoDB表格中. 將所有記錄的TTL設定為未來365天.
-- C. 將調查結果資料寫入Amazon S3桶。 使用 S3 事件通知來引用一個 AWS Lambda 函式來讀取資料並呼叫 Amazon Rekindition 進行情緒分析. 將情緒分析結果儲存在第二個S3 儲存桶(S3 bucket)中. 使用每桶的S3壽命週期政策在365天后過期物件.
+- C. 將調查結果資料寫入Amazon S3 bucket。 使用 S3 事件通知來引用一個 AWS Lambda 函式來讀取資料並呼叫 Amazon Rekindition 進行情緒分析. 將情緒分析結果儲存在第二個S3 bucket中. 使用每桶的S3壽命週期政策在365天后過期物件.
 - D. 將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 配置 SQS 佇列以引用 AWS Lambda 函式呼叫 Amazon Lex 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天.
 
 **答案**
@@ -27363,7 +27363,7 @@ A
 - A：將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 建立一個 AWS Lambda 函式,以檢視 SQS 佇列,呼叫 Amazon Comprehend 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天。API Gateway、SQS 與 Lambda 可吸收每小時數千筆調查的突發量，Lambda 再呼叫 Amazon Comprehend 執行情緒分析，避免自行管理伺服器。DynamoDB 保存結果並以 TTL 在 365 天後自動過期，既保留最近 12 個月資料，也控制儲存成本。
 - 其餘選項比較：
 - B：將調查結果資料傳送給一個正在執行於Amazon EC2例項的API。 配置API將調查結果儲存為Amazon DynamoDB表格中的新記錄,呼叫Amazon Comprehend進行情緒分析,並將結果儲存在第二個DynamoDB表格中. 將所有記錄的TTL設定為未來365天。在 EC2 上自行執行 API、資料寫入與分析流程，需要管理主機、擴縮、修補與併發控制；突發量也可能壓垮單一服務。受管事件鏈路能以較少營運工作達成相同功能。
-- C：將調查結果資料寫入Amazon S3桶。 使用 S3 事件通知來引用一個 AWS Lambda 函式來讀取資料並呼叫 Amazon Rekindition 進行情緒分析. 將情緒分析結果儲存在第二個S3 儲存桶(S3 bucket)中. 使用每桶的S3壽命週期政策在365天后過期物件。Amazon Rekognition 是影像與影片分析服務，不是文字情緒分析服務；此方案選錯 AI 服務。S3 事件也需要額外處理小檔案觸發與結果查詢模型。
+- C：將調查結果資料寫入Amazon S3 bucket。 使用 S3 事件通知來引用一個 AWS Lambda 函式來讀取資料並呼叫 Amazon Rekindition 進行情緒分析. 將情緒分析結果儲存在第二個S3 bucket中. 使用每桶的S3壽命週期政策在365天后過期物件。Amazon Rekognition 是影像與影片分析服務，不是文字情緒分析服務；此方案選錯 AI 服務。S3 事件也需要額外處理小檔案觸發與結果查詢模型。
 - D：將調查結果資料傳送到連線到Amazon Simple Queue Service的Amazon API Gateway端點(Amazon SQS)佇列. 配置 SQS 佇列以引用 AWS Lambda 函式呼叫 Amazon Lex 進行情緒分析,並將結果儲存到 Amazon DynamoDB 表格中. 將所有記錄的TTL設定為未來365天。Amazon Lex 是建立對話式機器人的服務，不提供調查文字的情緒分析；應使用 Comprehend。
 
 **分類：** 機器學習
@@ -27449,7 +27449,7 @@ D
 ## Question #1009
 
 **題目**
-一家公司經營一個將資料儲存在Amazon S3桶內的環境. 物體每天經常被存取。 該公司對儲存在S3 儲存桶(S3 bucket)的資料有嚴格的data 加密(encryption)要求. 該公司目前使用AWS Key Management Service(AWS KMS)用於加密(encryption). 公司希望在不給AWS KMS打額外電話的情況下,最佳化與加密S3物件相關的成本. 哪種解決辦法能滿足這些要求?
+一家公司經營一個將資料儲存在Amazon S3 bucket內的環境. 物體每天經常被存取。 該公司對儲存在S3 bucket的資料有嚴格的data 加密(encryption)要求. 該公司目前使用AWS Key Management Service(AWS KMS)用於加密(encryption). 公司希望在不給AWS KMS打額外電話的情況下,最佳化與加密S3物件相關的成本. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用伺服器側式加密(encryption)配有Amazon S3管理金鑰(SSE-S3).
@@ -27504,14 +27504,14 @@ B,C,D
 ## Question #1011
 
 **題目**
-一家公司在一個私人子網中託管一個應用程式. 該公司已經將該應用與Amazon Cognito整合. 公司使用Amazon Cognitto使用者池認證使用者. 公司需要修改應用程式,以便應用程式能夠安全地將使用者檔案儲存在Amazon S3桶中. 哪些步驟的組合將安全地將Amazon S3與應用程式整合?(選二.
+一家公司在一個私人子網中託管一個應用程式. 該公司已經將該應用與Amazon Cognito整合. 公司使用Amazon Cognitto使用者池認證使用者. 公司需要修改應用程式,以便應用程式能夠安全地將使用者檔案儲存在Amazon S3 bucket中. 哪些步驟的組合將安全地將Amazon S3與應用程式整合?(選二.
 
 **選項**
 - A. 建立一個Amazon Cognitto身份池,為使用者成功登入時生成安全的Amazon S3存取令牌.
 - B. 使用現有的Amazon Cognitto使用者池為使用者成功登入時生成Amazon S3存取令牌.
 - C. 在公司託管應用程式的同一VPC中建立一個Amazon S3 VPC 端點(VPC endpoint).
-- D. 在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 儲存桶(S3 bucket)指定一項政策,拒絕Amazon Cognito未啟動的任何請求.
-- E. 在S3 儲存桶(S3 bucket)上附加一個只允許從使用者的IP地址存取的政策.
+- D. 在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 bucket指定一項政策,拒絕Amazon Cognito未啟動的任何請求.
+- E. 在S3 bucket上附加一個只允許從使用者的IP地址存取的政策.
 
 **答案**
 A,C
@@ -27524,8 +27524,8 @@ A,C
 - C：在公司託管應用程式的同一VPC中建立一個Amazon S3 VPC 端點(VPC endpoint)。S3 VPC Endpoint 讓私人子網中的應用程式經由 VPC 私有路徑存取 S3，不需 NAT 或網際網路閘道器。結合桶政策與 Cognito 角色權限，可讓使用者檔案傳輸保持在 AWS 網路內。
 - 其餘選項比較：
 - B：使用現有的Amazon Cognitto使用者池為使用者成功登入時生成Amazon S3存取令牌。User Pool 負責使用者註冊與聯合登入，不會直接為應用程式簽發可呼叫 S3 的 AWS 臨時憑證。要把聯登入口接到 IAM 權限，還需要 Identity Pool。
-- D：在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 儲存桶(S3 bucket)指定一項政策,拒絕Amazon Cognito未啟動的任何請求。NAT Gateway 會提供出站轉送，但仍不是最直接的 S3 私有路徑，且桶政策不能簡單以 Cognito 是否啟動來取代正確的 IAM 臨時憑證授權。
-- E：在S3 儲存桶(S3 bucket)上附加一個只允許從使用者的IP地址存取的政策。以使用者 IP 授權不適合私人子網中的多個使用者，且無法表達 Cognito 身分與個別檔案權限。IP 來源也會隨網路環境改變。
+- D：在 VPC 中建立一個 NAT 閘道器, 由公司託管應用程式。 向S3 bucket指定一項政策,拒絕Amazon Cognito未啟動的任何請求。NAT Gateway 會提供出站轉送，但仍不是最直接的 S3 私有路徑，且桶政策不能簡單以 Cognito 是否啟動來取代正確的 IAM 臨時憑證授權。
+- E：在S3 bucket上附加一個只允許從使用者的IP地址存取的政策。以使用者 IP 授權不適合私人子網中的多個使用者，且無法表達 Cognito 身分與個別檔案權限。IP 來源也會隨網路環境改變。
 
 **分類：** 安全、身分與合規
 
@@ -27586,7 +27586,7 @@ A
 
 **選項**
 - A. 使用Amazon Elastic Container Service (Amazon ECS)與Amazon EC2 Spot 執行個體處理影象. 配置 Amazon 簡單佇列服務( Amazon SQS) 來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic File System (Amazon EFS)中.
-- B. 使用 AWS 批次任務處理影象。 使用 AWS Step 函式來協調 workfiow。 在Amazon S3桶中儲存已處理的檔案.
+- B. 使用 AWS 批次任務處理影象。 使用 AWS Step 函式來協調 workfiow。 在Amazon S3 bucket中儲存已處理的檔案.
 - C. 使用AWS Lambda函式和Amazon EC2 Spot 執行個體處理影象. 將已處理的檔案儲存在 Amazon FSx 中.
 - D. 部署一組 Amazon EC2 例項處理影象。 使用 AWS Step 函式來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic Block Store (Amazon EBS)中。
 
@@ -27596,7 +27596,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 AWS 批次任務處理影象。 使用 AWS Step 函式來協調 workfiow。 在Amazon S3桶中儲存已處理的檔案。AWS Batch 會依待處理工作佈建與調度批次計算資源，適合可平行化且數量波動的影像處理，而不必管理底層主機。Step Functions 可用狀態機串接處理步驟與錯誤重試，S3 則以高耐久、可擴展的物件儲存保存大型輸出檔案。
+- B：使用 AWS 批次任務處理影象。 使用 AWS Step 函式來協調 workfiow。 在Amazon S3 bucket中儲存已處理的檔案。AWS Batch 會依待處理工作佈建與調度批次計算資源，適合可平行化且數量波動的影像處理，而不必管理底層主機。Step Functions 可用狀態機串接處理步驟與錯誤重試，S3 則以高耐久、可擴展的物件儲存保存大型輸出檔案。
 - 其餘選項比較：
 - A：使用Amazon Elastic Container Service (Amazon ECS)與Amazon EC2 Spot 執行個體處理影象. 配置 Amazon 簡單佇列服務( Amazon SQS) 來協調 workfiow。 將已處理的檔案儲存在Amazon Elastic File System (Amazon EFS)中。ECS on EC2 Spot 需要管理叢集容量與中斷替換，EFS 也不是大量已處理影像的最低成本物件儲存。SQS 協調流程還需自行維護工作狀態。
 - C：使用AWS Lambda函式和Amazon EC2 Spot 執行個體處理影象. 將已處理的檔案儲存在 Amazon FSx 中。Lambda 不適合長時間或大型影像處理，且 EC2 Spot 仍需自行處理容量與中斷；FSx 也不是大量輸出檔案的最低成本歸檔層。
@@ -27607,13 +27607,13 @@ B
 ## Question #1015
 
 **題目**
-一家公司的影象託管網站讓世界各地的使用者能夠從他們的移動裝置上載,檢視和下載影象. 該公司目前以Amazon S3桶託管靜態網站. 由於網站的受歡迎程度不斷提高,網站的表現也有所下降. 使用者在上傳和下載影象時報告了延遲(latency)期. 公司必須提高網站的效能. 哪些解決辦法將滿足這些要求?
+一家公司的影象託管網站讓世界各地的使用者能夠從他們的移動裝置上載,檢視和下載影象. 該公司目前以Amazon S3 bucket託管靜態網站. 由於網站的受歡迎程度不斷提高,網站的表現也有所下降. 使用者在上傳和下載影象時報告了延遲(latency)期. 公司必須提高網站的效能. 哪些解決辦法將滿足這些要求?
 
 **選項**
-- A. 為S3 儲存桶(S3 bucket)配置一個Amazon CloudFront發行版本,以提高下載效能. 啟用 S3 Transfer Acceleration 以提高上傳效能.
+- A. 為S3 bucket配置一個Amazon CloudFront發行版本,以提高下載效能. 啟用 S3 Transfer Acceleration 以提高上傳效能.
 - B. 在多個 AWS 區域配置合適的 Amazon EC2 例項。 將應用程式移至 EC2 例項。 使用應用程式負載平衡器(Application Load Balancer)在EC2例項中平均分配網站流量. 配置 AWS 全球加速器,以低延遲(latency)滿足全球需求.
-- C. 配置一個使用S3 儲存桶(S3 bucket)作為來源的Amazon CloudFront發行,以提高下載效能. 配置使用 CloudFront 上傳影象的應用程式,以提高上傳效能. 在多個 AWS 區域建立 S3 桶。 為桶配置複寫(replication)規則,以複製使用者基於使用者位置的資料. 將下載重定向到最接近每個使用者位置的S3 儲存桶(S3 bucket).
-- D. 為S3 儲存桶(S3 bucket)配置AWS Global Accelerator,以提高網路效能. 為應用程式建立一個端點,用於使用S3 儲存桶(S3 bucket)的Global加速器.
+- C. 配置一個使用S3 bucket作為來源的Amazon CloudFront發行,以提高下載效能. 配置使用 CloudFront 上傳影象的應用程式,以提高上傳效能. 在多個 AWS 區域建立 S3 bucket。 為桶配置複寫(replication)規則,以複製使用者基於使用者位置的資料. 將下載重定向到最接近每個使用者位置的S3 bucket.
+- D. 為S3 bucket配置AWS Global Accelerator,以提高網路效能. 為應用程式建立一個端點,用於使用S3 bucket的Global加速器.
 
 **答案**
 A
@@ -27621,11 +27621,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為S3 儲存桶(S3 bucket)配置一個Amazon CloudFront發行版本,以提高下載效能. 啟用 S3 Transfer Acceleration 以提高上傳效能。CloudFront 會把 S3 靜態影像快取到全球邊緣位置，降低下載的往返延遲；S3 Transfer Acceleration 則利用 CloudFront 邊緣網路把上傳較快送到來源桶。兩者分別針對下載與上傳瓶頸，不需搬遷現有靜態網站。
+- A：為S3 bucket配置一個Amazon CloudFront發行版本,以提高下載效能. 啟用 S3 Transfer Acceleration 以提高上傳效能。CloudFront 會把 S3 靜態影像快取到全球邊緣位置，降低下載的往返延遲；S3 Transfer Acceleration 則利用 CloudFront 邊緣網路把上傳較快送到來源桶。兩者分別針對下載與上傳瓶頸，不需搬遷現有靜態網站。
 - 其餘選項比較：
 - B：在多個 AWS 區域配置合適的 Amazon EC2 例項。 將應用程式移至 EC2 例項。 使用應用程式負載平衡器(Application Load Balancer)在EC2例項中平均分配網站流量. 配置 AWS 全球加速器,以低延遲(latency)滿足全球需求。把靜態網站搬到多區域 EC2 與 ALB 會引入主機、複寫和部署維護，全球加速器也不會像 CloudFront 一樣快取影像內容。這是過度複雜的替代架構。
-- C：配置一個使用S3 儲存桶(S3 bucket)作為來源的Amazon CloudFront發行,以提高下載效能. 配置使用 CloudFront 上傳影象的應用程式,以提高上傳效能. 在多個 AWS 區域建立 S3 桶。 為桶配置複寫(replication)規則,以複製使用者基於使用者位置的資料. 將下載重定向到最接近每個使用者位置的S3 儲存桶(S3 bucket)。CloudFront 主要是內容下載快取，不是一般 S3 上傳的完整替代端點；多桶複寫與依位置重導會增加資料一致性、路由和維運負擔。
-- D：為S3 儲存桶(S3 bucket)配置AWS Global Accelerator,以提高網路效能. 為應用程式建立一個端點,用於使用S3 儲存桶(S3 bucket)的Global加速器。Global Accelerator 的端點通常是 ALB、NLB、EC2 或 Elastic IP，不是直接把 S3 桶當作端點。它也不能提供 S3 物件快取與上傳加速的完整功能。
+- C：配置一個使用S3 bucket作為來源的Amazon CloudFront發行,以提高下載效能. 配置使用 CloudFront 上傳影象的應用程式,以提高上傳效能. 在多個 AWS 區域建立 S3 bucket。 為桶配置複寫(replication)規則,以複製使用者基於使用者位置的資料. 將下載重定向到最接近每個使用者位置的S3 bucket。CloudFront 主要是內容下載快取，不是一般 S3 上傳的完整替代端點；多桶複寫與依位置重導會增加資料一致性、路由和維運負擔。
+- D：為S3 bucket配置AWS Global Accelerator,以提高網路效能. 為應用程式建立一個端點,用於使用S3 bucket的Global加速器。Global Accelerator 的端點通常是 ALB、NLB、EC2 或 Elastic IP，不是直接把 S3 bucket當作端點。它也不能提供 S3 物件快取與上傳加速的完整功能。
 
 **分類：** 網路連結和內容交付
 
@@ -27637,7 +27637,7 @@ A
 **選項**
 - A. 配置 S3 介面端點。 建立安全群組(security group),允許外出流量至Amazon S3.
 - B. 配置 S3 閘道器端點。 更新 VPC 路由表以使用端點。
-- C. 配置一個S3 儲存桶政策(bucket policy),允許從分配給NAT閘道器的彈性IP地址的流量.
+- C. 配置一個S3 bucket政策(bucket policy),允許從分配給NAT閘道器的彈性IP地址的流量.
 - D. 在部署遺留應用程式的同一子網中建立第二個NAT閘道器。 更新 VPC 路由表以使用第二個NAT閘道器.
 
 **答案**
@@ -27649,7 +27649,7 @@ B
 - B：配置 S3 閘道器端點。 更新 VPC 路由表以使用端點。S3 Gateway Endpoint 會在 VPC 路由表加入 S3 prefix list 路由，使私人子網直接經 AWS 私有網路存取 S3。這不需要 NAT Gateway 或網際網路閘道器，符合不得穿越網際網路且成本效益高的要求。
 - 其餘選項比較：
 - A：配置 S3 介面端點。 建立安全群組(security group),允許外出流量至Amazon S3。S3 Interface Endpoint 可提供私有連線，但需為每個 AZ 建立 ENI 並管理安全群組；對同一 VPC 內的 S3 存取，Gateway Endpoint 通常不需額外每小時端點費用。
-- C：配置一個S3 儲存桶政策(bucket policy),允許從分配給NAT閘道器的彈性IP地址的流量。桶政策只限制來源 Elastic IP，不能讓流量離開 NAT 後變成私有路徑；應用程式仍會透過 NAT 走公有服務端點。
+- C：配置一個S3 bucket政策(bucket policy),允許從分配給NAT閘道器的彈性IP地址的流量。桶政策只限制來源 Elastic IP，不能讓流量離開 NAT 後變成私有路徑；應用程式仍會透過 NAT 走公有服務端點。
 - D：在部署遺留應用程式的同一子網中建立第二個NAT閘道器。 更新 VPC 路由表以使用第二個NAT閘道器。增加第二個 NAT Gateway 仍是公有端點路徑，並且會增加 NAT 的小時與資料處理成本。它不能符合流量不得穿越網際網路的政策。
 
 **分類：** 網路連結和內容交付
