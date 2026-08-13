@@ -136,7 +136,7 @@ C
 ## Question #6
 
 **題目**
-一家公司使用NFS將大型影片檔案儲存在附著的 on-premises 網路儲存中. 每個影片檔案的大小從1MB到500GB不等. 總儲存量為70TB,不再增長. 公司決定將影片檔案遷移到Amazon S3. 公司必須儘快遷移影片檔案,同時使用儘可能少的網路頻寬. 哪種解決辦法能滿足這些要求?
+一家公司使用NFS將大型影片檔案儲存在附著的地端網路儲存中. 每個影片檔案的大小從1MB到500GB不等. 總儲存量為70TB,不再增長. 公司決定將影片檔案遷移到Amazon S3. 公司必須儘快遷移影片檔案,同時使用儘可能少的網路頻寬. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立 S3 bucket. 建立一個 IAM 角色,該角色擁有寫入 S3 bucket 的許可權。 使用 AWS CLI 在本地複製所有檔案到 S3 bucket.
@@ -982,7 +982,7 @@ B
 - A. 使用EC2序列控制檯直接存取每個例項的終端介面進行管理.
 - B. 在每一個現有例項和新例項中附加適當的IAM角色. 使用 AWS Systems Manager 會話管理器建立遠端SSH會話.
 - C. 建立行政 SSH 金鑰對。 將公鑰裝入每個 EC2 例項。 在一個公共子網中部署一個堡壘主機,為每個案例的行政管理提供隧道。
-- D. 建立AWS站點對站點VPN連線. 指示管理員透過使用跨VPN隧道的SSH金鑰,使用本地的前提機直接連線到例項.
+- D. 建立AWS站點對站點VPN連線. 指示管理員透過使用跨VPN隧道的SSH金鑰,使用本地的地端機直接連線到例項.
 
 **答案**
 B
@@ -996,7 +996,7 @@ B
 - 其餘選項比較：
 - A：使用EC2序列控制檯直接存取每個例項的終端介面進行管理。EC2 序列主控台是用於存取執行個體開機層級的序列埠,主要用於疑難排解開機或網路設定問題,並非為日常遠端管理大量執行個體所設計的方案。
 - C：建立行政 SSH 金鑰對。 將公鑰裝入每個 EC2 例項。 在一個公共子網中部署一個堡壘主機,為每個案例的行政管理提供隧道。建立管理用 SSH 金鑰對並在每個執行個體安裝公鑰,再於公開子網路中部署堡壘主機,需要持續管理金鑰、維護堡壘主機本身的安全與可用性,並開放對外 SSH 連接埠,維運負擔與攻擊面都明顯較高。
-- D：建立AWS站點對站點VPN連線. 指示管理員透過使用跨VPN隧道的SSH金鑰,使用本地的前提機直接連線到例項。建立站點對站點 VPN 連線並要求管理員透過本地端主機以 SSH 金鑰跨 VPN 通道連線,需要建置與維護 VPN 基礎設施及金鑰管理流程,操作複雜度明顯高於直接使用受管的 Session Manager。
+- D：建立AWS站點對站點VPN連線. 指示管理員透過使用跨VPN隧道的SSH金鑰,使用本地的地端機直接連線到例項。建立站點對站點 VPN 連線並要求管理員透過本地端主機以 SSH 金鑰跨 VPN 通道連線,需要建置與維護 VPN 基礎設施及金鑰管理流程,操作複雜度明顯高於直接使用受管的 Session Manager。
 
 **分類：** 管理與控管
 
@@ -1007,7 +1007,7 @@ B
 
 **選項**
 - A. 將包含網站的S3 bucket複製到所有AWS區域. 新增 Route 53 地理定位路由記錄.
-- B. AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 bucket聯絡起來。 編輯路由53條目以指向加速器的IP地址.
+- B. AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 bucket聯絡起來。 編輯Route 53條目以指向加速器的IP地址.
 - C. 在S3 bucket前增加一個Amazon CloudFront分佈. 編輯 Route 53 記錄以指向 CloudFront Distribution.
 - D. 在桶上啟用 S3 Transfer Acceleration。 編輯 route 53 條目以指向新的終點。
 
@@ -1022,7 +1022,7 @@ C
 - C：在S3 bucket前增加一個Amazon CloudFront分佈. 編輯 Route 53 記錄以指向 CloudFront Distribution。在 S3 bucket前建立 Amazon CloudFront 發行版,可將靜態內容快取至全球各地的邊緣節點,讓使用者從最近的邊緣節點取得內容,搭配修改 Route 53 記錄指向該 CloudFront 發行版,即可有效降低全球使用者的存取延遲。
 - 其餘選項比較：
 - A：將包含網站的S3 bucket複製到所有AWS區域. 新增 Route 53 地理定位路由記錄。將 S3 bucket內容複製到所有 AWS 區域並設定 Route 53 地理位置路由,需要自行維護跨區域的內容同步與一致性,操作複雜度遠高於使用單一 CDN 服務,且無法提供邊緣節點層級的快取效果。
-- B：AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 bucket聯絡起來。 編輯路由53條目以指向加速器的IP地址。AWS Global Accelerator 是透過 AWS 全球網路以任播 IP 將流量導向最近的運算端點(如 ALB、NLB、EC2),主要用於加速應用程式流量,並非為 S3 靜態網站內容提供邊緣快取,無法達到 CloudFront 對靜態內容的延遲改善效果。
+- B：AWS Global Accelerator中提供加速器. 將所提供的IP地址與S3 bucket聯絡起來。 編輯Route 53條目以指向加速器的IP地址。AWS Global Accelerator 是透過 AWS 全球網路以任播 IP 將流量導向最近的運算端點(如 ALB、NLB、EC2),主要用於加速應用程式流量,並非為 S3 靜態網站內容提供邊緣快取,無法達到 CloudFront 對靜態內容的延遲改善效果。
 - D：在桶上啟用 S3 Transfer Acceleration。 編輯 route 53 條目以指向新的終點。S3 Transfer Acceleration 是用來加速使用者將資料「上傳」到 S3 bucket的速度,並非用來加速一般使用者瀏覽網站時「下載」靜態內容的延遲,與題目需求不符。
 
 **分類：** 網路連結和內容交付
@@ -1390,7 +1390,7 @@ D,B
 ## Question #52
 
 **題目**
-一家公司想將它的前提應用程式遷移到AWS. 應用程式生成輸出檔案,大小從數十千兆位元組到數百兆位元組不等. 應用程式資料必須儲存在標準檔案系統結構中. 公司想要一個自動縮放的解決方案. 高可用性,需要最低限度的營運開銷(operational overhead)。 哪種解決辦法能滿足這些要求?
+一家公司想將它的地端應用程式遷移到AWS. 應用程式生成輸出檔案,大小從數十千兆位元組到數百兆位元組不等. 應用程式資料必須儲存在標準檔案系統結構中. 公司想要一個自動縮放的解決方案. 高可用性,需要最低限度的營運開銷(operational overhead)。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 在Amazon Elastic Container Service (Amazon ECS)上將作為集裝箱執行的應用程式遷移。 使用Amazon S3進行儲存.
@@ -1502,9 +1502,9 @@ C
 
 **選項**
 - A. 在 API 閘道器中建立具有" Endpoint- URL" 和" company domain Name" 的階段變數,以覆蓋預設的 URL。 將與公司域名相關的公憑證匯入AWS Certificate Manager(ACM).
-- B. 以公司域名建立路由53DNS記錄. 將別名記錄指向區域API Gateway 階段終點. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region).
+- B. 以公司域名建立Route 53 DNS記錄. 將別名記錄指向區域API Gateway 階段終點. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region).
 - C. 建立區域 API 閘道器終點。 將API閘道器端點與公司的域名聯絡起來. 在同一區域(Region)中將與公司域名相關的公憑證匯入AWS Certificate Manager(ACM). 將憑證附加到 API 閘道器終點。 配置到 API Gateway 端點的線路流量。
-- D. 建立區域 API 閘道器終點。 將API閘道器端點與公司的域名聯絡起來. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region). 將憑證附加到 API 閘道器 API。 以公司域名建立路由53DNS記錄. 將A記錄指向公司的域名.
+- D. 建立區域 API 閘道器終點。 將API閘道器端點與公司的域名聯絡起來. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region). 將憑證附加到 API 閘道器 API。 以公司域名建立Route 53 DNS記錄. 將A記錄指向公司的域名.
 
 **答案**
 C
@@ -1517,8 +1517,8 @@ C
 - C：建立區域 API 閘道器終點。 將API閘道器端點與公司的域名聯絡起來. 在同一區域(Region)中將與公司域名相關的公憑證匯入AWS Certificate Manager(ACM). 將憑證附加到 API 閘道器終點。 配置到 API Gateway 端點的線路流量。**AWS API Gateway Regional 端點的自訂網域名稱，ACM 憑證必須在與 API Gateway 相同的區域（ca-central-1）申請或匯入**，這是 Regional API Gateway 的核心要求。配置 Route 53 別名記錄指向 API Gateway 端點後，第三方即可用公司域名透過 HTTPS 呼叫 API。
 - 其餘選項比較：
 - A：在 API 閘道器中建立具有" Endpoint- URL" 和" company domain Name" 的階段變數,以覆蓋預設的 URL。 將與公司域名相關的公憑證匯入AWS Certificate Manager(ACM)。API Gateway 階段變數無法覆蓋端點 URL 使其使用自訂域名，這不是設定自訂網域的正確方式，且此方案未提及在哪個區域申請憑證。
-- B：以公司域名建立路由53DNS記錄. 將別名記錄指向區域API Gateway 階段終點. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region)。**Regional API Gateway 不能使用 us-east-1 的 ACM 憑證**，us-east-1 的憑證只用於 CloudFront 和邊緣優化（Edge-Optimized）API Gateway，此方案會導致憑證配置失敗。
-- D：建立區域 API 閘道器終點。 將API閘道器端點與公司的域名聯絡起來. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region). 將憑證附加到 API 閘道器 API。 以公司域名建立路由53DNS記錄. 將A記錄指向公司的域名。同樣的錯誤：**Regional API Gateway 在 ca-central-1，但 ACM 憑證卻放在 us-east-1**，兩個區域不一致，無法將 us-east-1 的憑證附加到 ca-central-1 的 Regional API Gateway。
+- B：以公司域名建立Route 53 DNS記錄. 將別名記錄指向區域API Gateway 階段終點. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region)。**Regional API Gateway 不能使用 us-east-1 的 ACM 憑證**，us-east-1 的憑證只用於 CloudFront 和邊緣優化（Edge-Optimized）API Gateway，此方案會導致憑證配置失敗。
+- D：建立區域 API 閘道器終點。 將API閘道器端點與公司的域名聯絡起來. 將公司域名相關的公憑證匯入AWS Certificate Manager(ACM)於我們-東-1 區域(Region). 將憑證附加到 API 閘道器 API。 以公司域名建立Route 53 DNS記錄. 將A記錄指向公司的域名。同樣的錯誤：**Regional API Gateway 在 ca-central-1，但 ACM 憑證卻放在 us-east-1**，兩個區域不一致，無法將 us-east-1 的憑證附加到 ca-central-1 的 Regional API Gateway。
 
 **分類：** 網路連結和內容交付
 
@@ -1714,7 +1714,7 @@ A
 ## Question #64
 
 **題目**
-一家公司在Windows檔案伺服器上有超過5TB的檔案資料,執行於房地. 使用者和應用程式每天與資料互動. 公司將Windows的工作量轉移到AWS. 隨著公司繼續這一程序,公司要求進入AWS和至少使用延遲(latency)的房地內檔案儲存. 公司需要一個解決方案,將營運開銷(operational overhead)最小化,不需要對現有檔案存取模式進行重大修改. 公司使用AWS站點對站點VPN連線連線AWS. 解決方案設計師應如何滿足這些要求?
+一家公司在Windows檔案伺服器上有超過5TB的檔案資料,執行於地端. 使用者和應用程式每天與資料互動. 公司將Windows的工作量轉移到AWS. 隨著公司繼續這一程序,公司要求進入AWS和至少使用延遲(latency)的地端內檔案儲存. 公司需要一個解決方案,將營運開銷(operational overhead)最小化,不需要對現有檔案存取模式進行重大修改. 公司使用AWS站點對站點VPN連線連線AWS. 解決方案設計師應如何滿足這些要求?
 
 **選項**
 - A. 在 AWS 上為 Windows 檔案伺服器部署和配置 Amazon FSx。 將預設檔案資料移動到FSx,用於Windows檔案伺服器. 重新配置工作量, 在 AWS 上為 Windows 檔案伺服器使用 FSx。
@@ -1822,7 +1822,7 @@ D
 ## Question #68
 
 **題目**
-一個解決方案架構師正在設計一個新的混合結構,以將公司的前提基礎設施擴充套件到AWS. 該公司需要與持續低水平的延遲(latency)與AWS 區域(Region)的高度可用連線. 公司需要儘量降低成本,如果主連線失敗,願意接受較慢的流量. 解決方案設計師應如何滿足這些要求?
+一個解決方案架構師正在設計一個新的混合結構,以將公司的地端基礎設施擴充套件到AWS. 該公司需要與持續低水平的延遲(latency)與AWS 區域(Region)的高度可用連線. 公司需要儘量降低成本,如果主連線失敗,願意接受較慢的流量. 解決方案設計師應如何滿足這些要求?
 
 **選項**
 - A. 提供AWS Direct Connect與區域(Region)的連線。 如果主直接連線失敗, 則以 備份(backup) 方式提供 VPN 連線。
@@ -2233,13 +2233,13 @@ D
 ## Question #83
 
 **題目**
-一家公司的動態網站在美國使用premess伺服器進行託管. 該公司正在歐洲推出其產品,它希望最佳化歐洲新使用者的站點載入時間. 該網站的後端必須留在美國. 該產品幾天後即將推出,需要立即解決. 解決方案設計師應該建議什麼?
+一家公司的動態網站在美國使用地端伺服器進行託管. 該公司正在歐洲推出其產品,它希望最佳化歐洲新使用者的站點載入時間. 該網站的後端必須留在美國. 該產品幾天後即將推出,需要立即解決. 解決方案設計師應該建議什麼?
 
 **選項**
 - A. 在東1號發射Amazon EC2 並遷移到它。
 - B. 將網站移至Amazon S3. 使用跨區域(Region) 複寫(Replication)跨區域.
 - C. 使用 Amazon CloudFront,並帶有自定義源,指向預設伺服器.
-- D. 使用 Amazon Route 53 地理近似路由政策指向前提伺服器.
+- D. 使用 Amazon Route 53 地理近似路由政策指向地端伺服器.
 
 **答案**
 C
@@ -2253,7 +2253,7 @@ C
 - 其餘選項比較：
 - A：在東1號發射Amazon EC2 並遷移到它。網站是「動態」網站且題目要求後端必須留在美國，把EC2發射在美國本地（us-east-1）並不會改善歐洲使用者的存取延遲，因為使用者到美國伺服器的實體距離與網路延遲並未縮短。
 - B：將網站移至Amazon S3. 使用跨區域(Region) 複寫(Replication)跨區域。網站是動態網站，含有後端邏輯與資料處理，並非純靜態內容，無法直接搬遷到S3託管；況且題目明確要求後端須留在美國，把整個網站搬到S3再做跨區域複寫既不符合這項限制，也是相對耗時的架構改造，不符合「幾天後即上線」的急迫時程。
-- D：使用 Amazon Route 53 地理近似路由政策指向前提伺服器。Route 53地理近似路由只是DNS層的流量導向機制，本身不具備任何快取或內容加速能力，仍然把使用者導向同一組美國地端伺服器，並未縮短歐洲使用者實際存取美國伺服器的網路延遲，無法達到最佳化載入時間的目的。
+- D：使用 Amazon Route 53 地理近似路由政策指向地端伺服器。Route 53地理近似路由只是DNS層的流量導向機制，本身不具備任何快取或內容加速能力，仍然把使用者導向同一組美國地端伺服器，並未縮短歐洲使用者實際存取美國伺服器的網路延遲，無法達到最佳化載入時間的目的。
 
 **分類：** 網路連結和內容交付
 
@@ -2614,7 +2614,7 @@ C
 ## Question #97
 
 **題目**
-一個公司有一個大型的微軟SharePoint部署執行在前提上,需要Microsoft Windows共享檔案儲存. 該公司希望將這一工作量遷移到AWS雲,並正在考慮各種儲存選項. 儲存解決方案必須非常可用,並與存取控制(access control)活動目錄整合. 哪一種辦法能滿足這些要求?
+一個公司有一個大型的微軟SharePoint部署執行在地端,需要Microsoft Windows共享檔案儲存. 該公司希望將這一工作量遷移到AWS雲,並正在考慮各種儲存選項. 儲存解決方案必須非常可用,並與存取控制(access control)活動目錄整合. 哪一種辦法能滿足這些要求?
 
 **選項**
 - A. 配置 Amazon EFS 儲存並設定活動目錄域進行認證.
@@ -2756,7 +2756,7 @@ A
 - B. 在預設資料中心安裝 AWS 資料同步代理。
 - C. 在EC2中建立二級Amazon Elastic Block Store (Amazon EBS),用於資料。
 - D. 手動使用作業系統複製命令將資料推向EC2例項.
-- E. 使用AWS DataSync為premies SFTP伺服器建立合適的位置配置.
+- E. 使用AWS DataSync為地端 SFTP伺服器建立合適的位置配置.
 
 **答案**
 A,B
@@ -2772,7 +2772,7 @@ A,B
 - 其餘選項比較：
 - C：在EC2中建立二級Amazon Elastic Block Store (Amazon EBS),用於資料。建立第二顆 Amazon EBS 磁碟區屬於區塊儲存，既不是題目要求伺服器最終要使用的 Amazon EFS 檔案系統，也不會觸發或加速地端到雲端的任何資料移轉動作，對達成自動化遷移沒有實質幫助。
 - D：手動使用作業系統複製命令將資料推向EC2例項。以作業系統複製指令手動搬移 200 GB 資料，仍然是人工操作，缺乏自動排程、重試、頻寬節流與資料完整性驗證等能力，與題目明確要求的「自動化」相違背。
-- E：使用AWS DataSync為premies SFTP伺服器建立合適的位置配置。題目說明來源儲存體本質是掛載於 SFTP 伺服器之下、以 NFS 為基礎的檔案系統；只要透過 B 選項在地端部署的 DataSync Agent 即可直接讀取該 NFS 匯出目錄完成傳輸，另外疊加設定 SFTP 位置並非此情境下對應來源儲存架構所需的組態。
+- E：使用AWS DataSync為地端 SFTP伺服器建立合適的位置配置。題目說明來源儲存體本質是掛載於 SFTP 伺服器之下、以 NFS 為基礎的檔案系統；只要透過 B 選項在地端部署的 DataSync Agent 即可直接讀取該 NFS 匯出目錄完成傳輸，另外疊加設定 SFTP 位置並非此情境下對應來源儲存架構所需的組態。
 
 **分類：** 移轉和傳輸
 
@@ -3082,7 +3082,7 @@ C
 ## Question #114
 
 **題目**
-一家公司建立了影象分析應用程式,使用者可以在其中上傳照片,並在影象中新增照片幀. 使用者上傳影象和後設資料,以表示他們想要在影象中新增哪個照片框. 該應用程式使用單一的Amazon EC2例項和Amazon DynamoDB儲存後設資料. 該應用程式越來越受歡迎,使用者數量也在增加. 公司預計同時使用的人數會因週日與日而異。 公司必須確保應用程式能夠規模化,以滿足日益增長的使用者基礎的需求. 這些要求是哪一種溶液?
+一家公司建立了影象分析應用程式,使用者可以在其中上傳照片,並在影象中新增照片幀. 使用者上傳影象和後設資料,以表示他們想要在影象中新增哪個照片框. 該應用程式使用單一的Amazon EC2例項和Amazon DynamoDB儲存後設資料. 該應用程式越來越受歡迎,使用者數量也在增加. 公司預計同時使用的人數會因週日與日而異。 公司必須確保應用程式能夠規模化,以滿足日益增長的使用者基礎的需求. 這些要求是哪一種解決方案?
 
 **選項**
 - A. 使用AWS Lambda處理照片. 將照片和後設資料儲存在DynamomDB.
@@ -3602,7 +3602,7 @@ A
 ## Question #133
 
 **題目**
-一家公司在房地經營一個甲骨文資料庫(database)。 作為公司向AWS遷移的一部分,公司希望將資料庫(database)升級為最新版本. 公司也希望為資料庫(database)公司設立災難復原(disaster recovery)(DR). 公司需要將正常執行和DR設定的營運開銷(operational overhead)最小化. 公司還需要維持資料庫(database)基礎作業系統的接入. 哪種解決辦法能滿足這些要求?
+一家公司在地端經營一個甲骨文資料庫(database)。 作為公司向AWS遷移的一部分,公司希望將資料庫(database)升級為最新版本. 公司也希望為資料庫(database)公司設立災難復原(disaster recovery)(DR). 公司需要將正常執行和DR設定的營運開銷(operational overhead)最小化. 公司還需要維持資料庫(database)基礎作業系統的接入. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 將甲骨文資料庫(database)遷移到Amazon EC2 執行個體. 將資料庫(database) 複寫(replication)設定到不同的AWS 區域(Region).
@@ -3683,7 +3683,7 @@ D
 ## Question #136
 
 **題目**
-一家公司正在將其房地PostgreSQL 資料庫(database)遷移到Amazon Aurora PostgreSQL。 資料庫(database)在遷移期間必須保持線上和無障礙。 Aurora 資料庫(database)型機車必須與原型機資料庫(database)型機車保持同步. 設計師必須採取何種綜合行動來滿足這些要求?(選二.
+一家公司正在將其地端PostgreSQL 資料庫(database)遷移到Amazon Aurora PostgreSQL。 資料庫(database)在遷移期間必須保持線上和無障礙。 Aurora 資料庫(database)執行個體必須與來源資料庫(database)執行個體保持同步. 設計師必須採取何種綜合行動來滿足這些要求?(選二.
 
 **選項**
 - A. 建立一個正在進行的複寫(replication)任務.
@@ -3744,8 +3744,8 @@ D
 
 **選項**
 - A. 在 Amazon MQ 上將佇列移到 rabbitMQ 例項的冗餘對(活動/待命)。 為主機的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管 PostgreSQL 資料庫(database) 的EC2 例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。
-- B. 在 Amazon MQ 上將佇列移到 rabbitMQ 例項的冗餘對(活動/待命)。 為主機的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)型機車在Amazon RDS的多AZ部署下執行,用於PostgreSQL.
-- C. 為託管 RabbitMQ 佇列的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管應用程式的EC2例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)型機車在Amazon RDS的多AZ部署下執行,用於PostgreSQL.
+- B. 在 Amazon MQ 上將佇列移到 rabbitMQ 例項的冗餘對(活動/待命)。 為主機的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)執行個體在Amazon RDS的多AZ部署下執行,用於PostgreSQL.
+- C. 為託管 RabbitMQ 佇列的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管應用程式的EC2例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)執行個體在Amazon RDS的多AZ部署下執行,用於PostgreSQL.
 - D. 為託管 RabbitMQ 佇列的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管應用程式的EC2例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管 PostgreSQL 資料庫(database) 的EC2 例項建立第三個多AZ Auto Scaling 群組(Auto Scaling group)
 
 **答案**
@@ -3756,10 +3756,10 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在 Amazon MQ 上將佇列移到 rabbitMQ 例項的冗餘對(活動/待命)。 為主機的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)型機車在Amazon RDS的多AZ部署下執行,用於PostgreSQL。Amazon MQ 是全代管的訊息代理服務，可以直接提供 RabbitMQ 引擎的主動／待命高可用部署，由 AWS 負責跨可用區的容錯移轉，不必自行在 EC2 上安裝、修補與叢集化 RabbitMQ；應用程式主機採用跨可用區的 Auto Scaling 群組維持運算層的彈性與復原能力；資料庫改用 Amazon RDS for PostgreSQL 的 Multi-AZ 部署，由 AWS 自動處理同步複寫與故障轉移到待命執行個體，三層架構都改用全代管高可用服務，同時達成最高可用性與最少維運開銷。
+- B：在 Amazon MQ 上將佇列移到 rabbitMQ 例項的冗餘對(活動/待命)。 為主機的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)執行個體在Amazon RDS的多AZ部署下執行,用於PostgreSQL。Amazon MQ 是全代管的訊息代理服務，可以直接提供 RabbitMQ 引擎的主動／待命高可用部署，由 AWS 負責跨可用區的容錯移轉，不必自行在 EC2 上安裝、修補與叢集化 RabbitMQ；應用程式主機採用跨可用區的 Auto Scaling 群組維持運算層的彈性與復原能力；資料庫改用 Amazon RDS for PostgreSQL 的 Multi-AZ 部署，由 AWS 自動處理同步複寫與故障轉移到待命執行個體，三層架構都改用全代管高可用服務，同時達成最高可用性與最少維運開銷。
 - 其餘選項比較：
 - A：在 Amazon MQ 上將佇列移到 rabbitMQ 例項的冗餘對(活動/待命)。 為主機的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管 PostgreSQL 資料庫(database) 的EC2 例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。訊息佇列與應用程式主機都已改用全代管或跨 AZ 的服務，但資料庫仍然是自行在 EC2 執行個體上運作 PostgreSQL，並用 Auto Scaling 群組來管理，代表公司仍須自行負責資料庫的安裝、修補、備份與複寫容錯邏輯，維運負擔明顯高於直接採用 RDS 的 Multi-AZ 部署。
-- C：為託管 RabbitMQ 佇列的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管應用程式的EC2例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)型機車在Amazon RDS的多AZ部署下執行,用於PostgreSQL。RabbitMQ 佇列仍然留在自行於 EC2 上執行並用 Auto Scaling 群組管理，而非改用全代管的 Amazon MQ，公司仍須自行安裝、修補、監控與處理 RabbitMQ 叢集的容錯邏輯，訊息佇列這一層的維運開銷並未降低。
+- C：為託管 RabbitMQ 佇列的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管應用程式的EC2例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。 將資料庫(database)執行個體在Amazon RDS的多AZ部署下執行,用於PostgreSQL。RabbitMQ 佇列仍然留在自行於 EC2 上執行並用 Auto Scaling 群組管理，而非改用全代管的 Amazon MQ，公司仍須自行安裝、修補、監控與處理 RabbitMQ 叢集的容錯邏輯，訊息佇列這一層的維運開銷並未降低。
 - D：為託管 RabbitMQ 佇列的 EC2 例項建立多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管應用程式的EC2例項建立另一個多 AZ Auto Scaling 群組(Auto Scaling group)。 為託管 PostgreSQL 資料庫(database) 的EC2 例項建立第三個多AZ Auto Scaling 群組(Auto Scaling group)。訊息佇列與資料庫都仍留在自行管理的 EC2 Auto Scaling 群組上，甚至為資料庫額外建立第三組 Auto Scaling 群組，完全沒有導入 Amazon MQ 或 Amazon RDS 等全代管服務，是四個選項中需要自行維運的元件最多、複雜度最高的架構。
 
 **分類：** 應用程式整合
@@ -4376,7 +4376,7 @@ C
 ## Question #161
 
 **題目**
-一家公司有一個小型的Python應用程式,處理JSON文件,並將結果輸出給一個promise SQL 資料庫(database). 應用程式每天執行數千次. 公司希望將應用程式移至AWS雲. 公司需要高可用解決方案,將可擴展性(scalability)最大化,將營運開銷(operational overhead)最小化. 哪種解決辦法能滿足這些要求?
+一家公司有一個小型的Python應用程式,處理JSON文件,並將結果輸出給一個地端 SQL 資料庫(database). 應用程式每天執行數千次. 公司希望將應用程式移至AWS雲. 公司需要高可用解決方案,將可擴展性(scalability)最大化,將營運開銷(operational overhead)最小化. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 把JSON檔案放進Amazon S3 bucket裡. 在多個 Amazon EC2 例項上執行 Python 程式碼來處理文件. 將結果儲存在 Amazon Aurora DB 叢集中.
@@ -4457,13 +4457,13 @@ C
 ## Question #164
 
 **題目**
-一家公司有兩種應用:傳送者應用,用待處理的有效載荷傳送資訊;處理應用,用有效載荷接收資訊。 公司希望實施AWS服務來處理兩個應用程式之間的訊息. 傳送者應用程式可以每小時傳送約1000條資訊. 處理電文需要2天: 如果訊息無法處理,必須保留,以免影響任何剩餘訊息的處理。 哪種解決辦法符合這些要求,而最高運作效率高?
+一家公司有兩個應用程式：傳送者應用程式會將待處理的訊息以酬載 (payload) 形式送出；處理器應用程式則接收該酬載並進行處理。公司想採用 AWS 服務來處理這兩個應用程式之間的訊息傳遞。傳送者應用程式每小時大約會送出 1,000 則訊息，每則訊息最多需要 2 天才能處理完成；如果某則訊息無法被處理，必須將它保留下來，不能影響其他剩餘訊息的處理。哪種解決方案能滿足這些需求，同時運作效率最高？
 
 **選項**
-- A. 設定一個 Amazon EC2 例項執行一個 Redis 資料庫(database). 配置兩個應用程式以使用例項。 分別儲存,處理和刪除訊息.
-- B. 使用 Amazon Kinesis 資料流接收來自傳送程式的訊息. 將處理應用程式與Kinesis客戶端庫(KCL)整合.
-- C. 將發件人和處理器應用程式與Amazon Simple Queue Service (Amazon SQS)佇列整合. 配置一個死字母佇列來收集無法處理的訊息。
-- D. 將處理應用程式訂閱到Amazon Simple Notification Service (Amazon SNS),以接收處理通知。 整合發件人應用程式以寫入SNS主題.
+- A. 建立一台 Amazon EC2 執行個體來執行 Redis 資料庫 (database)，並將兩個應用程式都設定為使用該執行個體，分別負責訊息的儲存、處理與刪除。
+- B. 使用 Amazon Kinesis Data Streams 接收來自傳送者應用程式的訊息，並讓處理器應用程式整合 Kinesis Client Library (KCL) 來處理訊息。
+- C. 讓傳送者與處理器應用程式都整合 Amazon Simple Queue Service (Amazon SQS) 佇列，並設定一個死信佇列 (dead-letter queue) 來收集無法處理的訊息。
+- D. 讓處理器應用程式訂閱 Amazon Simple Notification Service (Amazon SNS)，以接收處理通知；並讓傳送者應用程式整合寫入該 SNS 主題 (topic)。
 
 **答案**
 C
@@ -4471,11 +4471,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將發件人和處理器應用程式與Amazon Simple Queue Service (Amazon SQS)佇列整合. 配置一個死字母佇列來收集無法處理的訊息。Amazon SQS 是全代管的訊息佇列服務，透過可見性逾時(visibility timeout)確保訊息在成功處理並刪除前不會消失；若處理反覆失敗達到設定次數，可自動轉入死信佇列(DLQ)集中保留，不影響佇列中其餘訊息的正常處理。SQS 標準佇列的吞吐量遠高於每小時 1000 則的量，且讓發送者與處理者透過佇列完全解耦，符合題目對可靠性與運作效率的要求。
+- C：讓傳送者與處理器應用程式都整合 Amazon SQS 佇列，並設定一個死信佇列來收集無法處理的訊息。Amazon SQS 是全代管的訊息佇列服務，透過可見性逾時(visibility timeout)確保訊息在成功處理並刪除前不會消失；若處理反覆失敗達到設定次數，可自動轉入死信佇列(DLQ)集中保留，不影響佇列中其餘訊息的正常處理。SQS 標準佇列的吞吐量遠高於每小時 1,000 則的量，且讓傳送者與處理器透過佇列完全解耦，符合題目對可靠性與運作效率的要求。
 - 其餘選項比較：
-- A：設定一個 Amazon EC2 例項執行一個 Redis 資料庫(database). 配置兩個應用程式以使用例項。 分別儲存,處理和刪除訊息。在單一 EC2 執行個體上自架 Redis 作為佇列，訊息的持久化、可用性與擴充都要自行維護，且該執行個體本身是單點故障；Redis 沒有原生的死信佇列或訊息保留機制，無法確保處理失敗的訊息不會影響後續其他訊息的處理。
-- B：使用 Amazon Kinesis 資料流接收來自傳送程式的訊息. 將處理應用程式與Kinesis客戶端庫(KCL)整合。Kinesis Data Streams 是為即時大量資料串流的擷取與分析設計，資料依 shard 循序保存並有固定保留期，並非個別任務式的訊息佇列，也沒有內建的失敗訊息隔離或死信佇列機制；還需要自行管理 shard 容量與 KCL checkpoint，對每小時僅約 1000 則、且要求任務級失敗保留的情境並不合適。
-- D：將處理應用程式訂閱到Amazon Simple Notification Service (Amazon SNS),以接收處理通知。 整合發件人應用程式以寫入SNS主題。Amazon SNS 是發布/訂閱式的即時通知服務，訊息一旦送達訂閱端便視為完成，並不會像佇列一樣持久保留待處理；若處理應用程式當下無法處理或處理失敗，SNS 本身沒有機制讓該訊息被保留、重試而不影響後續訊息，不符合題目「失敗訊息須保留」的要求。
+- A：建立一台 EC2 執行個體執行 Redis 資料庫，並讓兩個應用程式共用該執行個體，分別儲存、處理與刪除訊息。在單一 EC2 執行個體上自架 Redis 作為佇列，訊息的持久化、可用性與擴充都要自行維護，且該執行個體本身是單點故障；Redis 沒有原生的死信佇列或訊息保留機制，無法確保處理失敗的訊息不會影響後續其他訊息的處理。
+- B：使用 Kinesis Data Streams 接收傳送者應用程式的訊息，並讓處理器應用程式整合 KCL 進行處理。Kinesis Data Streams 是為即時大量資料串流的擷取與分析設計，資料依 shard 循序保存並有固定保留期，並非個別任務式的訊息佇列，也沒有內建的失敗訊息隔離或死信佇列機制；還需要自行管理 shard 容量與 KCL checkpoint，對每小時僅約 1,000 則、且要求任務級失敗保留的情境並不合適。
+- D：讓處理器應用程式訂閱 SNS 以接收處理通知，並讓傳送者應用程式整合寫入該 SNS 主題。Amazon SNS 是發布/訂閱式的即時通知服務，訊息一旦送達訂閱端便視為完成，並不會像佇列一樣持久保留待處理；若處理應用程式當下無法處理或處理失敗，SNS 本身沒有機制讓該訊息被保留、重試而不影響後續訊息，不符合題目「失敗訊息須保留」的要求。
 
 **分類：** 應用程式整合
 
@@ -4944,7 +4944,7 @@ A
 ## Question #182
 
 **題目**
-一家公司希望將自己的MySQL 資料庫(database)從房地遷移到AWS. 該公司最近經歷了資料庫(database)停產,對企業產生了重大影響。 為確保不再發生這種情況,公司希望在AWS上有一個可靠的資料庫(database)解決方案,最大限度地減少資料丟失,並將每筆交易儲存在至少兩個節點上. 哪種解決辦法符合這些要求?
+一家公司希望將自己的MySQL 資料庫(database)從地端遷移到AWS. 該公司最近經歷了資料庫(database)停產,對企業產生了重大影響。 為確保不再發生這種情況,公司希望在AWS上有一個可靠的資料庫(database)解決方案,最大限度地減少資料丟失,並將每筆交易儲存在至少兩個節點上. 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 在3個可用區(Availability Zones)中建立一個帶有同步複寫(replication)到3個節點的Amazon RDS DB例項.
@@ -4998,12 +4998,12 @@ A
 ## Question #184
 
 **題目**
-一家公司有一個用於軟體工程的AWS帳戶. AWS帳戶可以透過一對AWS Direct Connect連線進入該公司的premise資料中心. 所有非VPC交通線路均通往虛擬私有閘道(virtual private gateway). 一個開發團隊最近透過控制檯建立了AWS Lambda功能. 開發團隊需要允許該功能存取在公司資料中心的私人子網中執行的資料庫(database). 哪種解決辦法能滿足這些要求?
+一家公司有一個用於軟體工程的AWS帳戶. AWS帳戶可以透過一對AWS Direct Connect連線進入該公司的地端資料中心. 所有非VPC交通線路均通往虛擬私有閘道(virtual private gateway). 一個開發團隊最近透過控制檯建立了AWS Lambda功能. 開發團隊需要允許該功能存取在公司資料中心的私人子網中執行的資料庫(database). 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置在 VPC 中執行的 Lambda 函式,並配有相應的 安全群組(security group)。
 - B. 從AWS到資料中心建立VPN連線. 從Lambda的交通透過VPN執行.
-- C. 更新VPC中的路由表,讓Lambda函式透過Direct Connect存取premes資料中心.
+- C. 更新VPC中的路由表,讓Lambda函式透過Direct Connect存取地端資料中心.
 - D. 建立彈性 IP 地址。 配置Lambda功能,在無彈性網路介面的情況下,透過彈性IP地址傳送流量.
 
 **答案**
@@ -5014,7 +5014,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：更新VPC中的路由表,讓Lambda函式透過Direct Connect存取premes資料中心。公司已經透過 Direct Connect 連上虛擬私有閘道，Lambda 函式只要在 VPC 中執行，再更新 VPC 路由表把目的地為公司機房私有子網段的流量導向虛擬私有閘道，就能重複利用既有的 Direct Connect 專線存取機房內的資料庫，不需新增任何連線即可達成低延遲、高頻寬的私有連通。
+- C：更新VPC中的路由表,讓Lambda函式透過Direct Connect存取地端資料中心。公司已經透過 Direct Connect 連上虛擬私有閘道，Lambda 函式只要在 VPC 中執行，再更新 VPC 路由表把目的地為公司機房私有子網段的流量導向虛擬私有閘道，就能重複利用既有的 Direct Connect 專線存取機房內的資料庫，不需新增任何連線即可達成低延遲、高頻寬的私有連通。
 - 其餘選項比較：
 - A：配置在 VPC 中執行的 Lambda 函式,並配有相應的 安全群組(security group)。只設定 Lambda 在 VPC 中執行並配置安全群組，只是決定了允許哪些流量進出，並沒有解決流量路徑的問題，若路由表沒有指向虛擬私有閘道，Lambda 產生的流量仍然無法送達機房內的私有子網。
 - B：從AWS到資料中心建立VPN連線. 從Lambda的交通透過VPN執行。公司已經有 Direct Connect 專線可用，另外架設一條 VPN 連線會造成連線用途重複、增加額外成本與維運複雜度，且 VPN 走的是公用網路上的加密隧道，頻寬與延遲表現通常不如既有的 Direct Connect 專線。
@@ -5358,7 +5358,7 @@ D
 ## Question #197
 
 **題目**
-一個公司有一個微軟.NET應用程式,執行於一個premises Windows Server上. 該應用程式透過使用Oracle 資料庫(Database)標準版伺服器儲存資料. 該公司正計劃向AWS遷移,希望在移動應用程式時儘量減少開發變化. AWS應用環境應該非常可用. 公司應採取何種行動來滿足這些要求?(選二.
+一個公司有一個微軟.NET應用程式,執行於一個地端 Windows Server上. 該應用程式透過使用Oracle 資料庫(Database)標準版伺服器儲存資料. 該公司正計劃向AWS遷移,希望在移動應用程式時儘量減少開發變化. AWS應用環境應該非常可用. 公司應採取何種行動來滿足這些要求?(選二.
 
 **選項**
 - A. 用執行.NET Core的 AWS Lambda 函式將應用程式重構為無伺服器.
@@ -5388,7 +5388,7 @@ B,D
 ## Question #198
 
 **題目**
-一家公司在一個前提資料中心的Kubernetes叢集上執行一個集裝箱化的應用程式。 該公司正在使用MongoDB 資料庫(database)進行資料儲存. 公司希望將其中一些環境遷移到AWS,但此時無法更改程式碼或部署方法. 公司需要一個解決方案,將營運開銷(operational overhead)最小化. 哪種解決辦法符合這些要求?
+一家公司在一個地端資料中心的Kubernetes叢集上執行一個集裝箱化的應用程式。 該公司正在使用MongoDB 資料庫(database)進行資料儲存. 公司希望將其中一些環境遷移到AWS,但此時無法更改程式碼或部署方法. 公司需要一個解決方案,將營運開銷(operational overhead)最小化. 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 使用Amazon Elastic Container Service (Amazon ECS),使用Amazon EC2工人節點進行計算,使用EC2上的MongoDB進行資料儲存.
@@ -5577,11 +5577,11 @@ D
 ## Question #205
 
 **題目**
-一家公司在一個premes資料中心內主持一個營銷網站. 網站由靜態文件組成,執行在單一伺服器上. 一個管理員不經常更新網站內容,並使用SFTP客戶端上傳新文件. 公司決定託管其在AWS上的網站,並使用Amazon CloudFront. 公司解決方案架構師建立了CloudFront發行. 解決方案架構師必須設計最具有成本效益和復原力的架構,使網站託管成為雲龍源. 哪種解決辦法能滿足這些要求?
+一家公司在一個地端資料中心內主持一個營銷網站. 網站由靜態文件組成,執行在單一伺服器上. 一個管理員不經常更新網站內容,並使用SFTP客戶端上傳新文件. 公司決定託管其在AWS上的網站,並使用Amazon CloudFront. 公司解決方案架構師建立了CloudFront發行. 解決方案架構師必須設計最具有成本效益和復原力的架構,使網站託管成為雲龍源. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用Amazon Lightsail建立虛擬伺服器. 在 Lightsail 例項中配置網路伺服器。 使用 SFTP 客戶端上傳網站內容。
-- B. 為 Amazon EC2 例項建立 AWS Auto Scaling 群組(Auto Scaling group)。 使用應用程式負載平衡器(Application Load Balancer)型機車. 使用 SFTP 客戶端上傳網站內容。
+- B. 為 Amazon EC2 例項建立 AWS Auto Scaling 群組(Auto Scaling group)。 使用應用程式負載平衡器(Application Load Balancer). 使用 SFTP 客戶端上傳網站內容。
 - C. 建立私人Amazon S3 bucket. 使用 S3 bucket政策(bucket policy) 允許從 CloudFront 原始碼存取身份( OAI) 存取。 使用 AWS CLI 上傳網站內容。
 - D. 打造公共Amazon S3 bucket. 配置 SFTP 的 AWS 傳輸。 為網站託管配置 S3 bucket。 使用 SFTP 客戶端上傳網站內容。
 
@@ -5596,7 +5596,7 @@ C
 - C：建立私人Amazon S3 bucket. 使用 S3 bucket政策(bucket policy) 允許從 CloudFront 原始碼存取身份( OAI) 存取。 使用 AWS CLI 上傳網站內容。把網站內容放進私人 S3 bucket，並用 OAI 讓 CloudFront 成為唯一能存取該儲存桶的來源，可確保內容只透過 CloudFront 邊緣節點分發、不可被繞過直接存取 S3。S3 本身具備跨多個設施的高耐用性與免管理伺服器的特性，加上依用量計費，是靜態網站託管最具成本效益與復原力的組合，用 CLI 上傳也省去維運 SFTP 伺服器的負擔。
 - 其餘選項比較：
 - A：使用Amazon Lightsail建立虛擬伺服器. 在 Lightsail 例項中配置網路伺服器。 使用 SFTP 客戶端上傳網站內容。Lightsail 仍是需要自行管理作業系統與網頁伺服器的虛擬機，成本固定且無法自動因應流量變化而擴縮，復原力也不如具備跨可用區高耐用性的 S3。
-- B：為 Amazon EC2 例項建立 AWS Auto Scaling 群組(Auto Scaling group)。 使用應用程式負載平衡器(Application Load Balancer)型機車. 使用 SFTP 客戶端上傳網站內容。為了只是偶爾更新的靜態網站，建置 EC2 Auto Scaling 群組與應用程式負載平衡器等於長期為靜態內容付出運算與負載平衡費用，並不符合「最具成本效益」的要求，且仍需在每台執行個體上配置 SFTP 伺服器。
+- B：為 Amazon EC2 例項建立 AWS Auto Scaling 群組(Auto Scaling group)。 使用應用程式負載平衡器(Application Load Balancer). 使用 SFTP 客戶端上傳網站內容。為了只是偶爾更新的靜態網站，建置 EC2 Auto Scaling 群組與應用程式負載平衡器等於長期為靜態內容付出運算與負載平衡費用，並不符合「最具成本效益」的要求，且仍需在每台執行個體上配置 SFTP 伺服器。
 - D：打造公共Amazon S3 bucket. 配置 SFTP 的 AWS 傳輸。 為網站託管配置 S3 bucket。 使用 SFTP 客戶端上傳網站內容。公開的 S3 bucket會讓內容可被繞過 CloudFront 直接公開存取，失去存取控管的意義；另外架設 AWS Transfer Family 的 SFTP 端點需要持續產生每小時費用，對一個內容不常更新的網站而言是不必要的額外成本與複雜度。
 
 **分類：** 儲存
@@ -6126,7 +6126,7 @@ C,E
 ## Question #225
 
 **題目**
-一家媒體公司收集和分析房地內的使用者活動資料。 公司希望將這種能力遷移到AWS. 使用者活動資料儲存將繼續增長,規模將達到Petabytes. 公司需要構建一個高可用資料攝取解決方案,以方便對現有資料和SQL新資料進行按需分析. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家媒體公司收集和分析地端內的使用者活動資料。 公司希望將這種能力遷移到AWS. 使用者活動資料儲存將繼續增長,規模將達到Petabytes. 公司需要構建一個高可用資料攝取解決方案,以方便對現有資料和SQL新資料進行按需分析. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 將活動資料傳送到一個Amazon Kinesis資料流. 配置流將資料傳送給一個Amazon S3 bucket.
@@ -6540,9 +6540,9 @@ A
 一家公司以前將其資料倉解決方案遷移到AWS. 該公司還擁有AWS Direct Connect連線. 企業辦公使用者使用視覺化工具查詢資料倉. 資料倉儲返回的查詢的平均大小為50 MB,視覺化工具傳送的每個網頁約為500 KB. 資料倉儲返回的結果集沒有快取。 哪個解決方案為公司提供了LOWEST資料傳輸互換成本?
 
 **選項**
-- A. 將視覺化工具託管於房地,並直接透過網際網路查詢資料倉。
+- A. 將視覺化工具託管於地端,並直接透過網際網路查詢資料倉。
 - B. 在與資料倉儲相同的AWS 區域(Region)中託管視覺化工具. 透過網際網路存取它。
-- C. 將視覺化工具託管於房地,並在AWS 區域(Region)同一地點的直通連線上直接查詢資料倉。
+- C. 將視覺化工具託管於地端,並在AWS 區域(Region)同一地點的直通連線上直接查詢資料倉。
 - D. 在與資料倉儲相同的AWS 區域(Region)中託管視覺化工具,並在同一區域(Region)中的位置透過直接連線連線存取.
 
 **答案**
@@ -6553,9 +6553,9 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將視覺化工具託管於房地,並在AWS 區域(Region)同一地點的直通連線上直接查詢資料倉。視覺化工具維持在企業內部機房，改用與資料倉儲同一 AWS 區域託管地點的 AWS Direct Connect 專線直接查詢資料倉。Direct Connect 的資料傳出費率低於一般網際網路傳輸費率，佔傳輸量大宗的 50 MB 查詢結果集改走專線，可直接降低這筆資料量最大的傳輸單位成本。
+- C：將視覺化工具託管於地端,並在AWS 區域(Region)同一地點的直通連線上直接查詢資料倉。視覺化工具維持在企業內部機房，改用與資料倉儲同一 AWS 區域託管地點的 AWS Direct Connect 專線直接查詢資料倉。Direct Connect 的資料傳出費率低於一般網際網路傳輸費率，佔傳輸量大宗的 50 MB 查詢結果集改走專線，可直接降低這筆資料量最大的傳輸單位成本。
 - 其餘選項比較：
-- A：將視覺化工具託管於房地,並直接透過網際網路查詢資料倉。視覺化工具部署在企業內部，透過一般網際網路直接查詢資料倉，每次 50 MB 的查詢結果都要以標準網際網路資料傳出費率計費，是四個選項中單位傳輸成本最高的做法。
+- A：將視覺化工具託管於地端,並直接透過網際網路查詢資料倉。視覺化工具部署在企業內部，透過一般網際網路直接查詢資料倉，每次 50 MB 的查詢結果都要以標準網際網路資料傳出費率計費，是四個選項中單位傳輸成本最高的做法。
 - B：在與資料倉儲相同的AWS 區域(Region)中託管視覺化工具. 透過網際網路存取它。把視覺化工具放進與資料倉儲相同的 AWS 區域，能讓查詢流量走區域內部路徑，但使用者仍透過一般網際網路存取視覺化工具本身，每次網頁約 500 KB 的回應仍要以標準網際網路傳出費率計費，並未真正壓低傳輸成本。
 - D：在與資料倉儲相同的AWS 區域(Region)中託管視覺化工具,並在同一區域(Region)中的位置透過直接連線連線存取。將視覺化工具搬進與資料倉儲相同的 AWS 區域，雖能讓查詢流量留在區域內部，但代表企業需額外在雲端建置與維運視覺化工具的主機環境，屬於比單純更換連線路徑更大幅度的架構調整。
 
@@ -6621,7 +6621,7 @@ C
 一個醫學研究實驗室產生與新研究相關的資料. 實驗室希望向全國各地的診所提供最低延遲(latency)的資料,以備它們基於檔案的應用。 資料檔案儲存在 Amazon S3 bucket中,每個診所都有隻讀許可權. 解決方案設計師建議如何滿足這些要求?
 
 **選項**
-- A. 在每個診所的房地安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器
+- A. 在每個診所的地端安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器
 - B. 使用 AWS DataSync 將檔案移動到每個診所的配置應用程式。
 - C. 在每個診所的房舍安裝一個AWS Storage Gateway卷閘道器作為虛擬機器。
 - D. 將一個 Amazon 彈性檔案系統(Amazon EFS) 附加到每個診所的預設伺服器上。
@@ -6636,7 +6636,7 @@ C
 正確答案是 **C**。
 - C：在每個診所的房舍安裝一個AWS Storage Gateway卷閘道器作為虛擬機器。AWS Storage Gateway 磁碟區閘道器（Volume Gateway）以 iSCSI 區塊儲存裝置的形式，把常用資料區塊快取在診所端的本地虛擬機器上，原始資料則保存在 Amazon S3；診所端存取常用資料時可命中本地快取，藉此降低跨網路存取 S3 的延遲。
 - 其餘選項比較：
-- A：在每個診所的房地安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器。AWS Storage Gateway 檔案閘道器（File Gateway）會把 Amazon S3 bucket以 NFS/SMB 檔案共享的形式掛載到本地端，並在本地快取常用檔案，但仍需在每個診所部署與維護對應的虛擬機器閘道器，屬於額外的地端維運項目。
+- A：在每個診所的地端安裝一個AWS Storage Gateway檔案閘道器作為虛擬機器。AWS Storage Gateway 檔案閘道器（File Gateway）會把 Amazon S3 bucket以 NFS/SMB 檔案共享的形式掛載到本地端，並在本地快取常用檔案，但仍需在每個診所部署與維護對應的虛擬機器閘道器，屬於額外的地端維運項目。
 - B：使用 AWS DataSync 將檔案移動到每個診所的配置應用程式。AWS DataSync 是用來將資料在儲存系統之間搬移或同步的批次傳輸服務，題目描述的是診所要持續以低延遲讀取 S3 上既有的檔案，而不是把整批檔案一次性搬移並部署到各診所的應用程式環境中，使用情境並不相符。
 - D：將一個 Amazon 彈性檔案系統(Amazon EFS) 附加到每個診所的預設伺服器上。Amazon EFS 是設計給部署在 AWS 內、可從多個 EC2 執行個體掛載的區域型檔案系統，並不能直接掛載到位於全國各地診所的地端伺服器上做為低延遲的本地存取方案，也沒有跨地端站點的內建快取機制。
 
@@ -7083,7 +7083,7 @@ A
 ## Question #260
 
 **題目**
-一個公司的合規(compliance)團隊需要將其檔案股份移動到AWS. 在Windows Server SMB檔案共享上執行的股份. 一個自管的房地 Active Directory控制了對檔案和資料夾的存取. 公司希望將Amazon FSx用於Windows檔案伺服器作為解決方案的一部分. 公司必須確保在移動到 AWS 後,對 Windows 檔案伺服器 SMB 合規(compliance) 的股票,資料夾和檔案進行存取時,presimes Active Directory 組會限制對 FSx 的存取. 公司為Windows檔案伺服器檔案系統建立了FSx. 哪種解決辦法能滿足這些要求?
+一個公司的合規(compliance)團隊需要將其檔案股份移動到AWS. 在Windows Server SMB檔案共享上執行的股份. 一個自管的地端 Active Directory控制了對檔案和資料夾的存取. 公司希望將Amazon FSx用於Windows檔案伺服器作為解決方案的一部分. 公司必須確保在移動到 AWS 後,對 Windows 檔案伺服器 SMB 合規(compliance) 的股票,資料夾和檔案進行存取時,地端 Active Directory 組會限制對 FSx 的存取. 公司為Windows檔案伺服器檔案系統建立了FSx. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立活動目錄連線符,以連線活動目錄. 將活動目錄組對映到IAM組以限制存取.
@@ -7101,7 +7101,7 @@ D
 正確答案是 **D**。
 - D：加入檔案系統到活動目錄中以限制存取。FSx for Windows File Server 原生支援加入 self-managed 或 AWS Managed Active Directory 網域；一旦加入網域，既有 AD 使用者與群組的 NTFS 權限即可直接沿用套用在 FSx 的股份、資料夾與檔案上，不需要額外把 AD 群組轉換成 IAM 群組，正是題目要求的作法。
 - 其餘選項比較：
-- A：建立活動目錄連線符,以連線活動目錄. 將活動目錄組對映到IAM組以限制存取。AD Connector 是讓 AWS 服務（如 WorkSpaces、IAM Identity Center）代理驗證回 on-premises AD 的目錄閘道器，並不是 FSx for Windows File Server 控制 SMB 檔案/資料夾存取的機制；FSx 的存取控制走 NTFS ACL，而非把 AD 群組對映成 IAM 群組。
+- A：建立活動目錄連線符,以連線活動目錄. 將活動目錄組對映到IAM組以限制存取。AD Connector 是讓 AWS 服務（如 WorkSpaces、IAM Identity Center）代理驗證回地端 AD 的目錄閘道器，並不是 FSx for Windows File Server 控制 SMB 檔案/資料夾存取的機制；FSx 的存取控制走 NTFS ACL，而非把 AD 群組對映成 IAM 群組。
 - B：指定帶有限制標記金鑰和合規(Compliance)標記值的標記. 將活動目錄組對映到IAM組以限制存取。為資源加上標記並對映到 IAM 群組是 IAM 資源層級的存取控制手法，FSx 上檔案與資料夾的 SMB 存取權限是由 Windows NTFS ACL 決定，標記機制管不到這一層。
 - C：為Windows檔案伺服器建立直接與FSx連結的IAM服務連結角色,以限制存取。IAM 服務連結角色管控的是 AWS 服務對其他 AWS 資源發出 API 呼叫的權限，並不存在「與 FSx 直接連結來限制 SMB 存取」這種用途，無法用來限制使用者對檔案股份的存取。
 
@@ -7200,8 +7200,8 @@ A,D
 一家公司有一個網路應用程式,託管了10多個Amazon EC2 執行個體,由Amazon Route 53指揮流量. 公司在嘗試瀏覽應用程式時偶爾會遇到超時錯誤. 網路團隊發現一些DNS查詢返回不健康事件的IP地址,導致超時錯誤. 一個解決方案設計師應該執行什麼來克服這些超時錯誤?
 
 **選項**
-- A. 為每個EC2例項建立一條53路的簡單路線政策記錄。 每張記錄都要做健康檢查
-- B. 為每個EC2例項建立一條路由53故障路由政策記錄。 每張記錄都要做健康檢查
+- A. 為每個EC2例項建立一條Route 53的簡單路線政策記錄。 每張記錄都要做健康檢查
+- B. 為每個EC2例項建立一條Route 53故障路由政策記錄。 每張記錄都要做健康檢查
 - C. 建立 Amazon CloudFront 分佈, 以 EC2 例項作為來源。 將體檢與EC2病例聯絡起來。
 - D. 建立應用程式負載平衡器(Application Load Balancer)(ALB),在EC2 執行個體前進行健康檢查. 53號公路通往ALB的路線.
 
@@ -7215,8 +7215,8 @@ D
 正確答案是 **D**。
 - D：建立應用程式負載平衡器(Application Load Balancer)(ALB),在EC2 執行個體前進行健康檢查. 53號公路通往ALB的路線。在 EC2 前建立 ALB 並配置健康檢查，由 ALB 自動偵測並只把流量導向健康的目標，Route 53 只需一條指向 ALB 的別名記錄；如此 DNS 層級不再需要追蹤個別 EC2 的健康狀態，從根本上消除「DNS 查詢返回不健康 IP」造成的逾時問題。
 - 其餘選項比較：
-- A：為每個EC2例項建立一條53路的簡單路線政策記錄。 每張記錄都要做健康檢查。簡單路由政策每筆記錄各自對應一個健康檢查，DNS 仍可能因用戶端或解析器的 TTL 快取而在健康狀態變化後短暫回傳已失效的 IP，且無法在 10 台以上對等執行個體間做即時的健康感知流量轉移，無法徹底解決題目描述的超時問題。
-- B：為每個EC2例項建立一條路由53故障路由政策記錄。 每張記錄都要做健康檢查。容錯移轉路由政策（failover routing）是為「主／備」兩端點設計的機制，不適合 10 台以上對等（active-active）執行個體之間分散流量的情境，無法達到所需的負載平衡效果。
+- A：為每個EC2例項建立一條Route 53的簡單路線政策記錄。 每張記錄都要做健康檢查。簡單路由政策每筆記錄各自對應一個健康檢查，DNS 仍可能因用戶端或解析器的 TTL 快取而在健康狀態變化後短暫回傳已失效的 IP，且無法在 10 台以上對等執行個體間做即時的健康感知流量轉移，無法徹底解決題目描述的超時問題。
+- B：為每個EC2例項建立一條Route 53故障路由政策記錄。 每張記錄都要做健康檢查。容錯移轉路由政策（failover routing）是為「主／備」兩端點設計的機制，不適合 10 台以上對等（active-active）執行個體之間分散流量的情境，無法達到所需的負載平衡效果。
 - C：建立 Amazon CloudFront 分佈, 以 EC2 例項作為來源。 將體檢與EC2病例聯絡起來。CloudFront 是內容快取與交付服務，主要處理靜態或可快取內容的邊緣加速，並非用來解決「DNS 對多台後端做健康感知負載平衡」的根本問題，也仍需一個穩定來源端點。
 
 **分類：** 網路連結和內容交付
@@ -7824,7 +7824,7 @@ B
 ## Question #287
 
 **題目**
-一個公司想將一個基於Windows的應用程式從房地遷移到AWS雲. 該應用程式有三個層次:一個應用層次,一個業務層次,以及一個帶有Microsoft SQL Server的資料庫(database)層次. 公司希望使用SQL Server的具體功能,如本土備份和資料質量服務. 公司還需要在各層級之間共享處理檔案. 解決方案架構師應如何設計架構以滿足這些要求?
+一個公司想將一個基於Windows的應用程式從地端遷移到AWS雲. 該應用程式有三個層次:一個應用層次,一個業務層次,以及一個帶有Microsoft SQL Server的資料庫(database)層次. 公司希望使用SQL Server的具體功能,如本土備份和資料質量服務. 公司還需要在各層級之間共享處理檔案. 解決方案架構師應如何設計架構以滿足這些要求?
 
 **選項**
 - A. 在 Amazon EC2 例項上託管所有三個級別。 使用 Amazon FSx 檔案閘道器在等級間共享檔案.
@@ -7995,10 +7995,10 @@ A,B
 一家公司擁有一個已到生命末期的備份設備 (appliance)。 公司希望使用AWS作為新的備份(backup)解決方案的一部分,並希望在AWS上備份的同時保持本地對所有資料的存取. 公司希望確保AWS上備份的資料自動和安全地轉移. 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 使用AWS Snowball將資料從presimes解析到Amazon S3. 配置安裝 Snowball S3 端點的預設系統,以提供本地存取資料的機會。
-- B. 使用AWS Snowball Edge將資料從presimes解析到Amazon S3. 使用Snowball Edge檔案介面,提供本地存取資料的前提系統.
-- C. 使用AWS Storage Gateway並配置快取的磁碟區閘道器. 在房地執行儲存閘道器軟體應用程式,並配置一定比例的資料在當地快取. 掛載閘道器儲存卷以提供本地對資料的存取.
-- D. 使用AWS Storage Gateway並配置一個儲存的磁碟區閘道器. 在房地上執行儲存閘道器軟體應用程式,並將閘道器儲存量對映到前提儲存. 掛載閘道器儲存卷以提供本地對資料的存取.
+- A. 使用AWS Snowball將資料從地端解析到Amazon S3. 配置安裝 Snowball S3 端點的預設系統,以提供本地存取資料的機會。
+- B. 使用AWS Snowball Edge將資料從地端解析到Amazon S3. 使用Snowball Edge檔案介面,提供本地存取資料的地端系統.
+- C. 使用AWS Storage Gateway並配置快取的磁碟區閘道器. 在地端執行儲存閘道器軟體應用程式,並配置一定比例的資料在當地快取. 掛載閘道器儲存卷以提供本地對資料的存取.
+- D. 使用AWS Storage Gateway並配置一個儲存的磁碟區閘道器. 在地端上執行儲存閘道器軟體應用程式,並將閘道器儲存量對映到地端儲存. 掛載閘道器儲存卷以提供本地對資料的存取.
 
 **答案**
 D
@@ -8008,11 +8008,11 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用AWS Storage Gateway並配置一個儲存的磁碟區閘道器. 在房地上執行儲存閘道器軟體應用程式,並將閘道器儲存量對映到前提儲存. 掛載閘道器儲存卷以提供本地對資料的存取。AWS Storage Gateway 的 Stored Volume Gateway 會將完整資料集保留在本地儲存磁碟區中，讓應用程式持續透過本地存取取得全部資料；閘道軟體會在背景自動且以加密方式將磁碟區的時間點快照上傳至 Amazon S3（以 EBS 快照形式儲存），同時滿足『保留全部資料本地存取』與『自動安全地將備份資料傳送到 AWS』兩項要求。
+- D：使用AWS Storage Gateway並配置一個儲存的磁碟區閘道器. 在地端上執行儲存閘道器軟體應用程式,並將閘道器儲存量對映到地端儲存. 掛載閘道器儲存卷以提供本地對資料的存取。AWS Storage Gateway 的 Stored Volume Gateway 會將完整資料集保留在本地儲存磁碟區中，讓應用程式持續透過本地存取取得全部資料；閘道軟體會在背景自動且以加密方式將磁碟區的時間點快照上傳至 Amazon S3（以 EBS 快照形式儲存），同時滿足『保留全部資料本地存取』與『自動安全地將備份資料傳送到 AWS』兩項要求。
 - 其餘選項比較：
-- A：使用AWS Snowball將資料從presimes解析到Amazon S3. 配置安裝 Snowball S3 端點的預設系統,以提供本地存取資料的機會。AWS Snowball 是一次性、離線的實體裝置搬遷服務，用來把大量資料批次匯入 S3，並沒有可持續提供本地資料存取的『S3 端點』機制，無法作為長期、自動化的持續備份方案。
-- B：使用AWS Snowball Edge將資料從presimes解析到Amazon S3. 使用Snowball Edge檔案介面,提供本地存取資料的前提系統。Snowball Edge 的檔案介面主要用於邊緣運算或一次性大量資料搬遷情境，並非設計成永久駐留本地、持續自動把資料同步備份到 S3 的閘道器。
-- C：使用AWS Storage Gateway並配置快取的磁碟區閘道器. 在房地執行儲存閘道器軟體應用程式,並配置一定比例的資料在當地快取. 掛載閘道器儲存卷以提供本地對資料的存取。Cached Volume Gateway 只會把常用資料快取在本地，資料主體實際存放在 Amazon S3，代表不常用的資料需要時得回頭向 S3 提取，無法滿足『在本地保留所有資料』的要求。
+- A：使用AWS Snowball將資料從地端解析到Amazon S3. 配置安裝 Snowball S3 端點的預設系統,以提供本地存取資料的機會。AWS Snowball 是一次性、離線的實體裝置搬遷服務，用來把大量資料批次匯入 S3，並沒有可持續提供本地資料存取的『S3 端點』機制，無法作為長期、自動化的持續備份方案。
+- B：使用AWS Snowball Edge將資料從地端解析到Amazon S3. 使用Snowball Edge檔案介面,提供本地存取資料的地端系統。Snowball Edge 的檔案介面主要用於邊緣運算或一次性大量資料搬遷情境，並非設計成永久駐留本地、持續自動把資料同步備份到 S3 的閘道器。
+- C：使用AWS Storage Gateway並配置快取的磁碟區閘道器. 在地端執行儲存閘道器軟體應用程式,並配置一定比例的資料在當地快取. 掛載閘道器儲存卷以提供本地對資料的存取。Cached Volume Gateway 只會把常用資料快取在本地，資料主體實際存放在 Amazon S3，代表不常用的資料需要時得回頭向 S3 提取，無法滿足『在本地保留所有資料』的要求。
 
 **分類：** 儲存
 
@@ -8208,7 +8208,7 @@ C
 ## Question #301
 
 **題目**
-一個大學研究實驗室需要將30 TB的資料從一個premises Windows檔案伺服器遷移到Windows檔案伺服器的Amazon FSx. 實驗室有一個Gbps網路連結,大學中許多其他部門共享. 實驗室希望實施資料遷移服務,最大限度地提高資料傳輸的效能. 然而,實驗室需要能夠控制服務使用的頻寬量,以儘量減少對其他部門的影響. 資料遷移必須在今後5天內進行。 哪個AWS解決方案能滿足這些要求?
+一個大學研究實驗室需要將30 TB的資料從一個地端 Windows檔案伺服器遷移到Windows檔案伺服器的Amazon FSx. 實驗室有一個Gbps網路連結,大學中許多其他部門共享. 實驗室希望實施資料遷移服務,最大限度地提高資料傳輸的效能. 然而,實驗室需要能夠控制服務使用的頻寬量,以儘量減少對其他部門的影響. 資料遷移必須在今後5天內進行。 哪個AWS解決方案能滿足這些要求?
 
 **選項**
 - A. AWS 雪球
@@ -8372,7 +8372,7 @@ A
 ## Question #307
 
 **題目**
-一家主要在房地執行應用伺服器的公司決定向AWS遷移。 公司希望儘量縮小其網際網路小計算機系統介面(iSCSI)在房地儲存的需求. 公司只希望其最近獲得的資料能夠在當地儲存。 公司應使用何種AWS解決方案來滿足這些要求?
+一家主要在地端執行應用伺服器的公司決定向AWS遷移。 公司希望儘量縮小其網際網路小計算機系統介面(iSCSI)在地端儲存的需求. 公司只希望其最近獲得的資料能夠在當地儲存。 公司應使用何種AWS解決方案來滿足這些要求?
 
 **選項**
 - A. Amazon S3 檔案閘道器
@@ -8702,7 +8702,7 @@ A,D
 ## Question #319
 
 **題目**
-一家公司在AWS雲中有數百個基於Amazon EC2的Linux案例. 系統管理員使用共享的SSH金鑰來管理例項. 在最近稽核(audit)之後,該公司的安全小組正要求拆除所有共有鑰匙。 解決方案設計師必須設計一個解決方案,提供對EC2例項的安全存取. 以LEAST的行政間接費用數額滿足這一要求的哪一種辦法?
+一家公司在AWS雲中有數百個基於Amazon EC2的Linux案例. 系統管理員使用共享的SSH金鑰來管理例項. 在最近稽核(audit)之後,該公司的安全小組正要求拆除所有共有鑰匙。 解決方案設計師必須設計一個解決方案,提供對EC2例項的安全存取. 以LEAST的營運開銷數額滿足這一要求的哪一種辦法?
 
 **選項**
 - A. 使用 AWS Systems Manager 會話管理器連線到EC2 例項。
@@ -8837,10 +8837,10 @@ B
 ## Question #324
 
 **題目**
-一家公司希望實施災難復原(disaster recovery)計劃,用於其主要前提檔案儲存量. 檔案儲存量由一個Internet Small計算機系統介面(iSCSI)裝置掛載在本地儲存伺服器上. 檔案儲存量持有上百兆位元組(TB)的資料. 公司希望確保終端使用者在不經歷延遲(latency)的情況下,保留對現場系統的所有檔案型別的即時存取. 哪個解決方案將滿足這些要求,對公司現有基礎設施的LEAST數額進行修改?
+一家公司希望實施災難復原(disaster recovery)計劃,用於其主要地端檔案儲存量. 檔案儲存量由一個Internet Small計算機系統介面(iSCSI)裝置掛載在本地儲存伺服器上. 檔案儲存量持有上百兆位元組(TB)的資料. 公司希望確保終端使用者在不經歷延遲(latency)的情況下,保留對現場系統的所有檔案型別的即時存取. 哪個解決方案將滿足這些要求,對公司現有基礎設施的LEAST數額進行修改?
 
 **選項**
-- A. 提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於房地. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 bucket。
+- A. 提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於地端. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 bucket。
 - B. 提供AWS Storage Gateway磁帶閘道器. 使用資料備份(backup)解決方案將所有現有資料備份到虛擬磁帶庫. 配置資料 備份(backup) 解決方案在初始 備份(backup) 完成後夜間執行. 為了從災難中恢復過來,提供Amazon EC2例項,並將資料從虛擬磁帶庫的卷中恢復到Amazon Elastic Block Store(Amazon EBS)。
 - C. 提供AWS Storage Gateway卷門快取卷. 設定本地快取為 10 TB。 使用 iSCSI 將 Volume Gateway 快取的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中.
 - D. 提供AWS Storage Gateway卷閘道器儲存的磁碟區,磁碟空間與現有的檔案儲存磁碟區相同. 使用 iSCSI 將儲存的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中.
@@ -8855,7 +8855,7 @@ C
 正確答案是 **C**。
 - C：提供AWS Storage Gateway卷門快取卷. 設定本地快取為 10 TB。 使用 iSCSI 將 Volume Gateway 快取的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中。Volume Gateway 的快取磁碟區模式會把完整資料集放在 S3，僅在本地端保留一份熱資料快取（此處設定 10 TB），前端仍以 iSCSI 介面掛接，因此檔案伺服器與應用程式完全不用更動存取協定；常用資料留在本地快取可維持低延遲存取，搭配磁碟區排程快照，即可在故障時把快照還原成 EBS 磁碟區並掛載到 EC2 例項完成復原。
 - 其餘選項比較：
-- A：提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於房地. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 bucket。S3 File Gateway 只支援 NFS／SMB 通訊協定，而檔案伺服器目前是透過 iSCSI 掛載，改用此方案必須連帶修改應用程式的存取協定，屬於較大幅度的架構變更，不符合題目要求的最少修改原則。
+- A：提供Amazon S3檔案閘道器作為虛擬機器(VM),託管於地端. 設定本地快取為 10 TB。 修改現有的應用程式,透過NFS協議存取檔案. 為了從災害中恢復,提供Amazon EC2例項,並掛載載有檔案的S3 bucket。S3 File Gateway 只支援 NFS／SMB 通訊協定，而檔案伺服器目前是透過 iSCSI 掛載，改用此方案必須連帶修改應用程式的存取協定，屬於較大幅度的架構變更，不符合題目要求的最少修改原則。
 - B：提供AWS Storage Gateway磁帶閘道器. 使用資料備份(backup)解決方案將所有現有資料備份到虛擬磁帶庫. 配置資料 備份(backup) 解決方案在初始 備份(backup) 完成後夜間執行. 為了從災難中恢復過來,提供Amazon EC2例項,並將資料從虛擬磁帶庫的卷中恢復到Amazon Elastic Block Store(Amazon EBS)。Tape Gateway 提供的是虛擬磁帶庫，資料透過備份軟體以排程（例如每日一次）方式寫入，使用者無法對已封存的內容做即時存取，無法滿足終端使用者不經歷延遲、即時存取檔案的要求。
 - D：提供AWS Storage Gateway卷閘道器儲存的磁碟區,磁碟空間與現有的檔案儲存磁碟區相同. 使用 iSCSI 將儲存的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中。Volume Gateway 的儲存磁碟區模式會把與現有檔案磁碟區相同容量（上百 TB）的完整資料集持續留在本地，等於要準備與原有規模相當的儲存硬體，並沒有減少本地端基礎設施的規模與複雜度。
 
@@ -9056,11 +9056,11 @@ A
 ## Question #332
 
 **題目**
-公司需要為其僱員提供安全查閱機密和敏感檔案的機會。 公司希望確保檔案只能被授權使用者存取. 這些檔案必須安全下載到員工的裝置。 這些檔案被儲存在一個premise的Windows檔案伺服器中. 然而,由於遠端使用量的增加,檔案伺服器正在耗盡容量。。 哪種解決辦法能滿足這些要求?
+公司需要為其僱員提供安全查閱機密和敏感檔案的機會。 公司希望確保檔案只能被授權使用者存取. 這些檔案必須安全下載到員工的裝置。 這些檔案被儲存在一個地端的Windows檔案伺服器中. 然而,由於遠端使用量的增加,檔案伺服器正在耗盡容量。。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 將檔案伺服器遷移到公共子網的 Amazon EC2 例項。 配置 安全群組(security group) 以限制員工的IP地址的入境流量。
-- B. 為 Windows 檔案伺服器系統將檔案遷移到 Amazon FSx。 將Amazon FSx檔案系統與promess Active Directory整合. 配置 AWS 客戶端 VPN。
+- B. 為 Windows 檔案伺服器系統將檔案遷移到 Amazon FSx。 將Amazon FSx檔案系統與地端 Active Directory整合. 配置 AWS 客戶端 VPN。
 - C. 將檔案遷移到Amazon S3,並建立私人VPC 端點(VPC endpoint). 建立已簽名的 URL 允許下載。
 - D. 將檔案遷移到Amazon S3,並建立一個公開的VPC 端點(VPC endpoint). 允許員工與AWS IAM身份中心(AWS Single Sign-On)簽約.
 
@@ -9072,7 +9072,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：為 Windows 檔案伺服器系統將檔案遷移到 Amazon FSx。 將Amazon FSx檔案系統與promess Active Directory整合. 配置 AWS 客戶端 VPN。Amazon FSx for Windows File Server 是全代管、原生支援 SMB 協定的 Windows 檔案系統，可與現有的 Active Directory 整合，讓員工原本在 AD 中的使用者/群組權限與資料夾 ACL 直接沿用，不用重建授權架構；FSx 的儲存容量可依需要彈性擴充，正好解決現有伺服器容量不足的問題。再搭配 AWS Client VPN，員工可透過加密通道連進 VPC 存取檔案，下載流量不會經過公開網際網路，同時滿足「安全下載到裝置」與「僅授權使用者可存取」兩項限制。
+- B：為 Windows 檔案伺服器系統將檔案遷移到 Amazon FSx。 將Amazon FSx檔案系統與地端 Active Directory整合. 配置 AWS 客戶端 VPN。Amazon FSx for Windows File Server 是全代管、原生支援 SMB 協定的 Windows 檔案系統，可與現有的 Active Directory 整合，讓員工原本在 AD 中的使用者/群組權限與資料夾 ACL 直接沿用，不用重建授權架構；FSx 的儲存容量可依需要彈性擴充，正好解決現有伺服器容量不足的問題。再搭配 AWS Client VPN，員工可透過加密通道連進 VPC 存取檔案，下載流量不會經過公開網際網路，同時滿足「安全下載到裝置」與「僅授權使用者可存取」兩項限制。
 - 其餘選項比較：
 - A：將檔案伺服器遷移到公共子網的 Amazon EC2 例項。 配置 安全群組(security group) 以限制員工的IP地址的入境流量。把檔案伺服器搬到公有子網路的 EC2 執行個體，仍然是自行管理的單一 Windows 檔案伺服器，只是換了主機位置，並未解決儲存容量吃緊的根本問題；放在公有子網路上等於直接暴露在網際網路，即使用安全群組限制來源 IP，也比放在私有網路內多一層曝險風險。
 - C：將檔案遷移到Amazon S3,並建立私人VPC 端點(VPC endpoint). 建立已簽名的 URL 允許下載。改用 Amazon S3 加簽章 URL 下載，等同整個檔案存取模式都要重新設計，需要額外開發簽發與管理 URL 的機制，而且 S3 物件層級的存取控制無法直接對應到原本 Windows 檔案伺服器上依資料夾與 AD 群組設計的權限結構。
@@ -9114,9 +9114,9 @@ C
 
 **選項**
 - A. 為Amazon S3與SFTP建立AWS傳輸家族. 配置綜合活動目錄認證。
-- B. 設定 AWS 資料庫(Database) 遷移服務(AWS DS),以與 Amazon S3 同步設定前提客戶端. 配置綜合活動目錄認證。
+- B. 設定 AWS 資料庫(Database) 遷移服務(AWS DS),以與 Amazon S3 同步設定地端客戶端. 配置綜合活動目錄認證。
 - C. 透過使用AWS IAM身份識別中心(AWS Single Sign-On),設定AWS DataSync,以同步在現場位置和S3位置之間.
-- D. 與 SFTP 一起設定 Windows Amazon EC2 例項,以連線在前提上的客戶端與 Amazon S3. 整合AWS身份和存取管理。
+- D. 與 SFTP 一起設定 Windows Amazon EC2 例項,以連線在地端的客戶端與 Amazon S3. 整合AWS身份和存取管理。
 
 **答案**
 B
@@ -9126,11 +9126,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：設定 AWS 資料庫(Database) 遷移服務(AWS DS),以與 Amazon S3 同步設定前提客戶端. 配置綜合活動目錄認證。透過持續性資料同步服務把檔案內容同步進 Amazon S3，同時沿用整合 Active Directory 的身分驗證機制，可以讓客戶原本的前提端設定與帳號體系維持不變，不需要另外建置或維運一組獨立的傳輸伺服器，達到最少維運負擔的要求。
+- B：設定 AWS 資料庫(Database) 遷移服務(AWS DS),以與 Amazon S3 同步設定地端客戶端. 配置綜合活動目錄認證。透過持續性資料同步服務把檔案內容同步進 Amazon S3，同時沿用整合 Active Directory 的身分驗證機制，可以讓客戶原本的地端設定與帳號體系維持不變，不需要另外建置或維運一組獨立的傳輸伺服器，達到最少維運負擔的要求。
 - 其餘選項比較：
-- A：為Amazon S3與SFTP建立AWS傳輸家族. 配置綜合活動目錄認證。此做法需要另外建立並持續維運一組全新的 AWS Transfer Family SFTP 伺服器端點，並整合對應的網域驗證設定，等於在既有的前提 AD 架構之外再新增一層需要維護的傳輸基礎設施。
+- A：為Amazon S3與SFTP建立AWS傳輸家族. 配置綜合活動目錄認證。此做法需要另外建立並持續維運一組全新的 AWS Transfer Family SFTP 伺服器端點，並整合對應的網域驗證設定，等於在既有的地端 AD 架構之外再新增一層需要維護的傳輸基礎設施。
 - C：透過使用AWS IAM身份識別中心(AWS Single Sign-On),設定AWS DataSync,以同步在現場位置和S3位置之間。改用 AWS IAM 身分識別中心作為驗證來源，代表要把公司原本以 Active Directory 為主的帳號體系，另外聯合或遷移到 IAM 身分識別中心的使用者集區，對已經有一套 AD 驗證機制的公司而言是多一層身分系統整合工作。
-- D：與 SFTP 一起設定 Windows Amazon EC2 例項,以連線在前提上的客戶端與 Amazon S3. 整合AWS身份和存取管理。此做法需要自行架設一台執行 SFTP 服務的 Windows EC2 執行個體，並負責其作業系統更新、SFTP 軟體設定與身分驗證邏輯的維運，屬於完全自我管理的基礎設施，維運負擔明顯高於使用受管理的同步服務。
+- D：與 SFTP 一起設定 Windows Amazon EC2 例項,以連線在地端的客戶端與 Amazon S3. 整合AWS身份和存取管理。此做法需要自行架設一台執行 SFTP 服務的 Windows EC2 執行個體，並負責其作業系統更新、SFTP 軟體設定與身分驗證邏輯的維運，屬於完全自我管理的基礎設施，維運負擔明顯高於使用受管理的同步服務。
 
 **分類：** 移轉和傳輸
 
@@ -9197,7 +9197,7 @@ A
 - A. 將資料庫(database)移動到Amazon Aurora MySQL. 將讀取的複製品替換為Aurora複製品,並配置Aurora自動縮放. 將儲存的程式替換為 Aurora MySQL 本地函式。
 - B. 在資料庫(database)前為Redis叢集部署一個Amazon ElastiCache。 修改應用程式,以便在應用程式詢問資料庫(database)之前檢查快取. 用 AWS Lambda 函式替換儲存程式.
 - C. 將 資料庫(database) 移動到執行於 Amazon EC2 例項的 MySQL 資料庫(database)。 為所有複製節點選擇大,計算最佳化的EC2例項. 維持EC2例項的儲存程式。
-- D. 將資料庫(database)型機車遷移到Amazon DynamoDB型機車. 提供大量閱讀容量單位,支援所需的吞吐量(throughput),並配置按需容量縮放. 將儲存的程式替換為 DynamoDB 流。
+- D. 將資料庫(database)執行個體遷移到Amazon DynamoDB. 提供大量閱讀容量單位,支援所需的吞吐量(throughput),並配置按需容量縮放. 將儲存的程式替換為 DynamoDB 流。
 
 **答案**
 A
@@ -9211,7 +9211,7 @@ A
 - 其餘選項比較：
 - B：在資料庫(database)前為Redis叢集部署一個Amazon ElastiCache。 修改應用程式,以便在應用程式詢問資料庫(database)之前檢查快取. 用 AWS Lambda 函式替換儲存程式。在資料庫前加裝 Redis 快取，需要修改應用程式加入「先查快取再查資料庫」的邏輯，並把原本的預存程序改寫成 AWS Lambda 函式，這兩項都明顯違反「最小化應用程式碼變更」的要求；而且底層讀取複本仍是原本的非同步複寫架構，快取本身無法縮短複寫落後的時間。
 - C：將 資料庫(database) 移動到執行於 Amazon EC2 例項的 MySQL 資料庫(database)。 為所有複製節點選擇大,計算最佳化的EC2例項. 維持EC2例項的儲存程式。把資料庫搬到自行管理、跑在 EC2 上的 MySQL，代表放棄 RDS 提供的修補、備份與容錯移轉等代管功能，維運負擔大幅增加；單純把複本節點換成運算最佳化的大型執行個體，並沒有改變造成落後的二進位日誌非同步複寫機制本身。
-- D：將資料庫(database)型機車遷移到Amazon DynamoDB型機車. 提供大量閱讀容量單位,支援所需的吞吐量(throughput),並配置按需容量縮放. 將儲存的程式替換為 DynamoDB 流。遷移到 Amazon DynamoDB 是把關聯式資料庫換成完全不同的 NoSQL 資料模型，需要重新設計資料結構並改寫幾乎整個應用程式邏輯，而不只是替換預存程序，這與「最小化應用程式碼變更」的要求嚴重牴觸。
+- D：將資料庫(database)執行個體遷移到Amazon DynamoDB. 提供大量閱讀容量單位,支援所需的吞吐量(throughput),並配置按需容量縮放. 將儲存的程式替換為 DynamoDB 流。遷移到 Amazon DynamoDB 是把關聯式資料庫換成完全不同的 NoSQL 資料模型，需要重新設計資料結構並改寫幾乎整個應用程式邏輯，而不只是替換預存程序，這與「最小化應用程式碼變更」的要求嚴重牴觸。
 
 **分類：** 資料庫
 
@@ -9959,7 +9959,7 @@ C,D
 ## Question #365
 
 **題目**
-一家公司執行著由Amazon RDS支援的網路應用程式. 一個新的資料庫(database)管理員由於在資料庫(database)表中不慎編輯資訊而導致資料丟失. 為了幫助從這類事件中恢復過來,公司希望能夠將資料庫(database)型機車從過去30天內的任何變化前5分鐘恢復到狀態. 解決方案設計師在設計中應包含哪些特點,以滿足這一要求?
+一家公司執行著由Amazon RDS支援的網路應用程式. 一個新的資料庫(database)管理員由於在資料庫(database)表中不慎編輯資訊而導致資料丟失. 為了幫助從這類事件中恢復過來,公司希望能夠將資料庫(database)執行個體從過去30天內的任何變化前5分鐘恢復到狀態. 解決方案設計師在設計中應包含哪些特點,以滿足這一要求?
 
 **選項**
 - A. 讀取複製品
@@ -10016,10 +10016,10 @@ C
 一家公司正在使用Amazon Route 53 延遲(latency)-基於路由的線路,為世界各地的使用者提供其基於UDP的應用程式的路由請求. 該應用程式設在該公司在美國、亞洲和歐洲的虛擬資料中心的冗餘伺服器上。 該公司的合規(compliance)要求規定,申請必須設在辦公地點。 公司希望改進應用程式的效能和可用性. 解決方案設計師應如何滿足這些要求?
 
 **選項**
-- A. 配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 透過使用AWS Global Accelerator建立加速器,並將NLB登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
-- B. 在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為其終點。 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
-- C. 配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 在"53路"中,建立基於延遲(latency)的紀錄,指向三個NLB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
-- D. 在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 在"53路"中,建立基於延遲(latency)的唱片,指向三個ALB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
+- A. 配置三個AWS區域的3個網路負載平衡器(NLB),並指向地端端點。 透過使用AWS Global Accelerator建立加速器,並將NLB登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
+- B. 在三個AWS區域配置三個應用程式負載平衡器(ALBs),並指向地端端點. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為其終點。 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。
+- C. 配置三個AWS區域的3個網路負載平衡器(NLB),並指向地端端點。 在 Route 53 中,建立基於延遲(latency)的紀錄,指向三個NLB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
+- D. 在三個AWS區域配置三個應用程式負載平衡器(ALBs),並指向地端端點. 在 Route 53 中,建立基於延遲(latency)的紀錄,指向三個ALB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。
 
 **答案**
 A
@@ -10029,11 +10029,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 透過使用AWS Global Accelerator建立加速器,並將NLB登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。NLB（Network Load Balancer）運作在傳輸層，原生支援 UDP 協定，可將流量轉送到公司地端資料中心的伺服器端點以符合「應用程式須留在原地點」的合規要求；搭配 AWS Global Accelerator 以 Anycast IP 將使用者導向延遲最低且健康的區域端點，並支援 UDP 應用程式的加速與快速故障移轉，同時提升效能與可用性。
+- A：配置三個AWS區域的3個網路負載平衡器(NLB),並指向地端端點。 透過使用AWS Global Accelerator建立加速器,並將NLB登記為其終點. 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。NLB（Network Load Balancer）運作在傳輸層，原生支援 UDP 協定，可將流量轉送到公司地端資料中心的伺服器端點以符合「應用程式須留在原地點」的合規要求；搭配 AWS Global Accelerator 以 Anycast IP 將使用者導向延遲最低且健康的區域端點，並支援 UDP 應用程式的加速與快速故障移轉，同時提升效能與可用性。
 - 其餘選項比較：
-- B：在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為其終點。 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。ALB（Application Load Balancer）只運作在應用層，僅支援 HTTP/HTTPS 協定，並不支援題目所述的 UDP-based 應用程式流量，架構上無法承載此應用程式。
-- C：配置三個AWS區域的3個網路負載平衡器(NLB),以解決站點問題。 在"53路"中,建立基於延遲(latency)的紀錄,指向三個NLB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。CloudFront 是為 HTTP/HTTPS 內容設計的 CDN 服務，不支援 UDP 協定的來源存取與內容傳遞，把 UDP 應用程式放在 CloudFront 之後在技術上無法運作。
-- D：在三個AWS區域配置三個應用程式負載平衡器(ALBs),以解決前提端點. 在"53路"中,建立基於延遲(latency)的唱片,指向三個ALB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。此選項同時使用不支援 UDP 的 ALB 與不支援 UDP 的 CloudFront 兩個環節，皆與題目「基於 UDP 的應用程式」需求不符，無法承載實際流量。
+- B：在三個AWS區域配置三個應用程式負載平衡器(ALBs),並指向地端端點. 使用 AWS 全球加速器建立加速器,並將 ALB 註冊為其終點。 使用指向加速器 DNS 的 CNAME 來提供對應用程式的存取許可權。ALB（Application Load Balancer）只運作在應用層，僅支援 HTTP/HTTPS 協定，並不支援題目所述的 UDP-based 應用程式流量，架構上無法承載此應用程式。
+- C：配置三個AWS區域的3個網路負載平衡器(NLB),並指向地端端點。 在 Route 53 中,建立基於延遲(latency)的紀錄,指向三個NLB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。CloudFront 是為 HTTP/HTTPS 內容設計的 CDN 服務，不支援 UDP 協定的來源存取與內容傳遞，把 UDP 應用程式放在 CloudFront 之後在技術上無法運作。
+- D：在三個AWS區域配置三個應用程式負載平衡器(ALBs),並指向地端端點. 在 Route 53 中,建立基於延遲(latency)的紀錄,指向三個ALB,並將其作為Amazon CloudFront發行的源頭. 使用指向 CloudFront DNS 的 CNAME 來提供對應用程式的存取許可權。此選項同時使用不支援 UDP 的 ALB 與不支援 UDP 的 CloudFront 兩個環節，皆與題目「基於 UDP 的應用程式」需求不符，無法承載實際流量。
 
 **分類：** 網路連結和內容交付
 
@@ -10205,7 +10205,7 @@ D
 ## Question #374
 
 **題目**
-一家公司正在我們東1區域(Region)的3個單獨的VPC中執行多個業務應用. 應用程式必須能夠在VPC之間通訊. 這些應用程式還必須能夠持續地每天將數百千兆位元組的資料傳送給一個在單一的前提資料中心執行的延遲(latency)敏感應用程式。 一個解決方案架構師需要設計一個能最大限度地提高成本效益的網路連線解決方案. 哪種解決辦法符合這些要求?
+一家公司正在我們東1區域(Region)的3個單獨的VPC中執行多個業務應用. 應用程式必須能夠在VPC之間通訊. 這些應用程式還必須能夠持續地每天將數百千兆位元組的資料傳送給一個在單一的地端資料中心執行的延遲(latency)敏感應用程式。 一個解決方案架構師需要設計一個能最大限度地提高成本效益的網路連線解決方案. 哪種解決辦法符合這些要求?
 
 **選項**
 - A. 配置從資料中心到AWS的三個AWS站點對站點的VPN連線. 透過為每個VPC配置一個VPN連線來建立連線.
@@ -10232,7 +10232,7 @@ D
 ## Question #375
 
 **題目**
-一家電子商務公司正在建立一個分散式應用程式,涉及若干無伺服器功能和AWS服務,以完成訂單處理任務。 這些任務需要人工批准,作為工作檔案的一部分。 一個解決方案架構師需要為訂單處理應用程式設計一個架構. 解決方案必須能夠將多個AWS Lambda功能結合到響應性無伺服器應用程式中. 解決方案還必須協調執行在Amazon EC2例項、容器或前提伺服器上的資料和服務。 哪個解決方案能以最少的營運開銷達成這些要求？
+一家電子商務公司正在建立一個分散式應用程式,涉及若干無伺服器功能和AWS服務,以完成訂單處理任務。 這些任務需要人工批准,作為工作檔案的一部分。 一個解決方案架構師需要為訂單處理應用程式設計一個架構. 解決方案必須能夠將多個AWS Lambda功能結合到響應性無伺服器應用程式中. 解決方案還必須協調執行在Amazon EC2例項、容器或地端伺服器上的資料和服務。 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 使用 AWS 步驟函式構建應用程式。
@@ -11297,7 +11297,7 @@ B
 ## Question #414
 
 **題目**
-一個公司有一個商業系統,每天生成數百份報告. 業務系統將報告儲存為CSV格式的網路共享. 公司需要在近實時分析時將這些資料儲存在AWS雲中. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一個公司有一個商業系統,每天生成數百份報告. 業務系統將報告儲存為CSV格式的網路共享. 公司需要在近實時分析時將這些資料儲存在AWS雲中. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 使用AWS DataSync將檔案傳輸到Amazon S3. 建立每日末執行的預定任務。
@@ -11313,7 +11313,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：使用AWS DataSync將檔案傳輸到Amazon S3. 建立一個在自動化工作fiow中使用DataSync API的應用程式。AWS DataSync 是專門的線上資料傳輸服務，可持續同步本地端網路共享與 S3 之間的檔案；透過 DataSync API 建置自動化工作流程（例如偵測到新報表產生就觸發傳輸任務），能在不需修改既有業務系統寫入路徑的前提下達到接近即時的資料同步，維運上只需維護一組自動化流程，符合「近實時」與「最少行政間接費用」的要求。
+- C：使用AWS DataSync將檔案傳輸到Amazon S3. 建立一個在自動化工作fiow中使用DataSync API的應用程式。AWS DataSync 是專門的線上資料傳輸服務，可持續同步本地端網路共享與 S3 之間的檔案；透過 DataSync API 建置自動化工作流程（例如偵測到新報表產生就觸發傳輸任務），能在不需修改既有業務系統寫入路徑的前提下達到接近即時的資料同步，維運上只需維護一組自動化流程，符合「近實時」與「最少營運開銷」的要求。
 - 其餘選項比較：
 - A：使用AWS DataSync將檔案傳輸到Amazon S3. 建立每日末執行的預定任務。同樣使用 DataSync 傳輸檔案，但只建立「每日」執行一次的排程任務，資料同步會有長達近 24 小時的延遲，無法滿足題目「近實時分析」的時效要求。
 - B：建立 Amazon S3 檔案閘道器。 更新業務系統以使用來自S3檔案閘道器的新網路共享。S3 File Gateway 需要先更新既有業務系統，把寫入目標改成 File Gateway 提供的新網路共享路徑，代表要變更正在運作中正式系統的儲存設定與路徑，屬於應用程式層級的變更與部署風險，相較於不需觸碰來源系統的方案，額外增加了整合與測試的維運負擔。
@@ -11603,7 +11603,7 @@ B
 ## Question #425
 
 **題目**
-一家公司使用高容量的區塊儲存能力來管理其房地的工作量。 公司日高峰投入和產出交易每秒不超過15,000 IOPS. 公司希望將工作量遷移到Amazon EC2,並提供獨立於儲存容量的磁碟效能. Amazon Elastic Block Store (Amazon EBS)的容量型別將以符合成本效益的方式滿足這些要求?
+一家公司使用高容量的區塊儲存能力來管理其地端的工作量。 公司日高峰投入和產出交易每秒不超過15,000 IOPS. 公司希望將工作量遷移到Amazon EC2,並提供獨立於儲存容量的磁碟效能. Amazon Elastic Block Store (Amazon EBS)的容量型別將以符合成本效益的方式滿足這些要求?
 
 **選項**
 - A. GP2 磁碟區型別
@@ -11630,7 +11630,7 @@ C
 ## Question #426
 
 **題目**
-公司需要儲存其保健應用中的資料。 應用程式的資料經常發生變化。 一項新的條例要求稽核(audit)在儲存資料的所有級別存取。 該公司在儲存能力耗盡的前提基礎設施上託管應用程式。 一個解決方案設計師必須安全地將現有資料遷移到AWS,同時滿足新的監管要求. 哪種解決辦法能滿足這些要求?
+公司需要儲存其保健應用中的資料。 應用程式的資料經常發生變化。 一項新的條例要求稽核(audit)在儲存資料的所有級別存取。 該公司在儲存能力耗盡的地端基礎設施上託管應用程式。 一個解決方案設計師必須安全地將現有資料遷移到AWS,同時滿足新的監管要求. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用AWS DataSync將現有資料移動到Amazon S3. 使用AWS CloudTrail記錄資料事件.
@@ -11662,7 +11662,7 @@ B
 **選項**
 - A. 在AWS Lambda中部署應用程式。 配置 Amazon API Gateway API 與 Lambda 函式連線.
 - B. 使用 AWS 彈性 Beanstalk 部署應用程式。 配置負載平衡環境和滾動部署政策.
-- C. 將資料庫(database)型機車遷移到Amazon ElastiCache型機車. 配置 ElastiCache 安全群組(security group) 允許從應用程式存取。
+- C. 將資料庫(database)執行個體遷移到Amazon ElastiCache. 配置 ElastiCache 安全群組(security group) 允許從應用程式存取。
 - D. 推出Amazon EC2 執行個體. 在 EC2 例項上安裝 MySQL 伺服器。 配置伺服器上的應用程式。 建立AMI. 使用AMI建立帶有Auto Scaling 群組(Auto Scaling group)的發射模板.
 
 **答案**
@@ -11676,7 +11676,7 @@ B
 - B：使用 AWS 彈性 Beanstalk 部署應用程式。 配置負載平衡環境和滾動部署政策。AWS Elastic Beanstalk 原生支援 Tomcat 平台，可以直接部署這個 Java Web 應用程式，並自動建立負載平衡器與多執行個體構成的環境來達到高可用性；搭配滾動式部署（rolling deployment）政策，更新版本時會分批替換執行個體、避免服務整體中斷，正好對應題目必須部署在 Apache Tomcat 上且必須高度可用的要求。
 - 其餘選項比較：
 - A：在AWS Lambda中部署應用程式。 配置 Amazon API Gateway API 與 Lambda 函式連線。AWS Lambda 是無伺服器函式運算服務，無法提供完整的 Servlet 容器環境來執行需要部署在 Apache Tomcat 上的傳統 Java Web 應用程式，與題目的明確部署限制衝突。
-- C：將資料庫(database)型機車遷移到Amazon ElastiCache型機車. 配置 ElastiCache 安全群組(security group) 允許從應用程式存取。Amazon ElastiCache 是記憶體內快取服務（Redis 或 Memcached），並非關聯式資料庫，直接把 MySQL 資料庫遷移到 ElastiCache 會造成資料模型不相容與資料遺失風險，也完全沒有處理應用程式部署或高可用性的需求。
+- C：將資料庫(database)執行個體遷移到Amazon ElastiCache. 配置 ElastiCache 安全群組(security group) 允許從應用程式存取。Amazon ElastiCache 是記憶體內快取服務（Redis 或 Memcached），並非關聯式資料庫，直接把 MySQL 資料庫遷移到 ElastiCache 會造成資料模型不相容與資料遺失風險，也完全沒有處理應用程式部署或高可用性的需求。
 - D：推出Amazon EC2 執行個體. 在 EC2 例項上安裝 MySQL 伺服器。 配置伺服器上的應用程式。 建立AMI. 使用AMI建立帶有Auto Scaling 群組(Auto Scaling group)的發射模板。在同一台 EC2 執行個體上同時安裝 MySQL 與應用程式後製作 AMI，再用 Auto Scaling 群組水平擴展，會讓每個新增的執行個體各自帶著一份獨立的 MySQL 資料庫，資料無法在多執行個體之間保持一致，這不是正常的高可用架構設計。
 
 **分類：** 運算
@@ -12153,9 +12153,9 @@ B
 
 **選項**
 - A. 在公司資料中心建立 AWS 資料同步代理。 建立資料傳輸任務 啟動傳輸到 Amazon S3 bucket。
-- B. 將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3 bucket在promess檔案系統上.
+- B. 將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3 bucket在地端檔案系統上.
 - C. 使用 rsync 將資料從本地儲存直接複製到指定的 Amazon S3 bucket,透過直接連線連線.
-- D. 備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3 bucket在promess檔案系統上.
+- D. 備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3 bucket在地端檔案系統上.
 
 **答案**
 A
@@ -12167,9 +12167,9 @@ A
 正確答案是 **A**。
 - A：在公司資料中心建立 AWS 資料同步代理。 建立資料傳輸任務 啟動傳輸到 Amazon S3 bucket。AWS DataSync 是設計用於在地端與 AWS 之間透過網路持續傳輸大量資料的服務，可以在既有的 10Gbps Direct Connect 專線上以代理程式增量同步資料，且傳輸過程中來源端仍可持續存取與更新資料，符合題目「90 天內搬遷、不中斷、傳輸期間仍需存取與更新資料」的限制。DataSync 本身會處理傳輸排程、頻寬使用與資料驗證，比手動指令碼更能有效率地運用現有連線完成大量資料搬遷。
 - 其餘選項比較：
-- B：將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3 bucket在promess檔案系統上。Snowball Edge Storage Optimized 是離線實體裝置搬遷方案，資料要先寫入裝置再寄送到 AWS 機房，裝置在途期間該部分資料的更新無法即時反映到雲端，與題目要求「轉移期間仍可存取並更新資料」相衝突；且公司已有 10Gbps 的 Direct Connect 專線，捨棄現成網路連線改用實體裝置並不合理。
+- B：將資料備份到 AWS Snowball Edge Storage Optimized 裝置中. 將裝置運送到AWS資料中心. 掛載目標Amazon S3 bucket在地端檔案系統上。Snowball Edge Storage Optimized 是離線實體裝置搬遷方案，資料要先寫入裝置再寄送到 AWS 機房，裝置在途期間該部分資料的更新無法即時反映到雲端，與題目要求「轉移期間仍可存取並更新資料」相衝突；且公司已有 10Gbps 的 Direct Connect 專線，捨棄現成網路連線改用實體裝置並不合理。
 - C：使用 rsync 將資料從本地儲存直接複製到指定的 Amazon S3 bucket,透過直接連線連線。用 rsync 直接透過 Direct Connect 把地端儲存複製到 S3 bucket，但 rsync 是設計給檔案系統對檔案系統同步的工具，並非原生支援 S3 物件儲存的語意，缺乏 AWS 原生傳輸服務具備的自動重試、頻寬調節與傳輸驗證機制，用在 700 TB 規模的持續同步上失敗風險偏高。
-- D：備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3 bucket在promess檔案系統上。把資料備份到磁帶再寄送到 AWS 機房，屬於離線且一次性的搬遷方式，磁帶寄送與掛載完成前這段期間資料無法被存取或更新，同樣不符合「轉移視窗期間仍需存取與更新資料」的要求，且製作與寄送磁帶的作業時間也難以掌握是否能在 90 天內確實完成。
+- D：備份磁帶上的資料。 把磁帶送到AWS資料中心 掛載目標Amazon S3 bucket在地端檔案系統上。把資料備份到磁帶再寄送到 AWS 機房，屬於離線且一次性的搬遷方式，磁帶寄送與掛載完成前這段期間資料無法被存取或更新，同樣不符合「轉移視窗期間仍需存取與更新資料」的要求，且製作與寄送磁帶的作業時間也難以掌握是否能在 90 天內確實完成。
 
 **分類：** 移轉和傳輸
 
@@ -12230,7 +12230,7 @@ A
 ## Question #448
 
 **題目**
-一家公司有兩個名為管理和生產的VPC. 管理VPC透過客戶閘道器使用VPN連線到資料中心的單個裝置. 生產VPC使用虛擬私有閘道(virtual private gateway)型機車,並設有兩個附著的AWS Direct Connect連線. 管理和生產VPC都使用單一的VPC對等連線,允許應用程式之間的通訊. 一個解決方案設計師應該做什麼來緩解這個架構中任何單一的失敗點?
+一家公司有兩個名為管理和生產的VPC. 管理VPC透過客戶閘道器使用VPN連線到資料中心的單個裝置. 生產VPC使用虛擬私有閘道(virtual private gateway),並設有兩個附著的AWS Direct Connect連線. 管理和生產VPC都使用單一的VPC對等連線,允許應用程式之間的通訊. 一個解決方案設計師應該做什麼來緩解這個架構中任何單一的失敗點?
 
 **選項**
 - A. 在管理和生產VPC之間增加一組VPN.
@@ -12257,7 +12257,7 @@ C
 ## Question #449
 
 **題目**
-一家公司在甲骨文資料庫(database)上執行其應用. 由於資料庫(database),備份(backup)管理以及資料中心維護的資源有限,公司計劃迅速遷移到AWS. 該應用程式使用第三方的資料庫(database)特性,這些特性需要優先存取. 哪個解決方案能幫助公司以成本效益高的方式將資料庫(database)型機車遷移到AWS MOST型機車?
+一家公司在甲骨文資料庫(database)上執行其應用. 由於資料庫(database),備份(backup)管理以及資料中心維護的資源有限,公司計劃迅速遷移到AWS. 該應用程式使用第三方的資料庫(database)特性,這些特性需要優先存取. 哪個解決方案能幫助公司以成本效益最高的方式將資料庫(database)執行個體遷移到AWS?
 
 **選項**
 - A. 將資料庫(database)遷移到Amazon RDS用於甲骨文. 以雲服務取代第三方特性。
@@ -13210,13 +13210,13 @@ B
 ## Question #482
 
 **題目**
-一家公司希望將100GB的歷史資料從一個presimes位置遷移到一個Amazon S3 bucket. 該公司擁有100兆位元每秒(Mbps)的網際網路連線。 公司需要加密傳輸中的資料到S3 bucket. 該公司將在Amazon S3直接儲存新資料. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司希望將100GB的歷史資料從一個地端位置遷移到一個Amazon S3 bucket. 該公司擁有100兆位元每秒(Mbps)的網際網路連線。 公司需要加密傳輸中的資料到S3 bucket. 該公司將在Amazon S3直接儲存新資料. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 使用 AWS CLI 中的 s3 同步命令將資料直接移動到 S3 bucket
 - B. 使用 AWS 資料同步將資料從預設位置遷移到 S3 bucket
 - C. 使用 AWS Snowball 移動資料到 S3 bucket
-- D. 設定一個IPsec VPN,從presimes位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 bucket
+- D. 設定一個IPsec VPN,從地端位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 bucket
 
 **答案**
 B
@@ -13230,7 +13230,7 @@ B
 - 其餘選項比較：
 - A：使用 AWS CLI 中的 s3 同步命令將資料直接移動到 S3 bucket。AWS CLI 的 s3 sync 指令雖然也能透過 HTTPS 加密傳輸並完成資料搬移，但需要自行在地端維護執行環境、排程、監控與失敗重試機制，遇到中斷需要人工介入，維運負擔明顯高於全代管服務。
 - C：使用 AWS Snowball 移動資料到 S3 bucket。AWS Snowball 是透過實體裝置離線寄送資料，通常用於資料量極為龐大或現有頻寬完全不足以線上傳輸的情境；本題資料量不大且已有可用的網際網路頻寬可直接加密傳輸，改用實體裝置寄送反而增加不必要的作業與等待時間。
-- D：設定一個IPsec VPN,從presimes位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 bucket。自行建立 IPsec VPN 再搭配 CLI 的 s3 cp 指令，需要額外設定與維運 VPN 閘道、金鑰交換與連線監控，操作與維運複雜度遠高於直接透過 HTTPS 加密傳輸的代管服務，對單純的資料遷移需求而言是過度複雜的做法。
+- D：設定一個IPsec VPN,從地端位置到AWS. 使用 AWS CLI 中的 s3 cp 命令將資料直接移動到 S3 bucket。自行建立 IPsec VPN 再搭配 CLI 的 s3 cp 指令，需要額外設定與維運 VPN 閘道、金鑰交換與連線監控，操作與維運複雜度遠高於直接透過 HTTPS 加密傳輸的代管服務，對單純的資料遷移需求而言是過度複雜的做法。
 
 **分類：** 移轉和傳輸
 
@@ -13348,7 +13348,7 @@ A
 ## Question #487
 
 **題目**
-一家公司尋求其應用的儲存解決方案. 解決辦法必須高度可用和可擴充套件。 解決方案也必須作為檔案系統在AWS的多個 Linux 例項和透過本地協議在前提上可以掛載,並且沒有最小大小要求. 該公司建立了一個站點對站點VPN,以便從其站點網路進入VPC. 哪些儲存解決方案符合這些要求?
+一家公司尋求其應用的儲存解決方案. 解決辦法必須高度可用和可擴充套件。 解決方案也必須作為檔案系統在AWS的多個 Linux 例項和透過本地協議在地端可以掛載,並且沒有最小大小要求. 該公司建立了一個站點對站點VPN,以便從其站點網路進入VPC. 哪些儲存解決方案符合這些要求?
 
 **選項**
 - A. Amazon FSx 多AZ部署
@@ -13402,13 +13402,13 @@ C
 ## Question #489
 
 **題目**
-一家電子商務公司在AWS雲中執行一個應用程式,該應用程式與前提倉庫解決方案整合. 公司使用Amazon Simple Notification Service (Amazon SNS)將訂單訊息傳送到一個promise的HTTPS端點,這樣倉庫應用程式就可以處理訂單. 本地資料中心團隊發現一些訂單訊息沒有收到. 解決方案架構師需要保留未傳送的資訊,並分析資訊長達14天. 在LEAST的開發努力下,哪一種解決辦法能滿足這些要求?
+一家電子商務公司在AWS雲中執行一個應用程式,該應用程式與地端倉庫解決方案整合. 公司使用Amazon Simple Notification Service (Amazon SNS)將訂單訊息傳送到一個地端的HTTPS端點,這樣倉庫應用程式就可以處理訂單. 本地資料中心團隊發現一些訂單訊息沒有收到. 解決方案架構師需要保留未傳送的資訊,並分析資訊長達14天. 在LEAST的開發努力下,哪一種解決辦法能滿足這些要求?
 
 **選項**
-- A. 配置 Amazon SNS 死字母佇列,該佇列有 Amazon Kinesis 資料流目標,保留期為14天.
+- A. 配置 Amazon SNS 死信佇列,該佇列有 Amazon Kinesis 資料流目標,保留期為14天.
 - B. 新增一個Amazon Simple Queue Service (Amazon SQS)佇列,應用程式和Amazon SNS之間的保留期為14天.
-- C. 配置 Amazon SNS 死字母佇列,該佇列具有Amazon Simple Queue Service (Amazon SQS)的目標,保留期為14天.
-- D. 配置 Amazon SNS 死字母佇列,該佇列具有一個Amazon DynamoDB目標,TTL屬性設定,保留期為14天.
+- C. 配置 Amazon SNS 死信佇列,該佇列具有Amazon Simple Queue Service (Amazon SQS)的目標,保留期為14天.
+- D. 配置 Amazon SNS 死信佇列,該佇列具有一個Amazon DynamoDB目標,TTL屬性設定,保留期為14天.
 
 **答案**
 C
@@ -13418,11 +13418,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：配置 Amazon SNS 死字母佇列,該佇列具有Amazon Simple Queue Service (Amazon SQS)的目標,保留期為14天。Amazon SNS 的死信佇列（dead-letter queue）功能原生只支援以 Amazon SQS 佇列作為目標，當訊息送到 HTTPS 端點的重試次數用盡仍失敗時，SNS 會自動把失敗訊息轉送到設定好的 SQS DLQ，完全不需要額外撰寫程式；SQS 支援最長 14 天的訊息保留期，直接設定即可滿足「保留並可分析 14 天」的要求，是開發工作量最少的做法。
+- C：配置 Amazon SNS 死信佇列,該佇列具有Amazon Simple Queue Service (Amazon SQS)的目標,保留期為14天。Amazon SNS 的死信佇列（dead-letter queue）功能原生只支援以 Amazon SQS 佇列作為目標，當訊息送到 HTTPS 端點的重試次數用盡仍失敗時，SNS 會自動把失敗訊息轉送到設定好的 SQS DLQ，完全不需要額外撰寫程式；SQS 支援最長 14 天的訊息保留期，直接設定即可滿足「保留並可分析 14 天」的要求，是開發工作量最少的做法。
 - 其餘選項比較：
-- A：配置 Amazon SNS 死字母佇列,該佇列有 Amazon Kinesis 資料流目標,保留期為14天。Amazon SNS 的死信佇列機制原生只接受 SQS 作為目標，並不支援直接將 Amazon Kinesis 資料流設定為 DLQ 目的地，若要串接 Kinesis 必須額外開發轉送邏輯，不符合「最少開發工作量」的要求。
+- A：配置 Amazon SNS 死信佇列,該佇列有 Amazon Kinesis 資料流目標,保留期為14天。Amazon SNS 的死信佇列機制原生只接受 SQS 作為目標，並不支援直接將 Amazon Kinesis 資料流設定為 DLQ 目的地，若要串接 Kinesis 必須額外開發轉送邏輯，不符合「最少開發工作量」的要求。
 - B：新增一個Amazon Simple Queue Service (Amazon SQS)佇列,應用程式和Amazon SNS之間的保留期為14天。在應用程式與 SNS 之間額外插入一個 SQS 佇列，並不符合 SNS 主動推送（push）到 HTTPS 端點訂閱者的架構，無法攔截推送失敗的訊息，等於沒有真正解決「部分訂單訊息未送達」的問題，還需要重新設計訊息流程，開發成本更高。
-- D：配置 Amazon SNS 死字母佇列,該佇列具有一個Amazon DynamoDB目標,TTL屬性設定,保留期為14天。SNS 死信佇列同樣不原生支援 Amazon DynamoDB 作為目標，若要把失敗訊息寫入 DynamoDB 並用 TTL 屬性管理 14 天保留期，必須自行開發轉送與寫入的程式邏輯，開發工作量遠高於直接使用 SQS 作為 DLQ 目標。
+- D：配置 Amazon SNS 死信佇列,該佇列具有一個Amazon DynamoDB目標,TTL屬性設定,保留期為14天。SNS 死信佇列同樣不原生支援 Amazon DynamoDB 作為目標，若要把失敗訊息寫入 DynamoDB 並用 TTL 屬性管理 14 天保留期，必須自行開發轉送與寫入的程式邏輯，開發工作量遠高於直接使用 SQS 作為 DLQ 目標。
 
 **分類：** 應用程式整合
 
@@ -13596,7 +13596,7 @@ C
 ## Question #496
 
 **題目**
-一家公司使用前提伺服器來託管其應用程式. 公司倉儲能力耗盡. 應用程式同時使用塊儲存和NFS儲存. 公司需要高效能的解決方案,支援本地的快取,而不對其現有的應用進行重新存檔. 一個設計師應採取何種綜合行動來滿足這些要求?(選二.
+一家公司使用地端伺服器來託管其應用程式. 公司倉儲能力耗盡. 應用程式同時使用塊儲存和NFS儲存. 公司需要高效能的解決方案,支援本地的快取,而不對其現有的應用進行重新存檔. 一個設計師應採取何種綜合行動來滿足這些要求?(選二.
 
 **選項**
 - A. 掛載 Amazon S3 作為檔案系統到預設伺服器.
@@ -13707,14 +13707,14 @@ B
 ## Question #500
 
 **題目**
-一家公司在房地設有多個Windows檔案伺服器. 公司希望將其檔案遷移並整合為Windows檔案伺服器檔案系統的Amazon FSx. 必須儲存檔案許可權,以確保存取許可權不變. 哪些解決辦法能滿足這些要求?(選二.
+一家公司在地端設有多個Windows檔案伺服器. 公司希望將其檔案遷移並整合為Windows檔案伺服器檔案系統的Amazon FSx. 必須儲存檔案許可權,以確保存取許可權不變. 哪些解決辦法能滿足這些要求?(選二.
 
 **選項**
 - A. 在現場部署AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
 - B. 透過使用AWS CLI,將每個檔案伺服器上的股份複製成Amazon S3 bucket. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
 - C. 從每個檔案伺服器中刪除驅動器。 將驅動器運送到AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
-- D. 訂購 AWS 斯諾科內裝置。 連線裝置到promises網路. 在裝置上發射AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
-- E. 訂購AWS Snowball Edge Storage Optimized裝置. 連線裝置到promises網路. 使用 AWS CLI 將資料複製到裝置中. 將裝置運回AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
+- D. 訂購 AWS 斯諾科內裝置。 連線裝置到地端網路. 在裝置上發射AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
+- E. 訂購AWS Snowball Edge Storage Optimized裝置. 連線裝置到地端網路. 使用 AWS CLI 將資料複製到裝置中. 將裝置運回AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統.
 
 **答案**
 A,D
@@ -13726,11 +13726,11 @@ A,D
 **詳解**
 正確答案是 **A, D**。
 - A：在現場部署AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。AWS DataSync 原生支援以 SMB 通訊協定直接讀取現場 Windows 檔案伺服器上的共用資料夾，並可直接寫入 FSx for Windows File Server 作為目的端，傳輸過程中會保留 NTFS 檔案與資料夾層級的權限、擁有者與時間戳記，正好對應題目「必須儲存檔案許可權」的要求。
-- D：訂購 AWS 斯諾科內裝置。 連線裝置到promises網路. 在裝置上發射AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。AWS Snowcone 是可攜式邊緣運算裝置，能在現場網路環境中執行 AWS DataSync 代理程式，適合用來取代在既有伺服器上安裝代理的做法；透過 DataSync 排程任務將資料寫入 FSx for Windows File Server，同樣能完整保留來源檔案的 NTFS 權限設定。
+- D：訂購 AWS 斯諾科內裝置。 連線裝置到地端網路. 在裝置上發射AWS資料同步代理. 排程資料同步任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。AWS Snowcone 是可攜式邊緣運算裝置，能在現場網路環境中執行 AWS DataSync 代理程式，適合用來取代在既有伺服器上安裝代理的做法；透過 DataSync 排程任務將資料寫入 FSx for Windows File Server，同樣能完整保留來源檔案的 NTFS 權限設定。
 - 其餘選項比較：
 - B：透過使用AWS CLI,將每個檔案伺服器上的股份複製成Amazon S3 bucket. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。先用 AWS CLI 把共用資料夾複製到一般的 Amazon S3 bucket，S3 物件並沒有對應 Windows NTFS ACL 的權限模型，這個步驟就已經遺失原始的檔案存取權限資訊，即使後續再用 DataSync 轉到 FSx，權限也無法還原。
 - C：從每個檔案伺服器中刪除驅動器。 將驅動器運送到AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。把磁碟機從現場伺服器拆下後自行運送到 AWS 以匯入 S3，並非 AWS 提供的標準遷移服務，而是自行拆裝硬體的克難做法，既不保證資料完整性，也同樣無法保留原始的檔案權限設定。
-- E：訂購AWS Snowball Edge Storage Optimized裝置. 連線裝置到promises網路. 使用 AWS CLI 將資料複製到裝置中. 將裝置運回AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。Snowball Edge Storage Optimized 在此方案中仍是先用 AWS CLI 把資料複製進裝置、運回 AWS 匯入 S3，資料落地在 S3 時一樣會遺失 NTFS 權限資訊，且比起現場直接執行 DataSync 代理多了裝置寄送的時間與流程複雜度。
+- E：訂購AWS Snowball Edge Storage Optimized裝置. 連線裝置到地端網路. 使用 AWS CLI 將資料複製到裝置中. 將裝置運回AWS,以匯入Amazon S3. 計劃AWS DataSync任務將資料傳輸到FSx用於Windows檔案伺服器檔案系統。Snowball Edge Storage Optimized 在此方案中仍是先用 AWS CLI 把資料複製進裝置、運回 AWS 匯入 S3，資料落地在 S3 時一樣會遺失 NTFS 權限資訊，且比起現場直接執行 DataSync 代理多了裝置寄送的時間與流程複雜度。
 
 **分類：** 移轉和傳輸
 
@@ -13894,7 +13894,7 @@ C
 - C：在應用程式中生成 Amazon S3 預先簽名的 URL。 從使用者瀏覽器直接上傳檔案到S3 bucket。在應用程式端產生 Amazon S3 預先簽名 URL，讓使用者瀏覽器憑此 URL 直接把照片上傳到 S3 bucket，上傳流量完全不經過應用程式伺服器，其擴充能力等同於 S3 本身近乎無限的吞吐能力，不受應用程式伺服器數量限制，因此在大型活動流量暴增時最具擴充性。
 - 其餘選項比較：
 - A：從使用者瀏覽器上傳檔案到應用程式伺服器. 把檔案轉到Amazon S3 bucket裡。先讓瀏覽器把檔案上傳到應用程式伺服器、再由伺服器轉存到 S3，應用程式層會成為所有上傳流量的必經瓶頸，活動流量暴增時就必須連帶擴充應用程式伺服器叢集，擴充彈性遠不如直接上傳到 S3。
-- B：提供AWS Storage Gateway檔案閘道器. 從使用者瀏覽器直接上傳檔案到檔案閘道器。AWS Storage Gateway 檔案閘道器的設計目的是讓現場（on-premises）應用程式透過 NFS/SMB 存取 S3，並非提供公開網際網路上一般使用者瀏覽器可直接上傳檔案的介面，不適合這個面向終端使用者的上傳情境。
+- B：提供AWS Storage Gateway檔案閘道器. 從使用者瀏覽器直接上傳檔案到檔案閘道器。AWS Storage Gateway 檔案閘道器的設計目的是讓現場（地端）應用程式透過 NFS/SMB 存取 S3，並非提供公開網際網路上一般使用者瀏覽器可直接上傳檔案的介面，不適合這個面向終端使用者的上傳情境。
 - D：提供Amazon Elastic File System (Amazon EFS)檔案系統. 從使用者瀏覽器直接上傳檔案到檔案系統。Amazon EFS 是提供給 VPC 內 EC2 執行個體掛載使用的網路檔案系統，一般使用者的瀏覽器無法透過網際網路直接掛載或寫入 EFS 檔案系統，完全不符合『從使用者瀏覽器直接上傳』的需求。
 
 **分類：** 儲存
@@ -14511,7 +14511,7 @@ B
 - A. 將資料庫遷移到 Amazon EC2。 為加密(encryption)使用 AWS Key Management Service(AWS KMS) AWS管理金鑰.
 - B. 將資料庫遷移到 Amazon RDS 配置 靜態加密(encryption at rest)。
 - C. 將資料遷移到 Amazon S3 使用 Amazon Macie 進行資料安全和保護
-- D. 將資料庫(database)型機車遷移到Amazon RDS型機車. 使用Amazon CloudWatch Logs進行資料安全和保護.
+- D. 將資料庫(database)執行個體遷移到Amazon RDS. 使用Amazon CloudWatch Logs進行資料安全和保護.
 
 **答案**
 A
@@ -14525,7 +14525,7 @@ A
 - 其餘選項比較：
 - B：將資料庫遷移到 Amazon RDS 配置 靜態加密(encryption at rest)。將資料庫遷移到 Amazon RDS 並設定靜態加密雖然同樣能加密資料，但選項內容並未提及使用 KMS 或客戶自管金鑰等具體金鑰管理方式，在安全性強化的描述上不如明確指定金鑰管理服務的做法完整。
 - C：將資料遷移到 Amazon S3 使用 Amazon Macie 進行資料安全和保護。將交易型資料庫的資料改放進 Amazon S3 再用 Amazon Macie 保護，Macie 的功能是掃描並辨識 S3 中的個資與敏感資料類型，並非為交易型資料庫工作負載設計的儲存或運算環境，資料存取模式並不相容於原本的資料庫應用程式。
-- D：將資料庫(database)型機車遷移到Amazon RDS型機車. 使用Amazon CloudWatch Logs進行資料安全和保護。使用 Amazon CloudWatch Logs 進行資料安全防護並不成立，CloudWatch Logs 是用來蒐集、監看與查詢日誌紀錄的服務，本身不具備替資料庫資料加密或防止敏感資料外洩的能力。
+- D：將資料庫(database)執行個體遷移到Amazon RDS. 使用Amazon CloudWatch Logs進行資料安全和保護。使用 Amazon CloudWatch Logs 進行資料安全防護並不成立，CloudWatch Logs 是用來蒐集、監看與查詢日誌紀錄的服務，本身不具備替資料庫資料加密或防止敏感資料外洩的能力。
 
 **分類：** 資料庫
 
@@ -14536,7 +14536,7 @@ A
 
 **選項**
 - A. 在NLB前增加Amazon CloudFront分發。 增加快取控制最大年齡引數。
-- B. 以應用程式負載平衡器(ALB)取代NLB。 配置53路使用基於延遲(latency)的路由.
+- B. 以應用程式負載平衡器(ALB)取代NLB。 配置Route 53使用基於延遲(latency)的路由.
 - C. 在NLB前增加AWS Global Accelerator. 配置全域性加速器端點以使用正確的聽器埠。
 - D. 在NLB後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。
 
@@ -14551,7 +14551,7 @@ D
 - D：在NLB後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。Amazon API Gateway 是用來建置 REST／HTTP／WebSocket API 的服務，並不支援承接原始的 TCP、UDP 傳輸層流量，也無法作為 NLB 後方的目標來處理這類協定；「啟用 API 快取」只對 REST API 的 HTTP 回應有意義，與降低即時遊戲連線延遲的需求完全無關。
 - 其餘選項比較：
 - A：在NLB前增加Amazon CloudFront分發。 增加快取控制最大年齡引數。Amazon CloudFront 是為 HTTP/HTTPS 內容設計的快取型 CDN 服務，並不轉發或加速 TCP、UDP 遊戲協定流量，「快取控制最大存留期」這類參數只對可快取的 HTTP 回應有意義，對即時遊戲連線的延遲沒有幫助。
-- B：以應用程式負載平衡器(ALB)取代NLB。 配置53路使用基於延遲(latency)的路由。應用程式負載平衡器（ALB）只運作在 HTTP/HTTPS 層，無法承載題目所需的 TCP 與 UDP 多人遊戲流量，改用 ALB 取代 NLB 會直接喪失處理這些協定的能力；Route 53 的延遲基礎路由只解決導向哪個區域，無法降低協定層本身的傳輸延遲。
+- B：以應用程式負載平衡器(ALB)取代NLB。 配置Route 53使用基於延遲(latency)的路由。應用程式負載平衡器（ALB）只運作在 HTTP/HTTPS 層，無法承載題目所需的 TCP 與 UDP 多人遊戲流量，改用 ALB 取代 NLB 會直接喪失處理這些協定的能力；Route 53 的延遲基礎路由只解決導向哪個區域，無法降低協定層本身的傳輸延遲。
 - C：在NLB前增加AWS Global Accelerator. 配置全域性加速器端點以使用正確的聽器埠。AWS Global Accelerator 會在 NLB 前面提供固定的 Anycast IP，透過 AWS 全球骨幹網路把玩家流量導向最近的邊緣進入點，並原生支援 TCP 與 UDP 協定，正好符合線上多人遊戲的傳輸型態；只要將加速器端點對應到正確的接聽器連接埠，即可降低全球玩家的連線延遲，並隨使用者成長水平擴充而不必更動應用架構。
 
 **分類：** 網路連結和內容交付
@@ -14807,7 +14807,7 @@ D
 ## Question #540
 
 **題目**
-一家公司擁有一個使用Oracle 資料庫(database)處理和儲存客戶資訊的promess伺服器. 公司希望使用AWS 資料庫(database)服務實現更高的可用性,提高應用效能. 該公司還希望從其主要的資料庫(database)系統進行Ofioad報告. 哪種解決辦法能以業務效率高的方式滿足這些要求?
+一家公司擁有一個使用Oracle 資料庫(database)處理和儲存客戶資訊的地端伺服器. 公司希望使用AWS 資料庫(database)服務實現更高的可用性,提高應用效能. 該公司還希望從其主要的資料庫(database)系統進行Ofioad報告. 哪種解決辦法能以業務效率高的方式滿足這些要求?
 
 **選項**
 - A. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)在多個 AWS區域建立 Amazon RDS DB 例項. 將報告功能與初級 DB 例項分開。
@@ -14929,7 +14929,7 @@ A,E
 - A. 為API Gateway建立金絲雀釋放部署階段. 部署最新的 API 版本。 指向金絲雀舞臺的適當比例 API驗證後,將金絲雀舞臺推廣到生產舞臺.
 - B. 用 OpenAPI YAML 檔案格式建立新的API Gateway end point,並使用新版本的API. 在 API 閘道器中將匯入到更新的操作合併到 API 模式中. 將新版API部署到生產階段.
 - C. 以 OpenAPI JSON 檔案格式建立新的API Gateway end point,並使用新的版本API. 在API Gateway中將覆蓋模式中的匯入至更新操作用於API. 將新版API部署到生產階段.
-- D. 建立一個帶有新版本API定義的新的API Gateway端點. 為新的API Gateway API建立自定義域名. 將"路由53"別名記錄到新的API Gateway API自定義域名.
+- D. 建立一個帶有新版本API定義的新的API Gateway端點. 為新的API Gateway API建立自定義域名. 將Route 53別名記錄到新的API Gateway API自定義域名.
 
 **答案**
 A
@@ -14943,7 +14943,7 @@ A
 - 其餘選項比較：
 - B：用 OpenAPI YAML 檔案格式建立新的API Gateway end point,並使用新版本的API. 在 API 閘道器中將匯入到更新的操作合併到 API 模式中. 將新版API部署到生產階段。建立全新的 API Gateway 端點並以合併（merge）模式匯入新版定義，仍然需要在某個時間點把正式流量整個切換到新端點或新階段，而合併模式只會疊加新增的路徑與方法，並無法提供把一部分流量逐步導向新版本進行驗證的能力。
 - C：以 OpenAPI JSON 檔案格式建立新的API Gateway end point,並使用新的版本API. 在API Gateway中將覆蓋模式中的匯入至更新操作用於API. 將新版API部署到生產階段。以覆蓋（overwrite）模式匯入到全新端點同樣意味著日後必須把客戶流量整批轉移到這個新端點，過程中沒有機制可以先讓少部分流量試跑新版本，一旦切換就是全有或全無，客戶影響程度高於金絲雀式的漸進發布。
-- D：建立一個帶有新版本API定義的新的API Gateway端點. 為新的API Gateway API建立自定義域名. 將"路由53"別名記錄到新的API Gateway API自定義域名。建立全新的 API Gateway 端點、綁定新的自訂網域並改指 Route 53 別名記錄，屬於一次性整批切換的做法；DNS 記錄一旦更新，所有客戶會立即導向新版本，新版本若有缺陷將直接影響全部使用者，而非侷限在一小部分流量內。
+- D：建立一個帶有新版本API定義的新的API Gateway端點. 為新的API Gateway API建立自定義域名. 將Route 53別名記錄到新的API Gateway API自定義域名。建立全新的 API Gateway 端點、綁定新的自訂網域並改指 Route 53 別名記錄，屬於一次性整批切換的做法；DNS 記錄一旦更新，所有客戶會立即導向新版本，新版本若有缺陷將直接影響全部使用者，而非侷限在一小部分流量內。
 
 **分類：** 無伺服器
 
@@ -14953,8 +14953,8 @@ A
 一家公司希望將其使用者引導到一個備份(backup)靜態錯誤頁面,如果公司的主要網站沒有. 主要網站的DNS記錄以Amazon Route 53為主機. 域指應用程式負載平衡器(Application Load Balancer)(ALB). 公司需要一種解決辦法,儘量減少變化和基礎設施的間接費用。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 更新53路的記錄,使用延遲(latency)路由政策. 將Amazon S3 bucket內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點.
-- B. 設定53路活動被動故障配置. 當53路健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3 bucket內託管的靜態錯誤頁.
+- A. 更新Route 53的記錄,使用延遲(latency)路由政策. 將Amazon S3 bucket內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點.
+- B. 設定Route 53活動被動故障配置. 當Route 53健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3 bucket內託管的靜態錯誤頁.
 - C. 設定一條帶有 ALB 的 Route 53 活動式配置, 以及一個 Amazon EC2 例項, 以一個靜態錯誤頁面作為端點。 在 ALB 健康檢查失敗的情況下, 配置53 路向例項傳送請求。
 - D. 更新"路53"記錄使用多值解答路由政策. 建立健康檢查。 如果健康檢查透過,直接存取網站。 如果健康檢查沒有透過,直接存取Amazon S3中託管的靜態錯誤頁。
 
@@ -14966,9 +14966,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：設定53路活動被動故障配置. 當53路健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3 bucket內託管的靜態錯誤頁。Route 53 的主動-被動容錯移轉路由正是為此情境設計：對主要記錄（指向 ALB）設定健康檢查，一旦判定 ALB 不健康，DNS 解析會自動改指向次要記錄（S3 託管的靜態錯誤頁面），全程不需額外運算資源或人工介入，符合儘量減少變化和基礎設施間接費用的要求。
+- B：設定Route 53活動被動故障配置. 當Route 53健康檢查確定ALB端點不健康時,直接流量會到達Amazon S3 bucket內託管的靜態錯誤頁。Route 53 的主動-被動容錯移轉路由正是為此情境設計：對主要記錄（指向 ALB）設定健康檢查，一旦判定 ALB 不健康，DNS 解析會自動改指向次要記錄（S3 託管的靜態錯誤頁面），全程不需額外運算資源或人工介入，符合儘量減少變化和基礎設施間接費用的要求。
 - 其餘選項比較：
-- A：更新53路的記錄,使用延遲(latency)路由政策. 將Amazon S3 bucket內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點。延遲路由政策是依照使用者與各端點之間的網路延遲高低來分配流量，並非依端點是否健康來決定路由；即使 ALB 完全正常運作，只要 S3 端點延遲較低，流量仍可能被導向錯誤頁面，這與「主要網站故障時才顯示備援頁」的需求不符。
+- A：更新Route 53的記錄,使用延遲(latency)路由政策. 將Amazon S3 bucket內託管的靜態錯誤頁新增到記錄中,使流量傳送到最響應的端點。延遲路由政策是依照使用者與各端點之間的網路延遲高低來分配流量，並非依端點是否健康來決定路由；即使 ALB 完全正常運作，只要 S3 端點延遲較低，流量仍可能被導向錯誤頁面，這與「主要網站故障時才顯示備援頁」的需求不符。
 - C：設定一條帶有 ALB 的 Route 53 活動式配置, 以及一個 Amazon EC2 例項, 以一個靜態錯誤頁面作為端點。 在 ALB 健康檢查失敗的情況下, 配置53 路向例項傳送請求。這個做法把原本可以直接用 S3 託管的靜態錯誤頁面，改成需要另外建置與維護一台執行中的 EC2 執行個體，這正是題目要求盡量避免的額外基礎設施間接費用。
 - D：更新"路53"記錄使用多值解答路由政策. 建立健康檢查。 如果健康檢查透過,直接存取網站。 如果健康檢查沒有透過,直接存取Amazon S3中託管的靜態錯誤頁。多值回應路由政策的設計目的是在一次 DNS 查詢中回傳多筆健康的 IP 位址以分散流量、達到用戶端層級的簡易容錯，並非為單一主要／次要的容錯移轉情境設計，也無法保證在主站故障時能乾淨地把全部流量切到備援頁面。
 
@@ -15196,7 +15196,7 @@ A
 ## Question #554
 
 **題目**
-一家公司的SAP應用軟體有一個後端的SQL Server 資料庫(database)在前提環境下. 公司希望將其在地上的應用和資料庫(database)伺服器遷移到AWS. 該公司需要一種滿足SAP 資料庫(database)的高要求的例項型別. On-presimes效能資料顯示,SAP應用程式和資料庫(database)的記憶體利用率都很高. 哪種解決辦法能滿足這些要求?
+一家公司的SAP應用軟體有一個後端的SQL Server 資料庫(database)在地端環境下. 公司希望將其在地上的應用和資料庫(database)伺服器遷移到AWS. 該公司需要一種滿足SAP 資料庫(database)的高要求的例項型別. 地端效能資料顯示,SAP應用程式和資料庫(database)的記憶體利用率都很高. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 應用時使用計算最佳化例項家族。 使用資料庫(database)的記憶體最佳化例項家族.
@@ -15445,7 +15445,7 @@ A,B
 ## Question #563
 
 **題目**
-一家公司在Amazon Elastic Kubernetes Service(Amazon EKS)叢集和前提上的Kubernetes叢集上執行其應用. 公司希望從中央地點檢視所有叢集和工作量. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司在Amazon Elastic Kubernetes Service(Amazon EKS)叢集和地端的Kubernetes叢集上執行其應用. 公司希望從中央地點檢視所有叢集和工作量. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 使用 Amazon CloudWatch 容器透視儀來收集和分組資訊.
@@ -15499,7 +15499,7 @@ B
 ## Question #565
 
 **題目**
-一家公司有一個處理交易資料的promise MySQL 資料庫(database). 公司將資料庫(database)型機車遷移至AWS雲. 遷移的資料庫(database)必須與使用資料庫(database)的公司的應用程式保持相容性. 在需求增加期間,遷移的資料庫(database)也必須自動擴大規模。 哪種移徙解決辦法將滿足這些要求?
+一家公司有一個處理交易資料的地端 MySQL 資料庫(database). 公司將資料庫(database)執行個體遷移至AWS雲. 遷移的資料庫(database)必須與使用資料庫(database)的公司的應用程式保持相容性. 在需求增加期間,遷移的資料庫(database)也必須自動擴大規模。 哪種移徙解決辦法將滿足這些要求?
 
 **選項**
 - A. 使用本地的MySQL工具將資料庫(database)遷移到Amazon RDS用於MySQL. 配置彈性儲存縮放。
@@ -15611,7 +15611,7 @@ Amazon EventBridge規則針對第三方API. 第三方API沒有收到任何來電
 
 **選項**
 - A. 在 AWS/Events 名稱空間中檢查 Amazon CloudWatch 中的度量衡。
-- B. 審查Amazon Simple Queue Service (Amazon SQS)中的事件死字佇列.
+- B. 審查Amazon Simple Queue Service (Amazon SQS)中的事件死信佇列.
 - C. 請檢查aWSERV0012中的事件.
 - D. 請檢查access-date=中的日期值(幫助) AWS CloudTrail中事件線索.
 
@@ -15625,7 +15625,7 @@ A
 正確答案是 **A**。
 - A：在 AWS/Events 名稱空間中檢查 Amazon CloudWatch 中的度量衡。Amazon EventBridge 會自動把規則的觸發次數、目標呼叫成功數與失敗數等度量發布到 Amazon CloudWatch 的 AWS/Events 命名空間（如 TriggeredRules、Invocations、FailedInvocations），檢視這些度量衡可以直接判斷規則條件是否曾被滿足、以及目標端點是否真的被呼叫，這正是診斷「規則條件是否滿足、目標是否被引用」最直接的方式。
 - 其餘選項比較：
-- B：審查Amazon Simple Queue Service (Amazon SQS)中的事件死字佇列。Amazon SQS 死信佇列只有在 EventBridge 規則的目標設定了 DLQ、且呼叫目標失敗時才會收到訊息；如果規則從未被觸發、或原本就沒有設定 DLQ，佇列裡根本不會有任何資料，無法用來判斷規則條件是否被滿足。
+- B：審查Amazon Simple Queue Service (Amazon SQS)中的事件死信佇列。Amazon SQS 死信佇列只有在 EventBridge 規則的目標設定了 DLQ、且呼叫目標失敗時才會收到訊息；如果規則從未被觸發、或原本就沒有設定 DLQ，佇列裡根本不會有任何資料，無法用來判斷規則條件是否被滿足。
 - C：請檢查aWSERV0012中的事件。選項所指的內容並非任何用來檢視 EventBridge 規則觸發或目標呼叫狀態的正規 AWS 診斷機制，無法提供規則條件是否滿足或目標是否被引用的資訊。
 - D：請檢查access-date=中的日期值(幫助) AWS CloudTrail中事件線索。AWS CloudTrail 記錄的是針對 AWS 管理平面 API 的呼叫軌跡（誰在何時呼叫了哪個 AWS API），EventBridge 規則呼叫第三方 API 屬於資料平面的動作，不會出現在 CloudTrail 的事件記錄中，因此無法用來確認規則是否觸發或目標是否被呼叫。
 
@@ -15688,7 +15688,7 @@ A
 ## Question #572
 
 **題目**
-一家公司在AWS上執行應用程式. 申請的使用量不一致。 該應用程式使用AWS Direct Connect連線到一個proposes MySQL相容的資料庫(database). 上部的資料庫(database)一致使用至少2GiB的記憶體. 公司希望將原創的資料庫(database)遷移到一個管理的AWS服務. 公司希望使用自動縮放能力來管理意想不到的工作量增加. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家公司在AWS上執行應用程式. 申請的使用量不一致。 該應用程式使用AWS Direct Connect連線到一個proposes MySQL相容的資料庫(database). 上部的資料庫(database)一致使用至少2GiB的記憶體. 公司希望將原創的資料庫(database)遷移到一個管理的AWS服務. 公司希望使用自動縮放能力來管理意想不到的工作量增加. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 提供預設讀寫容量設定的 Amazon DynamoDB 資料庫(database)。
@@ -15704,7 +15704,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：提供Amazon Aurora無伺服器 v2 資料庫(database),最小容量為1Aurora容量單元(ACU)。Aurora Serverless v2 相容 MySQL，會依實際連線與查詢負載即時自動調整運算容量（以 ACU 為單位），最低可設為 1 ACU，且整個擴縮流程完全由 AWS 代管，正好對應題目「意想不到的工作量增加」與「LEAST 行政間接費用」的雙重要求。
+- C：提供Amazon Aurora無伺服器 v2 資料庫(database),最小容量為1Aurora容量單元(ACU)。Aurora Serverless v2 相容 MySQL，會依實際連線與查詢負載即時自動調整運算容量（以 ACU 為單位），最低可設為 1 ACU，且整個擴縮流程完全由 AWS 代管，正好對應題目「意想不到的工作量增加」與「LEAST 營運開銷」的雙重要求。
 - 其餘選項比較：
 - A：提供預設讀寫容量設定的 Amazon DynamoDB 資料庫(database)。DynamoDB 是 NoSQL 的鍵值資料庫，不是 MySQL 相容的關聯式資料庫，無法直接承接原本透過 MySQL 相容引擎存取的應用邏輯與 SQL 語法，不符合遷移目標。
 - B：提供Amazon Aurora 資料庫(database),最低容量為1個Aurora容量單位。標準佈建模式的 Aurora 即使容量設定為最低的 1 個 Aurora 容量單位，仍屬於固定規格的執行個體，無法隨不一致的工作量即時自動增減容量，流量突然升高時仍須人工調整執行個體等級。
@@ -15742,7 +15742,7 @@ C
 ## Question #574
 
 **題目**
-一家金融服務公司推出了一個新的應用程式,為MySQL 資料庫(database)使用Amazon RDS. 公司使用該應用程式跟蹤股票市場趨勢. 公司每週末只需執行2小時的應用程式. 公司需要最佳化資料庫(database)型機車的執行成本. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家金融服務公司推出了一個新的應用程式,為MySQL 資料庫(database)使用Amazon RDS. 公司使用該應用程式跟蹤股票市場趨勢. 公司每週末只需執行2小時的應用程式. 公司需要最佳化資料庫(database)執行個體的執行成本. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 將MySQL 資料庫(database)的現有RDS遷移到一個Aurora Serverless v2 MySQL 資料庫(database)叢集.
@@ -15854,8 +15854,8 @@ D
 
 **選項**
 - A. 使用DynamoDB加速器(DAX).
-- B. 將資料庫(database)型機車遷移到Amazon Redshift型機車.
-- C. 將資料庫(database)型機車遷移到Amazon RDS型機車.
+- B. 將資料庫(database)執行個體遷移到Amazon Redshift.
+- C. 將資料庫(database)執行個體遷移到Amazon RDS.
 - D. 使用Amazon ElastiCache用於Redis.
 
 **答案**
@@ -15868,8 +15868,8 @@ A
 正確答案是 **A**。
 - A：使用DynamoDB加速器(DAX)。DynamoDB 加速器(DAX) 是專為 DynamoDB 設計、完全代管的記憶體內快取叢集，與 DynamoDB API 相容，應用程式幾乎不需修改程式邏輯就能將讀取延遲從毫秒等級降到微秒等級，並自動快取重複的請求，符合題目「以最少營運開銷」達成微秒級回應與快取需求。
 - 其餘選項比較：
-- B：將資料庫(database)型機車遷移到Amazon Redshift型機車。Amazon Redshift 是設計給大量資料分析與資料倉儲查詢使用的 OLAP 服務，並非提供低延遲快取或取代交易型 NoSQL 資料庫存取模式的服務，與題目情境不符。
-- C：將資料庫(database)型機車遷移到Amazon RDS型機車。遷移到 Amazon RDS 等於要把 NoSQL 的資料模型與應用程式邏輯改寫成關聯式資料庫架構，這項遷移本身既耗時又提高維運複雜度，RDS 本身也不會原生提供微秒級的請求快取能力。
+- B：將資料庫(database)執行個體遷移到Amazon Redshift。Amazon Redshift 是設計給大量資料分析與資料倉儲查詢使用的 OLAP 服務，並非提供低延遲快取或取代交易型 NoSQL 資料庫存取模式的服務，與題目情境不符。
+- C：將資料庫(database)執行個體遷移到Amazon RDS。遷移到 Amazon RDS 等於要把 NoSQL 的資料模型與應用程式邏輯改寫成關聯式資料庫架構，這項遷移本身既耗時又提高維運複雜度，RDS 本身也不會原生提供微秒級的請求快取能力。
 - D：使用Amazon ElastiCache用於Redis。Amazon ElastiCache for Redis 雖然同樣能提供微秒級的快取回應時間，但需要應用程式自行實作快取讀寫邏輯（例如 cache-aside 模式）與快取失效管理，相較於與 DynamoDB 原生整合、不需改動應用邏輯的 DAX，會帶來更高的營運與整合負擔。
 
 **分類：** 資料庫
@@ -15904,7 +15904,7 @@ C
 ## Question #580
 
 **題目**
-一家公司使用當地附著的儲存器在房地上執行延遲(latency)敏感應用程式。 公司採用升降和轉向方式將應用程式移至AWS雲. 公司不想改變應用架構. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司使用當地附著的儲存器在地端上執行延遲(latency)敏感應用程式。 公司採用升降和轉向方式將應用程式移至AWS雲. 公司不想改變應用架構. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 配置帶有 Amazon EC2 例項的 Auto Scaling 群組(Auto Scaling group)。 為Lustre檔案系統使用Amazon FSx來執行應用程式.
@@ -15962,9 +15962,9 @@ D
 
 **選項**
 - A. 制定地理定位路線政策. 將臨近我們西-1的流量傳送到現場資料中心. 將臨近eu-central-1的交通傳送至eu-central-1.
-- B. 建立一條簡單的路線政策,將所有接近eu-central-1的交通線路通向eu-central-1,並將所有靠近房地資料中心的交通線路通向promise資料中心.
+- B. 建立一條簡單的路線政策,將所有接近eu-central-1的交通線路通向eu-central-1,並將所有靠近地端資料中心的交通線路通向地端資料中心.
 - C. 制定延遲(latency)路線政策. 把政策和我們西一號聯絡起來
-- D. 制定加權路由政策. 將eu-central-1和promesse資料中心的流量平分.
+- D. 制定加權路由政策. 將eu-central-1和地端資料中心的流量平分.
 
 **答案**
 A
@@ -15976,9 +15976,9 @@ A
 正確答案是 **A**。
 - A：制定地理定位路線政策. 將臨近我們西-1的流量傳送到現場資料中心. 將臨近eu-central-1的交通傳送至eu-central-1。地理位置路由政策（Geolocation Routing Policy）依照使用者請求來源的實際地理位置，將流量導向對應的端點。公司在美西附近有實體資料中心、在歐洲的 eu-central-1 有雲端主機，使用地理位置路由可以把美西使用者導向鄰近的地端資料中心、把歐洲使用者導向鄰近的 eu-central-1，讓每位使用者的請求都由地理上最近的端點服務，直接達成縮短網站載入時間的目標。
 - 其餘選項比較：
-- B：建立一條簡單的路線政策,將所有接近eu-central-1的交通線路通向eu-central-1,並將所有靠近房地資料中心的交通線路通向promise資料中心。簡單路由政策（Simple Routing Policy）只會回傳單一組固定的紀錄值，不具備依照請求來源地理位置做條件式分流的能力，因此無法依照使用者所在位置分別導向地端資料中心或 eu-central-1，不能達成題目要求的效果。
+- B：建立一條簡單的路線政策,將所有接近eu-central-1的交通線路通向eu-central-1,並將所有靠近地端資料中心的交通線路通向地端資料中心。簡單路由政策（Simple Routing Policy）只會回傳單一組固定的紀錄值，不具備依照請求來源地理位置做條件式分流的能力，因此無法依照使用者所在位置分別導向地端資料中心或 eu-central-1，不能達成題目要求的效果。
 - C：制定延遲(latency)路線政策. 把政策和我們西一號聯絡起來。延遲路由政策（Latency-Based Routing）是根據多個 AWS 區域之間量測到的延遲挑選最低延遲的區域，但此選項只把政策與 us-west-1 建立關聯，而網站實際主機架設在 eu-central-1，並未涵蓋歐洲流量的路由邏輯，也未反映地端資料中心的位置。
-- D：制定加權路由政策. 將eu-central-1和promesse資料中心的流量平分。加權路由政策（Weighted Routing）只是按照設定比例（此處平均各 50%）分配流量，完全不考慮請求來源與端點的實際地理距離，會導致部分使用者的請求被導向較遠的端點，反而增加延遲，違背題目縮短載入時間的目的。
+- D：制定加權路由政策. 將eu-central-1和地端資料中心的流量平分。加權路由政策（Weighted Routing）只是按照設定比例（此處平均各 50%）分配流量，完全不考慮請求來源與端點的實際地理距離，會導致部分使用者的請求被導向較遠的端點，反而增加延遲，違背題目縮短載入時間的目的。
 
 **分類：** 網路連結和內容交付
 
@@ -15989,7 +15989,7 @@ A
 
 **選項**
 - A. 從現場的磁帶讀取資料 在本地的 NFS 儲存中預置資料。 使用AWS DataSync將資料遷移到Amazon S3 Glacier Flexible Retrieval.
-- B. 使用promise 備份(backup)應用程式從磁帶中讀取資料,直接寫入Amazon S3 Glacier Deep Archive.
+- B. 使用地端備份(backup)應用程式從磁帶中讀取資料,直接寫入Amazon S3 Glacier Deep Archive.
 - C. 訂購多個具有磁帶閘道器的AWS Snowball裝置. 複製物理磁帶到雪球的虛擬磁帶. 向AWS運送雪球裝置. 建立一個生命週期政策(lifecycle policy),將磁帶移動到Amazon S3 Glacier Deep Archive.
 - D. 配置磁帶閘道器。 在 AWS 雲中建立虛擬磁帶. 使用備份(backup)軟體將物理磁帶複製到虛擬磁帶.
 
@@ -16004,7 +16004,7 @@ C
 - C：訂購多個具有磁帶閘道器的AWS Snowball裝置. 複製物理磁帶到雪球的虛擬磁帶. 向AWS運送雪球裝置. 建立一個生命週期政策(lifecycle policy),將磁帶移動到Amazon S3 Glacier Deep Archive。訂購多台具備磁帶閘道器（Tape Gateway）功能的 AWS Snowball 裝置，讓現有備份軟體以標準虛擬磁帶介面直接把實體磁帶資料寫入 Snowball，再以實體運送方式寄回 AWS，完全不佔用資料中心的網際網路頻寬，可在六個月內完成 5 PB 資料的離線搬遷。搬入 AWS 後再用生命週期政策把資料轉存至 S3 Glacier Deep Archive，是十年合規保存、極少存取情境下單位儲存成本最低的方案。
 - 其餘選項比較：
 - A：從現場的磁帶讀取資料 在本地的 NFS 儲存中預置資料。 使用AWS DataSync將資料遷移到Amazon S3 Glacier Flexible Retrieval。先讀取磁帶資料到本地 NFS 儲存，再用 AWS DataSync 透過網路搬遷到 S3 Glacier Flexible Retrieval，實際上仍是走 1 Gbps 網際網路頻寬傳輸 5 PB 資料；以理論頻寬估算，半年內最多只能傳輸約 2 PB 左右，無法在六個月期限內完成搬遷。Glacier Flexible Retrieval 的儲存單價也高於 Glacier Deep Archive，對十年才需存取一次的合規資料而言並非最具成本效益的儲存層。
-- B：使用promise 備份(backup)應用程式從磁帶中讀取資料,直接寫入Amazon S3 Glacier Deep Archive。使用地端備份軟體直接把磁帶資料寫入 S3 Glacier Deep Archive，同樣得透過現有的 1 Gbps 網路連線傳輸整整 5 PB 資料，理論所需時間遠超過六個月，無法滿足遷移期限。
+- B：使用地端備份(backup)應用程式從磁帶中讀取資料,直接寫入Amazon S3 Glacier Deep Archive。使用地端備份軟體直接把磁帶資料寫入 S3 Glacier Deep Archive，同樣得透過現有的 1 Gbps 網路連線傳輸整整 5 PB 資料，理論所需時間遠超過六個月，無法滿足遷移期限。
 - D：配置磁帶閘道器。 在 AWS 雲中建立虛擬磁帶. 使用備份(backup)軟體將物理磁帶複製到虛擬磁帶。在地端架設磁帶閘道器並於雲端建立虛擬磁帶，再用備份軟體把實體磁帶複製到虛擬磁帶，資料仍必須透過既有的 1 Gbps 網路連線上傳到雲端，同樣受限於頻寬瓶頸，無法在期限內傳輸完 5 PB 資料。
 
 **分類：** 移轉和傳輸
@@ -16165,7 +16165,7 @@ D
 - 其餘選項比較：
 - A：使用 Amazon ElastiCache 來儲存會話資料。 更新程式以使用 ElastiCache for Memcached 來儲存會話狀態。ElastiCache for Memcached 是純記憶體、不支援資料複寫與持久化的快取引擎，節點重啟或故障時記憶體內容會直接消失，無法保證使用者 session 在後端節點異常時不遺失。
 - B：使用 Amazon ElastiCache 來儲存會話狀態。 更新應用程式以使用 ElastiCache 用於 Redis 儲存會話狀態。ElastiCache for Redis 雖支援複寫與快照持久化，但其定位仍是記憶體內快取層，用來加速資料存取而非作為系統唯一且具完整持久保證的資料存放區，大規模節點異常下仍存在資料尚未落盤即遺失的風險。
-- C：使用 AWS Storage Gateway 快取磁碟區儲存會話資料. 更新應用程式以使用 AWS Storage Gateway 快取磁碟區來儲存會話狀態。AWS Storage Gateway 快取磁碟區是讓地端(on-premises)伺服器透過 iSCSI 協定把資料延伸儲存到以 S3 為後端的區塊儲存服務，服務對象是地端工作負載，並非設計給雲端原生 Web 應用程式存放 session 狀態使用，技術定位不符題目情境。
+- C：使用 AWS Storage Gateway 快取磁碟區儲存會話資料. 更新應用程式以使用 AWS Storage Gateway 快取磁碟區來儲存會話狀態。AWS Storage Gateway 快取磁碟區是讓地端(地端)伺服器透過 iSCSI 協定把資料延伸儲存到以 S3 為後端的區塊儲存服務，服務對象是地端工作負載，並非設計給雲端原生 Web 應用程式存放 session 狀態使用，技術定位不符題目情境。
 
 **分類：** 資料庫
 
@@ -16388,7 +16388,7 @@ B
 ## Question #598
 
 **題目**
-一家研究公司使用前提裝置生成資料進行分析。 公司希望使用AWS雲分析資料. 裝置生成 .csv 檔案並支援將資料寫入 SMB 檔案共享。 公司分析員必須能夠使用SQL命令查詢資料. 分析員將全天定期查詢。 哪些步驟的組合將以符合成本效益的方式滿足這些要求?(選三.
+一家研究公司使用地端裝置生成資料進行分析。 公司希望使用AWS雲分析資料. 裝置生成 .csv 檔案並支援將資料寫入 SMB 檔案共享。 公司分析員必須能夠使用SQL命令查詢資料. 分析員將全天定期查詢。 哪些步驟的組合將以符合成本效益的方式滿足這些要求?(選三.
 
 **選項**
 - A. 在Amazon S3檔案閘道器模式的本地端部署一個AWS Storage Gateway。
@@ -16420,7 +16420,7 @@ C,E,F
 ## Question #599
 
 **題目**
-一家公司希望使用Amazon Elastic Container Service (Amazon ECS)叢集和Amazon RDS DB例項來構建和執行支付處理應用程式. 該公司將在其前提資料中心執行該應用程式,用於合規(compliance)目的. 一個解決方案架構師希望將AWS Outposts作為解決方案的一部分. 解決方案架構師正與公司的運營團隊合作,共同構建應用程式. 哪些活動是公司業務團隊的責任?(選三.
+一家公司希望使用Amazon Elastic Container Service (Amazon ECS)叢集和Amazon RDS DB例項來構建和執行支付處理應用程式. 該公司將在其地端資料中心執行該應用程式,用於合規(compliance)目的. 一個解決方案架構師希望將AWS Outposts作為解決方案的一部分. 解決方案架構師正與公司的運營團隊合作,共同構建應用程式. 哪些活動是公司業務團隊的責任?(選三.
 
 **選項**
 - A. 向外站架提供彈性電源和網路連線
@@ -16560,7 +16560,7 @@ B
 ## Question #604
 
 **題目**
-一個公司將在6周內將10個PB的資料遷移到Amazon S3. 目前的資料中心有一個500 Mbps上行連結到網際網路. 其他房地應用程式共用上行鏈路。 公司可以使用80%的網際網路頻寬來完成這一一次性遷移任務. 哪種解決辦法能滿足這些要求?
+一個公司將在6周內將10個PB的資料遷移到Amazon S3. 目前的資料中心有一個500 Mbps上行連結到網際網路. 其他地端應用程式共用上行鏈路。 公司可以使用80%的網際網路頻寬來完成這一一次性遷移任務. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置 AWS 資料同步將資料遷移到 Amazon S3 並自動驗證資料.
@@ -16722,11 +16722,11 @@ C
 ## Question #610
 
 **題目**
-一個連部署了在VPC中執行的Amazon EC2 執行個體. EC2例項將源資料載入到Amazon S3 bucket中,以便將來可以處理資料. 根據合規(compliance)法律,資料不得透過公共網際網路傳輸。 公司的premise資料中心中的伺服器會消耗執行在EC2例項上的應用程式的輸出. 哪種解決辦法能滿足這些要求?
+一個連部署了在VPC中執行的Amazon EC2 執行個體. EC2例項將源資料載入到Amazon S3 bucket中,以便將來可以處理資料. 根據合規(compliance)法律,資料不得透過公共網際網路傳輸。 公司的地端資料中心中的伺服器會消耗執行在EC2例項上的應用程式的輸出. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為Amazon EC2部署一個介面VPC 端點(VPC endpoint). 建立公司與VPC之間的AWS站點對站點VPN連線.
-- B. 為Amazon S3部署一個閘道器VPC 端點(VPC endpoint). 搭建AWS Direct Connect連線在premise網路和VPC之間.
+- B. 為Amazon S3部署一個閘道器VPC 端點(VPC endpoint). 搭建AWS Direct Connect連線在地端網路和VPC之間.
 - C. 設定從VPC到S3 bucket的AWS Transit Gateway連線. 建立公司與VPC之間的AWS站點對站點VPN連線.
 - D. 設定有通往NAT閘道器的路由的代理 EC2 例項。 配置代理 EC2 例項以獲取 S3 資料並反饋應用程式例項。
 
@@ -16738,7 +16738,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：為Amazon S3部署一個閘道器VPC 端點(VPC endpoint). 搭建AWS Direct Connect連線在premise網路和VPC之間。S3 的閘道器 VPC 端點讓 VPC 內的 EC2 執行個體透過 AWS 私有網路直接存取 S3，完全不經過公共網際網路，滿足資料不得透過公共網路傳輸的合規要求。再透過 AWS Direct Connect 建立地端資料中心與 VPC 之間的專線連線，讓地端伺服器消費 EC2 應用程式的輸出，同樣走專屬實體線路而非公共網際網路，兩段路徑都符合合規限制。
+- B：為Amazon S3部署一個閘道器VPC 端點(VPC endpoint). 搭建AWS Direct Connect連線在地端網路和VPC之間。S3 的閘道器 VPC 端點讓 VPC 內的 EC2 執行個體透過 AWS 私有網路直接存取 S3，完全不經過公共網際網路，滿足資料不得透過公共網路傳輸的合規要求。再透過 AWS Direct Connect 建立地端資料中心與 VPC 之間的專線連線，讓地端伺服器消費 EC2 應用程式的輸出，同樣走專屬實體線路而非公共網際網路，兩段路徑都符合合規限制。
 - 其餘選項比較：
 - A：為Amazon EC2部署一個介面VPC 端點(VPC endpoint). 建立公司與VPC之間的AWS站點對站點VPN連線。Amazon EC2 本身是運算服務，並非需要透過 VPC 端點存取的 AWS 公開服務端點，「為 EC2 部署介面 VPC 端點」在概念上不成立；此選項也只處理了地端到 VPC 的連線，並未解決 EC2 存取 S3 這段流量如何避開公共網際網路。
 - C：設定從VPC到S3 bucket的AWS Transit Gateway連線. 建立公司與VPC之間的AWS站點對站點VPN連線。AWS Transit Gateway 是用來串接多個 VPC 與地端網路的路由樞紐，並不能直接「連到 S3 bucket」，S3 存取仍需透過閘道器或介面端點；此外方案中地端是用 Site-to-Site VPN（走公共網際網路的 IPSec 通道）連接，與題目「資料不得經過公共網際網路」的限制相牴觸。
@@ -17106,7 +17106,7 @@ A
 ## Question #624
 
 **題目**
-一家公司希望為使用者提供AWS資源的存取. 公司擁有1500個使用者,並透過公司網路上的Active Directory使用者組管理其存取promess資源. 然而,公司並不希望使用者必須保持另一個身份才能存取資源. 一個解決方案架構師必須管理使用者對AWS資源的存取,同時保留對現場資源的存取. 解決方案設計師應如何滿足這些要求?
+一家公司希望為使用者提供AWS資源的存取. 公司擁有1500個使用者,並透過公司網路上的Active Directory使用者組管理其存取地端資源. 然而,公司並不希望使用者必須保持另一個身份才能存取資源. 一個解決方案架構師必須管理使用者對AWS資源的存取,同時保留對現場資源的存取. 解決方案設計師應如何滿足這些要求?
 
 **選項**
 - A. 為公司的每個使用者建立IAM使用者. 向每個使用者附上適當的政策。
@@ -17160,12 +17160,12 @@ A
 ## Question #626
 
 **題目**
-一家公司將其資料儲存在房地。 資料數量正在超過公司現有能力。 公司希望將其資料從現場位置遷移到Amazon S3 bucket. 公司需要一種在傳輸後自動驗證資料完整性的解決方案. 哪種解決辦法能滿足這些要求?
+一家公司將其資料儲存在地端。 資料數量正在超過公司現有能力。 公司希望將其資料從現場位置遷移到Amazon S3 bucket. 公司需要一種在傳輸後自動驗證資料完整性的解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 訂購AWS Snowball Edge裝置. 配置 Snowball 邊緣裝置, 執行線上資料傳輸到 S3 bucket
 - B. 在辦公地點部署AWS資料同步代理. 配置 DataSync 代理以進行線上資料傳輸到 S3 bucket。
-- C. 在房地上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 bucket
+- C. 在地端上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 bucket
 - D. 在 Amazon 配置 S3 Transfer Acceleration 的加速器。 配置加速器進行線上資料傳輸到S3 bucket.
 
 **答案**
@@ -17179,7 +17179,7 @@ B
 - B：在辦公地點部署AWS資料同步代理. 配置 DataSync 代理以進行線上資料傳輸到 S3 bucket。AWS DataSync 是全受管的線上資料傳輸服務，在地端部署代理程式後，可透過網路將檔案資料自動同步到 Amazon S3；DataSync 內建傳輸完成後的資料完整性驗證機制，會自動比對來源與目的地的內容，直接對應題目要求「傳輸後自動驗證資料完整性」的核心需求。
 - 其餘選項比較：
 - A：訂購AWS Snowball Edge裝置. 配置 Snowball 邊緣裝置, 執行線上資料傳輸到 S3 bucket。AWS Snowball Edge 的典型用途是透過實體裝置離線搬運大量資料，適合網路頻寬不足或資料量極大時使用；用它執行「線上」資料傳輸並不符合其設計定位，也不是題目強調「自動驗證資料完整性」流程中的標準工具。
-- C：在房地上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 bucket。Amazon S3 File Gateway 提供地端的 NFS/SMB 檔案介面，將寫入的檔案以物件形式非同步上傳至 S3，主要用於需要持續存取、快取熱資料的混合雲情境，而非針對一次性大量遷移設計的自動完整性驗證流程。
+- C：在地端上建立 Amazon S3 檔案閘道器 配置 S3 檔案閘道器, 執行線上資料傳輸到 S3 bucket。Amazon S3 File Gateway 提供地端的 NFS/SMB 檔案介面，將寫入的檔案以物件形式非同步上傳至 S3，主要用於需要持續存取、快取熱資料的混合雲情境，而非針對一次性大量遷移設計的自動完整性驗證流程。
 - D：在 Amazon 配置 S3 Transfer Acceleration 的加速器。 配置加速器進行線上資料傳輸到S3 bucket。S3 Transfer Acceleration 是透過 CloudFront 邊緣網路加速長距離的上傳速度，純粹是傳輸效能最佳化功能，本身不具備遷移排程、代理程式部署或資料完整性驗證的能力。
 
 **分類：** 移轉和傳輸
@@ -17403,7 +17403,7 @@ C
 ## Question #635
 
 **題目**
-一家公司在其初級AWS 區域(Region)中將Amazon FSx用於NetApp ONTAP用於CIFS和NFS檔案股份. 在 Amazon EC2 例項上執行的應用程式存取檔案共享。 該公司需要在二級區域(Region)中安裝儲存災難復原(disaster recovery)(DR)溶液. 二級區域(Region)中複製的資料需要使用與主區域(Region)相同的協議來存取. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司在其初級AWS 區域(Region)中將Amazon FSx用於NetApp ONTAP用於CIFS和NFS檔案股份. 在 Amazon EC2 例項上執行的應用程式存取檔案共享。 該公司需要在二級區域(Region)中安裝儲存災難復原(disaster recovery)(DR)解決方案. 二級區域(Region)中複製的資料需要使用與主區域(Region)相同的協議來存取. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 建立 AWS Lambda 函式將資料複製到 Amazon S3 bucket中. 將S3 bucket複製到二級區域(Region).
@@ -17790,7 +17790,7 @@ B
 ## Question #649
 
 **題目**
-一家電子商務公司在房地經營一家PostgreSQL 資料庫(database)公司。 資料庫(database)透過使用高IOPS Amazon Elastic Block Store(Amazon EBS)儲存塊儲存來儲存資料. 每日I/O交易高峰每秒不超過15,000 IOPS. 公司希望將資料庫(database)遷移到Amazon RDS,用於PostgreSQL和提供磁碟IOPS的效能獨立於磁碟儲存能力. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家電子商務公司在地端經營一家PostgreSQL 資料庫(database)公司。 資料庫(database)透過使用高IOPS Amazon Elastic Block Store(Amazon EBS)儲存塊儲存來儲存資料. 每日I/O交易高峰每秒不超過15,000 IOPS. 公司希望將資料庫(database)遷移到Amazon RDS,用於PostgreSQL和提供磁碟IOPS的效能獨立於磁碟儲存能力. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 配置通用SSD(gp2)EBS容量儲存型別和15,000 IOPS.
@@ -17817,7 +17817,7 @@ C
 ## Question #650
 
 **題目**
-一家公司希望將自己的premise Microsoft SQL Server Entertainment版資料庫(database)遷移到AWS. 公司的線上應用使用資料庫(database)處理交易. 資料分析組使用相同的生產資料庫(database)來執行報告進行分析處理. 公司希望儘可能將營運開銷(operational overhead)降低到管理服務. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司希望將自己的地端 Microsoft SQL Server Entertainment版資料庫(database)遷移到AWS. 公司的線上應用使用資料庫(database)處理交易. 資料分析組使用相同的生產資料庫(database)來執行報告進行分析處理. 公司希望儘可能將營運開銷(operational overhead)降低到管理服務. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 為微軟SOL伺服器移動到Amazon RDS. 為報告目的使用讀本
@@ -18009,7 +18009,7 @@ C
 ## Question #657
 
 **題目**
-一家公司在AWS Organizations的一個組織中有多個AWS帳戶,不同業務單位使用. 該公司在全球設有多個辦事處. 公司需要更新安全群組(security group)規則,以便允許新的辦公室CIDR範圍,或刪除整個組織的老的CIDR範圍. 公司希望集中管理安全群組(security group)規則,以儘量減少更新CIDR範圍所需的行政間接費用. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司在AWS Organizations的一個組織中有多個AWS帳戶,不同業務單位使用. 該公司在全球設有多個辦事處. 公司需要更新安全群組(security group)規則,以便允許新的辦公室CIDR範圍,或刪除整個組織的老的CIDR範圍. 公司希望集中管理安全群組(security group)規則,以儘量減少更新CIDR範圍所需的營運開銷. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 在組織管理帳戶中建立VPC安全小組. 需要更新 CIDR 範圍時更新安全小組。
@@ -18201,7 +18201,7 @@ A
 ## Question #664
 
 **題目**
-一家公司有一個網路應用程式,執行在房地。 該應用在高峰時段經歷了延遲(latency)問題. 延遲(latency)號衛星每月發行兩次。 在延遲(latency)發行之初,應用程式的CPU利用率立即提高到正常數量的10倍. 公司希望將應用程式遷移到AWS,以改善延遲(latency). 公司還希望在應用程式需求增加時自動擴大應用規模. 公司將使用AWS Elastic Beanstalk進行應用部署. 哪種解決辦法能滿足這些要求?
+一家公司有一個網路應用程式,執行在地端。 該應用在高峰時段經歷了延遲(latency)問題. 公司每月發布兩次新版本。 每次新版本剛發布時,應用程式的CPU利用率立即提高到正常數量的10倍. 公司希望將應用程式遷移到AWS,以改善延遲(latency). 公司還希望在應用程式需求增加時自動擴大應用規模. 公司將使用AWS Elastic Beanstalk進行應用部署. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 配置一個 Elastic Beanstalk 環境,以無限模式使用可爆效能例項。 根據請求配置環境以縮放。
@@ -18217,7 +18217,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：配置一個 Elastic Beanstalk 環境來使用最佳化的計算例項。 根據請求配置環境以縮放。最佳化運算執行個體提供穩定且較高的 CPU 效能，不受 CPU 額度限制，能直接應付延遲發布時瞬間暴增 10 倍的 CPU 需求；搭配依請求量進行的動態擴展，可以在需求真正上升時即時增加容量，同時滿足改善延遲與自動擴展兩項要求。
+- B：配置一個 Elastic Beanstalk 環境來使用最佳化的計算例項。 根據請求配置環境以縮放。最佳化運算執行個體提供穩定且較高的 CPU 效能，不受 CPU 額度限制，能直接應付新版本發布時瞬間暴增 10 倍的 CPU 需求；搭配依請求量進行的動態擴展，可以在需求真正上升時即時增加容量，同時滿足改善延遲與自動擴展兩項要求。
 - 其餘選項比較：
 - A：配置一個 Elastic Beanstalk 環境,以無限模式使用可爆效能例項。 根據請求配置環境以縮放。可爆發效能執行個體依賴 CPU 額度運作，CPU 一旦瞬間衝到平常的 10 倍，額度很快會耗盡，即使開啟無限模式也會產生額外費用，對於已知會出現大幅且持續 CPU 尖峰的工作負載而言並不划算。
 - C：配置一個 Elastic Beanstalk 環境來使用最佳化的計算例項。 配置環境以在一個排程中縮放。雖然採用了最佳化運算執行個體，但改用排程縮放代表擴展時間點是固定寫死的，題目只提到大約每月發布兩次而未給出精確固定時間，排程縮放無法對應「依應用程式需求增加」而觸發擴展的要求。
@@ -18260,7 +18260,7 @@ B
 **選項**
 - A. 在使用的每個可用區(Availability Zone)中提供一個網際網路閘道器。
 - B. 為 MySQL 多AZ DB 例項將 資料庫(database) 修改為 Amazon RDS。
-- C. 將資料庫(database)型機車遷移到Amazon DynamoDB型機車,並啟用DynamoDB自動縮放.
+- C. 將資料庫(database)執行個體遷移到Amazon DynamoDB,並啟用DynamoDB自動縮放.
 - D. 使用AWS DataSync在多個EC2例項中同步資料庫(database)資料.
 - E. 建立一個應用程式負載平衡器(Application Load Balancer),將流量分配到分佈在兩個可用區(Availability Zones)的EC2中的Auto Scaling 群組(Auto Scaling group).
 
@@ -18277,7 +18277,7 @@ B,E
 - E：建立一個應用程式負載平衡器(Application Load Balancer),將流量分配到分佈在兩個可用區(Availability Zones)的EC2中的Auto Scaling 群組(Auto Scaling group)。應用程式負載平衡器將流量分配到橫跨兩個可用區、由 Auto Scaling 群組管理的 EC2 執行個體，由於應用程式本身無狀態，請求可以自由導向任一可用區內健康的執行個體，不需要修改任何程式碼即可提供運算層的高可用性。
 - 其餘選項比較：
 - A：在使用的每個可用區(Availability Zone)中提供一個網際網路閘道器。網際網路閘道器是掛載在整個 VPC 上的區域性資源，並不是以每個可用區為單位個別佈建，「在每個可用區提供一個網際網路閘道器」在架構上並不成立，也無助於提升應用程式可用性。
-- C：將資料庫(database)型機車遷移到Amazon DynamoDB型機車,並啟用DynamoDB自動縮放。從 MySQL 遷移到 DynamoDB 屬於資料庫引擎與資料模型的根本改變，應用程式勢必需要修改資料存取程式碼才能相容 DynamoDB 的 API 與查詢方式，直接違反題目不能修改應用程式碼的限制。
+- C：將資料庫(database)執行個體遷移到Amazon DynamoDB,並啟用DynamoDB自動縮放。從 MySQL 遷移到 DynamoDB 屬於資料庫引擎與資料模型的根本改變，應用程式勢必需要修改資料存取程式碼才能相容 DynamoDB 的 API 與查詢方式，直接違反題目不能修改應用程式碼的限制。
 - D：使用AWS DataSync在多個EC2例項中同步資料庫(database)資料。AWS DataSync 是用來在檔案儲存系統（如 NFS/SMB 或 S3）之間搬移與同步檔案資料的服務，並不是關聯式資料庫的複寫機制，無法讓多個 EC2 執行個體上的 MySQL 資料庫保持資料一致。
 
 **分類：** 資料庫
@@ -18285,7 +18285,7 @@ B,E
 ## Question #667
 
 **題目**
-在多年移民專案期間,一家公司正在將其資料和應用轉移到AWS。 公司希望安全地從公司的AWS 區域(Region)和公司在前提位置獲取Amazon S3上的資料. 資料不能透過網際網路。 該公司在其區域(Region)和其辦公地點之間建立了AWS Direct Connect連線。 哪種解決辦法能滿足這些要求?
+在多年移民專案期間,一家公司正在將其資料和應用轉移到AWS。 公司希望安全地從公司的AWS 區域(Region)和公司在地端位置獲取Amazon S3上的資料. 資料不能透過網際網路。 該公司在其區域(Region)和其辦公地點之間建立了AWS Direct Connect連線。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 為 Amazon S3 建立閘道器端點. 使用閘道器端點安全地存取來自區域(Region)的資料和站點位置.
@@ -18474,7 +18474,7 @@ D
 ## Question #674
 
 **題目**
-一家公司在Auto Scaling 群組(Auto Scaling group)中執行了Amazon EC2的網路應用程式. 該應用程式使用執行於Amazon RDS上的資料庫(database),用於PostgreSQL DB例項. 當流量增加時,應用程式會緩慢執行. 資料庫(database)型機車在高流量期間的閱讀負荷很大。 設計師應採取什麼行動來解決這些業績問題?(選二.
+一家公司在Auto Scaling 群組(Auto Scaling group)中執行了Amazon EC2的網路應用程式. 該應用程式使用執行於Amazon RDS上的資料庫(database),用於PostgreSQL DB例項. 當流量增加時,應用程式會緩慢執行. 資料庫(database)執行個體在高流量期間的閱讀負荷很大。 設計師應採取什麼行動來解決這些業績問題?(選二.
 
 **選項**
 - A. 為 DB 例項開啟自動縮放。
@@ -18698,7 +18698,7 @@ C
 ## Question #682
 
 **題目**
-一家公司需要一個解決方案,在Amazon EC2例項上強制資料靜態加密(encryption at rest). 解決辦法必須自動查明不符合要求的資源,並強制執行關於調查結果的合規(compliance)政策。 LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家公司需要一個解決方案,在Amazon EC2例項上強制資料靜態加密(encryption at rest). 解決辦法必須自動查明不符合要求的資源,並強制執行關於調查結果的合規(compliance)政策。 LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 使用一個IAM 政策(IAM policy),允許使用者只建立加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Config和AWS Systems Manager自動檢測和補救未加密的EBS 磁碟區.
@@ -18725,12 +18725,12 @@ B
 ## Question #683
 
 **題目**
-一家公司正在將其多層次的前提應用程式轉移到AWS。 該應用程式包括一個單節點MySQL 資料庫(database)和一個多節點網路級. 公司必須在遷移期間儘量減少對申請的更改。 公司希望在遷移後提高應用程式的應變能力. 哪些步驟的組合將滿足這些要求?(選二.
+一家公司正在將其多層次的地端應用程式轉移到AWS。 該應用程式包括一個單節點MySQL 資料庫(database)和一個多節點網路級. 公司必須在遷移期間儘量減少對申請的更改。 公司希望在遷移後提高應用程式的應變能力. 哪些步驟的組合將滿足這些要求?(選二.
 
 **選項**
 - A. 在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中,將網路級遷移到Amazon EC2。
 - B. 在網路負載平衡器(Network Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中,將資料庫(database)遷移到Amazon EC2.
-- C. 將資料庫(database)型機車調整為Amazon RDS型多AZ部署.
+- C. 將資料庫(database)執行個體調整為Amazon RDS型多AZ部署.
 - D. 將網路級遷移到 AWS Lambda 函式。
 - E. 將資料庫(database)移動到一個Amazon DynamoDB表.
 
@@ -18743,7 +18743,7 @@ C,E
 
 **詳解**
 正確答案是 **C, E**。
-- C：將資料庫(database)型機車調整為Amazon RDS型多AZ部署。Amazon RDS 支援 MySQL 引擎，重新平台化後應用程式仍可透過原本的 SQL 介面存取資料庫、僅需更新連線端點，變更幅度極小；Multi-AZ 部署會自動佈建待命執行個體並同步複寫資料，主節點故障時可自動容錯移轉，直接提升遷移後的應變能力。
+- C：將資料庫(database)執行個體調整為Amazon RDS型多AZ部署。Amazon RDS 支援 MySQL 引擎，重新平台化後應用程式仍可透過原本的 SQL 介面存取資料庫、僅需更新連線端點，變更幅度極小；Multi-AZ 部署會自動佈建待命執行個體並同步複寫資料，主節點故障時可自動容錯移轉，直接提升遷移後的應變能力。
 - E：將資料庫(database)移動到一個Amazon DynamoDB表。DynamoDB 是全代管的 NoSQL 資料庫，原生具備跨多個可用區的資料複寫機制，不存在單一節點故障點，相較於原本的單節點 MySQL 架構在可用性與容錯能力上有明顯提升。
 - 其餘選項比較：
 - A：在應用程式負載平衡器(Application Load Balancer)後面的Auto Scaling 群組(Auto Scaling group)中,將網路級遷移到Amazon EC2。此做法能提升網路層本身的彈性與可用性，但並未處理原本單節點 MySQL 資料庫缺乏容錯能力這個核心風險，題目要求的是能兼顧最小應用程式變更與資料庫應變能力的做法。
@@ -18809,10 +18809,10 @@ B
 ## Question #686
 
 **題目**
-一個公司正在建立一個應用程式。 公司將應用程式測試資料儲存在多個地點。 公司需要在AWS雲中的AWS 區域(Region)中將現場位置與VPC連線. 明年,帳戶和VPC的數量將增加。 網路架構必須簡化新連線的管理,必須提供規模化的能力. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一個公司正在建立一個應用程式。 公司將應用程式測試資料儲存在多個地點。 公司需要在AWS雲中的AWS 區域(Region)中將現場位置與VPC連線. 明年,帳戶和VPC的數量將增加。 網路架構必須簡化新連線的管理,必須提供規模化的能力. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
-- A. 在 VPC 之間建立對等連線。 建立 VPN 連線 VPC 和 promise 位置。
+- A. 在 VPC 之間建立對等連線。 建立 VPN 連線 VPC 和地端位置。
 - B. 推出Amazon EC2 執行個體. 例如,包括VPN軟體,該軟體使用VPN連線連線所有VPC和辦公地點.
 - C. 建立中轉閘道器。 為 VPC 連線建立 VPC 附件。 建立 VPN 連線的連線附件。
 - D. 建立AWS Direct Connect連線,連線在原地位置和中央VPC之間. 透過使用對等連線將中心VPC連線到其他VPC.
@@ -18827,7 +18827,7 @@ D
 正確答案是 **D**。
 - D：建立AWS Direct Connect連線,連線在原地位置和中央VPC之間. 透過使用對等連線將中心VPC連線到其他VPC。Direct Connect 可將現場位置以私有連線接到中央 VPC，再透過 VPC 對等連線連到其他 VPC。這能集中管理現場連線，且比逐一維護 VPN 或 VPC 對等連線更符合題目的低管理負擔要求。
 - 其餘選項比較：
-- A：在 VPC 之間建立對等連線。 建立 VPN 連線 VPC 和 promise 位置。逐一建立 VPC 對等連線會形成大量連線管理工作，且對等連線不適合隨帳戶與 VPC 數量成長的集中式拓撲。
+- A：在 VPC 之間建立對等連線。 建立 VPN 連線 VPC 和地端位置。逐一建立 VPC 對等連線會形成大量連線管理工作，且對等連線不適合隨帳戶與 VPC 數量成長的集中式拓撲。
 - B：推出Amazon EC2 執行個體. 例如,包括VPN軟體,該軟體使用VPN連線連線所有VPC和辦公地點。在 EC2 上自行維護 VPN 軟體需要管理伺服器、路由與高可用性，營運負擔高且擴充性不佳。
 - C：建立中轉閘道器。 為 VPC 連線建立 VPC 附件。 建立 VPN 連線的連線附件。Transit Gateway 的集中式架構適合規模化連線，但題目指定的解決方案還需要以 Direct Connect 連接現場位置；單獨列出 VPC 與 VPN 附件不完整。
 
@@ -18920,7 +18920,7 @@ C
 ## Question #690
 
 **題目**
-一家公司定期上傳GB大小的檔案到Amazon S3. 公司上傳檔案後,公司使用Amazon EC2 Spot 執行個體的fieet來轉碼檔案格式. 公司需要將吞吐量(throughput)的尺度,當公司將資料從presimes資料中心上傳到Amazon S3,當公司將資料從Amazon S3下載到EC2例項時. 哪些解決辦法能滿足這些要求?(選二.
+一家公司定期上傳GB大小的檔案到Amazon S3. 公司上傳檔案後,公司使用Amazon EC2 Spot 執行個體的fieet來轉碼檔案格式. 公司需要將吞吐量(throughput)的尺度,當公司將資料從地端資料中心上傳到Amazon S3,當公司將資料從Amazon S3下載到EC2例項時. 哪些解決辦法能滿足這些要求?(選二.
 
 **選項**
 - A. 使用S3 bucket存取點,而不是直接存取S3 bucket.
@@ -18980,7 +18980,7 @@ A,D
 ## Question #692
 
 **題目**
-一家公司正在使用應用程式負載平衡器(Application Load Balancer)在三個AWS區域部署一個應用程式。 Amazon Route 53將用於在這些區域之間分配交通。 哪個53路的配置應該是一個解決方案設計師來提供MOST高效能的經驗?
+一家公司正在使用應用程式負載平衡器(Application Load Balancer)在三個AWS區域部署一個應用程式。 Amazon Route 53將用於在這些區域之間分配交通。 哪個Route 53的配置應該是一個解決方案設計師來提供MOST高效能的經驗?
 
 **選項**
 - A. 使用 延遲(latency) 策略建立 A 記錄。
@@ -19286,7 +19286,7 @@ C
 - A. 設定AWS Glue,將預設伺服器的資料複製到Amazon S3.
 - B. 在虛擬伺服器上設定一個AWS資料同步代理,並將資料同步到Amazon S3.
 - C. 利用 AWS Transfer 為 SFTP 設定 SFTP 同步, 以同步 資料從場地到 Amazon S3。
-- D. 搭建AWS Direct Connect連線於promise資料中心和一個VPC之間,並將資料複製到Amazon S3.
+- D. 搭建AWS Direct Connect連線於地端資料中心和一個VPC之間,並將資料複製到Amazon S3.
 
 **答案**
 D
@@ -19296,7 +19296,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：搭建AWS Direct Connect連線於promise資料中心和一個VPC之間,並將資料複製到Amazon S3。Direct Connect 可在現場資料中心與 VPC 之間建立私有連線，再由現場或 VPC 內的備份程序將 NFS 資料寫入 S3。對定期少量資料而言，這提供穩定的私有路徑且不需要額外的檔案傳輸服務。
+- D：搭建AWS Direct Connect連線於地端資料中心和一個VPC之間,並將資料複製到Amazon S3。Direct Connect 可在現場資料中心與 VPC 之間建立私有連線，再由現場或 VPC 內的備份程序將 NFS 資料寫入 S3。對定期少量資料而言，這提供穩定的私有路徑且不需要額外的檔案傳輸服務。
 - 其餘選項比較：
 - A：設定AWS Glue,將預設伺服器的資料複製到Amazon S3。AWS Glue 是用於資料目錄與 ETL 的分析服務，不是從本地 NFS 伺服器定期備份檔案到 S3 的檔案傳輸工具。
 - B：在虛擬伺服器上設定一個AWS資料同步代理,並將資料同步到Amazon S3。DataSync Agent 可以部署在虛擬機器上並連接 NFS，但此選項未指定 DataSync 任務或目的地設定；若以少量、定期資料為前提，還需要完整配置才能執行同步。
@@ -19529,13 +19529,13 @@ B
 ## Question #712
 
 **題目**
-一家公司正在AWS上設計一個網路應用程式. 該應用程式將使用公司現有資料中心和公司VPC之間的VPN連線. 公司使用Amazon Route 53作為其DNS服務. 應用程式必須使用私有的DNS記錄與VPC的premess服務進行通訊. 哪種解決辦法能以安全的方式滿足這些要求?
+一家公司正在AWS上設計一個網路應用程式. 該應用程式將使用公司現有資料中心和公司VPC之間的VPN連線. 公司使用Amazon Route 53作為其DNS服務. 應用程式必須使用私有的DNS記錄與VPC的地端服務進行通訊. 哪種解決辦法能以安全的方式滿足這些要求?
 
 **選項**
-- A. 建立路由 53 解析器出入口。 建立解脫法則. 將解決者規則與VPC聯絡起來.
-- B. 建立一條53路解碼器進入端點。 建立解脫法則. 將解決者規則與VPC聯絡起來.
-- C. 建立53路私人託管區. 將私人託管區與VPC聯絡起來。
-- D. 建立53路公共託管區. 為每個服務建立記錄以允許服務通訊
+- A. 建立Route 53 Resolver 出站端點。 建立解析器規則. 將解析器規則與VPC建立關聯.
+- B. 建立一條Route 53 Resolver 入站端點。 建立解析器規則. 將解析器規則與VPC建立關聯.
+- C. 建立Route 53私人託管區. 將私人託管區與VPC聯絡起來。
+- D. 建立Route 53公共託管區. 為每個服務建立記錄以允許服務通訊
 
 **答案**
 C
@@ -19545,11 +19545,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立53路私人託管區. 將私人託管區與VPC聯絡起來。Route 53 私有託管區可將私有名稱解析限制在關聯的 VPC 內，避免記錄公開到網際網路。把託管區與 VPC 關聯後，應用程式即可透過 VPN 使用私有名稱存取內部服務。
+- C：建立Route 53私人託管區. 將私人託管區與VPC聯絡起來。Route 53 私有託管區可將私有名稱解析限制在關聯的 VPC 內，避免記錄公開到網際網路。把託管區與 VPC 關聯後，應用程式即可透過 VPN 使用私有名稱存取內部服務。
 - 其餘選項比較：
-- A：建立路由 53 解析器出入口。 建立解脫法則. 將解決者規則與VPC聯絡起來。Resolver 出站端點是把 VPC 的 DNS 查詢轉送到外部或內部網路，方向不符合讓 VPC 使用私有託管區記錄的需求。
-- B：建立一條53路解碼器進入端點。 建立解脫法則. 將解決者規則與VPC聯絡起來。入站端點供外部網路查詢 VPC 中的 Route 53 Resolver，不能單獨建立 VPC 內服務所需的私有 DNS 記錄。
-- D：建立53路公共託管區. 為每個服務建立記錄以允許服務通訊。公共託管區會讓 DNS 記錄可被網際網路解析，無法滿足只透過 VPN 存取內部服務的私有性要求。
+- A：建立Route 53 Resolver 出站端點。 建立解析器規則. 將解析器規則與VPC建立關聯。Resolver 出站端點是把 VPC 的 DNS 查詢轉送到外部或內部網路，方向不符合讓 VPC 使用私有託管區記錄的需求。
+- B：建立一條Route 53 Resolver 入站端點。 建立解析器規則. 將解析器規則與VPC建立關聯。入站端點供外部網路查詢 VPC 中的 Route 53 Resolver，不能單獨建立 VPC 內服務所需的私有 DNS 記錄。
+- D：建立Route 53公共託管區. 為每個服務建立記錄以允許服務通訊。公共託管區會讓 DNS 記錄可被網際網路解析，無法滿足只透過 VPN 存取內部服務的私有性要求。
 
 **分類：** 網路連結和內容交付
 
@@ -19664,7 +19664,7 @@ C
 ## Question #717
 
 **題目**
-一個公司想要將一個原創的遺留應用程式遷移到AWS. 應用程式從一個前提上的企業資源規劃系統(ERP)接收客戶訂單檔案。 應用程式然後將檔案上傳到 SFTP 伺服器. 應用程式使用一個計劃的工作,每小時檢查訂單檔案. 公司已經有一個AWS帳戶,可以連線到promess網路. AWS上的新應用程式必須支援與現有企業資源規劃系統的整合。 新的應用程式必須安全和具有復原力,必須利用SFTP協議立即處理企業資源規劃系統發出的訂單。 哪種解決辦法能滿足這些要求?
+一個公司想要將一個原創的遺留應用程式遷移到AWS. 應用程式從一個地端的企業資源規劃系統(ERP)接收客戶訂單檔案。 應用程式然後將檔案上傳到 SFTP 伺服器. 應用程式使用一個計劃的工作,每小時檢查訂單檔案. 公司已經有一個AWS帳戶,可以連線到地端網路. AWS上的新應用程式必須支援與現有企業資源規劃系統的整合。 新的應用程式必須安全和具有復原力,必須利用SFTP協議立即處理企業資源規劃系統發出的訂單。 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 網際網路化伺服器. 使用Amazon S3儲存器. 建立 AWS Lambda 函式處理命令檔案。 使用 S3 事件通知傳送 s3: ObjectCreated: * 事件到 Lambda 函式。
@@ -19691,11 +19691,11 @@ A
 ## Question #718
 
 **題目**
-一家公司的應用程式使用Apache Hadoop和Apache Spark處理房地資料。 現有基礎設施無法擴充套件,管理複雜。 一個解決方案架構師必須設計一個可縮放的解決方案,以減少營運複雜性(operational complexity). 解決辦法必須把資料處理留在房地。 哪種解決辦法能滿足這些要求?
+一家公司的應用程式使用Apache Hadoop和Apache Spark處理地端資料。 現有基礎設施無法擴充套件,管理複雜。 一個解決方案架構師必須設計一個可縮放的解決方案,以減少營運複雜性(operational complexity). 解決辦法必須把資料處理留在地端。 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 使用 AWS 站點對站點 VPN 存取 promises Hadoop 分佈檔案系統(HDFS)的資料和應用. 使用 Amazon EMR 叢集處理資料.
-- B. 使用AWS DataSync連線到premises Hadoop分散式檔案系統(HDFS)叢集. 建立 Amazon EMR 群集處理資料.
+- A. 使用 AWS 站點對站點 VPN 存取地端 Hadoop 分佈檔案系統(HDFS)的資料和應用. 使用 Amazon EMR 叢集處理資料.
+- B. 使用AWS DataSync連線到地端 Hadoop分散式檔案系統(HDFS)叢集. 建立 Amazon EMR 群集處理資料.
 - C. 將Apache Hadoop應用程式和Apache Spark應用程式遷移到Amazon EMR的AWS Outposits上. 使用EMR叢集處理資料.
 - D. 使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 建立 Amazon EMR 群集處理資料.
 
@@ -19707,9 +19707,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用 AWS 站點對站點 VPN 存取 promises Hadoop 分佈檔案系統(HDFS)的資料和應用. 使用 Amazon EMR 叢集處理資料。透過 Site-to-Site VPN，EMR 可在 AWS 端使用現場 HDFS 中的資料與應用程式，不必把資料處理位置改到雲端儲存。EMR 代管 Hadoop 與 Spark 叢集，能彈性配置運算容量並降低自行維護叢集的負擔。
+- A：使用 AWS 站點對站點 VPN 存取地端 Hadoop 分佈檔案系統(HDFS)的資料和應用. 使用 Amazon EMR 叢集處理資料。透過 Site-to-Site VPN，EMR 可在 AWS 端使用現場 HDFS 中的資料與應用程式，不必把資料處理位置改到雲端儲存。EMR 代管 Hadoop 與 Spark 叢集，能彈性配置運算容量並降低自行維護叢集的負擔。
 - 其餘選項比較：
-- B：使用AWS DataSync連線到premises Hadoop分散式檔案系統(HDFS)叢集. 建立 Amazon EMR 群集處理資料。DataSync 主要用於檔案資料搬移與同步，不能把 HDFS 直接變成 EMR 可管理的處理環境，且增加資料複製流程。
+- B：使用AWS DataSync連線到地端 Hadoop分散式檔案系統(HDFS)叢集. 建立 Amazon EMR 群集處理資料。DataSync 主要用於檔案資料搬移與同步，不能把 HDFS 直接變成 EMR 可管理的處理環境，且增加資料複製流程。
 - C：將Apache Hadoop應用程式和Apache Spark應用程式遷移到Amazon EMR的AWS Outposits上. 使用EMR叢集處理資料。Outposts 仍需在現場部署與維護硬體，並沒有以最少營運工作量處理既有 Hadoop 與 Spark 基礎設施。
 - D：使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 建立 Amazon EMR 群集處理資料。Snowball 將資料搬到 S3 會改變資料處理位置，違反必須留在現場處理的限制。
 
@@ -19799,7 +19799,7 @@ C
 ## Question #722
 
 **題目**
-一家公司有一個AWS Direct Connect連線,從它的前提位置到AWS帳戶. AWS帳戶在同一AWS 區域(Region)中有30個不同的VPC. VPC使用私人虛擬介面(VIFs). 每個VPC有一個CIDR塊,與公司控制下的其他網路不重疊. 公司希望集中管理網路架構,同時仍允許每個VPC與所有其他VPC和場內網路進行交流. 哪個解決方案能滿足這些要求,LEAST數額是營運開銷(operational overhead)?
+一家公司有一個AWS Direct Connect連線,從它的地端位置到AWS帳戶. AWS帳戶在同一AWS 區域(Region)中有30個不同的VPC. VPC使用私人虛擬介面(VIFs). 每個VPC有一個CIDR塊,與公司控制下的其他網路不重疊. 公司希望集中管理網路架構,同時仍允許每個VPC與所有其他VPC和場內網路進行交流. 哪個解決方案能滿足這些要求,LEAST數額是營運開銷(operational overhead)?
 
 **選項**
 - A. 建立一箇中轉閘道器,並將直接連線連線到一個新的中轉VIF. 開啟中轉閘道器的路線傳播功能.
@@ -19853,7 +19853,7 @@ C
 ## Question #724
 
 **題目**
-一家公司透過使用Amazon Elstic Kubernetes Service(Amazon EKS)和Kubernetes 水平Pod Autoscale器執行集裝箱應用. 工作量在一天之內並不一致。 一個解決方案架構師注意到,當現有節點在叢集中達到最大容量時,節點的數量不會自動縮放,這引起了效能問題. 哪種解決辦法能用LEAST行政間接費用解決這個問題?
+一家公司透過使用Amazon Elstic Kubernetes Service(Amazon EKS)和Kubernetes 水平Pod Autoscale器執行集裝箱應用. 工作量在一天之內並不一致。 一個解決方案架構師注意到,當現有節點在叢集中達到最大容量時,節點的數量不會自動縮放,這引起了效能問題. 哪種解決辦法能用LEAST營運開銷解決這個問題?
 
 **選項**
 - A. 透過跟蹤記憶體使用量來縮放節點.
@@ -20342,7 +20342,7 @@ C
 ## Question #742
 
 **題目**
-一家公司正在AWS上建立一個應用程式,連線Amazon RDS 資料庫(database). 公司希望管理應用程式配置,並安全儲存和檢索資料庫(database)和其他服務的憑證. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家公司正在AWS上建立一個應用程式,連線Amazon RDS 資料庫(database). 公司希望管理應用程式配置,並安全儲存和檢索資料庫(database)和其他服務的憑證. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 使用AWS AppConfig儲存和管理應用程式配置. 使用AWS Secrets Manager儲存和檢索憑證.
@@ -20861,10 +20861,10 @@ B
 ## Question #761
 
 **題目**
-公司需要使用其premise上的LDAP目錄服務來認證使用者到AWS管理控制檯. 目錄服務與安全Assertion Markup Language(SAML)不相容. 哪種解決辦法符合這些要求?
+公司需要使用其地端上的LDAP目錄服務來認證使用者到AWS管理控制檯. 目錄服務與安全Assertion Markup Language(SAML)不相容. 哪種解決辦法符合這些要求?
 
 **選項**
-- A. 啟用 AWS IAM 身份認證中心(AWS Single Sign-On)在 AWS 和 presimes LDAP 之間.
+- A. 啟用 AWS IAM 身份認證中心(AWS Single Sign-On)在 AWS 和地端 LDAP 之間.
 - B. 建立一個使用 AWS 憑證的 IAM 政策(IAM policy),並將策略整合到 LDAP 中.
 - C. 設定一個程序,每當LDAP憑證更新時都會旋轉IAM憑證.
 - D. 開發一個使用AWS安全託肯服務(AWS STS)獲取短命憑證的自定義身份中介應用程式或程序.
@@ -20879,7 +20879,7 @@ C
 正確答案是 **C**。
 - C：設定一個程序,每當LDAP憑證更新時都會旋轉IAM憑證。在 LDAP 憑證異動時同步輪替 IAM 憑證，可讓 AWS 端使用的存取資料隨企業目錄生命週期更新，避免長期沿用過期憑證。透過自動化程序執行輪替，也能在不要求 LDAP 支援 SAML 的情況下維持登入流程。
 - 其餘選項比較：
-- A：啟用 AWS IAM 身份認證中心(AWS Single Sign-On)在 AWS 和 presimes LDAP 之間。IAM Identity Center 的外部身分來源通常需要 SAML 2.0 或其他受支援的聯邦整合；題目已指出 LDAP 不相容於 SAML，因此不能直接以此方式串接。
+- A：啟用 AWS IAM 身份認證中心(AWS Single Sign-On)在 AWS 和地端 LDAP 之間。IAM Identity Center 的外部身分來源通常需要 SAML 2.0 或其他受支援的聯邦整合；題目已指出 LDAP 不相容於 SAML，因此不能直接以此方式串接。
 - B：建立一個使用 AWS 憑證的 IAM 政策(IAM policy),並將策略整合到 LDAP 中。IAM 政策只會定義 AWS 資源的授權，不能把 LDAP 驗證流程整合進政策本身。
 - D：開發一個使用AWS安全託肯服務(AWS STS)獲取短命憑證的自定義身份中介應用程式或程序。自訂 STS 身分中介雖可取得臨時憑證，但需要自行維護身分驗證、角色信任政策與憑證交換，營運負擔較高。
 
@@ -20915,7 +20915,7 @@ D
 ## Question #763
 
 **題目**
-一家公司有150 TB的存檔影象資料儲存在-promesses上,需要在下個月內移動到AWS雲. 該公司目前的網路連線只允許在夜間為此目的上傳多達100 Mbps。 移動這些資料和在移徙截止日期前完成遷移的 " 現代化技術 " 成本效益高的機制是什麼?
+一家公司有150 TB的存檔影象資料儲存在-地端s上,需要在下個月內移動到AWS雲. 該公司目前的網路連線只允許在夜間為此目的上傳多達100 Mbps。 移動這些資料和在移徙截止日期前完成遷移的 " 現代化技術 " 成本效益高的機制是什麼?
 
 **選項**
 - A. 使用AWS Snowmobile將資料傳送到AWS.
@@ -20942,7 +20942,7 @@ A
 ## Question #764
 
 **題目**
-一家公司希望將其三級申請從房地轉移到AWS。 網路級和應用程式級執行在第三方虛擬機器(VMs)上. 資料庫(database)級在MySQL上執行. 公司需要透過對架構進行儘可能少的修改來遷移應用程式. 公司還需要資料庫(database)解決方案,可以將資料恢復到特定的時間點. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司希望將其三級申請從地端轉移到AWS。 網路級和應用程式級執行在第三方虛擬機器(VMs)上. 資料庫(database)級在MySQL上執行. 公司需要透過對架構進行儘可能少的修改來遷移應用程式. 公司還需要資料庫(database)解決方案,可以將資料恢復到特定的時間點. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 在私人子網中將網路級和應用級遷移到Amazon EC2 執行個體. 在私人子網中將資料庫(database)級移動至Amazon RDS用於MySQL.
@@ -21023,7 +21023,7 @@ B
 ## Question #767
 
 **題目**
-一家制藥公司正在研製一種新藥。 在過去幾個月裡,該公司生成的資料量成指數增長。 公司的研究者們經常要求整個資料集的子集以最小的滯後速度立即提供. 然而,整個資料集不需要每天存取. 目前所有資料都存於房地儲存陣列中,公司希望減少持續資本支出. 哪個儲存解決方案應該由設計師建議滿足這些要求?
+一家制藥公司正在研製一種新藥。 在過去幾個月裡,該公司生成的資料量成指數增長。 公司的研究者們經常要求整個資料集的子集以最小的滯後速度立即提供. 然而,整個資料集不需要每天存取. 目前所有資料都存於地端儲存陣列中,公司希望減少持續資本支出. 哪個儲存解決方案應該由設計師建議滿足這些要求?
 
 **選項**
 - A. 執行 AWS DataSync 作為預定的 cron 任務,持續將資料遷移到 Amazon S3 bucket中.
@@ -21192,7 +21192,7 @@ A,C
 
 **選項**
 - A. 建立一個Auto Scaling 群組(Auto Scaling group),規模足以處理高峰流量負載. 停止一半的 Amazon EC2 例。 配置 Auto Scaling 群組(Auto Scaling group) 以在流量增加時使用已停止的例來縮放。
-- B. 為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)型機車的最低尺寸,使其可以處理高流量而無需擴大.
+- B. 為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)的最低尺寸,使其可以處理高流量而無需擴大.
 - C. 使用Amazon CloudFront和Amazon ElastiCache來快取以Auto Scaling 群組(Auto Scaling group)設定為源的動態內容. 配置 Auto Scaling 群組(Auto Scaling group) 並配置 CloudFront 和 ElastiCache 所需的例項。 快取滿員後縮放。
 - D. 配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的Amazon Machine Image (AMI)開始新的例項.
 
@@ -21206,7 +21206,7 @@ A
 正確答案是 **A**。
 - A：建立一個Auto Scaling 群組(Auto Scaling group),規模足以處理高峰流量負載. 停止一半的 Amazon EC2 例。 配置 Auto Scaling 群組(Auto Scaling group) 以在流量增加時使用已停止的例來縮放。Auto Scaling group 可以預先建立足夠的 EC2 執行個體並在需求上升時納入已停止的執行個體，避免銷售尖峰才等待新執行個體啟動。跨多個可用區部署可維持可用性，同時只在需要時承擔峰值容量成本。
 - 其餘選項比較：
-- B：為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)型機車的最低尺寸,使其可以處理高流量而無需擴大。把最低容量固定在高流量規模會在平時持續支付大量 EC2 費用，沒有利用季節性負載的彈性擴縮。
+- B：為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)的最低尺寸,使其可以處理高流量而無需擴大。把最低容量固定在高流量規模會在平時持續支付大量 EC2 費用，沒有利用季節性負載的彈性擴縮。
 - C：使用Amazon CloudFront和Amazon ElastiCache來快取以Auto Scaling 群組(Auto Scaling group)設定為源的動態內容. 配置 Auto Scaling 群組(Auto Scaling group) 並配置 CloudFront 和 ElastiCache 所需的例項。 快取滿員後縮放。CloudFront 與 ElastiCache 不適合任意動態內容的完整快取，而且快取滿載不是 Auto Scaling 的正確觸發條件；此設計也增加不必要的元件成本。
 - D：配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的Amazon Machine Image (AMI)開始新的例項。依流量啟動新 EC2 雖能擴展，但冷啟動時間可能無法應對突然尖峰；選項沒有預熱容量或停止執行個體的成本最佳化措施。
 
@@ -21242,7 +21242,7 @@ C
 ## Question #775
 
 **題目**
-使用帶有Amazon EC2工人節點的Amazon Elastic Kubernetes Service(Amazon EKS). 一個連在AWS帳戶中部署了應用程式. 應用程式包括執行在AWS Lambda和Amazon Elastic Kubernetes Service (Amazon EKS)上的微服務. 一個單獨的團隊支援每個微服務. 公司擁有多個AWS帳戶,希望為每個團隊提供自己的微服務帳戶. 一個解決方案架構師需要設計一個解決方案,在HTTPS(443號港)上提供服務對服務通訊. 解決方案還必須為發現服務提供一個服務登記處。 LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+使用帶有Amazon EC2工人節點的Amazon Elastic Kubernetes Service(Amazon EKS). 一個連在AWS帳戶中部署了應用程式. 應用程式包括執行在AWS Lambda和Amazon Elastic Kubernetes Service (Amazon EKS)上的微服務. 一個單獨的團隊支援每個微服務. 公司擁有多個AWS帳戶,希望為每個團隊提供自己的微服務帳戶. 一個解決方案架構師需要設計一個解決方案,在HTTPS(443號港)上提供服務對服務通訊. 解決方案還必須為發現服務提供一個服務登記處。 LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 建立檢查VPC. 部署AWS網路防火牆(Firewall)防火牆(firewall),用於檢查VPC. 將檢查VPC附加到一個新的中轉閘道器. 途徑VPC至VPC的交通前往檢查VPC. 應用防火牆(firewall)規則只允許HTTPS通訊.
@@ -21272,7 +21272,7 @@ A
 一家公司有一個移動遊戲,從Amazon RDS DB例項讀取其大部分後設資料. 隨著遊戲受歡迎度的提高,開發者注意到與遊戲後設資料負載時間相關的減速. 業績衡量標準表明,僅僅擴大資料庫(database)將無濟於事。 一個解決方案架構師必須探索所有選項,包括快照、複寫(replication)和次微秒響應時間的能力。 解決方案設計師建議如何解決這些問題?
 
 **選項**
-- A. 將資料庫(database)型機車與Amazon Aurora型機車與Aurora複製機一起遷移.
+- A. 將資料庫(database)執行個體與Amazon Aurora與Aurora複製機一起遷移.
 - B. 用全域性表將資料庫(database)移動到Amazon DynamoDB.
 - C. 在資料庫(database)前增加一個Amazon ElastiCache用於雷迪斯層.
 - D. 在資料庫(database)前增加一個Amazon ElastiCache,用於疊加層.
@@ -21287,7 +21287,7 @@ D
 正確答案是 **D**。
 - D：在資料庫(database)前增加一個Amazon ElastiCache,用於疊加層。在 RDS 前加入 ElastiCache 的快取層，可把高頻讀取的遊戲後設資料放在記憶體中，避免每次請求往返關聯式資料庫。快取命中延遲遠低於磁碟型資料庫，且可透過節點擴充應付使用者成長，不必只靠升級資料庫規模。
 - 其餘選項比較：
-- A：將資料庫(database)型機車與Amazon Aurora型機車與Aurora複製機一起遷移。僅升級資料庫執行個體不會解決讀取熱點與重複查詢造成的延遲，且 Aurora 複本主要提供讀取擴展，不是次微秒快取。
+- A：將資料庫(database)執行個體與Amazon Aurora與Aurora複製機一起遷移。僅升級資料庫執行個體不會解決讀取熱點與重複查詢造成的延遲，且 Aurora 複本主要提供讀取擴展，不是次微秒快取。
 - B：用全域性表將資料庫(database)移動到Amazon DynamoDB。DynamoDB Global Tables 適合全球多區域複寫的鍵值資料，但將既有關聯式後設資料搬遷會帶來資料模型改寫與遷移成本。
 - C：在資料庫(database)前增加一個Amazon ElastiCache用於雷迪斯層。ElastiCache for Redis 可作為資料庫前的記憶體快取，但選項使用的快取層描述不完整，未指出正確的 Redis 快取與失效策略。
 
@@ -21545,10 +21545,10 @@ C
 一家公司在現場資料中心承擔多重工作量。 公司資料中心的規模不能迅速滿足公司不斷擴大的業務需求. 公司希望收集使用量和配置資料,以規劃向AWS的遷移. 哪種解決辦法能滿足這些要求?
 
 **選項**
-- A. 在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用AWS Systems Manager來收集關於presimes伺服器的資料.
-- B. 在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用 AWS 應用程式發現服務來收集關於premess伺服器的資料.
+- A. 在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用AWS Systems Manager來收集關於地端伺服器的資料.
+- B. 在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用 AWS 應用程式發現服務來收集關於地端伺服器的資料.
 - C. 使用 AWS Schema 轉換工具(AWS SCT)來建立相關的模板. 使用AWS Trusted Advisor 來蒐集關於預設伺服器的資料.
-- D. 使用 AWS Schema 轉換工具(AWS SCT)來建立相關的模板. 使用AWS 資料庫(Database) 遷移服務(AWS DS)來收集有關promes伺服器的資料.
+- D. 使用 AWS Schema 轉換工具(AWS SCT)來建立相關的模板. 使用AWS 資料庫(Database) 遷移服務(AWS DS)來收集有關地端伺服器的資料.
 
 **答案**
 B
@@ -21558,11 +21558,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用 AWS 應用程式發現服務來收集關於premess伺服器的資料。AWS Application Discovery Service 可透過 agent 或 agentless collector 收集現場伺服器的配置、使用率與網路相依性。搭配 Migration Hub 的 home Region，可用這些資料規劃工作負載分組與 AWS 遷移路徑。
+- B：在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用 AWS 應用程式發現服務來收集關於地端伺服器的資料。AWS Application Discovery Service 可透過 agent 或 agentless collector 收集現場伺服器的配置、使用率與網路相依性。搭配 Migration Hub 的 home Region，可用這些資料規劃工作負載分組與 AWS 遷移路徑。
 - 其餘選項比較：
-- A：在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用AWS Systems Manager來收集關於presimes伺服器的資料。Migration Hub 可集中追蹤遷移，但 Systems Manager Inventory 主要盤點受管執行個體，不是用來完整收集現場伺服器相依性與使用量資料。
+- A：在 AWS 遷移樞紐中設定家 AWS 區域(Region)。 使用AWS Systems Manager來收集關於地端伺服器的資料。Migration Hub 可集中追蹤遷移，但 Systems Manager Inventory 主要盤點受管執行個體，不是用來完整收集現場伺服器相依性與使用量資料。
 - C：使用 AWS Schema 轉換工具(AWS SCT)來建立相關的模板. 使用AWS Trusted Advisor 來蒐集關於預設伺服器的資料。SCT 用於資料庫結構與程式碼轉換，Trusted Advisor 則提供 AWS 帳戶最佳化檢查，兩者都不是現場伺服器探索工具。
-- D：使用 AWS Schema 轉換工具(AWS SCT)來建立相關的模板. 使用AWS 資料庫(Database) 遷移服務(AWS DS)來收集有關promes伺服器的資料。DMS 主要執行資料庫遷移與複寫，不會像 Application Discovery Service 一樣盤點多種工作負載的硬體與相依性。
+- D：使用 AWS Schema 轉換工具(AWS SCT)來建立相關的模板. 使用AWS 資料庫(Database) 遷移服務(AWS DS)來收集有關地端伺服器的資料。DMS 主要執行資料庫遷移與複寫，不會像 Application Discovery Service 一樣盤點多種工作負載的硬體與相依性。
 
 **分類：** 移轉和傳輸
 
@@ -21904,7 +21904,7 @@ A
 **選項**
 - A. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱. 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中.
 - B. 在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon Forecast 來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中。
-- C. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 bucket 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中.
+- C. 當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜的錄音. 儲存 S3 bucket 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中.
 - D. 當 Put Object 請求發生時,使用 Amazon EventBridge 規則引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon SageMaker來分析物件並提取成分名稱. 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中。
 
 **答案**
@@ -21919,7 +21919,7 @@ D
 - 其餘選項比較：
 - A：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱. 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中。Comprehend 可分析文字，但選項使用 S3 事件直接觸發且沒有明確處理非食物內容與推論錯誤的工作流控制。
 - B：在 PutObject 請求發生時,使用 Amazon EventBridge 規則來引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon Forecast 來提取成分名稱來分析物件. 將預測輸出儲存在 DynamoDB 表中。Amazon Forecast 用於時間序列預測，不是從食譜文字擷取原料名稱的自然語言服務。
-- C：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜唱片的錄音. 儲存 S3 bucket 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中。Polly 只會把文字轉成語音，無法從食譜可靠擷取成分；要求員工人工聆聽也不具成本效益與可擴展性。
+- C：當 Put Object 請求發生時, 使用 S3 事件通知來引用 AWS Lambda 函式。 使用Amazon Polly來建立食譜的錄音. 儲存 S3 bucket 中的音訊檔案。 使用Amazon簡單通知服務(Amazon SNS)向員工傳送URL作為訊息. 指示員工聆聽音訊檔案,計算營養分數. 將成分名稱儲存在 DynamoDB 表格中。Polly 只會把文字轉成語音，無法從食譜可靠擷取成分；要求員工人工聆聽也不具成本效益與可擴展性。
 
 **分類：** 機器學習
 
@@ -21986,7 +21986,7 @@ A
 - A. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列與 Amazon EventBridge 規則整合,以接收移動裝置的付款通知。 配置規則以驗證付款通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)任何地方部署後端應用程式. 建立獨立的叢集。
 - B. 建立 Amazon API Gateway API. 將 API 與 AWS Step 函式狀態機整合,以接收移動裝置的付款通知。 啟動國家機器驗證支付通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)上部署後端應用程式. 配置帶有自控節點的EKS叢集.
 - C. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列與 Amazon EventBridge 規則整合,以接收移動裝置的付款通知。 配置規則以驗證付款通知,並將通知傳送給後端應用程式。 在Amazon EC2 Spot 執行個體上部署後端應用程式. 配置帶有預設配置策略的 Spot Fleet。
-- D. 建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 發射型別.
+- D. 建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 啟動類型.
 
 **答案**
 C
@@ -22000,7 +22000,7 @@ C
 - 其餘選項比較：
 - A：建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列與 Amazon EventBridge 規則整合,以接收移動裝置的付款通知。 配置規則以驗證付款通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)任何地方部署後端應用程式. 建立獨立的叢集。EKS Anywhere 仍需管理 Kubernetes 叢集與節點，而且 Spot 或自控叢集的營運負擔不符合不管理基礎設施的條件。
 - B：建立 Amazon API Gateway API. 將 API 與 AWS Step 函式狀態機整合,以接收移動裝置的付款通知。 啟動國家機器驗證支付通知,並將通知傳送給後端應用程式。 在Amazon Elastic Kubernetes Service(Amazon EKS)上部署後端應用程式. 配置帶有自控節點的EKS叢集。自控節點 EKS 需要管理節點、修補與叢集容量；即使 Step Functions 負責驗證，後端仍不是最低營運開銷的部署方式。
-- D：建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 發射型別。Fargate 雖免除主機管理，但題目所述後端是長時間且可調整資源的工作，若需要佇列緩衝與基本驗證，選項沒有使用 SQS 的解耦流程。
+- D：建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 啟動類型。Fargate 雖免除主機管理，但題目所述後端是長時間且可調整資源的工作，若需要佇列緩衝與基本驗證，選項沒有使用 SQS 的解耦流程。
 
 **分類：** 容器
 
@@ -22088,7 +22088,7 @@ B
 ## Question #806
 
 **題目**
-一家社交媒體公司有收集和處理資料的工作量。 工作量將資料儲存在NFS儲存的前提上. 資料儲存的速度無法滿足公司不斷擴大的業務需求。 公司希望將當前資料庫遷移到AWS. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家社交媒體公司有收集和處理資料的工作量。 工作量將資料儲存在NFS儲存的地端. 資料儲存的速度無法滿足公司不斷擴大的業務需求。 公司希望將當前資料庫遷移到AWS. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 設立AWS Storage Gateway卷閘道器. 使用Amazon S3 生命週期政策(Lifecycle policy)將資料轉換到適當的儲存類.
@@ -22412,7 +22412,7 @@ B
 ## Question #818
 
 **題目**
-一家公司的應用程式執行於Amazon EC2的多個可用區(Availability Zones)例. 應用程式需要吸收第三方應用程式的實時資料. 公司需要資料攝入溶液,將攝入的原始資料放入Amazon S3 bucket中. 哪種解決辦法能滿足這些要求?
+一家公司的應用程式執行於Amazon EC2的多個可用區(Availability Zones)例. 應用程式需要吸收第三方應用程式的實時資料. 公司需要資料攝入解決方案,將攝入的原始資料放入Amazon S3 bucket中. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立 Amazon Kinesis 資料流用於資料攝入. 建立 Amazon Kinesis 資料 Firehose 傳送流以消耗 Kinesis 資料流. 指定 S3 bucket 為傳送流的目的地。
@@ -22763,7 +22763,7 @@ B
 ## Question #831
 
 **題目**
-公司需要在其前提環境與AWS之間安全連線. 這種連線不需要高頻寬,將處理少量流量. 連線應迅速建立. 建立這種聯絡的最符合成本效益的方法是什麼?
+公司需要在其地端環境與AWS之間安全連線. 這種連線不需要高頻寬,將處理少量流量. 連線應迅速建立. 建立這種聯絡的最符合成本效益的方法是什麼?
 
 **選項**
 - A. 執行客戶端 VPN.
@@ -22783,14 +22783,14 @@ D
 - 其餘選項比較：
 - A：執行客戶端 VPN。Client VPN 主要供個別使用者或用戶端建立 VPN 工作階段，並非企業資料中心到 VPC 的站點互連。管理多個用戶端憑證也不符合這種網路連線需求。
 - B：實施AWS Direct Connect。Direct Connect 需要電路佈建與交叉連接，建立時間較長，對少量流量的初始連線成本也較高。它適合穩定高頻寬或一致低延遲需求。
-- C：在Amazon EC2上安裝一個堡壘主機。堡壘主機是受控登入跳板，不會替整個前提網路建立到 VPC 的加密路由。它也需要自行管理 EC2 的修補、可用性與存取控制。
+- C：在Amazon EC2上安裝一個堡壘主機。堡壘主機是受控登入跳板，不會替整個地端網路建立到 VPC 的加密路由。它也需要自行管理 EC2 的修補、可用性與存取控制。
 
 **分類：** 網路連結和內容交付
 
 ## Question #832
 
 **題目**
-一家公司擁有一個基於前提的SFTP檔案傳輸解決方案. 公司正在向AWS雲遷移,透過使用Amazon S3來放大檔案傳輸解決方案並最佳化成本. 公司員工將使用他們對於promess Microsoft Active Directory(AD)的憑證存取新解決方案. 公司希望保留當前認證和檔案存取機制. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司擁有一個基於地端的SFTP檔案傳輸解決方案. 公司正在向AWS雲遷移,透過使用Amazon S3來放大檔案傳輸解決方案並最佳化成本. 公司員工將使用他們對於地端 Microsoft Active Directory(AD)的憑證存取新解決方案. 公司希望保留當前認證和檔案存取機制. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 配置 S3 檔案閘道器。 在檔案閘道器上建立使用現有活動目錄認證的 SMB 檔案共享。
@@ -22871,13 +22871,13 @@ C
 ## Question #835
 
 **題目**
-一家公司正在透過使用AWS Direct Connect的連線,將一個安全的前提網路擴充套件至AWS雲. 現場網路沒有直接的網際網路接入。 一個執行在premise網路上的應用程式需要使用Amazon S3 bucket. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司正在透過使用AWS Direct Connect的連線,將一個安全的地端網路擴充套件至AWS雲. 現場網路沒有直接的網際網路接入。 一個執行在地端網路上的應用程式需要使用Amazon S3 bucket. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 建立公共虛擬介面(VIF). 路由AWS交通透過公共VIF.
-- B. 建立 VPC 和 NAT 閘道器。 將AWS流量從premies網路到NAT閘道器.
-- C. 建立一個VPC和一個Amazon S3介面端點. 將AWS的流量從premies網路到S3介面端點.
-- D. 在premise網路和直接連線之間建立VPC對等連線. 把AWS的交通線路透過對等連線.
+- B. 建立 VPC 和 NAT 閘道器。 將AWS流量從地端網路到NAT閘道器.
+- C. 建立一個VPC和一個Amazon S3介面端點. 將AWS的流量從地端網路到S3介面端點.
+- D. 在地端網路和直接連線之間建立VPC對等連線. 把AWS的交通線路透過對等連線.
 
 **答案**
 C
@@ -22887,11 +22887,11 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立一個VPC和一個Amazon S3介面端點. 將AWS的流量從premies網路到S3介面端點。在 VPC 建立 S3 介面端點後，前提網路可經由 Direct Connect 的私有 VIF 進入 VPC，再透過端點私下存取 S3。這不需要公共網際網路或 NAT，並可用端點政策與安全群組限制可用的 S3 資源。
+- C：建立一個VPC和一個Amazon S3介面端點. 將AWS的流量從地端網路到S3介面端點。在 VPC 建立 S3 介面端點後，地端網路可經由 Direct Connect 的私有 VIF 進入 VPC，再透過端點私下存取 S3。這不需要公共網際網路或 NAT，並可用端點政策與安全群組限制可用的 S3 資源。
 - 其餘選項比較：
 - A：建立公共虛擬介面(VIF). 路由AWS交通透過公共VIF。公共 VIF 主要提供透過 Direct Connect 存取 AWS 公共服務的路徑，但本身不是針對 S3 的 VPC 端點控制。它可能讓流量走 AWS 公共服務路徑，且不如端點政策容易限制到指定儲存桶。
-- B：建立 VPC 和 NAT 閘道器。 將AWS流量從premies網路到NAT閘道器。NAT Gateway 讓 VPC 私有子網連出網際網路，無法直接被前提網路當作 S3 的私有服務入口。透過它還會產生額外處理費與不必要的網路跳轉。
-- D：在premise網路和直接連線之間建立VPC對等連線. 把AWS的交通線路透過對等連線。VPC peering 只連接 VPC 與 VPC，不能直接把前提網路的 Direct Connect 連線變成 S3 服務連線。此選項也沒有建立可供 S3 存取的端點或公共 VIF。
+- B：建立 VPC 和 NAT 閘道器。 將AWS流量從地端網路到NAT閘道器。NAT Gateway 讓 VPC 私有子網連出網際網路，無法直接被地端網路當作 S3 的私有服務入口。透過它還會產生額外處理費與不必要的網路跳轉。
+- D：在地端網路和直接連線之間建立VPC對等連線. 把AWS的交通線路透過對等連線。VPC peering 只連接 VPC 與 VPC，不能直接把地端網路的 Direct Connect 連線變成 S3 服務連線。此選項也沒有建立可供 S3 存取的端點或公共 VIF。
 
 **分類：** 網路連結和內容交付
 
@@ -23087,12 +23087,12 @@ D
 ## Question #843
 
 **題目**
-一家電子商務公司正在將其房地工作量轉移到AWS雲。 目前的工作量包括一個網路應用程式和一個用於儲存的後端Microsoft SQL 資料庫(database). 公司預計在促銷活動期間會有大批客戶. AWS雲中的新基礎設施必須非常可用和可擴充套件。 LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家電子商務公司正在將其地端工作量轉移到AWS雲。 目前的工作量包括一個網路應用程式和一個用於儲存的後端Microsoft SQL 資料庫(database). 公司預計在促銷活動期間會有大批客戶. AWS雲中的新基礎設施必須非常可用和可擴充套件。 LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 在應用程式負載平衡器(Application Load Balancer)後,將網路應用移動到兩個可用區(Availability Zones)的Amazon EC2例項. 為微軟SQL伺服器將資料庫(database)修改為Amazon RDS,同時在兩個可用區(Availability Zones)中都有讀取的複製品.
 - B. 將網路應用程式移動到一個Amazon EC2例項中,該例項以Auto Scaling 群組(Auto Scaling group)執行於應用程式負載平衡器(Application Load Balancer)後面的兩個可用區(Availability Zones). 用資料庫(database)複寫(replication)將資料庫(database)在不同的AWS地區遷移到兩個EC2級.
-- C. 將網路應用程式遷移到在應用程式負載平衡器(Application Load Balancer)後面兩個可用區(Availability Zones)執行的Amazon EC2 執行個體中. 透過多AZ部署將資料庫(database)型機車遷移到Amazon RDS型機車.
+- C. 將網路應用程式遷移到在應用程式負載平衡器(Application Load Balancer)後面兩個可用區(Availability Zones)執行的Amazon EC2 執行個體中. 透過多AZ部署將資料庫(database)執行個體遷移到Amazon RDS.
 - D. 在應用程式負載平衡器(Application Load Balancer)之後,將網路應用移動到三個可用區(Availability Zones)上的3個Amazon EC2例項. 在3個可用區(Availability Zones)中將資料庫(database)遷移到3個EC2.
 
 **答案**
@@ -23103,7 +23103,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：將網路應用程式遷移到在應用程式負載平衡器(Application Load Balancer)後面兩個可用區(Availability Zones)執行的Amazon EC2 執行個體中. 透過多AZ部署將資料庫(database)型機車遷移到Amazon RDS型機車。跨兩個可用區的 EC2 應用程式放在 ALB 後，可用 Auto Scaling 應對促銷期間流量。Amazon RDS Multi-AZ 會由 AWS 維護同步備援與故障切換，既提高資料庫可用性，也比自建 SQL Server 複寫少很多管理工作。
+- C：將網路應用程式遷移到在應用程式負載平衡器(Application Load Balancer)後面兩個可用區(Availability Zones)執行的Amazon EC2 執行個體中. 透過多AZ部署將資料庫(database)執行個體遷移到Amazon RDS。跨兩個可用區的 EC2 應用程式放在 ALB 後，可用 Auto Scaling 應對促銷期間流量。Amazon RDS Multi-AZ 會由 AWS 維護同步備援與故障切換，既提高資料庫可用性，也比自建 SQL Server 複寫少很多管理工作。
 - 其餘選項比較：
 - A：在應用程式負載平衡器(Application Load Balancer)後,將網路應用移動到兩個可用區(Availability Zones)的Amazon EC2例項. 為微軟SQL伺服器將資料庫(database)修改為Amazon RDS,同時在兩個可用區(Availability Zones)中都有讀取的複製品。RDS 讀取複本主要用於擴展讀取，並不等同於 SQL Server 的高可用 Multi-AZ 部署；將多個讀取複本分散在兩區也會增加設計與管理工作。
 - B：將網路應用程式移動到一個Amazon EC2例項中,該例項以Auto Scaling 群組(Auto Scaling group)執行於應用程式負載平衡器(Application Load Balancer)後面的兩個可用區(Availability Zones). 用資料庫(database)複寫(replication)將資料庫(database)在不同的AWS地區遷移到兩個EC2級。在 EC2 自建跨區域資料庫複寫需要自行管理 SQL Server、複寫、備份和故障切換，營運負擔高。選項也沒有正確使用受管的 Auto Scaling 應用層。
@@ -23114,7 +23114,7 @@ C
 ## Question #844
 
 **題目**
-一家公司擁有一個promession業務應用程式,每天生成數百個檔案. 這些檔案被儲存在SMB檔案共享上,需要低水平的延遲(latency)連線到應用程式伺服器. 新公司政策規定所有應用程式生成的檔案必須複製到AWS. 已有 VPN 連線到 AWS。 應用程式開發團隊沒有時間進行必要的程式碼修改,將應用程式移動到AWS. 一個解決方案架構師應該建議哪個服務允許應用程式將檔案複製到AWS?
+一家公司擁有一個地端業務應用程式,每天生成數百個檔案. 這些檔案被儲存在SMB檔案共享上,需要低水平的延遲(latency)連線到應用程式伺服器. 新公司政策規定所有應用程式生成的檔案必須複製到AWS. 已有 VPN 連線到 AWS。 應用程式開發團隊沒有時間進行必要的程式碼修改,將應用程式移動到AWS. 一個解決方案架構師應該建議哪個服務允許應用程式將檔案複製到AWS?
 
 **選項**
 - A. Amazon Elastic File System (Amazon EFS)
@@ -23132,7 +23132,7 @@ D
 正確答案是 **D**。
 - D：AWS Storage Gateway。AWS Storage Gateway 的 File Gateway 可在現場提供 SMB 檔案共享，並將檔案非同步寫入 S3，同時在本地快取常用資料。既有應用程式可繼續使用 SMB，透過現有 VPN 將檔案複製到 AWS，幾乎不需修改程式碼。
 - 其餘選項比較：
-- A：Amazon Elastic File System (Amazon EFS)。EFS 是 AWS 中的 NFS 檔案系統，不能直接取代現有前提環境的 SMB 共享，也不會自動把既有檔案複製到 AWS。應用程式還需要協定與連線方式的修改。
+- A：Amazon Elastic File System (Amazon EFS)。EFS 是 AWS 中的 NFS 檔案系統，不能直接取代現有地端環境的 SMB 共享，也不會自動把既有檔案複製到 AWS。應用程式還需要協定與連線方式的修改。
 - B：Windows 檔案伺服器的 Amazon FSx。FSx for Windows File Server 提供 SMB 相容檔案共享，但部署後仍需變更應用程式或檔案複製流程。它也不會像 Storage Gateway 一樣提供與現場共享的快取同步。
 - C：AWS Snowball。Snowball 適合一次性或大批量離線資料遷移，不適合每天持續產生數百個檔案的同步需求。它也不能提供應用程式需要的低延遲檔案路徑。
 
@@ -23576,7 +23576,7 @@ C
 ## Question #861
 
 **題目**
-一家公司希望將它的promise MySQL 資料庫(database)遷移到AWS. 資料庫(database)接受客戶端應用程式的定期進口,這造成了大量寫作業務. 公司擔心流量可能在申請中引起效能問題. 一個解決方案架構師應該如何在AWS上設計建築?
+一家公司希望將它的地端 MySQL 資料庫(database)遷移到AWS. 資料庫(database)接受客戶端應用程式的定期進口,這造成了大量寫作業務. 公司擔心流量可能在申請中引起效能問題. 一個解決方案架構師應該如何在AWS上設計建築?
 
 **選項**
 - A. 為 MySQL DB 例項提供 Amazon RDS , 並配置 IOPS SSD 儲存。 透過使用Amazon CloudWatch來監視寫入操作度量. 必要時調整所提供的綜合業務政策。
@@ -24515,7 +24515,7 @@ A
 ## Question #895
 
 **題目**
-一家公司正在對該公司在AWS上託管的媒體應用程式實施共享儲存解決方案. 公司需要具備使用SMB客戶端存取儲存資料的能力. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家公司正在對該公司在AWS上託管的媒體應用程式實施共享儲存解決方案. 公司需要具備使用SMB客戶端存取儲存資料的能力. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 建立 AWS Storage Gateway 卷式閘道器. 建立使用所需客戶協議的檔案共享。 連線應用程式伺服器到檔案共享。
@@ -24623,7 +24623,7 @@ C
 ## Question #899
 
 **題目**
-一家公司正在向AWS雲中的VPC遷移5個前提應用. 每個應用程式目前部署在房地的孤立虛擬網路中,應同樣部署在AWS雲中。 應用需要達到共享服務 VPC. 所有申請必須能夠相互溝通. 如果遷移成功,公司將重複遷移過程,申請超過100項. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家公司正在向AWS雲中的VPC遷移5個地端應用. 每個應用程式目前部署在地端的孤立虛擬網路中,應同樣部署在AWS雲中。 應用需要達到共享服務 VPC. 所有申請必須能夠相互溝通. 如果遷移成功,公司將重複遷移過程,申請超過100項. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 在應用VPC和共享服務VPC之間部署軟體VPN隧道. 在其子網中的應用VPC之間新增路由到共享服務VPC.
@@ -24650,14 +24650,14 @@ D
 ## Question #900
 
 **題目**
-一家公司希望使用Amazon ECS公司(Amazon ECS)在混合環境中執行其立體應用. 該應用程式目前執行在房地的集裝箱上。 公司需要一種單一的容器溶液,可以在一個上層,混合,或雲層環境中進行規模化. 公司必須在AWS雲執行新的應用容器,必須使用負載平衡器(load balancer)進行HTTP流量. 哪些行動組合將滿足這些要求?(選二.
+一家公司希望使用 Amazon Elastic Container Service (Amazon ECS) 在混合環境中執行其容器化應用程式。該應用程式目前執行在地端 (地端) 的容器上。公司需要一套統一的容器解決方案，能夠橫跨地端、混合、以及雲端環境進行擴展。公司必須在 AWS 雲端執行新的應用程式容器，且必須使用負載平衡器 (load balancer) 處理 HTTP 流量。哪些行動組合可以滿足這些需求？(選擇兩項)
 
 **選項**
-- A. 建立使用AWS Fargate發射型別的雲應用容器的ECS叢集. 使用 Amazon ECS 任何外部發射型別, 用於預設應用容器。
-- B. 為雲端ECS服務設定應用程式負載平衡器(Application Load Balancer).
-- C. 為雲端ECS服務設定網路負載平衡器(Network Load Balancer).
-- D. 建立使用AWSFargate 啟動類型別的ECS叢集. 使用Fargate進行雲應用容器和前提應用容器.
-- E. 建立使用Amazon EC2發射型別的雲應用容器ECS叢集. 使用 Amazon ECS AWS Fargate 啟動類型的任何地方,用於裝設應用容器.
+- A. 建立一個使用 AWS Fargate 啟動類型的 ECS 叢集，用於雲端的應用程式容器；同一個 ECS 叢集再搭配 Amazon ECS 的 EXTERNAL 啟動類型，用於既有的地端應用程式容器。
+- B. 為雲端的 ECS 服務設定 Application Load Balancer（應用程式負載平衡器）。
+- C. 為雲端的 ECS 服務設定 Network Load Balancer（網路負載平衡器）。
+- D. 建立一個使用 AWS Fargate 啟動類型的 ECS 叢集，同時用 Fargate 執行雲端應用程式容器與地端 (地端) 應用程式容器。
+- E. 建立一個使用 Amazon EC2 啟動類型的 ECS 叢集，用於雲端的應用程式容器；並宣稱可在任何地端環境使用 AWS Fargate 啟動類型來裝載應用程式容器。
 
 **答案**
 A,B
@@ -24668,19 +24668,19 @@ A,B
 
 **詳解**
 正確答案是 **A, B**。
-- A：建立使用AWS Fargate發射型別的雲應用容器的ECS叢集. 使用 Amazon ECS 任何外部發射型別, 用於預設應用容器。ECS Fargate launch type 可在 AWS 雲端執行容器而不管理 EC2 主機，ECS Anywhere external instance 可將相同 ECS 控制平面延伸到現場環境。這提供單一容器管理方式，並符合雲端與既有環境都要運行 ECS 的需求。
-- B：為雲端ECS服務設定應用程式負載平衡器(Application Load Balancer)。Application Load Balancer 支援 HTTP/HTTPS 的第 7 層流量與 ECS 服務整合，能依 target group 將雲端容器請求導向正確任務。使用 ALB 也可提供健康檢查與動態服務註冊。
+- A：建立一個使用 AWS Fargate 啟動類型的 ECS 叢集來執行雲端的應用程式容器，同一叢集再搭配 Amazon ECS 的 EXTERNAL 啟動類型（即 ECS Anywhere）執行既有的地端應用程式容器。Fargate 讓公司在 AWS 雲端執行容器而不需管理底層 EC2 主機；ECS Anywhere 的 EXTERNAL 啟動類型則能把同一套 ECS 控制平面延伸到地端伺服器。兩者搭配在同一個 ECS 叢集下，就能用單一容器管理方式同時涵蓋雲端與地端，符合題目對混合環境統一管理的要求。
+- B：為雲端的 ECS 服務設定 Application Load Balancer。ALB 是第 7 層負載平衡器，原生支援 HTTP/HTTPS 流量，並能與 ECS 服務整合，依 target group 將請求導向正確的任務 (task)，同時提供健康檢查與動態服務註冊，符合題目「使用負載平衡器處理 HTTP 流量」的要求。
 - 其餘選項比較：
-- C：為雲端ECS服務設定網路負載平衡器(Network Load Balancer)。Network Load Balancer 主要適合 TCP、UDP 或需要固定 IP 的傳輸層流量；題目指定 HTTP 流量，應使用 ALB 的應用層功能。
-- D：建立使用AWSFargate 啟動類型別的ECS叢集. 使用Fargate進行雲應用容器和前提應用容器。Fargate 可用於 AWS 雲端，但不能作為現場既有主機的 ECS Anywhere 執行方式；現場容器需要外部執行個體模式。
-- E：建立使用Amazon EC2發射型別的雲應用容器ECS叢集. 使用 Amazon ECS AWS Fargate 啟動類型的任何地方,用於裝設應用容器。題目要求雲端使用可擴展的容器方案，而 EC2 launch type 仍需自行管理主機；將 Fargate 描述為現場啟動類型也不符合 ECS Anywhere 的部署模型。
+- C：為雲端的 ECS 服務設定 Network Load Balancer。NLB 是第 4 層負載平衡器，主要用於 TCP/UDP 或需要固定 IP 的流量情境；題目明確要求處理 HTTP 流量，應使用 ALB 的應用層功能，而不是 NLB。
+- D：建立一個使用 AWS Fargate 啟動類型的 ECS 叢集，同時用 Fargate 執行雲端與地端的應用程式容器。Fargate 是完全代管的雲端運算引擎，無法部署到地端伺服器上執行容器；地端容器必須透過 ECS Anywhere 的 EXTERNAL 啟動類型註冊，而不是 Fargate。
+- E：建立一個使用 Amazon EC2 啟動類型的 ECS 叢集來執行雲端的應用程式容器，並宣稱可在任何地端環境使用 AWS Fargate 啟動類型裝載應用程式容器。EC2 啟動類型仍須自行管理、修補與擴展底層主機，未能降低維運負擔；同時 Fargate 本身就無法用於地端環境，這個說法與 ECS Anywhere 的實際部署模型不符。
 
 **分類：** 容器
 
 ## Question #901
 
 **題目**
-一家公司正在將其工作量轉移到AWS。 該公司在SQL Server例項上執行的關於前提關聯式資料庫中有敏感和關鍵的資料. 公司希望使用AWS雲來增加安全性,減少資料庫的營運開銷(operational overhead). 哪種解決辦法能滿足這些要求?
+一家公司正在將其工作量轉移到AWS。 該公司在SQL Server例項上執行的關於地端關聯式資料庫中有敏感和關鍵的資料. 公司希望使用AWS雲來增加安全性,減少資料庫的營運開銷(operational overhead). 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 將資料庫遷移到 Amazon EC2 例項。 為加密(encryption)使用 AWS Key Management Service(AWS KMS) AWS管理金鑰.
@@ -24788,7 +24788,7 @@ A
 ## Question #905
 
 **題目**
-一家公司希望改進其混合應用的可用性和效能. 申請包括不同AWS地區基於Amazon EC2 執行個體的基於TCP的可靠工作量,以及基於房地的基於UDP的無狀態工作量。 設計師應該採取何種綜合行動來改進可用性和效能?(選二.
+一家公司希望改進其混合應用的可用性和效能. 申請包括不同AWS地區基於Amazon EC2 執行個體的基於TCP的可靠工作量,以及基於地端的基於UDP的無狀態工作量。 設計師應該採取何種綜合行動來改進可用性和效能?(選二.
 
 **選項**
 - A. 使用 AWS 全球加速器建立加速器。 新增負載平衡器作為終點.
@@ -25116,7 +25116,7 @@ D
 ## Question #918
 
 **題目**
-一家公司正在使用AWS DataSync將數百萬個檔案從一個premies系統遷移到AWS. 檔案平均大小為10 KB. 公司希望使用Amazon S3進行檔案儲存. 遷移後的第一年,將一兩次查閱這些檔案,必須立即提供。 1年後,檔案必須至少存檔7年. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
+一家公司正在使用AWS DataSync將數百萬個檔案從一個地端系統遷移到AWS. 檔案平均大小為10 KB. 公司希望使用Amazon S3進行檔案儲存. 遷移後的第一年,將一兩次查閱這些檔案,必須立即提供。 1年後,檔案必須至少存檔7年. 哪種解決辦法能夠以成本效益高的方式滿足這些要求?
 
 **選項**
 - A. 使用歸檔工具將檔案分組為大物件。 使用資料同步來遷移物件。 將物件儲存在 S3 Glacier Instant Retrieval 中第一年。 使用生命週期配置在1年後將檔案轉換為S3 Glacier Deep Archive,保留期為7年.
@@ -25269,7 +25269,7 @@ B,E
 ## Question #924
 
 **題目**
-一家公司在AWS雲執行其所有的業務應用. 公司使用AWS Organizations管理多個AWS帳戶. 一個解決方案架構師需要審查給予IAM使用者的所有許可權,以確定哪些IAM使用者擁有比要求更多的許可權. LEAST的行政間接費用將滿足這些要求的哪一種解決辦法?
+一家公司在AWS雲執行其所有的業務應用. 公司使用AWS Organizations管理多個AWS帳戶. 一個解決方案架構師需要審查給予IAM使用者的所有許可權,以確定哪些IAM使用者擁有比要求更多的許可權. LEAST的營運開銷將滿足這些要求的哪一種解決辦法?
 
 **選項**
 - A. 使用網路存取分析器來審查公司AWS帳戶中的所有存取許可權.
@@ -25350,7 +25350,7 @@ C
 - A. 啟用 AWS Config。 配置一個檢測 DDoS 攻擊的 AWS Config 管理規則。
 - B. 在ALCreate上啟用 AWS WAF 的 AWS WAF 網路ACL,其規則用於檢測和防止 DDoS 攻擊. 將ACL網路與ALB聯絡.
 - C. 在Amazon S3 bucket中儲存ALB存取日誌. 配置 Amazon GuardDuty 來檢測和採取針對 DDoS 攻擊的自動預防行動.
-- D. 訂閱至AWS Shield高階. 配置53路的託管區域. 新增 ALB 資源作為保護資源.
+- D. 訂閱至AWS Shield高階. 配置Route 53的託管區域. 新增 ALB 資源作為保護資源.
 
 **答案**
 D
@@ -25358,7 +25358,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：訂閱至AWS Shield高階. 配置53路的託管區域. 新增 ALB 資源作為保護資源。AWS Shield Advanced 提供更進階的 DDoS 偵測、可見性和回應支援，並可將 ALB 與 Route 53 等資源加入保護。符合資格的設定還能使用 Shield Response Team 的主動參與能力來處理攻擊。
+- D：訂閱至AWS Shield高階. 配置Route 53的託管區域. 新增 ALB 資源作為保護資源。AWS Shield Advanced 提供更進階的 DDoS 偵測、可見性和回應支援，並可將 ALB 與 Route 53 等資源加入保護。符合資格的設定還能使用 Shield Response Team 的主動參與能力來處理攻擊。
 - 其餘選項比較：
 - A：啟用 AWS Config。 配置一個檢測 DDoS 攻擊的 AWS Config 管理規則。AWS Config 管理規則檢查資源設定合規性，不是即時偵測並主動處理 DDoS 攻擊的防護服務。
 - B：在ALCreate上啟用 AWS WAF 的 AWS WAF 網路ACL,其規則用於檢測和防止 DDoS 攻擊. 將ACL網路與ALB聯絡。WAF 可針對 HTTP 請求執行第七層規則，但題目要求主動參與的受管理 DDoS 偵測與回應；僅配置 WAF 不包含 Shield Advanced 的專家支援。
@@ -25527,7 +25527,7 @@ A
 ## Question #934
 
 **題目**
-一家公司擁有多個Microsoft Windows SMB檔案伺服器和Linux NFS檔案伺服器,用於在promise環境下進行檔案共享. 作為公司AWS遷移計劃的一部分,公司希望整合AWS雲中的檔案伺服器. 公司需要管理好的AWS儲存服務,支援NFS和SMB的存取. 解決辦法必須能夠在協議之間共享。 該解決方案必須具有可用區(Availability Zone)級冗餘. 哪種解決辦法能滿足這些要求?
+一家公司擁有多個Microsoft Windows SMB檔案伺服器和Linux NFS檔案伺服器,用於在地端環境下進行檔案共享. 作為公司AWS遷移計劃的一部分,公司希望整合AWS雲中的檔案伺服器. 公司需要管理好的AWS儲存服務,支援NFS和SMB的存取. 解決辦法必須能夠在協議之間共享。 該解決方案必須具有可用區(Availability Zone)級冗餘. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用Amazon FSx用於NetApp ONTAP儲存. 配置多程式存取。
@@ -25555,7 +25555,7 @@ A
 一個軟體公司需要升級一個關鍵的網路應用程式. 該應用程式目前執行在公司在公共子網中託管的Amazon EC2單一例項上. EC2例項執行一個 MySQL 資料庫(database). 該應用程式的DNS記錄釋出在Amazon Route 53區. 一個解決方案架構設計師必須重新配置應用程式,使其具有可擴充套件性和高度可用性。 解決方案架構師還必須將 MySQL 改為 延遲(latency). 哪些解決方案組合將滿足這些要求?(選二.
 
 **選項**
-- A. 在第二個AWS 區域(Region)中啟動第二個EC2例項. 使用一條53路的故障路由政策,將交通轉向第二EC2 執行個體.
+- A. 在第二個AWS 區域(Region)中啟動第二個EC2例項. 使用一條Route 53的故障路由政策,將交通轉向第二EC2 執行個體.
 - B. 建立和配置一個Auto Scaling 群組(Auto Scaling group),在多個可用區(Availability Zones)中啟動私人EC2例項. 將例項新增到一個新的應用程式負載平衡器(Application Load Balancer)背後的目標群體中。
 - C. 將資料庫(database)遷移到一個Amazon Aurora MySQL叢集. 在單獨的 可用區(Availability Zones) 中建立初級 DB 例項和閱讀器 DB 例項。
 - D. 建立和配置一個 Auto Scaling 群組(Auto Scaling group) ,以便在多個 AWS 區域啟動私人 EC2 例項。 將例項新增到一個新的應用程式負載平衡器(Application Load Balancer)背後的目標群體中。
@@ -25573,7 +25573,7 @@ D,E
 - D：建立和配置一個 Auto Scaling 群組(Auto Scaling group) ,以便在多個 AWS 區域啟動私人 EC2 例項。 將例項新增到一個新的應用程式負載平衡器(Application Load Balancer)背後的目標群體中。在多個 AWS 區域部署 Auto Scaling 執行個體並分別由負載平衡器服務，可讓應用程式跨區域擴展與容錯。實際部署需在各區域使用各自的 ALB，再由全球 DNS 或流量管理導向健康區域。
 - E：將資料庫(database)遷移到一個帶有跨區域(Region)的Amazon Aurora MySQL叢集讀取複製品。Aurora Global Database 以主要區域複寫到其他區域的 Aurora 叢集，能提供低延遲的跨區域資料複本和較快的災難切換。它也比自行建立資料庫複寫更少需要管理同步與故障處理。
 - 其餘選項比較：
-- A：在第二個AWS 區域(Region)中啟動第二個EC2例項. 使用一條53路的故障路由政策,將交通轉向第二EC2 執行個體。跨區域故障路由可提供備援，但兩台獨立 EC2 的應用程式與資料庫仍需自行同步，且不能同時提供區域內的橫向擴展。
+- A：在第二個AWS 區域(Region)中啟動第二個EC2例項. 使用一條Route 53的故障路由政策,將交通轉向第二EC2 執行個體。跨區域故障路由可提供備援，但兩台獨立 EC2 的應用程式與資料庫仍需自行同步，且不能同時提供區域內的橫向擴展。
 - B：建立和配置一個Auto Scaling 群組(Auto Scaling group),在多個可用區(Availability Zones)中啟動私人EC2例項. 將例項新增到一個新的應用程式負載平衡器(Application Load Balancer)背後的目標群體中。多可用區 Auto Scaling 和 ALB 可提升單一區域的可用性，但無法在整個 AWS 區域故障時提供跨區域復原；RDS Multi-AZ 也不是跨區域資料庫。
 - C：將資料庫(database)遷移到一個Amazon Aurora MySQL叢集. 在單獨的 可用區(Availability Zones) 中建立初級 DB 例項和閱讀器 DB 例項。Aurora 同區域的讀取器可改善讀取效能和可用性，但不能在完整區域故障時提供災難復原，也未完成應用程式的跨區域擴展。
 
@@ -25865,7 +25865,7 @@ A
 ## Question #947
 
 **題目**
-一個公司在其promess資料中心的伺服器上執行一個節點js功能. 資料中心將資料儲存在PostgreSQL 資料庫(database)中. 公司在伺服器上的環境變數中儲存連線字串中的憑證. 公司希望將其應用程式遷移到AWS,並以AWS Lambda取代Node.js應用程式伺服器. 公司還希望為PostgreSQL遷移到Amazon RDS,並確保資料庫(database)憑證的安全管理. 哪個解決方案能以最少的營運開銷達成這些要求？
+一個公司在其地端資料中心的伺服器上執行一個節點js功能. 資料中心將資料儲存在PostgreSQL 資料庫(database)中. 公司在伺服器上的環境變數中儲存連線字串中的憑證. 公司希望將其應用程式遷移到AWS,並以AWS Lambda取代Node.js應用程式伺服器. 公司還希望為PostgreSQL遷移到Amazon RDS,並確保資料庫(database)憑證的安全管理. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 將資料庫(database)憑證作為引數儲存在AWS Systems Manager引數儲存器配置引數儲存器中,每隔30天自動輪換這些秘密. 更新 Lambda 函式以從引數中獲取憑證。
@@ -26326,7 +26326,7 @@ D
 ## Question #965
 
 **題目**
-一家公司正在將一個應用程式從前提環境轉移到AWS。 該應用程式將在Amazon S3中儲存敏感資料. 公司必須在Amazon S3中儲存資料之前加密資料. 哪種解決辦法能滿足這些要求?
+一家公司正在將一個應用程式從地端環境轉移到AWS。 該應用程式將在Amazon S3中儲存敏感資料. 公司必須在Amazon S3中儲存資料之前加密資料. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用客戶端的加密(encryption)用客戶端管理的金鑰加密資料.
@@ -26405,7 +26405,7 @@ A
 ## Question #968
 
 **題目**
-一家金融公司使用premises搜尋應用程式從各生產商收集流資料. 該應用程式為搜尋和視覺化功能提供實時更新. 公司計劃向AWS遷移,希望使用AWS本地解決方案. 哪種解決辦法能滿足這些要求?
+一家金融公司使用地端搜尋應用程式從各生產商收集流資料. 該應用程式為搜尋和視覺化功能提供實時更新. 公司計劃向AWS遷移,希望使用AWS本地解決方案. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 使用 Amazon EC2 例項來攝取和處理資料流到 Amazon S3 bucket的托爾儲存。 使用Amazon Athena搜尋資料. 使用Amazon Managed Grafana來建立視覺化.
@@ -26430,7 +26430,7 @@ D
 ## Question #969
 
 **題目**
-一家公司目前執行一個在Linux機器上使用ASP.NET的promess應用程式. 該應用程式需要大量資源,直接為客戶服務。 公司希望將應用程式現代化到.NET. 公司希望在集裝箱上執行該應用程式,並根據Amazon CloudWatch 度量衡進行規模化. 公司還希望縮短用於運營維護活動的時間. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司目前執行一個在Linux機器上使用ASP.NET的地端應用程式. 該應用程式需要大量資源,直接為客戶服務。 公司希望將應用程式現代化到.NET. 公司希望在集裝箱上執行該應用程式,並根據Amazon CloudWatch 度量衡進行規模化. 公司還希望縮短用於運營維護活動的時間. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 使用 AWS App2 容器來容器化應用程式. 使用AWS CloudFormation模板在AWS Fargate上向Amazon Elastic Container Service (Amazon ECS)部署應用程式.
@@ -26505,7 +26505,7 @@ D
 ## Question #972
 
 **題目**
-一家公司目前透過使用Microsoft Windows Server來執行一個基於前提的股票交易應用程式. 公司希望將應用程式遷移到AWS雲. 公司需要設計一個高度可用的解決方案,為跨多個可用區(Availability Zones)的區塊儲存提供低延遲(latency)存取. 哪些解決辦法將滿足這些要求?
+一家公司目前透過使用Microsoft Windows Server來執行一個基於地端的股票交易應用程式. 公司希望將應用程式遷移到AWS雲. 公司需要設計一個高度可用的解決方案,為跨多個可用區(Availability Zones)的區塊儲存提供低延遲(latency)存取. 哪些解決辦法將滿足這些要求?
 
 **選項**
 - A. 在 Amazon EC2 例項上配置一個跨兩個 可用區(Availability Zones) 的 Windows 伺服器叢集。 在兩個叢集節點上安裝應用程式。 在Windows檔案伺服器中使用Amazon FSx作為兩個叢集節點之間的共享儲存.
@@ -26765,7 +26765,7 @@ B
 ## Question #982
 
 **題目**
-一個公司有一個Amazon S3 bucket,裡面裝有敏感的資料檔案. 公司擁有一個在虛擬機器上執行的應用程式,位於一個premess資料中心. 該公司目前使用AWS IAM身份中心. 該應用程式需要臨時存取S3 bucket中的檔案. 公司希望讓應用程式安全地存取S3 bucket中的檔案. 哪種解決辦法能滿足這些要求?
+一個公司有一個Amazon S3 bucket,裡面裝有敏感的資料檔案. 公司擁有一個在虛擬機器上執行的應用程式,位於一個地端資料中心. 該公司目前使用AWS IAM身份中心. 該應用程式需要臨時存取S3 bucket中的檔案. 公司希望讓應用程式安全地存取S3 bucket中的檔案. 哪種解決辦法能滿足這些要求?
 
 **選項**
 - A. 建立一個 S3 bucket政策(bucket policy), 允許從公司在虛擬資料中心的公共IP地址範圍存取桶。
@@ -26790,13 +26790,13 @@ B
 ## Question #983
 
 **題目**
-一家公司將它的核心網路服務,包括目錄服務和DNS,託管在它的前提資料中心. 資料中心使用AWS Direct Connect(DX)與AWS雲連線. 計劃增加AWS帳戶,需要快速、具有成本效益和連貫一致地獲得這些網路服務。 解決方案設計師應採用何種方法滿足這些要求,其中的LEAST金額為營運開銷(operational overhead)?
+一家公司將它的核心網路服務,包括目錄服務和DNS,託管在它的地端資料中心. 資料中心使用AWS Direct Connect(DX)與AWS雲連線. 計劃增加AWS帳戶,需要快速、具有成本效益和連貫一致地獲得這些網路服務。 解決方案設計師應採用何種方法滿足這些要求,其中的LEAST金額為營運開銷(operational overhead)?
 
 **選項**
 - A. 在每個新帳戶中建立 DX 連線。 將網路流量排到現場伺服器
 - B. 在DX VPC中配置所有所需服務的VPC端點. 將網路流量排到現場伺服器
 - C. 在每個新帳戶和DX VPRoute之間建立一個 VPN 連線,網路流量可以連線到預設伺服器。
-- D. 配置帳戶之間的 AWS 過渡閘道器。 將DX指定為過境閘道器,將路由網路流量指定為前提伺服器.
+- D. 配置帳戶之間的 AWS 過渡閘道器。 將DX指定為過境閘道器,將路由網路流量指定為地端伺服器.
 
 **答案**
 D
@@ -26804,7 +26804,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：配置帳戶之間的 AWS 過渡閘道器。 將DX指定為過境閘道器,將路由網路流量指定為前提伺服器。AWS Transit Gateway 可作為多 VPC、多帳戶的集中路由樞紐，並以 Transit Gateway attachment 連接新帳戶。把 Direct Connect 指向 Transit Gateway 後，所有帳戶可沿同一條受管 DX 路徑存取現場目錄與 DNS，減少重複連線與路由維護。
+- D：配置帳戶之間的 AWS 過渡閘道器。 將DX指定為過境閘道器,將路由網路流量指定為地端伺服器。AWS Transit Gateway 可作為多 VPC、多帳戶的集中路由樞紐，並以 Transit Gateway attachment 連接新帳戶。把 Direct Connect 指向 Transit Gateway 後，所有帳戶可沿同一條受管 DX 路徑存取現場目錄與 DNS，減少重複連線與路由維護。
 - 其餘選項比較：
 - A：在每個新帳戶中建立 DX 連線。 將網路流量排到現場伺服器。每個新帳戶各建立 Direct Connect 連線，需要新的專線、設備與維運流程，無法以一致且具成本效益的方式擴展。
 - B：在DX VPC中配置所有所需服務的VPC端點. 將網路流量排到現場伺服器。VPC Endpoint 只能連到支援的 AWS 服務，不能把帳戶間的新 VPC 流量集中轉送到現場的 DNS 或目錄伺服器。
@@ -26971,7 +26971,7 @@ C
 ## Question #990
 
 **題目**
-一家公司正計劃將遺留的應用程式遷移到AWS. 該應用程式目前使用NFS通訊到一個premess儲存解決方案,以儲存應用程式資料. 應用程式不能被修改為為此目的使用NFS以外的任何其他通訊協議. 遷移後應該建議使用哪種儲存解決方案?
+一家公司正計劃將遺留的應用程式遷移到AWS. 該應用程式目前使用NFS通訊到一個地端儲存解決方案,以儲存應用程式資料. 應用程式不能被修改為為此目的使用NFS以外的任何其他通訊協議. 遷移後應該建議使用哪種儲存解決方案?
 
 **選項**
 - A. AWS 資料同步
@@ -27021,7 +27021,7 @@ C
 ## Question #992
 
 **題目**
-一個公司的軟體開發團隊需要一個Amazon RDS多AZ叢集. RDS叢集將作為部署在房地的桌面客戶端的後端。 桌面客戶端需要直接連線到RDS叢集. 公司必須賦予開發團隊與叢集連線的能力,在團隊在辦公室時使用客戶端. 哪種解決方案能夠安全地提供所需的連線?
+一個公司的軟體開發團隊需要一個Amazon RDS多AZ叢集. RDS叢集將作為部署在地端的桌面客戶端的後端。 桌面客戶端需要直接連線到RDS叢集. 公司必須賦予開發團隊與叢集連線的能力,在團隊在辦公室時使用客戶端. 哪種解決方案能夠安全地提供所需的連線?
 
 **選項**
 - A. 建立VPC和兩個公共子網. 在公共子網建立 RDS 叢集。 使用AWS站點對站點VPN,在公司辦公室設有客戶閘道器.
@@ -27121,7 +27121,7 @@ B
 ## Question #996
 
 **題目**
-一家公司在一個Kubernetes叢集上執行一個基於前提的應用程式. 公司最近增加了數百萬新客戶. 該公司現有的房地基礎設施無法應付大量新客戶。 公司需要將前置應用程式遷移到AWS雲. 公司將遷移到Amazon Elastic Kubernetes Service Service(Amazon EKS)叢集. 公司不想管理AWS上新架構的基本計算基礎設施. 哪個解決方案能以最少的營運開銷達成這些要求？
+一家公司在一個Kubernetes叢集上執行一個基於地端的應用程式. 公司最近增加了數百萬新客戶. 該公司現有的地端基礎設施無法應付大量新客戶。 公司需要將前置應用程式遷移到AWS雲. 公司將遷移到Amazon Elastic Kubernetes Service Service(Amazon EKS)叢集. 公司不想管理AWS上新架構的基本計算基礎設施. 哪個解決方案能以最少的營運開銷達成這些要求？
 
 **選項**
 - A. 使用自控節點提供計算容量. 向新的 EKS 叢集部署應用程式。
@@ -27221,13 +27221,13 @@ B
 ## Question #1000
 
 **題目**
-一家公司目前將5 TB的資料儲存在地殼區塊儲存系統中. 該公司目前的儲存解決方案為額外資料提供了有限的空間. 該公司在必須能夠以低水平的延遲(latency)檢索經常存取資料的房地執行應用程式。 公司需要基於雲的儲存解決方案. 哪種辦法能滿足這些要求?
+一家公司目前將5 TB的資料儲存在地端區塊儲存系統中. 該公司目前的儲存解決方案為額外資料提供了有限的空間. 該公司在必須能夠以低水平的延遲(latency)檢索經常存取資料的地端執行應用程式。 公司需要基於雲的儲存解決方案. 哪種辦法能滿足這些要求?
 
 **選項**
-- A. 使用 Amazon S3 檔案閘道器. 將 S3 檔案閘道器與promise 應用程式整合,透過使用 SMB 檔案系統儲存和直接檢索檔案.
+- A. 使用 Amazon S3 檔案閘道器. 將 S3 檔案閘道器與地端應用程式整合,透過使用 SMB 檔案系統儲存和直接檢索檔案.
 - B. 使用帶有快取卷的 AWS Storage Gateway 卷閘道器作為 ISSCSI 目標.
 - C. 使用AWS Storage Gateway卷閘道器,以儲存的卷作為iSCSI目標.
-- D. 使用AWS Storage Gateway磁帶閘道器. 將磁帶閘道器與虛擬磁帶儲存在Amazon S3的promess應用程式整合.
+- D. 使用AWS Storage Gateway磁帶閘道器. 將磁帶閘道器與虛擬磁帶儲存在Amazon S3的地端應用程式整合.
 
 **答案**
 B
@@ -27237,9 +27237,9 @@ B
 正確答案是 **B**。
 - B：使用帶有快取卷的 AWS Storage Gateway 卷閘道器作為 ISSCSI 目標。Volume Gateway 的 cached volume 以 iSCSI 目標提供區塊介面，常用資料保留在現場快取，因此可維持低延遲讀取；完整資料則持久存放在 AWS。它能擴展雲端容量，同時讓既有應用程式繼續使用區塊協定。
 - 其餘選項比較：
-- A：使用 Amazon S3 檔案閘道器. 將 S3 檔案閘道器與promise 應用程式整合,透過使用 SMB 檔案系統儲存和直接檢索檔案。S3 File Gateway 對現場應用程式呈現 SMB 或 NFS 檔案介面，主要把資料存為 S3 物件；它不是以 iSCSI 區塊裝置取代既有區塊儲存。
+- A：使用 Amazon S3 檔案閘道器. 將 S3 檔案閘道器與地端應用程式整合,透過使用 SMB 檔案系統儲存和直接檢索檔案。S3 File Gateway 對現場應用程式呈現 SMB 或 NFS 檔案介面，主要把資料存為 S3 物件；它不是以 iSCSI 區塊裝置取代既有區塊儲存。
 - C：使用AWS Storage Gateway卷閘道器,以儲存的卷作為iSCSI目標。Stored volume 以現場儲存作為主要資料來源，雲端只保存快照，不能解決現有空間有限且需要雲端擴展的核心問題。
-- D：使用AWS Storage Gateway磁帶閘道器. 將磁帶閘道器與虛擬磁帶儲存在Amazon S3的promess應用程式整合。Tape Gateway 提供虛擬磁帶給備份軟體，不是低延遲的隨機區塊儲存。它不適合承載需要直接存取檔案的現場應用程式。
+- D：使用AWS Storage Gateway磁帶閘道器. 將磁帶閘道器與虛擬磁帶儲存在Amazon S3的地端應用程式整合。Tape Gateway 提供虛擬磁帶給備份軟體，不是低延遲的隨機區塊儲存。它不適合承載需要直接存取檔案的現場應用程式。
 
 **分類：** 儲存
 
@@ -27296,12 +27296,12 @@ D
 ## Question #1003
 
 **題目**
-一家公司經營其媒體在房地上提交申請。 公司希望降低儲存成本,並將所有資料移至Amazon S3. 內建渲染應用程式需要低度延遲(latency)存取儲存. 公司需要為應用程式設計儲存解決方案. 儲存解決方案必須保持預期的應用效能. 哪種儲存解決方案能夠以成本效益高的成本效益方式滿足這些要求?
+一家公司經營其媒體在地端上提交申請。 公司希望降低儲存成本,並將所有資料移至Amazon S3. 內建渲染應用程式需要低度延遲(latency)存取儲存. 公司需要為應用程式設計儲存解決方案. 儲存解決方案必須保持預期的應用效能. 哪種儲存解決方案能夠以成本效益高的成本效益方式滿足這些要求?
 
 **選項**
 - A. 在Amazon S3上使用掛載點來存取Amazon S3中的資料,用於provises應用.
-- B. 配置一個 Amazon S3 檔案閘道器,為premes 應用程式提供儲存.
-- C. 將Amazon S3的資料複製到Windows檔案伺服器的Amazon FSx. 配置一個 Amazon FSx 檔案閘道器,為premes 應用程式提供儲存.
+- B. 配置一個 Amazon S3 檔案閘道器,為地端 應用程式提供儲存.
+- C. 將Amazon S3的資料複製到Windows檔案伺服器的Amazon FSx. 配置一個 Amazon FSx 檔案閘道器,為地端 應用程式提供儲存.
 - D. 配置預設檔案伺服器。 使用Amazon S3 API連線到S3儲存器. 配置從預設檔案伺服器存取儲存的應用程式。
 
 **答案**
@@ -27310,10 +27310,10 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：配置一個 Amazon S3 檔案閘道器,為premes 應用程式提供儲存。S3 File Gateway 會以 NFS 或 SMB 對現場應用程式呈現檔案介面，並把資料保存到 S3。其本地快取可讓經常使用的媒體維持低延遲存取，同時把主要儲存成本轉移到可擴展的 S3。
+- B：配置一個 Amazon S3 檔案閘道器,為地端 應用程式提供儲存。S3 File Gateway 會以 NFS 或 SMB 對現場應用程式呈現檔案介面，並把資料保存到 S3。其本地快取可讓經常使用的媒體維持低延遲存取，同時把主要儲存成本轉移到可擴展的 S3。
 - 其餘選項比較：
 - A：在Amazon S3上使用掛載點來存取Amazon S3中的資料,用於provises應用。S3 沒有可直接掛載到現場應用程式的原生檔案系統掛載點；應用程式不能把 S3 當成一般本機檔案系統使用。
-- C：將Amazon S3的資料複製到Windows檔案伺服器的Amazon FSx. 配置一個 Amazon FSx 檔案閘道器,為premes 應用程式提供儲存。把資料複製到 FSx 會維持另一份檔案儲存並增加同步與容量成本；題目也沒有名為 FSx File Gateway 的必要服務。
+- C：將Amazon S3的資料複製到Windows檔案伺服器的Amazon FSx. 配置一個 Amazon FSx 檔案閘道器,為地端 應用程式提供儲存。把資料複製到 FSx 會維持另一份檔案儲存並增加同步與容量成本；題目也沒有名為 FSx File Gateway 的必要服務。
 - D：配置預設檔案伺服器。 使用Amazon S3 API連線到S3儲存器. 配置從預設檔案伺服器存取儲存的應用程式。自行維護檔案伺服器並以 S3 API 存取，仍需管理伺服器、快取、故障與協定轉換。它不能以受管 File Gateway 直接保留既有檔案介面。
 
 **分類：** 儲存
@@ -27474,7 +27474,7 @@ B
 ## Question #1010
 
 **題目**
-一家公司在虛擬機器(VMs)上執行多個工作量,位於一個promesse資料中心. 公司發展迅速. 現場資料中心無法迅速擴大規模以滿足業務需要。 公司希望將工作量轉移到AWS. 遷移時間敏感。 公司希望對非關鍵工作量採用升班戰略. 哪些步驟的組合將滿足這些要求?(選三.
+一家公司在虛擬機器(VMs)上執行多個工作量,位於一個地端資料中心. 公司發展迅速. 現場資料中心無法迅速擴大規模以滿足業務需要。 公司希望將工作量轉移到AWS. 遷移時間敏感。 公司希望對非關鍵工作量採用升班戰略. 哪些步驟的組合將滿足這些要求?(選三.
 
 **選項**
 - A. 使用 AWS Schema 轉換工具(AWS SCT)來收集關於VMs的資料.
