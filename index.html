@@ -31,6 +31,19 @@
             <span class="mode-tab-icon">⚡</span>
             <span class="mode-tab-label">小考</span>
           </button>
+          <button id="tab-chapter" class="mode-tab" role="tab" aria-selected="false" data-mode="chapter">
+            <span class="mode-tab-icon">🏷️</span>
+            <span class="mode-tab-label">章節測驗</span>
+          </button>
+        </div>
+
+        <!-- Chapter Selector (Visible in chapter mode) -->
+        <div id="chapter-select-wrap" class="chapter-select-wrap hidden">
+          <div class="chapter-select-header">
+            <span class="chapter-select-title">選擇測驗章節主題</span>
+            <span class="chapter-select-hint">依據考題類型集中特訓</span>
+          </div>
+          <div id="chapter-grid" class="chapter-grid"></div>
         </div>
 
         <div class="start-meta">
@@ -58,7 +71,7 @@
           <div class="meta-item">
             <span class="meta-icon">📚</span>
             <div>
-              <span class="meta-label">題庫數量</span>
+              <span class="meta-label" id="meta-bank-label">題庫數量</span>
               <span id="bank-count" class="meta-value">載入中…</span>
             </div>
           </div>
@@ -70,7 +83,7 @@
         </button>
         <div class="start-rules">
           <h2 class="rules-title">考試規則</h2>
-          <ul class="rules-list">
+          <ul id="rules-list" class="rules-list">
             <li>每次從題庫隨機抽取 65 題（題號越大，抽中機率越高）</li>
             <li>單選題選擇一個答案，複選題需選擇所有正確答案</li>
             <li>可標記題目並隨時切換上一題 / 下一題</li>

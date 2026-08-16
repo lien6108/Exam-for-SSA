@@ -9,26 +9,116 @@ const TOTAL_SCORE = 1000;
 
 const MODES = {
   exam: {
+    name: '模擬考',
     size: 65,
     timeLimit: null,
     weighted: true,
     hasReview: true,
     hasMark: true,
     passScore: 700,
+    rules: [
+      '每次從題庫隨機抽取 65 題（題號越大，抽中機率越高）',
+      '單選題選擇一個答案，複選題需選擇所有正確答案',
+      '可標記題目並隨時切換上一題 / 下一題',
+      '全部作答完成後，進入答題列表確認後才可送出批改',
+      '滿分 1000 分，及格門檻 700 分，送出後立即顯示成績與領域分析',
+    ],
   },
   quiz: {
+    name: '小考',
     size: 10,
     timeLimit: 15 * 60,
     weighted: false,
     hasReview: false,
     hasMark: false,
     passScore: null,
+    rules: [
+      '隨機抽取 10 題快速測驗',
+      '作答時間 15 分鐘（倒數計時）',
+      '無及格分數限制，送出後立即檢視每題解析與答案',
+    ],
+  },
+  chapter: {
+    name: '章節測驗',
+    size: 20,
+    timeLimit: 30 * 60,
+    weighted: false,
+    hasReview: true,
+    hasMark: true,
+    passScore: null,
+    rules: [
+      '依選定章節主題隨機抽取 20 題',
+      '作答時間 30 分鐘（倒數計時）',
+      '無及格分數限制，適合針對特定領域集中特訓',
+      '支援標記題號與答題列表檢查，送出後即時呈現正確率與全題解析',
+    ],
   },
 };
 
 let currentMode = 'exam';
+let selectedChapterId = 'compute';
 
-// ── 領域關鍵字規則 ────────────────────────────────────────────────
+// ── 章節領域定義 ──────────────────────────────────────────────────
+const CHAPTER_DOMAINS = [
+  {
+    id: 'compute',
+    icon: '💻',
+    title: 'Compute & Containers',
+    label: '運算與容器',
+    desc: 'EC2, Lambda, ECS, EKS, Fargate, Serverless, Batch',
+    rawCategories: ['運算', '容器', '無伺服器'],
+  },
+  {
+    id: 'storage',
+    icon: '📦',
+    title: 'Storage & Transfer',
+    label: '儲存與傳輸',
+    desc: 'S3, EBS, EFS, FSx, DataSync, Snowball, Storage Gateway',
+    rawCategories: ['儲存', '移轉和傳輸'],
+  },
+  {
+    id: 'database',
+    icon: '🗄️',
+    title: 'Database & Analytics',
+    label: '資料庫與分析',
+    desc: 'RDS, Aurora, DynamoDB, ElastiCache, Redshift, Athena, EMR',
+    rawCategories: ['資料庫', '分析'],
+  },
+  {
+    id: 'networking',
+    icon: '🌐',
+    title: 'Networking & CDN',
+    label: '網路與內容傳遞',
+    desc: 'VPC, CloudFront, Route 53, ALB/NLB, Direct Connect, VPN',
+    rawCategories: ['網路連結和內容交付'],
+  },
+  {
+    id: 'security',
+    icon: '🛡️',
+    title: 'Security & Governance',
+    label: '安全與治理',
+    desc: 'IAM, Organizations, KMS, CloudTrail, Config, Cost Management',
+    rawCategories: ['安全、身分與合規', '管理與控管', 'AWS Cost Management'],
+  },
+  {
+    id: 'integration',
+    icon: '🔄',
+    title: 'Integration & Others',
+    label: '應用整合與其他',
+    desc: 'SQS, SNS, EventBridge, Step Functions, ML, Media Services',
+    rawCategories: ['應用程式整合', '機器學習', '前端網頁和行動裝置', '媒體服務'],
+  },
+  {
+    id: 'all',
+    icon: '📚',
+    title: 'All Domains Mixed',
+    label: '全章節綜合隨機',
+    desc: '從全部領域隨機抽取 20 題綜合特訓',
+    rawCategories: [],
+  },
+];
+
+// ── 領域關鍵字規則（模擬考雷達/分析使用）───────────────────────────
 const DOMAIN_RULES = [
   {
     id: 'compute',
@@ -84,7 +174,7 @@ const DOMAIN_RULES = [
 
 // ── 應用狀態 ─────────────────────────────────────────────────────
 let allQuestions  = [];   // 全部解析完的題目
-let examQuestions = [];   // 本次抽到的 65 題
+let examQuestions = [];   // 本次抽到的題目
 let userAnswers   = {};   // { examIndex: Set<string> }
 let markedSet     = new Set();
 let currentIndex  = 0;
@@ -161,7 +251,11 @@ function parseMarkdownQuestions(mdText) {
     const exMatch = block.match(/\*\*詳解\*\*\s*\n([\s\S]*?)(?=\n\*\*分類|$)/);
     const explanation = exMatch ? exMatch[1].trim() : '';
 
-    questions.push({ id, questionText, options, answers, explanation });
+    // 分類標籤
+    const catMatch = block.match(/\*\*分類[：:]\*\*\s*([^\n\r]+)/);
+    const category = catMatch ? catMatch[1].trim() : '';
+
+    questions.push({ id, questionText, options, answers, explanation, category });
   });
 
   return questions;
@@ -199,7 +293,7 @@ function sampleWeightedQuestions(pool, n) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 5. classifyDomain — 依關鍵字判斷領域
+// 5. classifyDomain & getQuestionChapter
 // ═══════════════════════════════════════════════════════════════════
 function classifyDomain(question) {
   const corpus = [
@@ -219,8 +313,94 @@ function classifyDomain(question) {
   return best || DOMAIN_RULES[DOMAIN_RULES.length - 1];
 }
 
+function getQuestionChapter(q) {
+  if (q.category) {
+    const found = CHAPTER_DOMAINS.find(c => c.id !== 'all' && c.rawCategories.includes(q.category));
+    if (found) return found;
+  }
+  const d = classifyDomain(q);
+  const map = {
+    compute: 'compute',
+    storage: 'storage',
+    database: 'database',
+    networking: 'networking',
+    appintegration: 'integration',
+    management: 'security',
+  };
+  const targetId = map[d.id] || 'compute';
+  return CHAPTER_DOMAINS.find(c => c.id === targetId) || CHAPTER_DOMAINS[0];
+}
+
+function getQuestionsByChapter(chapterId) {
+  if (chapterId === 'all') return allQuestions;
+  const chapter = CHAPTER_DOMAINS.find(c => c.id === chapterId);
+  if (!chapter) return allQuestions;
+  return allQuestions.filter(q => {
+    if (q.category && chapter.rawCategories.includes(q.category)) return true;
+    const assigned = getQuestionChapter(q);
+    return assigned.id === chapterId;
+  });
+}
+
 // ═══════════════════════════════════════════════════════════════════
-// 6. switchMode — 切換模式並更新首頁 meta
+// 6. renderChapterSelector
+// ═══════════════════════════════════════════════════════════════════
+function renderChapterSelector() {
+  const grid = $('chapter-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  CHAPTER_DOMAINS.forEach(ch => {
+    const count = getQuestionsByChapter(ch.id).length;
+    const isSelected = ch.id === selectedChapterId;
+
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = `chapter-card ${isSelected ? 'selected' : ''}`;
+    card.setAttribute('data-chapter-id', ch.id);
+    card.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+
+    card.innerHTML = `
+      <div class="chapter-card-top">
+        <span class="chapter-card-icon">${ch.icon}</span>
+        <span class="chapter-card-badge">${count} 題</span>
+      </div>
+      <div class="chapter-card-title">${ch.title}</div>
+      <div class="chapter-card-label">${ch.label}</div>
+      <div class="chapter-card-desc">${ch.desc}</div>
+    `;
+
+    card.addEventListener('click', () => {
+      selectedChapterId = ch.id;
+      document.querySelectorAll('.chapter-card').forEach(c => {
+        const active = c.getAttribute('data-chapter-id') === selectedChapterId;
+        c.classList.toggle('selected', active);
+        c.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      updateBankCountDisplay();
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function updateBankCountDisplay() {
+  const bankCountEl = $('bank-count');
+  const bankLabelEl = $('meta-bank-label');
+  if (!bankCountEl) return;
+
+  if (currentMode === 'chapter') {
+    const count = getQuestionsByChapter(selectedChapterId).length;
+    if (bankLabelEl) bankLabelEl.textContent = '該章題數';
+    bankCountEl.textContent = `${count} 題`;
+  } else {
+    if (bankLabelEl) bankLabelEl.textContent = '題庫數量';
+    bankCountEl.textContent = `${allQuestions.length} 題`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 7. switchMode — 切換模式並更新首頁 meta 與規則
 // ═══════════════════════════════════════════════════════════════════
 function switchMode(mode) {
   currentMode = mode;
@@ -243,17 +423,50 @@ function switchMode(mode) {
   }
 
   $('meta-pass-item').style.display = cfg.passScore ? '' : 'none';
+
+  // 章節選擇器顯示與隱藏
+  const chapterWrap = $('chapter-select-wrap');
+  if (chapterWrap) {
+    chapterWrap.classList.toggle('hidden', mode !== 'chapter');
+    if (mode === 'chapter') {
+      renderChapterSelector();
+    }
+  }
+
+  updateBankCountDisplay();
+
+  // 更新規則清單
+  const rulesList = $('rules-list');
+  if (rulesList && cfg.rules) {
+    rulesList.innerHTML = cfg.rules.map(r => `<li>${r}</li>`).join('');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 7. startExam
+// 8. startExam
 // ═══════════════════════════════════════════════════════════════════
 function startExam() {
   const cfg = MODES[currentMode];
 
-  if (cfg.weighted) {
+  if (currentMode === 'chapter') {
+    const pool = [...getQuestionsByChapter(selectedChapterId)];
+    // Fisher-Yates 隨機打散
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    examQuestions = pool.slice(0, cfg.size);
+    examQuestions.forEach(q => {
+      q.domain = classifyDomain(q);
+      q.chapterInfo = getQuestionChapter(q);
+    });
+  } else if (cfg.weighted) {
     examQuestions = sampleWeightedQuestions(allQuestions, cfg.size);
     examQuestions.sort((a, b) => a.id - b.id);
+    examQuestions.forEach(q => {
+      q.domain = classifyDomain(q);
+      q.chapterInfo = getQuestionChapter(q);
+    });
   } else {
     const pool = [...allQuestions];
     for (let i = pool.length - 1; i > 0; i--) {
@@ -261,6 +474,10 @@ function startExam() {
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
     examQuestions = pool.slice(0, cfg.size);
+    examQuestions.forEach(q => {
+      q.domain = classifyDomain(q);
+      q.chapterInfo = getQuestionChapter(q);
+    });
   }
 
   userAnswers  = {};
@@ -269,17 +486,13 @@ function startExam() {
   examElapsed  = 0;
   startTime    = Date.now();
 
-  if (cfg.weighted) {
-    examQuestions.forEach(q => { q.domain = classifyDomain(q); });
-  }
-
   showScreen('screen-question');
   renderQuestionPage(currentIndex);
   startTimer();
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 7. renderQuestionPage
+// 9. renderQuestionPage
 // ═══════════════════════════════════════════════════════════════════
 function renderQuestionPage(idx) {
   const q = examQuestions[idx];
@@ -298,8 +511,17 @@ function renderQuestionPage(idx) {
   const typeBadge = $('q-type-badge');
   typeBadge.textContent = isMulti ? '複選題' : '單選題';
   typeBadge.className = 'q-type-badge' + (isMulti ? ' multi' : '');
-  $('q-domain-badge').textContent = q.domain ? q.domain.label.split('/')[0].trim() : '未分類';
-  $('q-domain-badge').style.display = cfg.weighted ? '' : 'none';
+
+  const domainBadge = $('q-domain-badge');
+  if (currentMode === 'chapter') {
+    domainBadge.textContent = q.chapterInfo ? q.chapterInfo.title : '章節主題';
+    domainBadge.style.display = '';
+  } else if (cfg.weighted) {
+    domainBadge.textContent = q.domain ? q.domain.label.split('/')[0].trim() : '未分類';
+    domainBadge.style.display = '';
+  } else {
+    domainBadge.style.display = 'none';
+  }
 
   // 標記
   const markBtn = $('btn-mark');
@@ -377,10 +599,10 @@ function updateProgressBar() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 8. renderReviewPage
+// 10. renderReviewPage
 // ═══════════════════════════════════════════════════════════════════
 function renderReviewPage() {
-  stopTimer(); // accumulates examElapsed and sets startTime = null
+  stopTimer();
 
   const grid = $('review-grid');
   grid.innerHTML = '';
@@ -449,12 +671,12 @@ function renderReviewPage() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 9. gradeExam
+// 11. gradeExam
 // ═══════════════════════════════════════════════════════════════════
 function gradeExam() {
   let correctCount = 0;
   const wrongItems = [];
-  const domainStats = {}; // domain.id -> { correct, total }
+  const domainStats = {};
 
   DOMAIN_RULES.forEach(d => { domainStats[d.id] = { correct: 0, total: 0, label: d.label }; });
 
@@ -479,7 +701,7 @@ function gradeExam() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 10. renderResultPage
+// 12. renderResultPage
 // ═══════════════════════════════════════════════════════════════════
 function renderResultPage(result) {
   stopTimer();
@@ -492,10 +714,16 @@ function renderResultPage(result) {
     return;
   }
 
+  if (currentMode === 'chapter') {
+    renderChapterResult(correctCount, wrongItems);
+    return;
+  }
+
   const passed = score >= cfg.passScore;
 
   // Hero
   const hero = $('result-hero');
+  hero.style.display = '';
   hero.className = 'result-hero ' + (passed ? 'pass' : 'fail');
   $('result-icon').textContent = passed ? '🏆' : '📖';
   $('result-status-text').textContent = passed ? `恭喜通過！ (${score} 分)` : `未達及格 (${score} 分)`;
@@ -513,13 +741,15 @@ function renderResultPage(result) {
   ring.setAttribute('class', 'ring-progress ' + (passed ? 'pass' : 'fail'));
 
   // Domain breakdown
+  const domainsEl = document.querySelector('.result-domains');
+  domainsEl.style.display = '';
   const domainEl = $('domain-breakdown');
   domainEl.innerHTML = '';
   DOMAIN_RULES.forEach(d => {
     const st  = domainStats[d.id];
     if (st.total === 0) return;
-    const pct = Math.round((st.correct / st.total) * 100);
-    const tier = pct >= 70 ? 'high' : pct >= 40 ? 'mid' : 'low';
+    const pctVal = Math.round((st.correct / st.total) * 100);
+    const tier = pctVal >= 70 ? 'high' : pctVal >= 40 ? 'mid' : 'low';
     const row  = document.createElement('div');
     row.className = 'domain-row';
 
@@ -532,7 +762,7 @@ function renderResultPage(result) {
 
     const pctSpan = document.createElement('span');
     pctSpan.className = `domain-pct ${tier}`;
-    pctSpan.textContent = `${pct}%`;
+    pctSpan.textContent = `${pctVal}%`;
 
     top.appendChild(nameSpan);
     top.appendChild(pctSpan);
@@ -542,7 +772,7 @@ function renderResultPage(result) {
     const bar = document.createElement('div');
     bar.className = `domain-bar ${tier}`;
     bar.style.width = '0%';
-    setTimeout(() => { bar.style.width = pct + '%'; }, 100);
+    setTimeout(() => { bar.style.width = pctVal + '%'; }, 100);
     barWrap.appendChild(bar);
 
     const sub = document.createElement('div');
@@ -556,6 +786,8 @@ function renderResultPage(result) {
   });
 
   // Wrong list
+  const wrongListEl = document.querySelector('.result-wrong-list');
+  wrongListEl.style.display = '';
   const wrongEl = $('wrong-list');
   wrongEl.innerHTML = '';
   if (wrongItems.length === 0) {
@@ -653,7 +885,107 @@ function renderResultPage(result) {
     });
   }
 
+  // 清除自訂結果區塊
+  const oldQuiz = document.getElementById('quiz-result-section');
+  if (oldQuiz) oldQuiz.remove();
+  const oldChap = document.getElementById('chapter-result-section');
+  if (oldChap) oldChap.remove();
+
   showScreen('screen-result');
+}
+
+// ── Chapter Result (無及格限制，全題解析與章節正確率) ───────────────
+function renderChapterResult(correctCount, wrongItems) {
+  const resultContainer = document.querySelector('.result-container');
+
+  // 隱藏模擬考專屬區塊
+  $('result-hero').style.display = 'none';
+  document.querySelector('.result-domains').style.display = 'none';
+  document.querySelector('.result-wrong-list').style.display = 'none';
+
+  // 移除舊結果區塊
+  const oldQuiz = document.getElementById('quiz-result-section');
+  if (oldQuiz) oldQuiz.remove();
+  const oldChap = document.getElementById('chapter-result-section');
+  if (oldChap) oldChap.remove();
+
+  const currentChapter = CHAPTER_DOMAINS.find(c => c.id === selectedChapterId) || CHAPTER_DOMAINS[0];
+  const pct = Math.round((correctCount / examQuestions.length) * 100);
+
+  const section = document.createElement('div');
+  section.id = 'chapter-result-section';
+  section.className = 'quiz-result-section';
+
+  // 摘要卡片
+  const summary = document.createElement('div');
+  summary.className = 'quiz-summary chapter-summary';
+  summary.innerHTML = `
+    <div class="chapter-summary-badge">${currentChapter.icon} ${currentChapter.title}</div>
+    <div class="quiz-summary-score">${pct}%</div>
+    <div class="quiz-summary-label">答對 ${correctCount} / ${examQuestions.length} 題（正確率）</div>
+    <div class="quiz-summary-time">作答時間 ${formatTime(examElapsed)}</div>
+  `;
+  section.appendChild(summary);
+
+  // 每題結果列表
+  const listTitle = document.createElement('h2');
+  listTitle.className = 'section-title';
+  listTitle.textContent = '每題結果與解析';
+  section.appendChild(listTitle);
+
+  examQuestions.forEach((q, i) => {
+    const selected = userAnswers[i] ? [...userAnswers[i]].sort() : [];
+    const correct  = [...q.answers].sort();
+    const isCorrect = selected.length === correct.length && correct.every(a => selected.includes(a));
+
+    const item = document.createElement('div');
+    item.className = `quiz-result-item ${isCorrect ? 'correct' : 'wrong'}`;
+
+    const statusIcon = isCorrect ? '✅' : '❌';
+
+    const optionsHtml = q.options.map(opt => {
+      const isCorrectOpt  = q.answers.includes(opt.key);
+      const isSelectedOpt = selected.includes(opt.key);
+      let cls = 'opt-neutral';
+      if (isCorrectOpt) cls = 'opt-correct';
+      else if (isSelectedOpt) cls = 'opt-wrong';
+      const t = opt.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<div class="qri-option ${cls}"><span class="opt-key">${opt.key}</span><span class="opt-text">${t}</span></div>`;
+    }).join('');
+
+    const expHtml = q.explanation
+      ? `<div class="explanation"><span class="explanation-label">詳解</span><p class="explanation-text">${q.explanation.replace(/</g, '&lt;')}</p></div>`
+      : '';
+
+    const qTextEscaped = q.questionText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    item.innerHTML = `
+      <div class="qri-header">
+        <span class="qri-icon">${statusIcon}</span>
+        <span class="qri-num">Q${i + 1} (ID:${q.id})</span>
+        <span class="qri-type">${q.answers.length >= 2 ? '複選' : '單選'}</span>
+      </div>
+      <p class="qri-q-text">${qTextEscaped}</p>
+      <div class="qri-options">${optionsHtml}</div>
+      ${expHtml}
+    `;
+    section.appendChild(item);
+  });
+
+  resultContainer.insertBefore(section, $('btn-restart'));
+  showScreen('screen-result');
+
+  // 再次挑戰按鈕綁定
+  $('btn-restart').onclick = () => {
+    $('result-hero').style.display = '';
+    document.querySelector('.result-domains').style.display = '';
+    document.querySelector('.result-wrong-list').style.display = '';
+    const oldC = document.getElementById('chapter-result-section');
+    if (oldC) oldC.remove();
+    const oldQ = document.getElementById('quiz-result-section');
+    if (oldQ) oldQ.remove();
+    stopTimer();
+    showScreen('screen-start');
+  };
 }
 
 // ── Timer ─────────────────────────────────────────────────────────
@@ -684,11 +1016,13 @@ function startTimer() {
     }
   }, 1000);
 }
+
 function stopTimer() {
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   if (startTime) examElapsed += Math.floor((Date.now() - startTime) / 1000);
   startTime = null;
 }
+
 function formatTime(s) {
   const h = String(Math.floor(s / 3600)).padStart(2, '0');
   const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
@@ -705,9 +1039,11 @@ function renderQuizResult(correctCount, wrongItems) {
   document.querySelector('.result-domains').style.display = 'none';
   document.querySelector('.result-wrong-list').style.display = 'none';
 
-  // 移除舊的小考結果（避免重複）
+  // 移除舊結果
   const old = document.getElementById('quiz-result-section');
   if (old) old.remove();
+  const oldChap = document.getElementById('chapter-result-section');
+  if (oldChap) oldChap.remove();
 
   const section = document.createElement('div');
   section.id = 'quiz-result-section';
@@ -777,6 +1113,8 @@ function renderQuizResult(correctCount, wrongItems) {
     document.querySelector('.result-wrong-list').style.display = '';
     const s = document.getElementById('quiz-result-section');
     if (s) s.remove();
+    const oldC = document.getElementById('chapter-result-section');
+    if (oldC) oldC.remove();
     stopTimer();
     showScreen('screen-start');
   };
@@ -837,11 +1175,8 @@ function wireEvents() {
   });
 
   $('btn-restart').addEventListener('click', () => {
-    // 模擬考模式還原（小考模式的 btn-restart 由 renderQuizResult 覆寫 onclick）
-    if (currentMode !== 'quiz') {
-      stopTimer();
-      showScreen('screen-start');
-    }
+    stopTimer();
+    showScreen('screen-start');
   });
 }
 
@@ -855,7 +1190,7 @@ async function init() {
 
     if (allQuestions.length === 0) throw new Error('沒有解析到任何題目，請確認 MD 格式是否正確。');
 
-    $('bank-count').textContent = `${allQuestions.length} 題`;
+    updateBankCountDisplay();
     $('btn-start').disabled = false;
   } catch (err) {
     console.error(err);
