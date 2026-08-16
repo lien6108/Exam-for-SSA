@@ -742,7 +742,7 @@ A
 - D. 在本地端部署一個身份提供者。 從 AWS SSO 控制檯啟用 AWS 單一簽名( AWS SSO)。
 
 **答案**
-A
+B
 
 **社群投票：** B 78%, A 18%
 
@@ -1315,7 +1315,7 @@ D
 - D. 在Amazon S3標準儲存中儲存個人檔案. 使用 S3 壽命週期政策將檔案移動到一年後的 S3 Glacier Deep Archive。 在Amazon RDS中儲存搜尋後設資料. 查詢來自Amazon RDS的檔案. 從S3 Glacier Deep Archive檢索檔案.
 
 **答案**
-C
+B
 
 **社群投票：** B 69%, C 24%
 
@@ -1723,7 +1723,7 @@ A
 - D. 在 AWS 上為 Windows 檔案伺服器部署和配置 Amazon FSx。 安裝並配置一個 Amazon FSx 檔案閘道器。 將預設檔案資料移動到 FSx 檔案閘道器。 在 AWS 上配置使用 Windows 檔案伺服器的雲工作量。 配置預設工作量以使用 FSx 檔案閘道器。
 
 **答案**
-A
+D
 
 **社群投票：** D 78%, A 19%
 
@@ -2215,7 +2215,7 @@ C
 - D. 建立一個 Amazon EventBridge(Amazon CloudWatch Events)規則,以檢測任何將在30天內過期的憑證. 配置規則以引用 AWS Lambda 函式。 配置 Lambda 函式以透過 Amazon 簡單通知服務(Amazon SNS)傳送自定義提醒。
 
 **答案**
-D
+B
 
 **社群投票：** B 52%, D 45%
 
@@ -2350,7 +2350,7 @@ A
 - D. 在Amazon Simple Queue Service (Amazon SQS)中儲存客戶資料 FIFO佇列. 建立一個新的 Lambda 函式,用於對佇列進行投票,並將客戶資料儲存在 資料庫(database) 中.
 
 **答案**
-A
+D
 
 **社群投票：** D 61%, A 39%
 
@@ -2431,7 +2431,7 @@ A
 - D. 使用 Amazon ElastiCache 來快取指令碼執行於資料庫(database)的常見查詢.
 
 **答案**
-D
+B
 
 **社群投票：** B 95%
 
@@ -2650,7 +2650,7 @@ D
 - D. 修改 Lambda 函式,以便在處理訊息前立即從 SQS 佇列中刪除每封信。
 
 **答案**
-A
+C
 
 **社群投票：** C 81%
 
@@ -2704,7 +2704,7 @@ D
 - D. 建立 AWS Key Management Service(AWS KMS) 客戶端管理金鑰。 允許EC2角色在加密(encryption)操作中使用KMS金鑰. 在Amazon Elastic Block Store(Amazon EBS 磁碟區上儲存加密資料.
 
 **答案**
-D
+C
 
 **社群投票：** C 79%, D 19%
 
@@ -2759,7 +2759,7 @@ A
 - E. 使用AWS DataSync為地端 SFTP伺服器建立合適的位置配置.
 
 **答案**
-A,B
+B,E
 
 **社群投票：** BE 55%, AB 40%
 
@@ -2899,7 +2899,7 @@ D
 - D. 使用Amazon API Gateway與Amazon Kinesis資料分析.
 
 **答案**
-D
+B
 
 **社群投票：** B 50%, D 43%
 
@@ -2926,7 +2926,7 @@ D
 - D. 訂閱一個 RDS 事件通知, 併傳送一個 Amazon 簡單通知服務( Amazon SNS) 主題扇形到多個 Amazon 簡單佇列服務( Amazon SQS) 佇列。 使用AWS Lambda功能來更新目標.
 
 **答案**
-C
+A
 
 **社群投票：** A 63%, D 32%
 
@@ -3091,7 +3091,7 @@ C
 - D. EC2 執行個體增至3例. 使用IOPS SSD(io2) Amazon Elastic Block Store(Amazon EBS)卷儲存照片和後設資料.
 
 **答案**
-A
+C
 
 **社群投票：** C 100%
 
@@ -3175,7 +3175,7 @@ A,D
 - D. 在每個應用程式伺服器上安裝和配置 Amazon Kinesis Agent,將日誌傳送給 Amazon Kinesis Data Streams. 配置 Kinesis 資料流向 Amazon OpenSearch Service(Amazon Elasticsearch Service) 傳送日誌.
 
 **答案**
-C
+A
 
 **社群投票：** A 69%, C 30%
 
@@ -3229,7 +3229,7 @@ D
 - D. 在其中一個大區設立AWS Shield. 具有API階段的協理區域網路ACL.
 
 **答案**
-A
+B
 
 **社群投票：** B 69%, A 31%
 
@@ -3256,7 +3256,7 @@ A
 - D. 將兩個NLB改為兩個應用程式負載平衡器。 建立一個 Amazon Route 53 延遲(latency) 路由政策,用於向兩個ALB中的一個路由請求. 建立 Amazon CloudFront 分佈。 使用 Route 53 記錄作為 Distribution 來源。
 
 **答案**
-A
+B
 
 **社群投票：** B 75%, A 21%
 
@@ -3390,7 +3390,7 @@ A
 - E. 配置一個VPC,有兩個公共子網,兩個私有子網,兩個NAT閘道器跨越兩個可用區(Availability Zones). 在公共子網中部署一個應用程式負載平衡器(Application Load Balancer).
 
 **答案**
-C,E
+A,D
 
 **社群投票：** AD 61%, AB 18%, A 17%
 
@@ -3446,7 +3446,7 @@ B
 - D. Amazon EC2 最大效能例項儲存,Amazon S3 持久資料儲存,Amazon S3 Glacier 存檔儲存
 
 **答案**
-A
+D
 
 **社群投票：** D 62%, A 38%
 
@@ -3473,7 +3473,7 @@ A
 - D. 在Amazon Elastic Kubernetes Service(Amazon EKS)中使用 隨需執行個體（On-Demand） 管理節點組.
 
 **答案**
-A
+B
 
 **社群投票：** B 72%, A 27%
 
@@ -3611,7 +3611,7 @@ A
 - D. 將甲骨文資料庫(database)遷移到Amazon RDS用於甲骨文. 在另一個可用區(Availability Zone)中建立備用資料庫(database).
 
 **答案**
-D
+C
 
 **社群投票：** C 49%, A 40%
 
@@ -3638,7 +3638,7 @@ D
 - D. 將資料裝入現有的S3 bucket. 使用S3 Cross-Region Replication(CRR)在另一個區域(Region)中將加密物件複製到一個S3 bucket. 使用伺服器側式加密(encryption),由Amazon S3管理加密(encryption)鍵(SSE-S3). 使用Amazon RDS查詢資料.
 
 **答案**
-A
+C
 
 **社群投票：** C 52%, A 48%
 
@@ -3693,7 +3693,7 @@ D
 - E. 建立 Amazon EventBridge(Amazon CloudWatch Events)規則,以監控資料庫(database)同步.
 
 **答案**
-C,D
+A,C
 
 **社群投票：** AC 91%
 
@@ -3722,7 +3722,7 @@ C,D
 - D. 配置所有已有的 AWS 帳戶和所有新建的帳戶以使用相同的根使用者電子郵件地址。 在 AWS Organizations 控制檯或程式上配置 AWS 帳戶替代聯絡人。
 
 **答案**
-D
+B
 
 **社群投票：** B 89%
 
@@ -3776,7 +3776,7 @@ B
 - D. 配置 S3 bucket之間的 S3 複寫(replication)。 配置分析 S3 bucket 向 Amazon EventBridge(Amazon CloudWatch Events) 傳送事件通知. 在 EventBridge(Cloud Watch Events) 中配置一個物件建立規則。 配置Lambda和SageMaker管道作為規則的目標.
 
 **答案**
-A
+D
 
 **社群投票：** D 78%, B 17%
 
@@ -3833,7 +3833,7 @@ A,C
 - D. 在兩個AWS區域部署應用程式堆疊. 使用 Amazon Route 53 地理定位路線政策,在最接近的區域(Region)中服務ALB的所有內容.
 
 **答案**
-B
+A
 
 **社群投票：** A 70%, B 27%
 
@@ -4242,7 +4242,7 @@ C
 - E. 使用AWS湖形成中的藍圖來識別可以被攝入資料湖(data lake)的資料. 使用AWS Glue來爬行源,提取資料,並以Apache Parquet格式將資料載入到Amazon S3.
 
 **答案**
-A,C
+A,E
 
 **社群投票：** AE 89%
 
@@ -4272,7 +4272,7 @@ A,C
 - E. 使用AWS Backup接收備份,並將備份儲存5年.
 
 **答案**
-B,E
+D,E
 
 **社群投票：** DE 78%, AD 18%
 
@@ -4329,7 +4329,7 @@ A
 - E. 為每個試圖存取API的使用者建立IAM角色. 使用者在發出API呼叫時將承擔角色.
 
 **答案**
-C,D
+A,C
 
 **社群投票：** AC 67%, CE 24%
 
@@ -4385,7 +4385,7 @@ C
 - D. 將 JSON 文件放置在 Amazon 簡單佇列服務( Amazon SQS) 佇列中作為訊息。 將Python程式碼作為集裝箱安裝在Amazon Elastic Container Service (Amazon ECS)叢集上,該叢集配置為Amazon EC2發射型. 使用容器處理 SQS 訊息。 在 Amazon RDS DB 例項中儲存結果。
 
 **答案**
-D
+B
 
 **社群投票：** B 95%
 
@@ -4439,7 +4439,7 @@ A
 - D. 建立包含容器映像檔的 Amazon EC2 Amazon Machine Image (AMI)。將 EC2 執行個體部署到跨多個可用區 (Availability Zones) 的 Auto Scaling 群組中。當平均 CPU 使用率超過門檻時，使用 Amazon CloudWatch 警報擴展 EC2 執行個體數量。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -4545,7 +4545,7 @@ D
 - D. 使用預留執行個體作為基線能力,並利用預留執行個體處理額外能力。
 
 **答案**
-C
+D
 
 **社群投票：** D 53%, C 46%
 
@@ -4653,7 +4653,7 @@ C
 - D. 使用 Amazon API Gateway 設計一個 REST API,與 Amazon EC2 例項上的 API 連線. API Gateway接受並將專案名稱傳遞給EC2,用於計算稅收.
 
 **答案**
-D
+B
 
 **社群投票：** B 96%
 
@@ -4680,7 +4680,7 @@ D
 - D. 配置 CloudFront 並設定僅用於檢視器協議政策的 HTTPS 原始協議政策設定。
 
 **答案**
-A
+C
 
 **社群投票：** C 77%, B 18%
 
@@ -4788,7 +4788,7 @@ B
 - D. 使用附在VPC上的網際網路閘道器.
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -5007,7 +5007,7 @@ A
 - D. 建立彈性 IP 地址。 配置Lambda功能,在無彈性網路介面的情況下,透過彈性IP地址傳送流量.
 
 **答案**
-C
+A
 
 **社群投票：** A 73%, C 27%
 
@@ -5118,7 +5118,7 @@ A,D
 - D. 在VPC的私人子網中發射Amazon EC2 執行個體. 在EC2例項前放置一個網路負載平衡器(Network Load Balancer)(NLB)。 為NLB建立 SFTP 聽器埠。 與新合作伙伴共享NLB主機名. 在 EC2 例項上執行一個 cron 任務指令碼,將檔案上傳到 S3 資料湖(data lake).
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -5146,7 +5146,7 @@ D
 - E. 使用伺服器側式加密(encryption)與AWS Key Management Service(AWS KMS)客戶提供(進口)金鑰. 配置金鑰旋轉。
 
 **答案**
-C,E
+B,D
 
 **社群投票：** BD 77%, BC 22%
 
@@ -5175,7 +5175,7 @@ C,E
 - D. 整合網路應用程式。 對 Amazon EC2 例項應用網路應用程式。 使用 AWS 負載平衡器(Load Balancer) 控制器在包含測試新站點特性的容器之間動態路由流量.
 
 **答案**
-D
+B
 
 **社群投票：** B 90%
 
@@ -5202,7 +5202,7 @@ D
 - D. 安排非高峰時段的報告查詢。
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -5230,7 +5230,7 @@ B
 - E. 建立當新文件上傳時執行的 AWS Lambda 函式。 使用 Amazon Textract 將文件轉換為原始文字。 使用Amazon Comprehend Medical來檢測和提取文字中的相關醫學資訊.
 
 **答案**
-C,D
+B,E
 
 **社群投票：** BE 100%
 
@@ -5259,7 +5259,7 @@ C,D
 - D. 使用 Amazon ElastiCache 為Memcached。
 
 **答案**
-A
+B
 
 **社群投票：** B 53%, A 47%
 
@@ -5286,7 +5286,7 @@ A
 - D. 在可用區(Availability Zone)中啟動EC2例項. 在EC2例項上安裝 資料庫(database)。 使用一個Amazon Machine Image (AMI)來備份資料. 如果發生干擾事件,則使用EC2自動回收來恢復例項。
 
 **答案**
-C
+A
 
 **社群投票：** A 55%, C 45%
 
@@ -5313,7 +5313,7 @@ C
 - D. 建立一個Amazon Simple Notification Service (Amazon SNS)主題. 建立 AWS Lambda 函式,並訂閱該函式為 SNS 主題. 配置向SNS主題傳送訊息的命令系統. 向 EC2 例項傳送命令,透過使用 AWS Systems Manager 執行命令處理訊息。
 
 **答案**
-D
+C
 
 **社群投票：** C 95%
 
@@ -5368,7 +5368,7 @@ D
 - E. 使用AWS 資料庫(Database) 遷移服務(AWS DS)在多AZ部署中從Oracle 資料庫(database)遷移到Amazon RDS上的Oracle.
 
 **答案**
-B,D
+B,E
 
 **社群投票：** BE 98%
 
@@ -5424,7 +5424,7 @@ D
 - D. 使用 Amazon Rekcognition 進行多個揚聲器識別. 在Amazon S3中儲存記錄檔案. 使用 Amazon Textract 進行筆錄檔案分析.
 
 **答案**
-C
+B
 
 **社群投票：** B 92%
 
@@ -5451,7 +5451,7 @@ C
 - D. 在 API Gateway 中配置一個 Amazon Cognitto 使用者池授權器,讓 Amazon Cognitto 驗證每個請求.
 
 **答案**
-A
+D
 
 **社群投票：** D 98%
 
@@ -5478,7 +5478,7 @@ A
 - D. 建立Amazon Simple Notification Service (Amazon SNS) FIFO主題. 將 Amazon Kinesis 資料流訂閱到 SNS 專題,以供分析和存檔.
 
 **答案**
-A
+B
 
 **社群投票：** B 87%
 
@@ -5559,7 +5559,7 @@ D
 - D. 建立 Amazon Redshift 叢集。 安排一個 AWS Lambda 函式,將 Amazon S3 和 Amazon RDS 的資料定期複製到 Amazon Redshift。 使用Amazon Redshift存取控制限制存取.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -5613,7 +5613,7 @@ C
 - D. 配置一個Amazon Simple Queue Service (Amazon SQS) FIFO佇列作為AWS CloudTrail日誌的目標. 建立一個 AWS Lambda 函式,在檢測到一個 Creatimage API 呼叫時向一個 Amazon 簡單通知服務(Amazon SNS) 發出警報.
 
 **答案**
-D
+C
 
 **社群投票：** C 72%, A 18%
 
@@ -5667,7 +5667,7 @@ D
 - D. 使用提供的AWS,可公開獲取的ip-ranges.json檔案獲取S3 bucket服務API端點的私人IP地址. 在 VPC 路由表中建立一條路由,為EC2 例項提供S3 bucket 存取許可權. 在 S3 bucket 上附加資源政策, 只允許 EC2 例項的 IAM 角色存取。
 
 **答案**
-B
+A
 
 **社群投票：** A 57%, B 43%
 
@@ -5721,7 +5721,7 @@ A
 - D. 提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集,另一個用於命令實現. 配置 EC2 例項以檢視各自的佇列。 根據每個例項的積壓計算建立一個衡量標準。 基於此引數的自動縮放組。
 
 **答案**
-C
+D
 
 **社群投票：** D 88%
 
@@ -5829,7 +5829,7 @@ A
 - D. 建立 AWS Lambda 函式,將資料轉換,輸出到轉換後的資料桶中. 配置 S3 bucket 的事件通知。 指定 Lambda 函式為事件通知的目的地。
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -5910,7 +5910,7 @@ B
 - D. 以AWS Backup備份資料. 使用備份(backup)在第二個AWS 區域(Region)中建立所需的基礎設施. 使用 Amazon Route 53 配置主動被動故障。 在第二個區域(Region)中建立一個Aurora第二初級案例.
 
 **答案**
-D
+A
 
 **社群投票：** A 70%, D 30%
 
@@ -6135,7 +6135,7 @@ C,E
 - D. 在分佈於多個可用區(Availability Zones)的 Amazon EC2 例項上建立一個攝入服務. 配置將資料轉發給 Amazon RDS 多AZ 資料庫(database).
 
 **答案**
-A
+B
 
 **社群投票：** B 95%
 
@@ -6438,7 +6438,7 @@ C
 - D. 為前端層和應用層使用負載平衡的多AZ AWS Elastic Beanstalk環境. 將 資料庫(database) 移動到 Amazon RDS 多AZ DB 例項。 使用 Amazon S3 儲存並服務使用者的影象.
 
 **答案**
-A
+D
 
 **社群投票：** D 69%, B 29%
 
@@ -6492,7 +6492,7 @@ A
 - D. 使用 AWS 成本與使用報告建立一個具有小時顆粒性的報告. 將報告資料納入Amazon Athena。 使用Amazon EventBridge來安排雅典娜查詢. 配置一個 Amazon 簡單通知服務( Amazon SNS) 話題, 以便在超過閾值時收到通知。
 
 **答案**
-B
+C
 
 **社群投票：** C 96%
 
@@ -6546,7 +6546,7 @@ A
 - D. 在與資料倉儲相同的AWS 區域(Region)中託管視覺化工具,並在同一區域(Region)中的位置透過直接連線連線存取.
 
 **答案**
-C
+D
 
 **社群投票：** D 92%
 
@@ -6627,7 +6627,7 @@ C
 - D. 將一個 Amazon 彈性檔案系統(Amazon EFS) 附加到每個診所的預設伺服器上。
 
 **答案**
-C
+A
 
 **社群投票：** A 96%
 
@@ -6681,7 +6681,7 @@ C
 - D. 減少開發環境Auto Scaling 群組(Auto Scaling group)中EC2 執行個體的最大數量。
 
 **答案**
-A
+D
 
 **社群投票：** D 56%, A 43%
 
@@ -6708,7 +6708,7 @@ A
 - D. 每個可用區(Availability Zone)中建立公共子網. 將公共子網與ALB聯絡起來. 更新公共子網的路由表,並附帶一條通往私有子網的路由.
 
 **答案**
-C
+D
 
 **社群投票：** D 83%
 
@@ -6736,7 +6736,7 @@ C
 - E. 透過將備份(backup)保留期設定為0.
 
 **答案**
-A,C
+C,E
 
 **社群投票：** CE 71%, AE 16%
 
@@ -6819,7 +6819,7 @@ D
 - D. 使用Amazon S3作為目標. 啟用 S3 生命週期政策(Lifecycle policy) 在90天后將日誌轉換為 S3 標準-不頻繁存取(S3 Standard-IA)。
 
 **答案**
-A
+D
 
 **社群投票：** D 92%
 
@@ -7038,7 +7038,7 @@ A
 - D. 建立一個 AWS Glue 提取,轉換和載入(ETL)任務,將.csv檔案轉換為Parquet格式,並將輸出檔案放置為S3 bucket. 為每個 S3 PUT 事件建立 AWS Lambda 函式以引用 ETL 任務。
 
 **答案**
-A
+D
 
 **社群投票：** D 89%
 
@@ -7476,7 +7476,7 @@ B
 - D. 在二級可用區(Availability Zone)中發射EC2例項. 在二級可用區(Availability Zone)中始終保持EC2例項活躍.
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -7503,7 +7503,7 @@ D
 - D. 實施一項預定行動,將最低和最大能力設定在辦公室開幕前不久的20個。
 
 **答案**
-A
+C
 
 **社群投票：** C 66%, A 34%
 
@@ -7531,7 +7531,7 @@ A
 - E. 配置Auto Scaling 群組(Auto Scaling group)以平均自由記憶體作為縮放度量衡.
 
 **答案**
-A,C
+A,D
 
 **社群投票：** AD 88%
 
@@ -7560,7 +7560,7 @@ A,C
 - D. 使用Amazon S3儲存影片內容. 將檔案暫時移到連線在伺服器上的Amazon Elastic Block Store (Amazon EBS)中進行處理。
 
 **答案**
-A
+D
 
 **社群投票：** D 78%, A 22%
 
@@ -7588,7 +7588,7 @@ A
 - E. 為 AWS 帳戶配置 Amazon Macie。 將Macie與Amazon EventBridge整合,透過Amazon簡易通知服務(Amazon SNS)訂閱傳送月度通知.
 
 **答案**
-C,D
+B,E
 
 **社群投票：** BE 100%
 
@@ -7617,7 +7617,7 @@ C,D
 - D. 使用AWS CLI建立DynamomDB表的點播備份(backup). 設定一條Amazon EventBridge規則,在每月的第一天以cron表示式執行命令. 在命令中指定在6個月後將備份轉換為冷儲存,並在7年後刪除備份。
 
 **答案**
-B
+A
 
 **社群投票：** A 86%
 
@@ -7644,7 +7644,7 @@ B
 - D. 使用Amazon DynamoDB中的標準SQL查詢來分析S3 bucket中的CloudFront日誌. 以Amazon QuickSight視覺化結果.
 
 **答案**
-A
+B
 
 **社群投票：** B 93%
 
@@ -7671,7 +7671,7 @@ A
 - D. 配置一個 可用區(Availability Zone) 中的 DB 例項,並配置 AWS 資料庫(Database) 遷移服務(AWS DSMS) 更改資料捕獲(CDC)任務.
 
 **答案**
-D
+A
 
 **社群投票：** A 91%
 
@@ -7698,7 +7698,7 @@ D
 - D. 配置 ALB 的 安全群組(security group) 允許任何埠的任何 TCP 流量。
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -7806,7 +7806,7 @@ B
 - D. 使用AWS Certificate Manager(ACM)驗證網站的SSL憑證.
 
 **答案**
-B
+C
 
 **社群投票：** C 96%
 
@@ -7860,7 +7860,7 @@ B
 - D. 配置通用 SSD(gp3) Amazon Elastic Block Store(Amazon EBS) 磁碟區. 將 EBS 捲上載到所有網路伺服器。
 
 **答案**
-A
+C
 
 **社群投票：** C 100%
 
@@ -7887,7 +7887,7 @@ A
 - D. 將IAM角色應用到Lambda函式中. 將 IAM 政策(IAM policy) 應用到角色上, 允許讀取帳戶中的所有 S3 bucket。
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -7914,7 +7914,7 @@ D
 - D. Spot 執行個體和預留執行個體的混合
 
 **答案**
-B
+C
 
 **社群投票：** C 90%
 
@@ -7942,7 +7942,7 @@ B
 - E. AWS Secrets Manager.
 
 **答案**
-C,E
+A,B
 
 **社群投票：** AB 85%
 
@@ -8082,7 +8082,7 @@ B
 - D. 10.01.0/24(中文(簡體) ).
 
 **答案**
-B
+D
 
 **社群投票：** D 98%
 
@@ -8109,7 +8109,7 @@ B
 - D. 建立兩個 Amazon CloudWatch 提醒。 配置第一個進入 ALARM 狀態的 Cloud Watch 提醒, 當平均 CPUUtili化 度量器低於 20% 時。 配置第二個 CloudWatch 提醒, 當平均 CPUUtili化 母性超過 50% 時進入 ALARM 狀態。 配置提醒以釋出到 Amazon 簡單通知服務(Amazon SNS) 主題以傳送電子郵件訊息。 收到訊息後, 登入以減少或增加正在執行的 EC2 例項。
 
 **答案**
-D
+B
 
 **社群投票：** B 96%
 
@@ -8136,7 +8136,7 @@ D
 - D. 提供一個覆蓋可用區(Availability Zones)的子網。 配置 Auto Scaling 群組(Auto Scaling group) 以在 可用區(Availability Zones) 中分配 EC2 例項。 為多AZ部署配置 DB 例項。
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -8163,7 +8163,7 @@ D
 - D. 為NetApp ONTAP檔案系統建立 Amazon FSx. 將每卷的分層策略設定為無線。 將原始資料匯入檔案系統。 在 EC2 例項上掛載檔案系統。
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -8381,7 +8381,7 @@ A
 - D. AWS Storage Gateway 流閘道器快取卷
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -8409,7 +8409,7 @@ A
 - E. 審查受託顧問對Amazon Redshift保留節點最佳化的檢查.
 
 **答案**
-A,C
+B,D
 
 **社群投票：** BD 61%, BC 38%
 
@@ -8438,7 +8438,7 @@ A,C
 - D. 為 S3 物件 監控(monitoring) 開啟 AWS CloudTrail。 透過使用與Amazon CloudWatch Logs整合的CloudTrail日誌來分析水桶存取模式.
 
 **答案**
-D
+A
 
 **社群投票：** A 93%
 
@@ -8492,7 +8492,7 @@ B
 - D. 基於引文型別建立多個Amazon Kinesis Data Firehose送電流,將資料流送至AWSERV008叢集. 配置應用程式以傳送訊息到合適的傳送流。 配置每個後端組的應用程式伺服器,以搜尋OpenSearch Service發來的訊息並相應處理.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -8519,7 +8519,7 @@ D
 - D. 寫一個 AWS Lambda 函式,將應用程式的 EBS 磁碟區的夜快照排程,並將快照複製到不同的 可用區(Availability Zone)。
 
 **答案**
-C
+B
 
 **社群投票：** B 92%
 
@@ -8600,7 +8600,7 @@ B
 - D. 啟動Amazon Inspector 將Amazon Inspector部署到EC2區。 配置一個 AWS Lambda 功能,實現報告生成和分發自動化,以詳細說明結果.
 
 **答案**
-C
+D
 
 **社群投票：** D 97%
 
@@ -8627,7 +8627,7 @@ C
 - D. 使用 AWS Systems Manager 執行命令按需執行指令碼.
 
 **答案**
-A
+C
 
 **社群投票：** C 90%
 
@@ -8711,7 +8711,7 @@ A,D
 - D. 使用 Amazon Cognitto 自定義授權器認證使用者. Invoke a AWS Lambda 函式生成一個臨時的SSH金鑰.
 
 **答案**
-B
+A
 
 **社群投票：** A 83%
 
@@ -8846,7 +8846,7 @@ B
 - D. 提供AWS Storage Gateway卷閘道器儲存的磁碟區,磁碟空間與現有的檔案儲存磁碟區相同. 使用 iSCSI 將儲存的磁碟區掛載到現有的檔案伺服器,並將所有檔案複製到儲存磁碟區中. 配置儲存磁碟區的計劃快照。 為了從災難中恢復過來,將快照(snapshot)恢復到Amazon彈性塊儲存器(Amazon EBS)的體積,並將EBS體積附加在Amazon EC2例項中.
 
 **答案**
-C
+D
 
 **社群投票：** D 77%, C 23%
 
@@ -9011,7 +9011,7 @@ D
 - D. 在 AWS 身份和存取管理(IAM)中生成憑證. 使用憑證在 DB 例項上啟用 SSL/ TLS。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -9119,7 +9119,7 @@ C
 - D. 與 SFTP 一起設定 Windows Amazon EC2 例項,以連線在地端的客戶端與 Amazon S3. 整合AWS身份和存取管理。
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -9146,7 +9146,7 @@ B
 - D. 使用Amazon EventBridge來引用提供AMI的AWS Backup生命週期政策. 配置 Auto Scaling 群組(Auto Scaling group) 容量限制,作為 EventBridge 中的事件源.
 
 **答案**
-C
+B
 
 **社群投票：** B 91%
 
@@ -9227,7 +9227,7 @@ A
 - D. 為DB叢集建立Aurora全球資料庫(database). 在二級區域(Region)中指定最少一個DB例項.
 
 **答案**
-D
+B
 
 **社群投票：** B 56%, D 32%
 
@@ -9254,7 +9254,7 @@ D
 - D. 為應用程式使用者建立MySQL 資料庫(database)的RDS憑證,並將憑證儲存在AWS Systems Manager引數儲存器中. 配置從引數儲存器裝入 資料庫(database) 憑證的應用程式。 為MySQL 資料庫(database)使用引數儲存器的RDS中應用程式使用者設定憑證旋轉時間表.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -9281,7 +9281,7 @@ D
 - D. 設定 Amazon 檢查器來自動阻止所有的 SQL 注射嘗試。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -9308,7 +9308,7 @@ C
 - D. 使用湖泊形成藍圖來吸收從資料庫(database)到S3 資料湖(data lake)的資料. 使用 Lake Formation 執行列級的 存取控制(access control),供快速視使用者使用. 使用Amazon Athena作為QuickSight的資料來源.
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -9362,7 +9362,7 @@ C
 - D. 將預定的MySQL 資料庫(database)的備份(backup)儲存在為S3 Cross-Region Replication(CRR)配置的Amazon S3 bucket中. 使用資料備份(backup)在DR 區域(Region)中恢復資料庫(database).
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -9443,7 +9443,7 @@ A
 - D. Amazon S3 檔案閘道器
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -9470,7 +9470,7 @@ C
 - D. 標準預留執行個體
 
 **答案**
-D
+A
 
 **社群投票：** A 79%, B 20%
 
@@ -9497,7 +9497,7 @@ D
 - D. 使用點播模式. 指定保留容量的讀取容量單位和寫寫容量單位。
 
 **答案**
-A
+B
 
 **社群投票：** B 86%
 
@@ -9689,7 +9689,7 @@ B
 - D. 在Amazon EC2上使用AWS批次.
 
 **答案**
-A
+D
 
 **社群投票：** D 96%
 
@@ -9773,7 +9773,7 @@ A,D
 - D. 建立 CloudFront 響應頭政策。 使用策略可以自動調整影象大小,並服務基於請求中的使用者代理HTTP頭的適當格式.
 
 **答案**
-D
+C
 
 **社群投票：** C 88%
 
@@ -9827,7 +9827,7 @@ C
 - D. 在兩個 REST API 之間新增一個 Amazon 簡單的佇列服務( Amazon SQS) 佇列。
 
 **答案**
-A
+B
 
 **社群投票：** B 92%
 
@@ -9854,7 +9854,7 @@ A
 - D. 經常存取的資料使用Amazon DynamoDB. 開啟流線到Amazon Kinesis資料流. 使用Amazon Kinesis Data Firehose來讀取來自Kinesis Data Streams的資料. 把記錄存放在Amazon S3 bucket裡.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -9882,7 +9882,7 @@ B
 - E. 將訊息寫入Amazon Simple Queue Service (Amazon SQS) FIFO佇列. 設定訊息組以使用支付ID。
 
 **答案**
-B,D
+B,E
 
 **社群投票：** BE 74%, AE 22%
 
@@ -9939,7 +9939,7 @@ B
 - E. 透過使用AWS Key Management Service(AWS KMS)客戶端管理金鑰在SQS元件上開啟伺服器側加密(encryption). 應用IAM 政策(IAM policy),將金鑰使用限制在一組授權主機. 在佇列策略中設定一個條件, 只允許在 TLS 上加密連線。
 
 **答案**
-C,D
+B,D
 
 **社群投票：** BD 73%, CD 17%
 
@@ -9995,7 +9995,7 @@ C
 - D. 實施API使用計劃和API金鑰,限制沒有訂閱的使用者存取.
 
 **答案**
-C
+D
 
 **社群投票：** D 85%, C 15%
 
@@ -10131,7 +10131,7 @@ C
 - E. 在 EKS 叢集中以 Kubernetes 金鑰儲存客戶管理金鑰。 使用客戶管理金鑰加密 EBS 磁碟區。
 
 **答案**
-A,E
+C,D
 
 **社群投票：** CD 56%, BD 40%
 
@@ -10241,7 +10241,7 @@ D
 - D. 使用 AWS Lambda 函式和 Amazon EventBridge 事件來構建應用程式.
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -10349,7 +10349,7 @@ B
 - D. 增加資料庫(database)的大小,以增加Lambda可以一次性建立的連線數量.
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -10376,7 +10376,7 @@ C
 - D. 建立 AWS Lambda 函式, 啟動並停止 EC2 例項和 DB 例項。 配置 Amazon EventBridge 在一個排程中引用 Lambda 函式。
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -10403,7 +10403,7 @@ A
 - D. 設定一個新的 Amazon DynamoDB 表格來儲存文件. 使用固定的寫能力支援新文件條目. 自動縮放支援報告的讀取能力。
 
 **答案**
-D
+B
 
 **社群投票：** B 94%
 
@@ -10484,7 +10484,7 @@ A
 - D. 使用Amazon Elastic File System (Amazon EFS)一區儲存級. 制定生命週期管理政策,將不經常存取的資料移動到EFS One Zone-Creative Access(EFS One Zone-IA).
 
 **答案**
-B
+C
 
 **社群投票：** C 93%
 
@@ -10622,7 +10622,7 @@ D
 - D. 在多個 可用區(Availability Zones) 中部署 DB 例項處理業務報告查詢。
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -10650,7 +10650,7 @@ D
 - E. 在應用程式中使用 AWS Systems Manager 應用程式管理器來管理使用者會話資訊.
 
 **答案**
-B,D
+A,D
 
 **社群投票：** AD 44%, AB 29%, BD 25%
 
@@ -10679,7 +10679,7 @@ B,D
 - D. 每2小時拍攝Amazon Elastic Block Store (Amazon EBS)的EC2卷。 在Amazon RDS中啟用自動備份,並使用點對時間恢復以滿足RPO.
 
 **答案**
-D
+C
 
 **社群投票：** C 87%
 
@@ -10760,7 +10760,7 @@ C
 - D. 將2000GB gp3卷替換為2千GB gp3卷.
 
 **答案**
-C
+D
 
 **社群投票：** D 40%, B 35%, C 25%
 
@@ -10787,7 +10787,7 @@ C
 - D. AWS Config 阿富汗
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -10868,7 +10868,7 @@ C
 - D. 在公司所在地和最近的AWS 區域(Region)之間建立10 Gbps AWS Direct Connect連線. 透過一個VPN連線將資料傳輸到區域(Region),將資料儲存在Amazon S3中.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -11003,7 +11003,7 @@ A
 - D. 建立具有所需許可權的IAM執行角色,並將IAM角色附加到Lambda函式中.
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -11117,7 +11117,7 @@ C,D
 - D. 為 Lustre 檔案系統建立 Amazon FSx。 將檔案系統附加到源伺服器上。 連線應用程式伺服器到檔案系統.
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -11171,7 +11171,7 @@ B
 - D. 將檔案共享遷移到Amazon Elastic File System (Amazon EFS).
 
 **答案**
-A
+C
 
 **社群投票：** C 96%
 
@@ -11306,7 +11306,7 @@ B
 - D. 為 SFTP 端點部署 AWS 傳輸。 建立一個指令碼,檢查網路共享上的新檔案,並透過使用SFTP上傳新檔案.
 
 **答案**
-C
+B
 
 **社群投票：** B 85%, C 15%
 
@@ -11445,7 +11445,7 @@ B
 - E. 在組織管理帳戶中,指定預設的EBS 磁碟區加密(encryption)設定.
 
 **答案**
-A,D
+C,E
 
 **社群投票：** CE 75%
 
@@ -11474,7 +11474,7 @@ A,D
 - D. 使用 Amazon RDS 多AZ DB 群集部署點 讀取工作量到讀取端點。
 
 **答案**
-A
+D
 
 **社群投票：** D 82%
 
@@ -11501,7 +11501,7 @@ A
 - D. 建立 Amazon S3 bucket, 啟用預設的 加密(encryption)。 建立一個帶有VPC 端點(VPC endpoint)的AWS Transfer Family SFTP服務,在私人子網內可以內部存取. 附加只允許信任的 IP 地址的 安全群組(security group)。 將S3 bucket附加到SFTP服務端點. 允許使用者存取SFTP服務.
 
 **答案**
-C
+B
 
 **社群投票：** B 82%
 
@@ -11639,7 +11639,7 @@ C
 - D. 使用AWS Storage Gateway將現有資料移動到Amazon S3. 使用 AWS CloudTrail 來日誌管理事件.
 
 **答案**
-B
+A
 
 **社群投票：** A 57%, D 43%
 
@@ -11885,7 +11885,7 @@ A
 - D. 訂購1GB專用的AWS Direct Connect連線,與資料中心建立連線. 使用 AWS 資料庫(Database) 遷移服務(AWS DS) 使用 AWS Schema 轉換工具(AWS SCT) 將 資料庫(database) 遷移到正在進行中的 複寫(replication) .
 
 **答案**
-D
+A
 
 **社群投票：** A 85%, D 15%
 
@@ -12021,7 +12021,7 @@ A
 - E. 上傳資料庫傾印 (dump) 上傳至 Amazon S3，然後使用 AWS DMS 將傾印匯入 Aurora.
 
 **答案**
-A,D
+A,C
 
 **社群投票：** AC 80%
 
@@ -12185,7 +12185,7 @@ A
 - D. 為S3 bucket開啟S3 Object Lock,採用合規(compliance)保留模式. 規定保留期在7年後屆滿。 使用S3 Batch Operations將現有資料帶入合規(compliance).
 
 **答案**
-C
+D
 
 **社群投票：** D 83%
 
@@ -12266,7 +12266,7 @@ C
 - D. 將資料庫(database)修改為Amazon RDS用於PostgreSQL,方法是重寫應用程式程式碼以消除對甲骨文APEX的依賴.
 
 **答案**
-C
+B
 
 **社群投票：** B 94%
 
@@ -12295,7 +12295,7 @@ C
 - F. 在私人子網使用Amazon RDS 資料庫(database)多AZ叢集部署. 只允許資料庫(database)從應用程式級安全組存取.
 
 **答案**
-A,C,F
+C,E,F
 
 **社群投票：** CEF 100%
 
@@ -12384,7 +12384,7 @@ B
 - D. 使用AWS Backup來建立備份(backup)金庫,該金庫以合規(compliance)模式設有金庫鎖. 建立所需的備份(backup)計劃.
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -12411,7 +12411,7 @@ A
 - D. 使用AWS X-Ray檢視工作量細節. 構建結構圖與關係.
 
 **答案**
-A
+C
 
 **社群投票：** C 95%
 
@@ -12554,7 +12554,7 @@ B,C
 - D. 從組織成員帳號計費控制檯啟動一個命名為部門的AWS定義成本分配標籤. 在Cost Explorer分組中按標籤名稱建立一份成本報告,由EC2過濾.
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -12608,7 +12608,7 @@ C
 - D. 建立一個 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN))端點. 在端點後建立應用程式負載平衡器(Application Load Balancer)(ALB),並監聽TCP和UDP埠. 更新 Auto Scaling 群組(Auto Scaling group) 以註冊 ALB 上的例項。 更新 CloudFront 以 ALB 作為來源。
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -13084,7 +13084,7 @@ C
   "效果":"阿羅"
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -13246,7 +13246,7 @@ B
 - D. 在AWS Fargate上使用Amazon Elastic Container Service (Amazon ECS)來執行這項工作. 根據任務的容器影象建立獨立的任務。 使用Windows任務排程器每10分鐘執行工作.
 
 **答案**
-A
+C
 
 **社群投票：** C 53%, B 33%, A 15%
 
@@ -13303,7 +13303,7 @@ A,E
 - D. 將錄影檔案儲存在Amazon S3 " 一個區-不經常存取 "(S3 One Zone-IA)。
 
 **答案**
-C
+A
 
 **社群投票：** A 96%
 
@@ -13689,7 +13689,7 @@ A
 - D. 聯絡一個 AWS Direct Connect 合夥人,為一個現有的 AWS 帳戶訂購200 Mbps 主機連線。
 
 **答案**
-B
+D
 
 **社群投票：** D 83%, B 17%
 
@@ -13746,7 +13746,7 @@ A,D
 - D. 使用Amazon API Gateway來攝取資料. 使用AWS Lambda實時分析資料.
 
 **答案**
-A
+C
 
 **社群投票：** C 93%
 
@@ -13774,7 +13774,7 @@ A
 - E. 從現有的 EC2 例項建立一個 Amazon 機器影象( AMI)。 使用AMI作為Auto Scaling 群組(Auto Scaling group)的一部分,提供應用程式負載平衡器(Application Load Balancer)背後的新例項. 配置 Auto Scaling 群組(Auto Scaling group) 以保持至少兩個例項。 為網站配置 Amazon CloudFront 發行版。
 
 **答案**
-D,E
+C,E
 
 **社群投票：** CE 70%, AE 30%
 
@@ -13911,7 +13911,7 @@ C
 - D. 將應用程式移動到 Amazon Aurora 無伺服器的 資料庫(database)。 為每個區域(Region)部署資料庫(database)的例項. 使用每個區域部署中正確的區域終點進入全球業務安全標準0003。 使用AWS Lambda功能處理每個區域(Region)中的事件流,同步資料庫.
 
 **答案**
-B
+A
 
 **社群投票：** A 58%, B 42%
 
@@ -13939,7 +13939,7 @@ B
 - E. 使用 AWS Backup 建立 備份(backup) 保險庫。 使用AWS Backup為EC2例項建立基於標記值的備份(backup)計劃. 指定每天執行兩次的備份(backup)時間表。 向西二區索取
 
 **答案**
-B,C
+B,D
 
 **社群投票：** BD 100%
 
@@ -13995,7 +13995,7 @@ B
 - D. 在eu-West-1 VPC和AP-S東南部-2 VPC之間建立一個具有對等附件的中轉閘道器. 在中轉閘道器正確對等和路由配置後,在資料庫(database)安全群組(security group)中建立一條入境規則,該規則引用eu-west-1中應用伺服器的安全群組(security group)ID.
 
 **答案**
-B
+C
 
 **社群投票：** C 87%
 
@@ -14022,7 +14022,7 @@ B
 - D. 使用 Amazon S3 物件選擇配置每個開發環境
 
 **答案**
-B
+C
 
 **社群投票：** C 59%, B 41%
 
@@ -14189,7 +14189,7 @@ B
 - D. 安裝 Amazon CloudWatch 代理。 將所有日誌推向雲表日誌組。 建立 CloudWatch 日誌訂閱, 將任何日誌事件推向 Amazon Kinesis Data Firehose 傳送流。 將Amazon S3設定為目的地.
 
 **答案**
-D
+A
 
 **社群投票：** A 92%
 
@@ -14354,7 +14354,7 @@ B,C
 - D. Amazon Athena 帶有 DynamoDB 聯結器的聯邦查詢
 
 **答案**
-A
+D
 
 **社群投票：** D 49%, A 27%, B 24%
 
@@ -14408,7 +14408,7 @@ C
 - D. 建立 AWS 預算報告使用費用資料。 透過SMTP將資料傳送給公司.
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -14462,7 +14462,7 @@ D
 - D. 將網路層級和應用層級部署到第二個區域(Region)。 使用Amazon Aurora全球資料庫(database)在主區域(Region)和第二區域(Region)中部署資料庫(database). 使用Amazon Route 53健康檢查,並配有故障通路政策到第二個區域(Region). 視需要將中學升至小學。
 
 **答案**
-B
+D
 
 **社群投票：** D 94%
 
@@ -14514,7 +14514,7 @@ B
 - D. 將資料庫(database)執行個體遷移到Amazon RDS. 使用Amazon CloudWatch Logs進行資料安全和保護.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -14541,7 +14541,7 @@ A
 - D. 在NLB後面增加一個Amazon API Gateway端點。 啟用 API 快取。 覆蓋不同階段的快取方法。
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -14568,7 +14568,7 @@ D
 - D. 建立 Amazon 簡單佇列服務( Amazon SQS) 佇列。 將佇列附加到 Lambda 函式中。 為 Webhook 提供 SQS 佇列的公開主機名給第三方。
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -14597,7 +14597,7 @@ B
 - F. 在 API 閘道器中為 REST API 建立自定義域名。 從 AWS Certificate Manager(ACM) 匯入憑證.
 
 **答案**
-C,F,D
+A,D,F
 
 **社群投票：** ADF 100%
 
@@ -14627,7 +14627,7 @@ C,F,D
 - D. 使用Amazon GuardDuty. 建立一個 Amazon EventBridge 規則,從 GuardDuty 的發現過濾 CRITICAL 事件型別,並向安全小組傳送Amazon 簡單佇列服務(Amazon SQS)通知.
 
 **答案**
-C
+A
 
 **社群投票：** A 83%, C 17%
 
@@ -14654,7 +14654,7 @@ C
 - D. 建立後30天向S3 One Zone-不頻繁存取(S3 One Zone-IA)的儲存類轉換物件. 90天后將所有物件移動到 S3 Glacier Flexible Retrieval 儲存類. 寫入一個過期動作,指示 Amazon S3 在90天后刪除物件.
 
 **答案**
-B
+C
 
 **社群投票：** C 62%, A 31%
 
@@ -14681,7 +14681,7 @@ B
 - D. 建立一個新的 AWS Key Management Service(AWS KMS) 金鑰,其別名/aws/eb的別名. 為帳戶啟用預設的 Amazon 彈性塊儲存( Amazon EBS) 卷 加密(encryption)。
 
 **答案**
-D
+B
 
 **社群投票：** B 95%
 
@@ -14708,7 +14708,7 @@ D
 - D. 將設定從單AZ改為多AZ叢集部署,並有兩個可讀的備用例. 為資料科學家提供讀取的終點。
 
 **答案**
-C
+D
 
 **社群投票：** D 82%
 
@@ -14735,7 +14735,7 @@ C
 - D. 將 MySQL 資料庫(database) 移動到 Amazon RDS 為 MySQL 在一個單獨的 可用區(Availability Zone). 使用 Amazon ElastiCache 來使用 高可用性(high availability) 的 Redis 儲存會話資料,並讀取快取。 將網路伺服器移動到一個Auto Scaling 群組(Auto Scaling group),它位於三個可用區(Availability Zones)中.
 
 **答案**
-B
+A
 
 **社群投票：** A 79%, B 21%
 
@@ -14789,7 +14789,7 @@ A
 - D. 使用第三方備份(backup)軟體每晚獲取備份. 在Amazon S3中儲存一組二級備份.
 
 **答案**
-D
+B
 
 **社群投票：** B 58%, C 42%
 
@@ -15124,7 +15124,7 @@ B,D
 - D. 使用S3標準. 使用S3生命週期規則,在7天后將報告轉換為S3 Glacier Deep Archive。
 
 **答案**
-B
+A
 
 **社群投票：** A 65%, C 33%
 
@@ -15151,7 +15151,7 @@ B
 - D. 購買一個全先期EC2 Instance Savings Plans（EC2 執行個體節省方案）,為期一年。
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -15286,7 +15286,7 @@ B
 - D. 使用AWS Glue處理S3資料. 使用帶有Amazon Redshift資料的AWS湖形成來豐富S3資料.
 
 **答案**
-D
+B
 
 **社群投票：** B 71%, A 29%
 
@@ -15535,7 +15535,7 @@ C
 - D. 在每個EC2例項上附加的Amazon Elastic Block Store(Amazon EBS 磁碟區上建立檔案系統. 在不同的EC2例項中同步 EBS 磁碟區.
 
 **答案**
-A
+B
 
 **社群投票：** B 93%
 
@@ -15643,7 +15643,7 @@ A
 - D. 建立使用自動縮放的Auto Scaling 群組(Auto Scaling group).
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -15724,7 +15724,7 @@ C
 - D. 配置 Lambda SnapStart。(笑聲)
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -15778,7 +15778,7 @@ A
 - D. 建立一個Amazon RDS 資料庫(database),配置為跨區域(Region)閱讀複製版.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -15832,7 +15832,7 @@ D
 - D. 使用 AWS Certificate Manager(ACM) 建立憑證. 對域使用電子郵件驗證。
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -15886,7 +15886,7 @@ A
 - D. 購買所有預留的 DB 例。
 
 **答案**
-C
+A
 
 **社群投票：** A 95%
 
@@ -15913,7 +15913,7 @@ C
 - D. 在 Amazon EC2 例項中託管申請。 使用一個Amazon彈性塊儲存器(Amazon EBS)GP3磁碟區來執行應用程式.
 
 **答案**
-B
+D
 
 **社群投票：** D 100%
 
@@ -15940,7 +15940,7 @@ B
 - D. 設定Auto Scaling 群組(Auto Scaling group)最低容量為4架. 在一個可用區(Availability Zone)中部署兩個Spot 執行個體,在第二個可用區(Availability Zone)中部署兩個Spot 執行個體。
 
 **答案**
-D
+B
 
 **社群投票：** B 70%, A 30%
 
@@ -16073,7 +16073,7 @@ C
 - D. 讓研發AWS帳戶加入新的組織. 使新的管理帳戶成為前一個組織的成員。
 
 **答案**
-C
+B
 
 **社群投票：** B 87%
 
@@ -16100,7 +16100,7 @@ C
 - D. 在Amazon彈性集裝箱服務(Amazon ECS)集裝箱例項前,在Amazon彈性檔案系統(Amazon EFS)上儲存公司收到的資訊。 使用 AWS Lambda 函式解決授權.
 
 **答案**
-D
+C
 
 **社群投票：** C 84%, B 16%
 
@@ -16127,7 +16127,7 @@ D
 - D. 每24小時將自動快照複製到另一個區域(Region).
 
 **答案**
-B
+D
 
 **社群投票：** D 100%
 
@@ -16154,7 +16154,7 @@ B
 - D. 使用Amazon RDS儲存會話狀態. 更新應用程式以使用 Amazon RDS 儲存會話狀態。
 
 **答案**
-D
+B
 
 **社群投票：** B 89%
 
@@ -16208,7 +16208,7 @@ A
 - D. 使用Amazon API Gateway將請求連線到Amazon EKS.
 
 **答案**
-C
+B
 
 **社群投票：** B 75%, D 25%
 
@@ -16235,7 +16235,7 @@ C
 - D. 使用Amazon S3儲存影象. 使用Amazon CloudFront以地理限制方式分發影象. 為每個客戶在 CloudFront 中存取資料提供簽名的 URL。
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -16343,7 +16343,7 @@ C
 - D. 將PostgreSQL 資料庫(database)遷移到Amazon Redshift,以適應增加的使用.
 
 **答案**
-C
+A
 
 **社群投票：** A 93%
 
@@ -16399,7 +16399,7 @@ B
 - F. 設定 Amazon Athena 查詢 Amazon S3中的資料. 提供接觸分析員的機會。
 
 **答案**
-C,E,F
+A,C,F
 
 **社群投票：** ACF 96%
 
@@ -16431,7 +16431,7 @@ C,E,F
 - F. 為Amazon ECS叢集提供額外能力,以減輕伺服器故障和維護事件
 
 **答案**
-A,C,E
+A,C,F
 
 **社群投票：** ACF 50%, ACE 26%, ACD 21%
 
@@ -16569,7 +16569,7 @@ B
 - D. 訂購多個AWS Snowball裝置. 將資料複製到裝置中。 將裝置傳送給AWS,將資料複製到Amazon S3.
 
 **答案**
-A
+D
 
 **社群投票：** D 94%
 
@@ -16596,7 +16596,7 @@ A
 - D. 部署帶有快取卷的 AWS Storage Gateway 卷閘道器。
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -16704,7 +16704,7 @@ A
 - D. 建立 AWS Lambda 函式,用於定期查詢和刪除湖形成表中的敏感資訊。
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -16785,7 +16785,7 @@ A
 - D. 配置一個VPC 端點(VPC endpoint). 更新S3 bucket政策(bucket policy),允許從VPC 端點(VPC endpoint)進入. 更新應用程式以使用新的 VPC 端點(VPC endpoint).
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -16839,7 +16839,7 @@ B
 - D. 部署一個應用程式負載平衡器(Application Load Balancer),目標組包含應用程式伺服器的Auto Scaling 群組(Auto Scaling group). 配置安全群組(security group),只允許網路伺服器存取應用程式伺服器.
 
 **答案**
-A
+D
 
 **社群投票：** D 83%, B 17%
 
@@ -16866,7 +16866,7 @@ A
 - D. 在現有的EKS叢集中配置 Amazon CloudWatch 容器透視. 檢視雲表控制檯的引數和日誌。
 
 **答案**
-C
+D
 
 **社群投票：** D 90%
 
@@ -16893,7 +16893,7 @@ C
 - D. 配置AWS Config,以監控結果並向Amazon EventBridge報告.
 
 **答案**
-A
+C
 
 **社群投票：** C 100%
 
@@ -16921,7 +16921,7 @@ A
 - E. 在預設資料中心安裝 AWS 資料同步代理。 使用預設位置和 AWS 之間的資料同步任務。
 
 **答案**
-A,B
+B,E
 
 **社群投票：** BE 100%
 
@@ -17059,7 +17059,7 @@ A
 - E. 在Auto Usization 組中的Amazon EC2例項中,為靜態內容部署網路伺服器。 配置例項, 以定期重新整理 Amazon 彈性檔案系統( Amazon EFS) 卷的內容。
 
 **答案**
-C,D
+A,D
 
 **社群投票：** AD 60%, CD 32%
 
@@ -17088,7 +17088,7 @@ C,D
 - D. 設定API Gateway,配有Amazon CloudFront發行版. 在 CloudFront 中配置 AWS WAF。
 
 **答案**
-A
+B
 
 **社群投票：** B 89%
 
@@ -17142,7 +17142,7 @@ D
 - D. 配置 Amazon Route 53 並配有地理近似路由政策
 
 **答案**
-A
+C
 
 **社群投票：** C 77%, A 23%
 
@@ -17907,7 +17907,7 @@ B
 - D. 建立 AWS Lambda 函式,以預設值標記資源。 配置 Amazon EventBridge 規則,對 AWS CloudTrail 事件作出反應,在資源缺失成本中心標記時引用 Lambda 函式.
 
 **答案**
-B
+A
 
 **社群投票：** A 54%, B 46%
 
@@ -17991,7 +17991,7 @@ C,E
 - D. 將影象儲存在 Amazon S3 標準-不頻繁存取（S3 Standard-IA）中. 使用S3 Standard-IA透過使用靜態網站直接傳送影象.
 
 **答案**
-C
+D
 
 **社群投票：** D 90%
 
@@ -18210,7 +18210,7 @@ A
 - D. 配置一個 Elastic Beanstalk 環境,以無限模式使用可爆效能例項。 配置環境以在預測度量表上縮放.
 
 **答案**
-B
+A
 
 **社群投票：** A 56%, D 41%
 
@@ -18294,7 +18294,7 @@ B,E
 - D. 使用 AWS Key Management Service(AWS KMS) 金鑰從區域(Region) 安全地存取資料,並存取現場位置.
 
 **答案**
-A
+C
 
 **社群投票：** C 82%
 
@@ -18375,7 +18375,7 @@ C
 - D. 購買DynamoDB保留能力,任期3年.
 
 **答案**
-A
+B
 
 **社群投票：** B 75%, A 25%
 
@@ -18402,7 +18402,7 @@ A
 - D. 使用Amazon CloudWatch來監控成本並識別異常支出.
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -18429,7 +18429,7 @@ C
 - D. 配置 AWS Glue 爬蟲來爬行資料. 配置 Amazon Kinesis Data Analytics使用 SQL 查詢資料.
 
 **答案**
-D
+B
 
 **社群投票：** B 92%
 
@@ -18456,7 +18456,7 @@ D
 - D. 為每個使用者配置Amazon S3存取許可權. 建立一個S3 生命週期政策(Lifecycle policy),在7天后將資料轉換為S3 Glacier Flexible Retrieval.
 
 **答案**
-D
+B
 
 **社群投票：** B 82%, C 18%
 
@@ -18484,7 +18484,7 @@ D
 - E. 配置 Auto Scaling 群組(Auto Scaling group) 子網,以確保在與 DB 例項相同的 可用區(Availability Zone) 中提供 EC2 例項。
 
 **答案**
-A,C
+B,D
 
 **社群投票：** BD 86%
 
@@ -18513,7 +18513,7 @@ A,C
 - D. 鎖定EBS快照以防止刪除.
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -18594,7 +18594,7 @@ D
 - D. 下載 S3 物件到 Amazon EC2 例項。 使用客戶管理的金鑰加密物件。 將加密物件上傳到 Amazon S3。
 
 **答案**
-A
+B
 
 **社群投票：** B 93%
 
@@ -18623,7 +18623,7 @@ A
 - F. 配置 備份(backup) 解決方案, 以保留30天的時間標記物件
 
 **答案**
-C,E,F
+A,C,E
 
 **社群投票：** ACE 69%, ADE 31%
 
@@ -18653,7 +18653,7 @@ C,E,F
 - D. 在與檔案系統相同的 VPC 中啟動 Amazon EC2 例項。 掛載檔案系統。 建立一個指令碼,以例行同步起源S3 bucket中更改的所有物件到目的地S3 bucket和掛載的檔案系統.
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -18680,7 +18680,7 @@ D
 - D. 使用 AWS 擁有的金鑰加密 EBS 磁碟區。
 
 **答案**
-C
+A
 
 **社群投票：** A 94%
 
@@ -18707,7 +18707,7 @@ C
 - D. 使用Amazon檢查器檢測未加密的Amazon Elastic Block Store(Amazon EBS)卷. 使用AWS Systems Manager自動化規則自動加密已有和新的EBS 磁碟區.
 
 **答案**
-B
+A
 
 **社群投票：** A 94%
 
@@ -18735,7 +18735,7 @@ B
 - E. 將資料庫(database)移動到一個Amazon DynamoDB表.
 
 **答案**
-C,E
+A,C
 
 **社群投票：** AC 100%
 
@@ -18818,7 +18818,7 @@ B
 - D. 建立AWS Direct Connect連線,連線在原地位置和中央VPC之間. 透過使用對等連線將中心VPC連線到其他VPC.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -18846,7 +18846,7 @@ D
 - E. 透過使用S3 bucket中的歷史資料來訓練一個Amazon Forecast 預測器.
 
 **答案**
-C,D
+D,E
 
 **社群投票：** DE 63%, AB 16%
 
@@ -18875,7 +18875,7 @@ C,D
 - D. 在IAM身份中心建立個人使用者. 建立新的許可權集,其中包含針對每個使用者的適當的IAM政策. 指定使用者進入適當的帳戶。 從具體帳戶中為使用者提供額外的IAM許可權. 當僱用新使用者時,將其新增到IAM身份中心,並分配給帳戶.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -18902,7 +18902,7 @@ B
 - D. 為 Amazon EBS 建立 AWS Config 規則,以評價一個磁碟區是否被加密,如果一個磁碟區沒有被加密,則可以虛構磁碟區.
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -18930,7 +18930,7 @@ C
 - E. 上傳檔案時在每個物件中新增隨機字首.
 
 **答案**
-A,C
+C,D
 
 **社群投票：** CD 100%
 
@@ -18960,7 +18960,7 @@ A,C
 - E. 建立 Amazon S3 bucket儲存網頁內容。 將快取控制頭的後設資料設定為無快取。 使用Amazon CloudFront來傳送內容.
 
 **答案**
-A,D
+B,E
 
 **社群投票：** BE 100%
 
@@ -18989,7 +18989,7 @@ A,D
 - D. 建立帶有地理近似政策的CNAME記錄.
 
 **答案**
-D
+A
 
 **社群投票：** A 81%
 
@@ -19016,7 +19016,7 @@ D
 - D. 修改Auto Scaling 群組(Auto Scaling group),在3個可用區(Availability Zones)中使用EC2例項. 透過使用AWS 資料庫(Database)遷移服務(AWS DS)將嵌入式的NoSQL 資料庫(database)遷移到Amazon DynamoDB.
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -19070,7 +19070,7 @@ B
 - D. 使用 AWS 信任顧問來理解應用程式的效能.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -19097,7 +19097,7 @@ A
 - D. 為每個客戶提供AWS Certificate Manager(ACM)憑證。 加密資料客戶端。 在公共憑證政策中,除客戶提供的IAM角色外,拒絕所有負責人獲得憑證。
 
 **答案**
-D
+C
 
 **社群投票：** C 73%, B 27%
 
@@ -19124,7 +19124,7 @@ D
 - D. 確保作為EC2例項的安全群組(security group)允許HTTP在80號口岸的流量和HTTPS在443號口岸的流量. 確保網站的DNS記錄解決EC2例項的公開IP地址.
 
 **答案**
-D
+B
 
 **社群投票：** B 83%
 
@@ -19151,7 +19151,7 @@ D
 - D. 在相同的可用區(Availability Zones)中建立Amazon Elastic File System (Amazon EFS),將EKS工人節點放置在其中. 在 EKS 叢集上的儲存類物件中註冊檔案系統。 建立一個 AWS Lambda 函式,在檔案系統之間同步資料.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -19206,7 +19206,7 @@ B
 - E. 配置 Amazon CloudFront 處理每個 區域(Region) 中應用程式的流量和線路請求
 
 **答案**
-B,C
+A,C
 
 **社群投票：** AC 100%
 
@@ -19235,7 +19235,7 @@ B,C
 - D. 為應用程式建立 Amazon CloudFront 分佈,並將 ALB 設定為來源。 啟用關於發行的 AWS WAF 網頁 ACL, 並配置規則以阻斷來自未知來源的流量
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -19262,7 +19262,7 @@ B
 - D. 為 Lustre 檔案系統建立 Amazon FSx。 直接將資料匯入FSx用於Lustre檔案系統. 從 HPC 叢集例項存取 Lustre 檔案系統的 FSx。
 
 **答案**
-C
+D
 
 **社群投票：** D 53%, B 47%
 
@@ -19289,7 +19289,7 @@ C
 - D. 搭建AWS Direct Connect連線於地端資料中心和一個VPC之間,並將資料複製到Amazon S3.
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -19316,7 +19316,7 @@ D
 - D. 在單獨的AWS區域EC2例項上推出一套相同的遊戲伺服器. 將網際網路接入兩組EC2例項。
 
 **答案**
-A
+C
 
 **社群投票：** C 100%
 
@@ -19344,7 +19344,7 @@ A
 - E. 推廣Aurora PostgreSQL在複製滯後為零時讀取複製品到一個獨立的Aurora PostgreSQL DB叢集.
 
 **答案**
-A,E
+A,D
 
 **社群投票：** AD 100%
 
@@ -19400,7 +19400,7 @@ B
 - D. 在一個專門的Amazon EC2例項上使用Amazon EMR直接查詢ALB以獲取流量存取日誌資訊.
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -19427,7 +19427,7 @@ C
 - D. 在與EC2例項相同的VPC中,在公共子網中建立私有的NAT閘道器.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -19455,7 +19455,7 @@ D
 - E. 為所需的帳戶建立 OU。 將 SCP 附加到 OU 上. 將非生產成員帳戶移至新的OU.
 
 **答案**
-D,E
+B,E
 
 **社群投票：** BE 83%
 
@@ -19511,7 +19511,7 @@ A
 - D. 為 Redis 快取建立 Amazon ElastiCache。 透過使用AWS 資料庫(Database) 遷移服務(AWS DS),採用迴轉方式將Aurora叢集的資料複製到Redis.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -19538,7 +19538,7 @@ B
 - D. 建立Route 53公共託管區. 為每個服務建立記錄以允許服務通訊
 
 **答案**
-C
+A
 
 **社群投票：** A 91%
 
@@ -19565,7 +19565,7 @@ C
 - D. 在Amazon S3冰川儲存類中儲存照片. 設定一個S3 生命週期政策(Lifecycle policy),將超過30天的照片移動到S3 Glacier Deep Archive儲存類. 將照片後設資料及其S3位置儲存在 Amazon OpenSearch Service.
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -19592,7 +19592,7 @@ D
 - D. 使用基於 RequestCount 和 GobjectResponseTime Cloud Watch 度量衡的最小未決請求演算法.
 
 **答案**
-C
+B
 
 **社群投票：** B 79%, D 21%
 
@@ -19619,7 +19619,7 @@ C
 - D. 建立Savings Plans（節省方案）預告訂閱. 啟用所有通知選項。 輸入接收通知的電子郵件地址。
 
 **答案**
-B
+A
 
 **社群投票：** A 76%, D 24%
 
@@ -19646,7 +19646,7 @@ B
 - D. 部署一個使用私人子網的網路負載平衡器(Network Load Balancer)(NLB)。 為網際網路上的HTTPS通訊配置一個NLB聽眾。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -19673,7 +19673,7 @@ C
 - D. 在兩個可用區(Availability Zones)中建立一個 AWS Transfer Family SFTP 內部伺服器. 使用Amazon S3儲存器. 建立 AWS Lambda 函式處理命令檔案。 使用一個 Transfer Family 管理的 workfiow 來引用 Lambda 函式。
 
 **答案**
-A
+D
 
 **社群投票：** D 76%, A 24%
 
@@ -19700,7 +19700,7 @@ A
 - D. 使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 建立 Amazon EMR 群集處理資料.
 
 **答案**
-A
+C
 
 **社群投票：** C 83%, B 17%
 
@@ -19727,7 +19727,7 @@ A
 - D. 為 OpenZFS 檔案系統建立 Amazon FSx. 將資料遷移到新卷.
 
 **答案**
-C
+B
 
 **社群投票：** B 70%, C 30%
 
@@ -19754,7 +19754,7 @@ C
 - D. 在AWS Elastic Beanstalk上執行應用程式作為單一的應用環境,並採用全機部署策略.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -19781,7 +19781,7 @@ B
 - D. 使用執行自定義開發程式碼的 AWS Lambda 函式.
 
 **答案**
-C
+D
 
 **社群投票：** D 80%, C 20%
 
@@ -19808,7 +19808,7 @@ C
 - D. 建立 AWS 站點到站點的 VPN 連線從站點到每個 VPC。 確保每條連線的VPN隧道都通車. 開啟路線傳播功能
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -19889,7 +19889,7 @@ B
 - D. 配置Amazon CloudFront以減少儲存在Amazon S3中的物件數量.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -19943,7 +19943,7 @@ D
 - D. 啟用 DynamoDB 表格上的時點恢復。
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -19997,7 +19997,7 @@ B
 - D. 制定簡單的縮放政策. 根據EC2例項啟動時間增加冷卻期.
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -20078,7 +20078,7 @@ C
 - D. 在應用程式程式碼中為不同的功能使用不同的資料庫(database)帳戶. 避免給予資料庫(database)使用者過多的特權.
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -20159,7 +20159,7 @@ D
 - D. 按下分數更新到Amazon SQS 佇列 (Amazon SQS). 使用帶有 Auto 縮放的 Amazon EC2 例項來處理 SQS 佇列中的更新。 將處理過的更新儲存在 Amazon RDS 多AZ DB 例項中。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -20214,7 +20214,7 @@ B
 - E. 建立 S3 Multi-Region Access Point. 修改應用程式以使用多區域(Region)存取點的Amazon Resource Name (ARN)進行影片流和上傳.
 
 **答案**
-A,B
+C,E
 
 **社群投票：** CE 85%
 
@@ -20243,7 +20243,7 @@ A,B
 - D. 在最接近使用者的區域(Region)中上傳並儲存Amazon S3中的內容. 使用Amazon CloudFront的多個分佈.
 
 **答案**
-A
+B
 
 **社群投票：** B 93%
 
@@ -20270,7 +20270,7 @@ A
 - D. 將API Gateway REST API的請求傳送到多個Amazon Simple Queue Service (Amazon SQS)佇列. 配置目標 Lambda 函式以檢視不同的 SQS 佇列。
 
 **答案**
-D
+A
 
 **社群投票：** A 68%, B 26%
 
@@ -20297,7 +20297,7 @@ D
 - D. 透過過濾Amazon S3的AWS使用報告,建立未加密物件列表. 配置 S3 預設的 加密(encryption) 特性,使用伺服器側的 加密(encryption) 並帶有客戶提供的金鑰(SSE-C).
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -20324,7 +20324,7 @@ B
 - D. 在 VPC 中建立 Amazon Route 53 解析器。 指定提供者的 DNS 將轉發 DNS 查詢的 IP 地址。 配置提供者的 DNS 將域名的 DNS 查詢轉發到 IP 地址, 指定於 入境端點。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -20351,7 +20351,7 @@ C
 - D. 使用AWS AppConfig儲存和管理應用程式配置. 使用Amazon RDS儲存和檢索憑證.
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -20378,7 +20378,7 @@ B
 - D. 下載 AWS 提供的根憑證。 在 RDS 例項的所有連線中提供憑證。
 
 **答案**
-A
+D
 
 **社群投票：** D 81%, A 19%
 
@@ -20405,7 +20405,7 @@ A
 - D. 在負載平衡器(load balancer)前以公共IP地址作為代理執行的EC2例項.
 
 **答案**
-D
+A
 
 **社群投票：** A 92%
 
@@ -20432,7 +20432,7 @@ D
 - D. 向最高階的解決方案架構師提供根使用者憑證。 讓解決方案架構師使用根使用者執行日常管理任務.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -20460,7 +20460,7 @@ A
 - E. 使用Amazon Elastic Block Store (Amazon EBS)最佳化例項型別.
 
 **答案**
-B,E
+A,C
 
 **社群投票：** AC 100%
 
@@ -20489,7 +20489,7 @@ B,E
 - D. 使用 AWS Direct Connect 將 primes 檔案儲存上的資料遷移到 AWS Storage Gateway 卷閘道器.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -20516,7 +20516,7 @@ B
 - D. 在監控(monitoring)帳戶中建立一個新的IAM使用者. 在每個AWS帳戶中建立交叉帳戶IAM政策. 將IAM政策附加到新的IAM使用者中.
 
 **答案**
-C
+A
 
 **社群投票：** A 86%
 
@@ -20543,7 +20543,7 @@ C
 - D. 修改ALB背後目標群體EC2事件的安全組,以否認惡意IP地址.
 
 **答案**
-A
+B
 
 **社群投票：** B 81%, A 19%
 
@@ -20570,7 +20570,7 @@ A
 - D. 使用AWS資源存取管理器(AWS RAM)與現有IDP中的使用者共享對AWS帳戶的存取.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -20654,7 +20654,7 @@ A,D
 - D. 部署用於 SFTP 的 AWS 傳輸器和一個 Amazon S3 bucket儲存。 修改程式, 將批次檔案從 Amazon S3 拖動到 Amazon EC2 處理。 在Auto Scaling 群組(Auto Scaling group)中使用EC2例項,並帶有預定的縮放政策來執行批次操作.
 
 **答案**
-B
+A
 
 **社群投票：** A 63%, D 31%
 
@@ -20681,7 +20681,7 @@ B
 - D. 在每個區域(Region)中,將EC2例項放在應用程式負載平衡器(ALBs)後面. 建立一個Amazon CloudFront分佈,其來源使用Amazon Route 53 延遲(latency)基於路由的路由,用於向ALB請求路由. 部署AWS WAF 在雲紋分佈。
 
 **答案**
-C
+B
 
 **社群投票：** B 83%, D 17%
 
@@ -20708,7 +20708,7 @@ C
 - D. 遷移至 Amazon Redshift.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -20735,7 +20735,7 @@ A
 - D. 建立 Amazon DynamoDB 表格。 建立 AWS Lambda 函式,只讀取檔案中不包含PII的資料. 配置 Lambda 函式,在向 Amazon S3 寫入新檔案時,將非 PII 資料儲存在 DynamoDB 表中. 允許外部服務提供商存取DynamomDB表格.
 
 **答案**
-D
+A
 
 **社群投票：** A 91%
 
@@ -20762,7 +20762,7 @@ D
 - D. 以兩個使用RAID配置進行儲存冗餘的Amazon Elastic Block Store (Amazon EBS)啟動EC2例項.
 
 **答案**
-A
+C
 
 **社群投票：** C 68%, D 32%
 
@@ -20789,7 +20789,7 @@ A
 - D. 使用 AWS Lambda 函式. 配置 Lambda 函式以連線到 VPC。 配置應用程式自動縮放以使用 Lambda 作為可縮放的目標。 設定最小容量為3.
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
@@ -20816,7 +20816,7 @@ B
 - D. 在S3 Standard中儲存較新的電影影片檔案. 在S3 Glacier Flexible Retrieval中儲存較舊的電影影片檔案. 當使用者訂購更古老的電影時,透過使用批次檢索來檢索影片檔案.
 
 **答案**
-A
+C
 
 **社群投票：** C 50%, B 39%
 
@@ -20843,7 +20843,7 @@ A
 - D. 建立Amazon Elastic Container Service (Amazon ECS)叢集,使用Amazon EC2發射型,其AVSERV0050容量超過50GB的空間. 為容器影象建立任務定義。 建立帶有任務定義的服務。
 
 **答案**
-B
+C
 
 **社群投票：** C 91%
 
@@ -20870,7 +20870,7 @@ B
 - D. 開發一個使用AWS安全託肯服務(AWS STS)獲取短命憑證的自定義身份中介應用程式或程序.
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -20897,7 +20897,7 @@ C
 - D. 將AMIs上傳到一個擁有Cross-區域(Region) 複寫(Replication)的Amazon S3 bucket.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -20924,7 +20924,7 @@ D
 - D. 建立一個Amazon S3 VPC 端點(VPC endpoint)並建立一個VPN上傳資料.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -20951,7 +20951,7 @@ A
 - D. 在公共子網中將網路層級和應用層級遷移到Amazon EC2例項. 在公共子網中將資料庫(database)級移動到Amazon Aurora MySQL.
 
 **答案**
-A
+B
 
 **社群投票：** B 93%
 
@@ -20978,7 +20978,7 @@ A
 - D. 建立一個Amazon Simple Notification Service (Amazon SNS)存取政策,為另一家公司提供對SQS佇列的存取.
 
 **答案**
-A
+C
 
 **社群投票：** C 100%
 
@@ -21005,7 +21005,7 @@ A
 - D. 將AmazonSSMManaged Instance Core IAM 政策(IAM policy)附加到與EC2例項相關的IAM角色中. 指示開發者使用 AWS Systems Manager 會話管理器存取 EC2 例項。
 
 **答案**
-B
+D
 
 **社群投票：** D 100%
 
@@ -21032,7 +21032,7 @@ B
 - D. 配置 AWS 站點到站點的 VPN 從站點環境到 AWS 連線。 將資料遷移到一個Amazon Elastic File System (Amazon EFS)的檔案系統.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -21059,7 +21059,7 @@ B
 - D. 開啟表上的流來捕捉過去24小時裡對錶的所有更改的日誌. 在Amazon S3 bucket中儲存流水副本.
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -21086,7 +21086,7 @@ C
 - D. 配置一個 Amazon 簡單通知服務(Amazon SNS) 主題處理上傳到 Amazon S3 的檔案. Invoke a AWS Lambda 函式處理檔案.
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -21113,7 +21113,7 @@ Amazon EC2例項上部署了一個公司的應用程式,並且將AWS Lambda功�
 - D. 生產例項使用專用主機。 對非生產情況採用EC2 Instance Savings Plans（EC2 執行個體節省方案）。
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -21140,7 +21140,7 @@ D
 - D. 使用AWS Snowball裝置將資料遷移到Amazon S3 bucket. 透過使用Aurora PostgreSQL aws s3擴充套件將 S3 資料匯入到 Aurora PostgreSQL 中.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -21197,7 +21197,7 @@ A,C
 - D. 配置一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板,從預先配置的Amazon Machine Image (AMI)開始新的例項.
 
 **答案**
-A
+D
 
 **社群投票：** D 80%, C 20%
 
@@ -21224,7 +21224,7 @@ A
 - D. 配置服務控制政策(SCP),防止非行政使用者建立或編輯安全組. 當使用者請求需要管理員許可權的規則時,在售票系統中建立一個通知.
 
 **答案**
-C
+B
 
 **社群投票：** B 100%
 
@@ -21251,7 +21251,7 @@ C
 - D. 建立包含微服務的VPC之間的對等連線. 為每個需要連線客戶端的服務建立字首列表. 建立路由表,將路由流量傳送給相應的VPC. 建立安全組只允許 HTTPS 通訊。
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -21278,7 +21278,7 @@ A
 - D. 在資料庫(database)前增加一個Amazon ElastiCache,用於疊加層.
 
 **答案**
-D
+C
 
 **社群投票：** C 100%
 
@@ -21306,7 +21306,7 @@ D
 - E. 重新建立 AWS KMS 金鑰。 新增一個關鍵政策,允許根Amazon Resource Name (ARN)的組織使用 AWS KMS 金鑰.
 
 **答案**
-B,C
+A,C
 
 **社群投票：** AC 100%
 
@@ -21335,7 +21335,7 @@ B,C
 - D. 建立AWS Storage Gateway卷閘道器,將資料傳輸到Amazon S3.
 
 **答案**
-C
+B
 
 **社群投票：** B 88%
 
@@ -21362,7 +21362,7 @@ C
 - D. 為每個應用程式建立 EFS 存取點。 使用可移植作業系統介面(POSIX)檔案許可權允許只讀存取根目錄中的檔案.
 
 **答案**
-A
+B
 
 **社群投票：** B 60%, C 33%
 
@@ -21632,7 +21632,7 @@ C
 - D. 使用服務控制政策(SCP)來阻止EC2例項和IAM資源的行動,如果這些行動導致不合規.
 
 **答案**
-D
+A
 
 **社群投票：** A 64%, D 36%
 
@@ -21716,7 +21716,7 @@ D
 - D. 配置一個 IAM 使用者來處理使用者認證。 使用IAM授權程式實施Amazon API Gateway HTTP API.
 
 **答案**
-D
+A
 
 **社群投票：** A 85%, B 15%
 
@@ -21743,7 +21743,7 @@ D
 - D. 建立 AWS CloudTrail 線索。 配置線索將日誌傳送給一個新的 Amazon CloudWatch 日誌組。 根據 Cloud Watch 日誌組的度量過濾器建立 Cloud Watch 提醒。 配置提醒以使用 Amazon SNS 在 KMS DeletKey 操作時通知管理員。
 
 **答案**
-D
+C
 
 **社群投票：** C 80%, D 20%
 
@@ -21881,7 +21881,7 @@ B
 - D. 在 Amazon Kinesis 資料流中建立資料流. 實施生產者和消費者應用。 在資料流中儲存親子夥伴列表. 當公司給予使用者點數時傳送使用者ID.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -21908,7 +21908,7 @@ A
 - D. 當 Put Object 請求發生時,使用 Amazon EventBridge 規則引用 AWS Lambda 函式。 程式設計Lambda函式,透過使用Amazon SageMaker來分析物件並提取成分名稱. 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中。
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -21935,7 +21935,7 @@ D
 - D. 將檔案系統的內容移動到 Lambda 層。 配置Lambda層的許可權,允許公司的二級帳戶使用Lambda層.
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -21962,7 +21962,7 @@ A
 - D. 在S3 bucket中儲存資料之前先加密公司資料中心的資料.
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -21989,7 +21989,7 @@ A
 - D. 建立 Amazon API Gateway API. 將API與AWS Lambda整合,從移動裝置接收付款通知. Invoke a Lambda 函式以驗證付款通知並將通知傳送給後端應用程式. 在Amazon Elastic Container Service (Amazon ECS)上部署後端應用程式。 配置 Amazon ECS ,具有 AWS Fargate 啟動類型.
 
 **答案**
-C
+D
 
 **社群投票：** D 100%
 
@@ -22016,7 +22016,7 @@ C
 - D. 為使用者認證配置 AWS IAM 身份認證中心(AWS Single Sign-On)認證. 配置許可權集以要求多要素認證(MFA).
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -22043,7 +22043,7 @@ C
 - D. 執行每天的AWS Glue任務,將資料轉換並載入到Amazon Athena表格中. 使用Amazon Athena ML來建立和訓練ML模型.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -22070,7 +22070,7 @@ B
 - D. 在資料中心安裝 AWS Snowball Edge Storage Optimized 節點。
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -22097,7 +22097,7 @@ B
 - D. 使用Amazon Elastic File System (Amazon EFS) One Zone-不經常存取(One Zone-IA)儲存級. 啟用不經常存取的生命週期政策(lifecycle policy)。
 
 **答案**
-D
+B
 
 **社群投票：** B 90%
 
@@ -22124,7 +22124,7 @@ D
 - D. 配置 Lambda 函式的提供貨幣。 根據AWS計算最佳化建議增加記憶體.
 
 **答案**
-C
+D
 
 **社群投票：** D 69%, B 15%, A 15%
 
@@ -22151,7 +22151,7 @@ C
 - D. 將容器影象儲存在已啟用版本的 Amazon S3 bucket中。 為 s3 配置 S3 事件通知: ObjectCreated: * 事件以引用 AWS Lambda 函式。 配置 Lambda 函式啟動 Amazon 檢查員掃描。
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -22178,7 +22178,7 @@ C
 - D. 配置 AWS 批次工作以釋出任務 SUCCEEDED 事件到 Amazon API Gateway REST API。 配置 API Gateway REST API 上的代理整合到 AWS Lambda 函式中. 配置 Lambda 函式以使用使用者名稱和密碼來引用第三方 API。
 
 **答案**
-D
+A
 
 **社群投票：** A 61%, B 29%
 
@@ -22205,7 +22205,7 @@ D
 - D. 使用AWS Transit Gateway整合公司的VPC和供應商的VPC. 使用VPC對等連線公司的VPC和供應商的VPC.
 
 **答案**
-A
+C
 
 **社群投票：** C 93%
 
@@ -22259,7 +22259,7 @@ B
 - D. 為資料建立 Amazon Athena 表格。 寫入雅典娜SQL查詢以轉換資料. 與員工共享雅典娜SQL查詢.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -22286,7 +22286,7 @@ B
 - D. 將所有例項放在同一個目標群體中。 為開發網站建立記錄。 設定值為 ALB。 在 ALB 上建立一個聽眾規則,將開發網站的請求轉發給目標群體.
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -22313,7 +22313,7 @@ C
 - D. 使用 AWS Lambda 函式執行應用程式. 使用 Amazon 簡單佇列服務(Amazon SQS)來檢索訊息.
 
 **答案**
-A
+B
 
 **社群投票：** B 93%
 
@@ -22340,7 +22340,7 @@ A
 - D. 在 AWS 全球加速器中建立標準加速器。 將現有的NLB配置為目標終點。
 
 **答案**
-A
+D
 
 **社群投票：** D 100%
 
@@ -22394,7 +22394,7 @@ B
 - D. 在Amazon S3 bucket中儲存所提取的洞見. 使用Amazon QuickSight視覺化分析資料.
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -22448,7 +22448,7 @@ A
 - D. 建立一個 AWS Lambda 函式,使用 gzip 壓縮來壓縮大物件,因為它們被寫入一個 DynamoDB 表.
 
 **答案**
-D
+B
 
 **社群投票：** B 100%
 
@@ -22583,7 +22583,7 @@ C
 - D. 應用到EC2例項中,這些例項被配置為應用程式負載平衡器(Application Load Balancer)背後的目標群體。 為 Redis 叢集建立使用 MySQL 聯結器的 Amazon ElastiCache。
 
 **答案**
-B
+C
 
 **社群投票：** C 100%
 
@@ -22610,7 +22610,7 @@ B
 - D. 使用客戶金鑰材料加密資料. 將資料遷移到S3 bucket. 建立一個AWS Key Management Service(AWS KMS)金鑰,不包含金鑰材料. 將客戶關鍵材料匯入 KMS 金鑰. 啟用自動金鑰旋轉。
 
 **答案**
-A
+B
 
 **社群投票：** B 60%, A 40%
 
@@ -22664,7 +22664,7 @@ B
 - D. 配置叢集以使用Aurora I/O-O-optimized儲存配置.
 
 **答案**
-C
+D
 
 **社群投票：** D 85%, C 15%
 
@@ -23015,7 +23015,7 @@ C
 - D. Amazon EC2 例項和 AWS 彈性IP地址
 
 **答案**
-A
+B
 
 **社群投票：** B 100%
 
@@ -23042,7 +23042,7 @@ A
 - D. 將每日快照(snapshot)保留在EBS 快照(snapshot)標準等級. 使用EBS直接API每月拍攝所有EBS 磁碟區的快照. 將快照存放在Amazon S3 bucket中,在不頻繁存取層中儲存7年.
 
 **答案**
-A
+B
 
 **社群投票：** B 45%, A 41%
 
@@ -23420,7 +23420,7 @@ C
 - D. 請求提供亞馬遜從我們西-1 區域(Region)的AWS Certificate Manager(ACM)頒發的公開憑證.
 
 **答案**
-A
+C
 
 **社群投票：** C 100%
 
@@ -23474,7 +23474,7 @@ D
 - D. 當啟動 EC2 例項時配置一個即時能力保留。
 
 **答案**
-D
+A
 
 **社群投票：** A 100%
 
@@ -23529,7 +23529,7 @@ C
 - E. 審查受託顧問的核查,以最佳化計算。 使用 AWS 計算最佳化器交叉檢查結果。
 
 **答案**
-B,C
+A,C
 
 **社群投票：** AC 62%, AD 23%
 
@@ -23558,7 +23558,7 @@ B,C
 - D. 在公共子網中為每個可用區(Availability Zone)建立一個NAT閘道器. 在私有子網的每個路由表中,都新增一個預設路由,在同一個可用區(Availability Zone)中指向NAT閘道器.
 
 **答案**
-C
+A
 
 **社群投票：** A 100%
 
@@ -23694,7 +23694,7 @@ C
 - E. 使用AWS Fargate與Amazon Elastic Container Service (Amazon ECS)處理資料.
 
 **答案**
-A,B
+A,E
 
 **社群投票：** AE 100%
 
@@ -23910,7 +23910,7 @@ D
 - D. 在帳戶中設定Amazon GuardDuty來監控所有EC2例項. 部署AWS Config,使EC2上的補丁裝置自動化。
 
 **答案**
-A
+B
 
 **社群投票：** B 88%
 
@@ -23992,7 +23992,7 @@ D
 - E. 建立 Amazon CloudWatch 提醒。 配置提醒以重新啟動向停止狀態過渡的 EC2 例項。
 
 **答案**
-C,D
+B,D
 
 **社群投票：** BD 100%
 
@@ -24048,7 +24048,7 @@ B
 - D. 配置每個 AWS 帳戶根使用者,以使用進入中央郵箱的電子郵件別名。 透過使用單個業務管理的電子郵件分發列表來配置每個帳戶的替代聯絡人,每個列表用於計費團隊,安全團隊,以及操作團隊.
 
 **答案**
-B
+D
 
 **社群投票：** D 54%, A 46%
 
@@ -24249,7 +24249,7 @@ A,C,E
 - E. 為Amazon EC2和Fargate購買EC2 Instance Savings Plans（EC2 執行個體節省方案）。
 
 **答案**
-B,D
+C,D
 
 **社群投票：** CD 100%
 
@@ -24279,7 +24279,7 @@ B,D
 - E. 使用 AWS 資料庫(Database) 遷移服務(AWS DS)來重寫應用程式中的SQL查詢.
 
 **答案**
-C,D
+B,C
 
 **社群投票：** BC 100%
 
@@ -24389,7 +24389,7 @@ B
 - D. 建立一個 S3 生命週期政策(Lifecycle policy),在物件建立30天后將檔案移動到 S3標準-不頻繁存取(S3 Standard-IA). 在物件建立4年後將檔案移動到 S3 Glacier Flexible Retrieval。
 
 **答案**
-D
+C
 
 **社群投票：** C 50%, A 45%
 
@@ -24416,7 +24416,7 @@ D
 - D. 設定Amazon S3,使用多區域(Region)Access Points在具有單一全域性終點的活性配置中. 配置 S3 跨 區域(Region) 複寫(Replication).
 
 **答案**
-B
+D
 
 **社群投票：** D 100%
 
@@ -25694,7 +25694,7 @@ B
 - D. PostgreSQL工作量的 " Amazon RDS " 預先選擇,為期3年。 購買為期3年的EC2 Instance Savings Plans（EC2 執行個體節省方案）,並預留EC2例項。
 
 **答案**
-B
+D
 
 **社群投票：** D 100%
 
@@ -26335,7 +26335,7 @@ D
 - D. 透過使用客戶端的加密(encryption)使用Amazon S3管理金鑰加密資料.
 
 **答案**
-B
+A
 
 **社群投票：** A 100%
 
