@@ -37,6 +37,15 @@
           </button>
         </div>
 
+        <button id="btn-wrong-bank" class="wrong-bank-entry" type="button">
+          <span class="wrong-bank-entry-icon">📚</span>
+          <span class="wrong-bank-entry-copy">
+            <strong>錯題庫</strong>
+            <small>依測驗日期與題型整理，隨時回來複習</small>
+          </span>
+          <span id="wrong-bank-count" class="wrong-bank-entry-count">0 次測驗&nbsp; →</span>
+        </button>
+
         <!-- Chapter Selector (Visible in chapter mode) -->
         <div id="chapter-select-wrap" class="chapter-select-wrap hidden">
           <div class="chapter-select-header">
@@ -92,6 +101,51 @@
           </ul>
         </div>
       </div>
+    </section>
+
+    <!-- Wrong Bank Directory -->
+    <section id="screen-wrong-bank" class="screen" aria-label="錯題庫目錄">
+      <header class="archive-header">
+        <button id="btn-back-home" class="btn-secondary archive-back" type="button">← 回到首頁</button>
+        <div class="archive-heading">
+          <span class="archive-kicker">REVIEW ARCHIVE</span>
+          <h1 class="archive-title">錯題庫</h1>
+          <p class="archive-subtitle">把每次測驗留下的盲點，整理成下一次進步的路線圖。</p>
+        </div>
+        <div id="wrong-bank-summary" class="archive-summary"></div>
+      </header>
+      <main class="wrong-bank-main">
+        <div class="wrong-bank-section-heading">
+          <div>
+            <span class="archive-kicker">YOUR SESSIONS</span>
+            <h2 class="section-title">測驗紀錄</h2>
+          </div>
+          <span class="wrong-bank-hint">點選一筆紀錄查看錯題與詳解</span>
+        </div>
+        <div id="wrong-bank-grid" class="wrong-bank-grid"></div>
+        <div id="wrong-bank-empty" class="wrong-bank-empty hidden">
+          <span class="wrong-bank-empty-icon">✦</span>
+          <h2>還沒有錯題紀錄</h2>
+          <p>完成一次測驗後，答錯的題目會自動收進這裡。</p>
+          <button id="btn-empty-start" class="btn-primary" type="button">開始第一次測驗</button>
+        </div>
+      </main>
+    </section>
+
+    <!-- Wrong Bank Detail -->
+    <section id="screen-wrong-detail" class="screen" aria-label="錯題詳解">
+      <header class="archive-header archive-detail-header">
+        <button id="btn-detail-back" class="btn-secondary archive-back" type="button">← 返回錯題庫</button>
+        <div id="wrong-detail-heading" class="archive-heading"></div>
+        <div id="wrong-detail-summary" class="archive-summary"></div>
+      </header>
+      <main class="wrong-detail-main">
+        <div class="wrong-detail-intro">
+          <span class="archive-kicker">MISSED QUESTIONS</span>
+          <h2 class="section-title">錯題與詳解</h2>
+        </div>
+        <div id="wrong-detail-list" class="wrong-detail-list"></div>
+      </main>
     </section>
 
     <!-- Question Screen -->

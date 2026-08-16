@@ -6,6 +6,8 @@ const QUESTION_FILES = [
 ];
 
 const TOTAL_SCORE = 1000;
+const WRONG_BANK_STORAGE_KEY = 'aws-saa-wrong-bank-v1';
+const WRONG_BANK_MAX_RECORDS = 50;
 
 const MODES = {
   exam: {
@@ -181,9 +183,244 @@ let currentIndex  = 0;
 let timerInterval = null;
 let startTime     = null;
 let examElapsed   = 0;   // 秒
+let wrongBankRecords = [];
+let activeWrongRecordId = null;
+let currentAttemptSaved = false;
 
 // ── DOM 快取 ──────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
+
+// ═══════════════════════════════════════════════════════════════════
+// Wrong Bank — 錯題庫保存與瀏覽
+// ═══════════════════════════════════════════════════════════════════
+function loadWrongBank() {
+  try {
+    const raw = localStorage.getItem(WRONG_BANK_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    wrongBankRecords = Array.isArray(parsed) ? parsed.filter(record => (
+      record && record.id && record.createdAt && Array.isArray(record.items)
+    )) : [];
+  } catch (err) {
+    console.warn('錯題庫讀取失敗:', err);
+    wrongBankRecords = [];
+  }
+  updateWrongBankEntry();
+}
+
+function saveWrongBank() {
+  try {
+    localStorage.setItem(WRONG_BANK_STORAGE_KEY, JSON.stringify(wrongBankRecords));
+  } catch (err) {
+    console.warn('錯題庫保存失敗:', err);
+  }
+  updateWrongBankEntry();
+}
+
+function getDateKey(date = new Date()) {
+  return `${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function getAttemptTitle() {
+  if (currentMode === 'chapter') {
+    const chapter = CHAPTER_DOMAINS.find(c => c.id === selectedChapterId) || CHAPTER_DOMAINS[0];
+    return chapter.title;
+  }
+  return currentMode === 'quiz' ? '小考 · 隨機練習' : '模擬考 · 綜合題型';
+}
+
+function getAttemptIcon(record) {
+  if (record.mode === 'chapter') {
+    const chapter = CHAPTER_DOMAINS.find(c => c.id === record.chapterId);
+    return chapter ? chapter.icon : '🏷️';
+  }
+  return record.mode === 'quiz' ? '⚡' : '📝';
+}
+
+function formatRecordTime(iso) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+}
+
+function updateWrongBankEntry() {
+  const countEl = $('wrong-bank-count');
+  if (!countEl) return;
+  const wrongCount = wrongBankRecords.reduce((total, record) => total + record.items.length, 0);
+  countEl.innerHTML = `${wrongBankRecords.length} 次測驗 <span aria-hidden="true">·</span> ${wrongCount} 題 →`;
+}
+
+function saveAttemptToWrongBank(result) {
+  if (currentAttemptSaved || !result.wrongItems.length) return;
+  currentAttemptSaved = true;
+
+  const now = new Date();
+  const record = {
+    id: `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
+    createdAt: now.toISOString(),
+    dateKey: getDateKey(now),
+    mode: currentMode,
+    chapterId: currentMode === 'chapter' ? selectedChapterId : null,
+    title: getAttemptTitle(),
+    score: result.score,
+    correctCount: result.correctCount,
+    total: examQuestions.length,
+    elapsed: examElapsed,
+    items: result.wrongItems.map(({ q, i, selected, correct }) => ({
+      questionNumber: i + 1,
+      questionId: q.id,
+      type: q.answers.length >= 2 ? '複選題' : '單選題',
+      domain: q.domain ? q.domain.label.split('/')[0].trim() : '',
+      questionText: q.questionText,
+      options: q.options,
+      selected,
+      correct,
+      explanation: q.explanation || '',
+    })),
+  };
+
+  wrongBankRecords = [record, ...wrongBankRecords].slice(0, WRONG_BANK_MAX_RECORDS);
+  saveWrongBank();
+}
+
+function createAnswerText(options, keys, emptyText = '（未作答）') {
+  if (!keys || keys.length === 0) return emptyText;
+  return keys.map(key => {
+    const option = options.find(item => item.key === key);
+    return `${key}. ${option ? option.text : ''}`;
+  }).join('　');
+}
+
+function createWrongDetailItem(item, index) {
+  const card = document.createElement('article');
+  card.className = 'wrong-item wrong-detail-item';
+  card.style.animationDelay = `${Math.min(index * 45, 360)}ms`;
+
+  const header = document.createElement('div');
+  header.className = 'wrong-item-header';
+  const number = document.createElement('span');
+  number.className = 'wrong-num';
+  number.textContent = `Q${item.questionNumber} (ID:${item.questionId})`;
+  const type = document.createElement('span');
+  type.className = 'wrong-type';
+  type.textContent = item.type || '題目';
+  const domain = document.createElement('span');
+  domain.className = 'wrong-domain';
+  domain.textContent = item.domain || '未分類';
+  header.append(number, type, domain);
+
+  const question = document.createElement('p');
+  question.className = 'wrong-q-text';
+  question.textContent = item.questionText;
+
+  const answers = document.createElement('div');
+  answers.className = 'wrong-answers';
+  const yourRow = document.createElement('div');
+  yourRow.className = 'wrong-answer-row';
+  const yourLabel = document.createElement('span');
+  yourLabel.className = 'answer-label your';
+  yourLabel.textContent = '你的答案：';
+  const yourValue = document.createElement('span');
+  yourValue.className = 'answer-val';
+  yourValue.textContent = createAnswerText(item.options || [], item.selected || []);
+  yourRow.append(yourLabel, yourValue);
+
+  const correctRow = document.createElement('div');
+  correctRow.className = 'wrong-answer-row';
+  const correctLabel = document.createElement('span');
+  correctLabel.className = 'answer-label correct';
+  correctLabel.textContent = '正確答案：';
+  const correctValue = document.createElement('span');
+  correctValue.className = 'answer-val';
+  correctValue.textContent = createAnswerText(item.options || [], item.correct || []);
+  correctRow.append(correctLabel, correctValue);
+  answers.append(yourRow, correctRow);
+
+  card.append(header, question, answers);
+
+  const explanation = document.createElement('div');
+  explanation.className = 'explanation';
+  const explanationLabel = document.createElement('span');
+  explanationLabel.className = 'explanation-label';
+  explanationLabel.textContent = '詳解';
+  const explanationText = document.createElement('p');
+  explanationText.className = 'explanation-text';
+  explanationText.textContent = item.explanation || '題庫目前沒有提供這題的詳解。';
+  explanation.append(explanationLabel, explanationText);
+  card.appendChild(explanation);
+
+  return card;
+}
+
+function renderWrongBank() {
+  const grid = $('wrong-bank-grid');
+  const empty = $('wrong-bank-empty');
+  const summary = $('wrong-bank-summary');
+  if (!grid || !empty || !summary) return;
+
+  grid.innerHTML = '';
+  const totalWrong = wrongBankRecords.reduce((total, record) => total + record.items.length, 0);
+  summary.innerHTML = `<strong>${wrongBankRecords.length} 次</strong>累積 ${totalWrong} 題錯題`;
+  empty.classList.toggle('hidden', wrongBankRecords.length > 0);
+
+  wrongBankRecords.forEach((record, index) => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'wrong-bank-card';
+    card.style.animation = `fadeUp .4s ease ${Math.min(index * 45, 360)}ms both`;
+
+    const top = document.createElement('div');
+    top.className = 'wrong-bank-card-top';
+    const date = document.createElement('span');
+    date.className = 'wrong-bank-date';
+    date.textContent = record.dateKey || getDateKey(new Date(record.createdAt));
+    const mode = document.createElement('span');
+    mode.className = 'wrong-bank-mode';
+    mode.textContent = `${getAttemptIcon(record)} ${record.mode === 'chapter' ? '章節測驗' : record.mode === 'quiz' ? '小考' : '模擬考'}`;
+    top.append(date, mode);
+
+    const title = document.createElement('span');
+    title.className = 'wrong-bank-card-title';
+    title.textContent = record.title;
+    const meta = document.createElement('span');
+    meta.className = 'wrong-bank-card-meta';
+    meta.innerHTML = `<strong>${record.items.length}</strong> 題錯題 <span aria-hidden="true">·</span> ${record.correctCount}/${record.total} 題答對`;
+    const time = document.createElement('span');
+    time.className = 'wrong-bank-card-time';
+    time.textContent = `${formatRecordTime(record.createdAt)} 建立紀錄`;
+
+    card.append(top, title, meta, time);
+    card.addEventListener('click', () => renderWrongDetail(record.id));
+    grid.appendChild(card);
+  });
+}
+
+function renderWrongDetail(recordId) {
+  const record = wrongBankRecords.find(item => item.id === recordId);
+  if (!record) return;
+  activeWrongRecordId = recordId;
+
+  const heading = $('wrong-detail-heading');
+  const summary = $('wrong-detail-summary');
+  const list = $('wrong-detail-list');
+  if (!heading || !summary || !list) return;
+
+  heading.innerHTML = '';
+  const kicker = document.createElement('span');
+  kicker.className = 'archive-kicker';
+  kicker.textContent = `${record.dateKey} · ${record.mode === 'chapter' ? 'CHAPTER REVIEW' : 'QUIZ REVIEW'}`;
+  const title = document.createElement('h1');
+  title.className = 'archive-title';
+  title.textContent = record.title;
+  const subtitle = document.createElement('p');
+  subtitle.className = 'archive-subtitle';
+  subtitle.textContent = `${formatRecordTime(record.createdAt)} 建立 · 作答 ${formatTime(record.elapsed || 0)}`;
+  heading.append(kicker, title, subtitle);
+  summary.innerHTML = `<strong>${record.items.length} 題</strong>需要重新理解<br>答對 ${record.correctCount} / ${record.total} 題`;
+
+  list.innerHTML = '';
+  record.items.forEach((item, index) => list.appendChild(createWrongDetailItem(item, index)));
+  showScreen('screen-wrong-detail');
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // 1. loadQuestionBanks — fetch 所有 MD 檔案
@@ -485,6 +722,7 @@ function startExam() {
   currentIndex = 0;
   examElapsed  = 0;
   startTime    = Date.now();
+  currentAttemptSaved = false;
 
   showScreen('screen-question');
   renderQuestionPage(currentIndex);
@@ -705,6 +943,7 @@ function gradeExam() {
 // ═══════════════════════════════════════════════════════════════════
 function renderResultPage(result) {
   stopTimer();
+  saveAttemptToWrongBank(result);
   const cfg = MODES[currentMode];
   const { score, correctCount, wrongItems, domainStats } = result;
   const wrongCnt = examQuestions.length - correctCount;
@@ -1127,9 +1366,20 @@ function showScreen(id) {
   if (el) { el.classList.add('active'); el.scrollTop = 0; }
 }
 
+function showWrongBank() {
+  stopTimer();
+  renderWrongBank();
+  showScreen('screen-wrong-bank');
+}
+
 // ── Event Wiring ──────────────────────────────────────────────────
 function wireEvents() {
   $('btn-start').addEventListener('click', startExam);
+
+  $('btn-wrong-bank').addEventListener('click', showWrongBank);
+  $('btn-back-home').addEventListener('click', () => showScreen('screen-start'));
+  $('btn-detail-back').addEventListener('click', showWrongBank);
+  $('btn-empty-start').addEventListener('click', () => showScreen('screen-start'));
 
   document.querySelectorAll('.mode-tab').forEach(btn => {
     btn.addEventListener('click', () => switchMode(btn.dataset.mode));
@@ -1183,6 +1433,7 @@ function wireEvents() {
 // ── Init ──────────────────────────────────────────────────────────
 async function init() {
   wireEvents();
+  loadWrongBank();
   try {
     const texts    = await loadQuestionBanks();
     const parsed   = texts.flatMap(t => parseMarkdownQuestions(t));
