@@ -460,8 +460,8 @@ function parseMarkdownQuestions(mdText) {
     const qMatch  = block.match(/\*\*題目\*\*\s*\n([\s\S]*?)(?=\*\*選項\*\*)/);
     // 選項
     const opMatch = block.match(/\*\*選項\*\*\s*\n([\s\S]*?)(?=\*\*答案\*\*)/);
-    // 答案（支援 "A"、"A,B" 與 "AB" 三種格式）
-    const anMatch = block.match(/\*\*答案\*\*\s*\n([A-Za-z,]+)/);
+    // 答案（支援 "A"、"A,B" 與 "AB" 三種格式，相容冒號與空白）
+    const anMatch = block.match(/\*\*答案[：:]?\*\*\s*([A-Za-z,\s]+)/);
 
     if (!qMatch || !opMatch || !anMatch) return;
 
@@ -469,12 +469,12 @@ function parseMarkdownQuestions(mdText) {
     const optionsRaw   = opMatch[1].trim();
     const answerRaw    = anMatch[1].trim().toUpperCase();
 
-    // 解析選項 "- A. 文字"
+    // 解析選項 "- A. 文字"、"- A。 文字"、"- A、 文字" 等
     const options = [];
-    const optLines = optionsRaw.split('\n').filter(l => l.trim().match(/^-\s+[A-Z]\./));
+    const optLines = optionsRaw.split('\n').filter(l => l.trim().match(/^-\s*[A-Z][.、。:\s]/i));
     optLines.forEach(line => {
-      const m = line.trim().match(/^-\s+([A-Z])\.\s*(.*)/);
-      if (m) options.push({ key: m[1], text: m[2].trim() });
+      const m = line.trim().match(/^-\s*([A-Z])[.、。:\s]\s*(.*)/i);
+      if (m) options.push({ key: m[1].toUpperCase(), text: m[2].trim() });
     });
 
     if (options.length < 2) return;
