@@ -5711,6 +5711,8 @@ A
 
 ## Question #210
 
+**題型：** 單選題
+
 **題目**
 一家公司提供糧食運送服務，這種服務正在迅速增長。 由於增長，該公司的訂單處理系統在高峰交通時段遇到了縮放問題。 當前的架構包括如下: • Amazon EC2 一組 Amazon EC2 執行個體，執行在 Amazon EC2 Auto Scaling 群組(Auto Scaling group) 執行個體，從應用程式中收集指令 ^ 另一組 EC2 執行個體，執行在 Amazon EC2 Auto Scaling 群組(Auto Scaling group) 執行個體，執行在完成指令 訂單收集過程迅速發生，但訂單實現過程可能需要更長的時間。 資料不能因為一個縮放事件而丟失。 解決方案架構師必須確保訂單收集過程和訂單實現過程能夠在高峰交通時段適當規模化。 解決方案必須最佳化對公司AWS資源的利用。 哪種解決方案符合這些要求？
 
@@ -5721,18 +5723,15 @@ A
 - D。 提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集，另一個用於命令實現。 設定 EC2 執行個體以檢視各自的佇列。 根據每個執行個體的積壓計算建立一個衡量標準。 基於此引數的自動縮放組。
 
 **答案**
-C
-
-**社群投票：** D 88%
+D
 
 
 **詳解**
-正確答案是 **C**。
-- C：提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集，另一個用於命令實現。 設定 EC2 執行個體以檢視各自的佇列。 根據佇列傳送的通知來縮放自動縮放組。為訂單收集與訂單實現分別建立獨立的 SQS 佇列，讓兩個處理速度不同的階段可依各自的訊息堆積量獨立擴縮，不會因為下游訂單實現較慢而拖累上游訂單收集的擴展。SQS 訊息在消費端實際處理完成並刪除前會持續留在佇列中，即使擴縮容事件終止了某台執行個體，未處理完的訊息也會因可見性逾時重新出現由其他執行個體接手，確保資料不遺失；依佇列通知（如佇列深度警示）觸發各自群組擴縮，也不需要額外開發、維運自訂的每執行個體工作負載指標。
-- 其餘選項比較：
-- A：使用 Amazon CloudWatch 指標來監視自動縮放組中每個執行個體的CPU。 根據工作高峰值設定每個Auto Scaling 群組(Auto Scaling group)的最低容量。只監看 CPU 使用率並依「尖峰預估值」設定各 Auto Scaling 群組的最低容量，等於用固定容量因應不確定的尖峰流量，離峰時會造成資源閒置浪費，不符合「最佳化資源利用」的要求，CPU 也不足以反映訂單收集與訂單實現這兩種處理速度不同流程各自的待處理工作負載。
-- B：使用 Amazon CloudWatch 指標來監視自動縮放組中每個執行個體的CPU。 設定一個 CloudWatch 提醒以呼叫 Amazon Simple Notification Service( Amazon SNS) 主題， 該主題可按要求建立額外的自動縮放組。用 CloudWatch 警示觸發 SNS 通知去「建立額外的 Auto Scaling 群組」並非合理的擴展方式，Auto Scaling 群組本身就該透過調整內部執行個體數量來擴縮，動態建立全新群組既複雜又難以管理，不是受支援的常規擴展模式。
-- D：提供兩個Amazon Simple Queue Service (Amazon SQS)佇列:一個用於命令收集，另一個用於命令實現。 設定 EC2 執行個體以檢視各自的佇列。 根據每個執行個體的積壓計算建立一個衡量標準。 基於此引數的自動縮放組。以「每執行個體待處理佇列量」作為自訂指標雖然能更精準反映負載，但其計算方式是把佇列訊息數除以執行中的執行個體數，當群組在離峰時期縮減到 0 個執行個體時會出現除以零的問題，需要額外邏輯保底維持最少執行個體數，且必須另外撰寫、部署並維護一套自訂 CloudWatch 指標發布程式，開發與維運成本高於直接依佇列本身通知來驅動擴縮。
+正確答案是 **D**。
+- D：為訂單收集與訂單履行分別建立 SQS 佇列，讓兩個處理速度不同的階段解耦，再以「每個執行個體的佇列積壓量」作為 Auto Scaling 的目標指標。這能讓兩個 Auto Scaling 群組依各自的工作量獨立擴縮，並避免擴縮事件造成尚未處理的訊息遺失。AWS 官方也將「SQS 佇列訊息數 ÷ InService 執行個體數」列為適合 Auto Scaling 目標追蹤的積壓指標。
+- A：依尖峰流量設定固定的最低容量，離峰時會造成資源閒置，無法最佳化資源使用。
+- B：透過 SNS 通知建立新的 Auto Scaling 群組不是一般的擴縮方式；應調整既有群組的執行個體數量。
+- C：只根據佇列通知或佇列深度擴縮，沒有將不同群組的處理能力納入「每個執行個體的積壓量」，擴縮精準度不如 D。
 
 **分類：** 應用程式整合
 
@@ -8234,30 +8233,29 @@ C
 
 ## Question #302
 
+**題型：** 複選題（選二）
+
 **題目**
-一家公司希望建立移動應用程式，允許使用者在移動裝置上流傳慢動作影片片段。 目前，該應用程式將影片片段捕獲，並以原始格式將影片片段上傳到Amazon S3 bucket中。 應用程式直接從S3 bucket上檢索這些影片片段。 然而，這些影片的原始格式很大。 使用者在移動裝置上遇到緩衝和回放的問題。 公司希望實施解決方案，以最大限度地提高該應用的效能和可擴展性，同時將營運開銷最小化。 哪些解決方案組合將滿足這些要求?(選二。
+一家公司想建立一個行動應用程式，讓使用者從行動裝置上傳慢動作影片片段。目前，應用程式會擷取影片片段，並以原始格式上傳到 Amazon S3 bucket，之後再直接從 S3 bucket 讀取這些影片片段。然而，原始影片檔案很大，使用者在行動裝置上播放時會遇到緩衝問題。公司希望在提升應用程式效能與可擴展性的同時，將營運負擔降到最低。哪些解決方案組合符合這些需求？（選二。）
 
 **選項**
-- A。 部署Amazon CloudFront，用於內容傳送和快取。
-- B。 使用AWS DataSync在其它S3 bucket中複製橫跨AW'S區域的影片檔案。
-- C。 使用Amazon Elastic Transcoder將影片檔案轉換為更合適的格式。
-- D。 在本地區部署Amazon EC2自動密封組，以交付內容和快取。
-- E。 在Amazon EC2執行個體中部署Auto Scaling 群組(Auto Scaling group)，將影片檔案轉換為更適當的格式。
+- A。部署 Amazon CloudFront，用於內容傳遞與快取。
+- B。使用 AWS DataSync，將影片檔案複製到其他 AWS 區域的 S3 bucket。
+- C。使用 Amazon Elastic Transcoder，將影片檔案轉換成更適合播放的格式。
+- D。在本身的 AWS 區域部署 Amazon EC2 Auto Scaling 群組，負責內容傳遞與快取。
+- E。在 Amazon EC2 執行個體中部署 Auto Scaling 群組，將影片檔案轉換成更適合播放的格式。
 
 **答案**
-A
-
-**社群投票：** A 57%, C 43%
+A,C
 
 
 **詳解**
-正確答案是 **A**。
-- A：部署Amazon CloudFront，用於內容傳送和快取。Amazon CloudFront是全代管CDN服務，能將影片內容快取到全球邊緣節點，讓行動裝置從鄰近節點取得資料而非每次都直接讀取來源S3 bucket，可大幅降低延遲並改善緩衝與播放體驗，且會依流量自動擴展，不需要自行維運額外基礎設施。
-- 其餘選項比較：
-- B：使用AWS DataSync在其它S3 bucket中複製橫跨AW'S區域的影片檔案。AWS DataSync是用來在儲存系統之間搬移或同步資料的服務，僅將影片檔案複製到其他區域的S3 bucket並不會改變影片的原始格式與檔案大小，也不具備快取或加速交付給行動裝置的能力，無法解決題目描述的緩衝與播放問題。
-- C：使用Amazon Elastic Transcoder將影片檔案轉換為更合適的格式。Amazon Elastic Transcoder是全代管的影音轉檔服務，能將使用者上傳的原始格式大檔轉換成適合行動裝置串流播放的格式與位元率，從根本上縮小需傳輸的檔案大小，直接解決原始格式過大造成緩衝的問題，且屬全代管服務不必自建轉檔管線。
-- D：在本地區部署Amazon EC2自動密封組，以交付內容和快取。在地端自行部署EC2 Auto Scaling群組來負責內容交付與快取，代表公司需要自行建置、修補與維運一整套快取伺服器叢集，這正是題目要求盡量降低的維運負擔，而且地端方案也無法達到CloudFront遍布全球邊緣節點所帶來的低延遲效果。
-- E：在Amazon EC2執行個體中部署Auto Scaling 群組(Auto Scaling group)，將影片檔案轉換為更適當的格式。使用EC2 Auto Scaling群組自行架設影片轉檔叢集，等同要自行開發、維護轉碼程式與擴縮邏輯，相較於直接使用Amazon Elastic Transcoder這類全代管轉檔服務，會顯著增加維運複雜度，不符合題目「將維運開銷降到最低」的要求。
+正確答案是 **A、C**。
+- A：CloudFront 是全代管的 CDN，可將影片快取到各地的邊緣節點，讓使用者從較近的節點取得內容，降低延遲並改善播放時的緩衝問題，也不需要自行維護快取伺服器。
+- C：Elastic Transcoder 可將原始的大型影片轉換成更適合行動裝置播放的格式與位元率，降低需要傳輸的資料量，直接改善檔案過大造成的播放問題。
+- B：DataSync 主要用於儲存系統之間的資料搬移或同步；複製到其他區域不會縮小影片檔案，也不會提供邊緣快取。
+- D：自行使用 EC2 建置內容傳遞與快取叢集，會增加伺服器、擴展與快取系統的維運負擔。
+- E：使用 EC2 自行建立轉碼叢集，需要自行管理轉碼程式、執行個體與擴展邏輯，不如使用受管的轉碼服務。
 
 **分類：** 媒體服務
 
@@ -12572,11 +12570,11 @@ C
 ## Question #460
 
 **題目**
-公司希望在其軟體作為服務(SaaS)應用程式 Salesforce 帳戶和Amazon S3之間安全地交換資料。 公司必須透過使用AWS Key Management Service(AWS KMS)客戶管理的金鑰(CMKs)對資料進行休息加密。 公司還必須加密過境資料。 該公司允許API存取銷售力量帳戶。
+公司希望在其軟體作為服務(SaaS)應用程式 Salesforce 帳戶和Amazon S3之間安全地交換資料。 公司必須透過使用AWS Key Management Service(AWS KMS)客戶管理的金鑰(CMKs)對資料進行休息加密。 公司還必須加密過境資料。 該公司允許API存取 Salesforce 帳戶。
 
 **選項**
 - A。 建立 AWS Lambda 函式，將資料安全地從 Salesforce 傳輸到 Amazon S3.
-- B。 建立 AWS 步函式工作模式。 確定將資料安全地從銷售部隊轉移到Amazon S3的任務。
+- B。 建立 AWS 步函式工作模式。 確定將資料安全地從 Salesforce 轉移到Amazon S3的任務。
 - C。 建立Amazon AppFlow fiows，將資料安全地從 Salesforce 傳輸到 Amazon S3.
 - D。 為 Salesforce 建立自定義聯結器，將資料安全地從 Salesforce 轉移到 Amazon S3。
 
@@ -12591,7 +12589,7 @@ C
 - C：建立Amazon AppFlow fiows，將資料安全地從 Salesforce 傳輸到 Amazon S3。Amazon AppFlow 是全代管的 SaaS 資料整合服務，內建 Salesforce 連接器可透過 API 安全擷取資料，並原生支援使用 AWS KMS 客戶管理金鑰對傳輸中與靜態資料加密，完全符合題目要求的 CMK 靜態加密、傳輸加密與經 API 存取 Salesforce 帳戶的限制，且不需自行開發程式碼。
 - 其餘選項比較：
 - A：建立 AWS Lambda 函式，將資料安全地從 Salesforce 傳輸到 Amazon S3。Lambda 函式雖然能撰寫程式碼呼叫 Salesforce API 並寫入 S3，但仍須自行處理 OAuth 認證、分頁擷取、重試機制與端到端加密邏輯，並非現成的受管整合服務，開發與維運成本明顯高於直接使用 SaaS 連接器。
-- B：建立 AWS 步函式工作模式。 確定將資料安全地從銷售部隊轉移到Amazon S3的任務。Step Functions 只是工作流程協調服務，用來安排多個 AWS 服務或 Lambda 任務的執行順序，本身並不具備連接 Salesforce API 或搬移資料的能力，仍需額外開發運算資源才能完成實際的資料傳輸與加密工作。
+- B：建立 AWS 步函式工作模式。 確定將資料安全地從 Salesforce 轉移到Amazon S3的任務。Step Functions 只是工作流程協調服務，用來安排多個 AWS 服務或 Lambda 任務的執行順序，本身並不具備連接 Salesforce API 或搬移資料的能力，仍需額外開發運算資源才能完成實際的資料傳輸與加密工作。
 - D：為 Salesforce 建立自定義聯結器，將資料安全地從 Salesforce 轉移到 Amazon S3。自行開發 Salesforce 專用的自定義聯結器，需要投入大量開發與長期維護資源來處理認證、加密與錯誤重試等細節，與題目希望降低維運複雜度、直接使用受管服務的情境不符，也重複了 AppFlow 已內建的功能。
 
 **分類：** 應用程式整合
@@ -18835,6 +18833,8 @@ D
 
 ## Question #687
 
+**題型：** 複選題（選二）
+
 **題目**
 一個使用AWS的公司需要一個解決方案來預測每個月製造工藝所需的資源。 解決方案必須使用目前儲存在Amazon S3 bucket中的歷史值。 公司沒有機器學習(ML)經驗，希望使用管理服務進行訓練和預測。 哪些步驟的組合將滿足這些要求?(選二。
 
@@ -18846,20 +18846,17 @@ D
 - E。 透過使用S3 bucket中的歷史資料來訓練一個Amazon Forecast 預測器。
 
 **答案**
-C,D
-
-**社群投票：** DE 63%, AB 16%
+D,E
 
 
 
 **詳解**
-正確答案是 **C,D**。
-- C：設定一個 AWS Lambda 函式，其功能URL使用亞馬遜 SageMaker 端點來根據輸入建立預測。Amazon Forecast 會處理時間序列預測的訓練與推論；預測結果可由 Lambda 透過已建立的預測端點或預測資源提供給應用程式。這能把預測服務包裝成簡單的無伺服器 API。
-- D：設定一個 AWS Lambda 函式，其功能URL使用Amazon Forecast 預測器根據輸入來建立預測。Amazon Forecast 是受管理的時間序列預測服務，能根據 S3 中的歷史資料建立預測器，Lambda 再呼叫預測器產生需求預測。這不需要公司自行設計與維護機器學習模型。
-- 其餘選項比較：
-- A：部署Amazon SageMaker模型。 為推斷建立 SageMaker 端點。SageMaker 模型與端點可以提供預測，但此選項沒有說明如何使用 S3 歷史資料訓練模型，且題目要求的是可直接使用的時間序列管理服務。
-- B：使用Amazon SageMaker透過使用S3 bucket中的歷史資料來訓練一個模型。SageMaker 確實能從 S3 取用訓練資料，但仍需要選擇演算法、設定訓練工作與部署流程，不符合希望以無機器學習經驗使用專用管理服務的情境。
-- E：透過使用S3 bucket中的歷史資料來訓練一個Amazon Forecast 預測器。使用 S3 歷史資料訓練 Forecast 預測器是合理的第一步，但單獨建立預測器不會讓應用程式能根據輸入取得預測，還需要題目中所述的推論呼叫方式。
+正確答案是 **D、E**。
+- E：使用 Amazon Forecast 以 S3 bucket 中的歷史時間序列資料訓練預測器。Forecast 是受管的時間序列預測服務，適合沒有機器學習專業能力、希望直接使用管理式訓練與預測功能的團隊。
+- D：以 Lambda Function URL 提供簡單的 HTTP 入口；Lambda 會呼叫已訓練的 Amazon Forecast 預測器（例如透過 QueryForecast）取得預測結果。D 與 E 合起來涵蓋「訓練預測器」與「提供推論結果」兩個必要步驟。
+- A：只部署 SageMaker 模型與端點，沒有說明如何使用 S3 歷史資料訓練模型。
+- B：SageMaker 雖然可以使用 S3 資料，但需要自行選擇演算法、設定訓練工作與部署流程，不符合希望使用專用受管預測服務且沒有 ML 經驗的情境。
+- C：SageMaker 端點不是 Amazon Forecast 預測器；而且此選項沒有使用題目要求的 Amazon Forecast 時間序列預測流程。
 
 **分類：** 機器學習
 
@@ -20968,6 +20965,8 @@ A
 
 ## Question #765
 
+**題型：** 單選題
+
 **題目**
 一個開發團隊正與另一家公司合作建立綜合產品。 另一家公司需要存取開發團隊帳戶中包含的Amazon Simple Queue Service (Amazon SQS)佇列。 另一家公司想在不放棄自己帳戶權限的情況下對佇列進行投票。 一個解決方案架構設計師應該如何提供對 SQS 佇列的存取？
 
@@ -20978,18 +20977,16 @@ A
 - D。 建立一個Amazon Simple Notification Service (Amazon SNS)存取政策，為另一家公司提供對SQS佇列的存取。
 
 **答案**
-A
-
-**社群投票：** C 100%
+C
 
 
 **詳解**
-正確答案是 **A**。
-- A：建立一個執行個體設定檔(instance profile)，提供另一家公司對SQS佇列的存取。跨帳戶存取 SQS 時，資源型 SQS queue policy 可直接指定另一個帳戶或其 IAM 主體，讓對方保留自己的帳戶與身分管理。這種做法不需要把外部使用者搬進本帳戶，並可限定到指定佇列與動作。
-- 其餘選項比較：
-- B：建立一個IAM 政策(IAM policy)，提供另一家公司對SQS佇列的存取。單獨建立身分型 IAM 政策只會授權本帳戶中的主體，不能授予另一個 AWS 帳戶對本帳戶 SQS 資源的跨帳戶權限。
-- C：建立 SQS 存取策略，為另一家公司提供對 SQS 佇列的存取。SQS 的資源政策確實是跨帳戶授權的機制，但此選項未明確指定外部帳戶主體與必要的信任條件，授權內容不完整。
-- D：建立一個Amazon Simple Notification Service (Amazon SNS)存取政策，為另一家公司提供對SQS佇列的存取。SNS access policy 管理的是 SNS 主題，不會授予外部帳戶直接操作 SQS 佇列的權限。
+正確答案是 **C**。
+- C：建立 SQS queue policy（SQS 佇列資源型存取策略），在佇列層級授權另一個 AWS 帳戶或其 IAM 主體存取指定的 SQS 佇列。這是跨帳戶共享 SQS 資源的正確方向，也能讓合作公司繼續使用自己的 AWS 帳戶與權限。
+- 實際設定跨帳戶存取時，通常還需要合作方的 IAM policy 允許必要動作；但在選項中，C 才是針對 SQS 資源本身建立跨帳戶授權的方案。
+- A：EC2 instance profile 是附加給 EC2 執行個體角色的憑證機制，不是用來直接授權另一家公司存取本帳戶 SQS 佇列的方案。
+- B：單獨建立本帳戶的身分型 IAM policy，不能取代佇列資源政策來完成跨帳戶授權。
+- D：SNS access policy 管理 SNS topic，不會授予外部帳戶直接操作 SQS 佇列的權限。
 
 **分類：** 應用程式整合
 
@@ -21898,6 +21895,8 @@ A
 
 ## Question #799
 
+**題型：** 單選題
+
 **題目**
 一個公司需要從作為文字檔案儲存在Amazon S3 bucket中的食譜記錄中提取原料名稱。 一個網路應用程式將使用成分名稱查詢一個Amazon DynamoDB表，並確定營養分數。 該應用程式可以處理非食物記錄和錯誤。 公司沒有任何員工擁有機器學習知識來開發這種解決方案。 哪種解決方案能夠以成本效益高的方式滿足這些要求？
 
@@ -21908,18 +21907,15 @@ A
 - D。 當 Put Object 請求發生時，使用 Amazon EventBridge 規則呼叫 AWS Lambda 函式。 程式設計Lambda函式，透過使用Amazon SageMaker來分析物件並提取成分名稱。 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中。
 
 **答案**
-D
-
-**社群投票：** A 100%
+A
 
 
 **詳解**
-正確答案是 **D**。
-- D：當 Put Object 請求發生時，使用 Amazon EventBridge 規則呼叫 AWS Lambda 函式。 程式設計Lambda函式，透過使用Amazon SageMaker來分析物件並提取成分名稱。 將來自 SageMaker 端點的推論輸出儲存在 DynamoDB 表格中。SageMaker 可部署適合公司資料的文字分類或實體擷取模型，Lambda 在 S3 物件建立事件後呼叫端點並把推論結果寫入 DynamoDB。這種事件驅動設計能隨上傳量擴展，也能在 Lambda 中處理非食物記錄與錯誤回應。
-- 其餘選項比較：
-- A：當 Put Object 請求發生時， 使用 S3 事件通知來呼叫 AWS Lambda 函式。 程式設計 Lambda 函式透過使用 Amazon Comprehend 來分析物件並提取成分名稱。 將 Amazon Comprehend 輸出儲存在 DynamoDB 表格中。Comprehend 可分析文字，但選項使用 S3 事件直接觸發且沒有明確處理非食物內容與推論錯誤的工作流控制。
-- B：在 PutObject 請求發生時，使用 Amazon EventBridge 規則來呼叫 AWS Lambda 函式。 程式設計Lambda函式，透過使用Amazon Forecast 來提取成分名稱來分析物件。 將預測輸出儲存在 DynamoDB 表中。Amazon Forecast 用於時間序列預測，不是從食譜文字擷取原料名稱的自然語言服務。
-- C：當 Put Object 請求發生時， 使用 S3 事件通知來呼叫 AWS Lambda 函式。 使用Amazon Polly來建立食譜的錄音。 儲存 S3 bucket 中的音訊檔案。 使用Amazon Simple Notification Service(Amazon SNS)向員工傳送URL作為訊息。 指示員工聆聽音訊檔案，計算營養分數。 將成分名稱儲存在 DynamoDB 表格中。Polly 只會把文字轉成語音，無法從食譜可靠擷取成分；要求員工人工聆聽也不具成本效益與可擴展性。
+正確答案是 **A**。
+- A：S3 物件建立事件可觸發 Lambda，Lambda 再使用 Amazon Comprehend 分析食譜文字並擷取實體或成分名稱，最後將結果寫入 DynamoDB。Comprehend 是受管的自然語言處理服務，不需要公司自行建立與維護機器學習模型；Lambda 也能處理非食物記錄與錯誤。
+- B：Amazon Forecast 用於時間序列預測，不是從食譜文字擷取原料名稱的自然語言服務。
+- C：Amazon Polly 是文字轉語音服務，無法擷取食材；要求員工聆聽錄音並人工計算也不具成本效益或可擴展性。
+- D：SageMaker 可以實作自訂模型，但需要自行準備模型、訓練與部署端點，對沒有機器學習經驗的團隊而言，開發與維運成本高於直接使用 Amazon Comprehend。
 
 **分類：** 機器學習
 
@@ -22492,28 +22488,26 @@ C
 
 ## Question #821
 
+**題型：** 單選題
+
 **題目**
-一家公司使用銷售力量。 公司需要載入現有的資料和正在進行的資料變化，從銷售部隊到Amazon Redshift進行分析。 公司不希望資料透過公共網際網路。 在LEAST的開發努力下，哪一種解決方案能滿足這些要求？
+一家公司使用 Salesforce。公司需要將 Salesforce 中既有的資料以及後續的資料變更載入 Amazon Redshift 進行分析。公司不希望資料透過公共網際網路傳輸。在開發工作量最少的情況下，哪一種解決方案符合這些需求？
 
 **選項**
-- A。 建立VPN連線 從VPC到 Salesforce。 使用AWS Glue DataBrew傳輸資料。
-- B。 建立從VPC到銷售力量的AWS Direct Connect連線。 使用AWS Glue DataBrew傳輸資料。
-- C。 在 VPC 到 Salesforce 中建立 AWS 私人連結。 使用Amazon AppFlow傳輸資料。
-- D。 與 Salesforce 建立 VPC 對等連線。 使用Amazon AppFlow傳輸資料。
+- A。建立從 VPC 到 Salesforce 的 VPN 連線，並使用 AWS Glue DataBrew 傳輸資料。
+- B。建立從 VPC 到 Salesforce 的 AWS Direct Connect 連線，並使用 AWS Glue DataBrew 傳輸資料。
+- C。使用 AWS PrivateLink 在 VPC 與 Salesforce 之間建立私有連線，並使用 Amazon AppFlow 傳輸資料。
+- D。與 Salesforce 建立 VPC 對等連線，並使用 Amazon AppFlow 傳輸資料。
 
 **答案**
 C
 
-**社群投票：** C 100%
-
-
 **詳解**
 正確答案是 **C**。
-- C：在 VPC 到 Salesforce 中建立 AWS 私人連結。 使用Amazon AppFlow傳輸資料。Amazon AppFlow 原生支援 Salesforce 到 Amazon Redshift 的資料傳輸，可載入既有資料並同步後續變更。透過 Salesforce 的 PrivateLink 私有連線，資料不必經過公共網際網路，且不需自行開發連接器或排程程式。
-- 其餘選項比較：
-- A：建立VPN連線 從VPC到 Salesforce。 使用AWS Glue DataBrew傳輸資料。DataBrew 主要用於互動式資料準備，並不是從 Salesforce 載入資料及持續同步變更的整合服務。VPN 也需要額外網路設定，不能以最少開發工作完成 SaaS 整合。
-- B：建立從VPC到銷售力量的AWS Direct Connect連線。 使用AWS Glue DataBrew傳輸資料。Direct Connect 適合企業網路到 AWS 的私有專線，不是 Salesforce SaaS 連線的標準整合方式。DataBrew 仍缺少現成的 Salesforce 增量資料流功能。
-- D：與 Salesforce 建立 VPC 對等連線。 使用Amazon AppFlow傳輸資料。VPC 對等連線只連接兩個 VPC，Salesforce 並不是可直接建立 VPC peering 的 VPC 網路。即使使用 AppFlow，這個網路連線方式也不成立。
+- C：Amazon AppFlow 原生支援以 Salesforce 為資料來源、以 Amazon Redshift 為目的地，可載入既有資料並同步後續的資料變更。搭配 AWS PrivateLink 私有連線後，實際資料傳輸不需要經過公共網際網路，也不需要自行開發連接器與同步程式。
+- A：AWS Glue DataBrew 主要用於互動式資料準備，不是用來建立 Salesforce 到 Redshift 的持續資料整合流程；VPN 也無法取代這項整合功能。
+- B：Direct Connect 主要用於建立企業網路與 AWS 之間的專用連線，不是 Salesforce SaaS 整合的標準解決方案；DataBrew 仍缺少現成的 Salesforce 資料流功能。
+- D：VPC 對等連線只能連接兩個 VPC；Salesforce 並不是可直接與公司 VPC 建立 VPC Peering 的 VPC 網路。
 
 **分類：** 應用程式整合
 
@@ -25165,6 +25159,8 @@ A
 
 ## Question #920
 
+**題型：** 單選題
+
 **題目**
 一家公司正在從一個單一的架構遷移到一個在Amazon EC2上託管的網路應用程式，一個沒有伺服器的微服務架構。 公司希望使用支援事件驅動，鬆散組合的架構的AWS服務。 公司希望使用出版/訂閱(pub/sub)模式。 哪種解決方案能夠以成本效益高的方式滿足這些要求？
 
@@ -25175,16 +25171,15 @@ A
 - D。 設定 Amazon API Gateway HTTP API 以呼叫 AWS Lambda 函式，該函式釋出事件給Amazon Simple Notification Service (Amazon SNS)主題。 設定一個或多個訂閱者以接收來自該主題的事件。
 
 **答案**
-B
+D
 
 
 **詳解**
-正確答案是 **B**。
-- B：設定 Amazon API Gateway REST API 以呼叫 AWS Lambda 函式，將事件釋出給Amazon Simple Notification Service (Amazon SNS)主題。 設定一個或多個訂閱者接收來自 SNS 主題的事件。SNS 主題是 AWS 的發佈/訂閱服務，發布者只需發送一次，便可將通知扇出給多個訂閱者。API Gateway、Lambda 與 SNS 都是受管服務，能以事件驅動方式鬆散耦合微服務。
-- 其餘選項比較：
-- A：設定 Amazon API Gateway REST API 以呼叫 AWS Lambda 函式，將事件釋出給Amazon Simple Queue Service (Amazon SQS)佇列。 設定一個或多個訂閱者從 SQS 佇列讀取事件。SQS 是點對點佇列，一則訊息通常由單一消費者處理；多個訂閱者無法自然取得同一事件的獨立副本。
-- C：設定一個 Amazon API Gateway WebSocket API ,用於寫入 Amazon Kinesis Data Streams 中的資料流，並帶有增強的扇形輸出。 設定一個或多個使用者接收資料流中的事件。Kinesis Data Streams 適合高量、可重播的串流資料，不是此處簡單的事件發佈/訂閱需求；WebSocket 和增強扇出也會增加不必要的設計與成本。
-- D：設定 Amazon API Gateway HTTP API 以呼叫 AWS Lambda 函式，該函式釋出事件給Amazon Simple Notification Service (Amazon SNS)主題。 設定一個或多個訂閱者以接收來自該主題的事件。HTTP API 搭配 SNS 的模式可行，但題庫指定的方案使用 REST API；相較於事件本身，這會引入較高的 API Gateway 功能與成本負擔。
+正確答案是 **D**。
+- D：使用 API Gateway HTTP API 呼叫 Lambda，再由 Lambda 將事件發布到 SNS topic。SNS 是發佈／訂閱服務，可以把同一事件傳送給多個訂閱者；HTTP API、Lambda 與 SNS 也都是受管服務。相較於 REST API，HTTP API 更適合本題的簡單且重視成本的入口需求。
+- A：SQS 是點對點佇列，一則訊息通常由單一消費者處理，不會自然地把同一事件複製給多個訂閱者。
+- B：REST API 可以完成事件發布，但相較於功能較精簡的 HTTP API，成本與功能負擔較高，不是本題「成本效益」的最佳選擇。
+- C：Kinesis Data Streams 適合高吞吐量、可重播的串流資料；本題只需要簡單的事件發佈／訂閱，使用 WebSocket 與增強扇出會增加不必要的複雜度。
 
 **分類：** 應用程式整合
 
@@ -26377,28 +26372,26 @@ B
 
 ## Question #967
 
+**題型：** 單選題
+
 **題目**
-一個解決方案架構師正在設計一個應用程式，幫助使用者填寫和提交登錄檔。 解決方案架構師計劃使用雙層架構，包括網路應用程式伺服器級和工人級。 申請需要快速處理提交的表格。 應用程式需要處理每個表格一次。 解決方案必須確保不丟失任何資料。 哪種解決方案能滿足這些要求？
+一位解決方案架構師正在設計一個協助使用者填寫並提交註冊表單的應用程式。應用程式採用雙層架構，包括 Web 應用程式伺服器層與 Worker 工作處理層。應用程式必須快速處理提交的表單，而且每份表單都必須恰好處理一次。解決方案也必須確保資料不會遺失。哪一種解決方案符合這些需求？
 
 **選項**
-- A。 使用 Amazon Simple Queue Service(Amazon SQS) FIFO 佇列在網路應用伺服器級別和工人級別之間儲存和轉發格式資料。
-- B。 使用網路應用程式伺服器級和工人級之間的Amazon API Gateway HTTP API來儲存和轉發格式資料。
-- C。 在網路應用程式伺服器級和工人級之間使用一個Amazon Simple Queue Service (Amazon SQS)的標準佇列來儲存和轉發格式資料。
-- D。 使用 AWS 步函式工作符。 在網路應用程式伺服器層和儲存和轉發資料的工人層之間建立一個同步的工作空間。
+- A。在 Web 應用程式伺服器層與 Worker 層之間使用 Amazon SQS FIFO 佇列，儲存並轉送表單資料。
+- B。在 Web 應用程式伺服器層與 Worker 層之間使用 Amazon API Gateway HTTP API，儲存並轉送表單資料。
+- C。在 Web 應用程式伺服器層與 Worker 層之間使用 Amazon SQS 標準佇列，儲存並轉送表單資料。
+- D。使用 AWS Step Functions 工作流程，在 Web 應用程式伺服器層與 Worker 層之間建立同步工作流程，以儲存並轉送表單資料。
 
 **答案**
 A
 
-**社群投票：** A 100%
-
-
 **詳解**
 正確答案是 **A**。
-- A：使用 Amazon Simple Queue Service(Amazon SQS) FIFO 佇列在網路應用伺服器級別和工人級別之間儲存和轉發格式資料。SQS FIFO 佇列能讓表單提交依訊息群組有序處理，並提供恰好一次處理的去重語意，適合每份表單只處理一次的要求。訊息會持久保存並在工作者確認刪除前保留，網路層與工作層因此解耦且不易遺失資料。
-- 其餘選項比較：
-- B：使用網路應用程式伺服器級和工人級之間的Amazon API Gateway HTTP API來儲存和轉發格式資料。API Gateway HTTP API 是請求入口，不是用來持久保存待處理表單的工作佇列；工作者短暫不可用時，直接轉送可能造成資料遺失或需要自行重試。
-- C：在網路應用程式伺服器級和工人級之間使用一個Amazon Simple Queue Service (Amazon SQS)的標準佇列來儲存和轉發格式資料。標準 SQS 佇列可提供至少一次投遞，但可能出現重複訊息，不能直接滿足每份表單只處理一次。除非應用程式自行實作冪等性，否則不符合題目的處理語意。
-- D：使用 AWS 步函式工作符。 在網路應用程式伺服器層和儲存和轉發資料的工人層之間建立一個同步的工作空間。同步 Step Functions 工作流程會讓網路請求等待工作者完成，無法像佇列一樣吸收突發提交量。同步呼叫也增加逾時與失敗重試對前端的影響。
+- A：SQS FIFO 佇列可在 Web 層與 Worker 層之間可靠地暫存和轉送表單資料，並支援訊息去重與恰好一次的處理語意；Worker 確認處理並刪除訊息前，訊息會保留在佇列中，因此能降低資料遺失風險。
+- B：API Gateway HTTP API 是請求入口，不是用來持久保存待處理表單的工作佇列；Worker 暫時無法使用時，還需要自行實作暫存與重試機制。
+- C：標準 SQS 佇列採用至少一次投遞，可能出現重複訊息，不能直接符合每份表單只處理一次的要求。
+- D：AWS Step Functions 的正確名稱是 **AWS Step Functions 工作流程服務**。它是用來協調多個服務與處理步驟的工作流程編排服務，不是本題所需的訊息佇列；同步工作流程也會讓前端請求等待 Worker 完成，無法像 SQS 一樣吸收突發提交量。
 
 **分類：** 應用程式整合
 
@@ -27728,4 +27721,3 @@ B
 - D：修改附在API Gateway上的安全群組(security group)，允許僅從信任的IP地址存取流量。API Gateway 本身沒有可供客戶直接修改的傳統 EC2 安全群組來限制呼叫者 IP。應使用 API Gateway resource policy 或適當的授權器。
 
 **分類：** 無伺服器
-
