@@ -1,0 +1,1654 @@
+[
+  {
+    "q_num": 90,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "95%",
+    "vote_raw": "B 95%"
+  },
+  {
+    "q_num": 98,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "81%",
+    "vote_raw": "C 81%"
+  },
+  {
+    "q_num": 114,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 136,
+    "original_ans": "C,D",
+    "new_ans": "A, C",
+    "vote_pct": "91%",
+    "vote_raw": "AC 91%"
+  },
+  {
+    "q_num": 137,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "89%",
+    "vote_raw": "B 89%"
+  },
+  {
+    "q_num": 156,
+    "original_ans": "A,C",
+    "new_ans": "A, E",
+    "vote_pct": "89%",
+    "vote_raw": "AE 89%"
+  },
+  {
+    "q_num": 161,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "95%",
+    "vote_raw": "B 95%"
+  },
+  {
+    "q_num": 163,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 171,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "96%",
+    "vote_raw": "B 96%"
+  },
+  {
+    "q_num": 176,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 188,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 190,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "90%",
+    "vote_raw": "B 90%"
+  },
+  {
+    "q_num": 191,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 192,
+    "original_ans": "C,D",
+    "new_ans": "B, E",
+    "vote_pct": "100%",
+    "vote_raw": "BE 100%"
+  },
+  {
+    "q_num": 195,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "95%",
+    "vote_raw": "C 95%"
+  },
+  {
+    "q_num": 197,
+    "original_ans": "B,D",
+    "new_ans": "B, E",
+    "vote_pct": "98%",
+    "vote_raw": "BE 98%"
+  },
+  {
+    "q_num": 199,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "92%",
+    "vote_raw": "B 92%"
+  },
+  {
+    "q_num": 200,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "98%",
+    "vote_raw": "D 98%"
+  },
+  {
+    "q_num": 201,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "87%",
+    "vote_raw": "B 87%"
+  },
+  {
+    "q_num": 204,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 214,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 225,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "95%",
+    "vote_raw": "B 95%"
+  },
+  {
+    "q_num": 238,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "96%",
+    "vote_raw": "C 96%"
+  },
+  {
+    "q_num": 240,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "92%",
+    "vote_raw": "D 92%"
+  },
+  {
+    "q_num": 243,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "96%",
+    "vote_raw": "A 96%"
+  },
+  {
+    "q_num": 246,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "83%",
+    "vote_raw": "D 83%"
+  },
+  {
+    "q_num": 250,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "92%",
+    "vote_raw": "D 92%"
+  },
+  {
+    "q_num": 258,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "89%",
+    "vote_raw": "D 89%"
+  },
+  {
+    "q_num": 274,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 276,
+    "original_ans": "A,C",
+    "new_ans": "A, D",
+    "vote_pct": "88%",
+    "vote_raw": "AD 88%"
+  },
+  {
+    "q_num": 278,
+    "original_ans": "C,D",
+    "new_ans": "B, E",
+    "vote_pct": "100%",
+    "vote_raw": "BE 100%"
+  },
+  {
+    "q_num": 279,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "86%",
+    "vote_raw": "A 86%"
+  },
+  {
+    "q_num": 280,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "93%",
+    "vote_raw": "B 93%"
+  },
+  {
+    "q_num": 281,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "91%",
+    "vote_raw": "A 91%"
+  },
+  {
+    "q_num": 282,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 286,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "96%",
+    "vote_raw": "C 96%"
+  },
+  {
+    "q_num": 288,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 289,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 290,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "90%",
+    "vote_raw": "C 90%"
+  },
+  {
+    "q_num": 291,
+    "original_ans": "C,E",
+    "new_ans": "A, B",
+    "vote_pct": "85%",
+    "vote_raw": "AB 85%"
+  },
+  {
+    "q_num": 296,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "98%",
+    "vote_raw": "D 98%"
+  },
+  {
+    "q_num": 297,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "96%",
+    "vote_raw": "B 96%"
+  },
+  {
+    "q_num": 298,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 299,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 307,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 309,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "93%",
+    "vote_raw": "A 93%"
+  },
+  {
+    "q_num": 311,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 312,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "92%",
+    "vote_raw": "B 92%"
+  },
+  {
+    "q_num": 315,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "97%",
+    "vote_raw": "D 97%"
+  },
+  {
+    "q_num": 316,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "90%",
+    "vote_raw": "C 90%"
+  },
+  {
+    "q_num": 319,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "83%",
+    "vote_raw": "A 83%"
+  },
+  {
+    "q_num": 330,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 334,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 335,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "91%",
+    "vote_raw": "B 91%"
+  },
+  {
+    "q_num": 339,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 340,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 341,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 343,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 346,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 348,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "86%",
+    "vote_raw": "B 86%"
+  },
+  {
+    "q_num": 355,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "96%",
+    "vote_raw": "D 96%"
+  },
+  {
+    "q_num": 358,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "88%",
+    "vote_raw": "C 88%"
+  },
+  {
+    "q_num": 360,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "92%",
+    "vote_raw": "B 92%"
+  },
+  {
+    "q_num": 361,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 366,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "85%",
+    "vote_raw": "D 85%, C 15%"
+  },
+  {
+    "q_num": 375,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 379,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 380,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 381,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "94%",
+    "vote_raw": "B 94%"
+  },
+  {
+    "q_num": 384,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "93%",
+    "vote_raw": "C 93%"
+  },
+  {
+    "q_num": 389,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 391,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "87%",
+    "vote_raw": "C 87%"
+  },
+  {
+    "q_num": 395,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 398,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 403,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 407,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 409,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "96%",
+    "vote_raw": "C 96%"
+  },
+  {
+    "q_num": 414,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "85%",
+    "vote_raw": "B 85%, C 15%"
+  },
+  {
+    "q_num": 421,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "82%",
+    "vote_raw": "B 82%"
+  },
+  {
+    "q_num": 435,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "85%",
+    "vote_raw": "A 85%, D 15%"
+  },
+  {
+    "q_num": 440,
+    "original_ans": "A,D",
+    "new_ans": "A, C",
+    "vote_pct": "80%",
+    "vote_raw": "AC 80%"
+  },
+  {
+    "q_num": 446,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "83%",
+    "vote_raw": "D 83%"
+  },
+  {
+    "q_num": 449,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "94%",
+    "vote_raw": "B 94%"
+  },
+  {
+    "q_num": 450,
+    "original_ans": "A,C,F",
+    "new_ans": "C, E, F",
+    "vote_pct": "100%",
+    "vote_raw": "CEF 100%"
+  },
+  {
+    "q_num": 453,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 454,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "95%",
+    "vote_raw": "C 95%"
+  },
+  {
+    "q_num": 459,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 461,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 477,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 485,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "96%",
+    "vote_raw": "A 96%"
+  },
+  {
+    "q_num": 499,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "83%",
+    "vote_raw": "D 83%, B 17%"
+  },
+  {
+    "q_num": 501,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "93%",
+    "vote_raw": "C 93%"
+  },
+  {
+    "q_num": 508,
+    "original_ans": "B,C",
+    "new_ans": "B, D",
+    "vote_pct": "100%",
+    "vote_raw": "BD 100%"
+  },
+  {
+    "q_num": 510,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "87%",
+    "vote_raw": "C 87%"
+  },
+  {
+    "q_num": 517,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "92%",
+    "vote_raw": "A 92%"
+  },
+  {
+    "q_num": 525,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 529,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 530,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 531,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 532,
+    "original_ans": "C,F,D",
+    "new_ans": "A, D, F",
+    "vote_pct": "100%",
+    "vote_raw": "ADF 100%"
+  },
+  {
+    "q_num": 533,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "83%",
+    "vote_raw": "A 83%, C 17%"
+  },
+  {
+    "q_num": 535,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "95%",
+    "vote_raw": "B 95%"
+  },
+  {
+    "q_num": 536,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "82%",
+    "vote_raw": "D 82%"
+  },
+  {
+    "q_num": 552,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 566,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "93%",
+    "vote_raw": "B 93%"
+  },
+  {
+    "q_num": 570,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 573,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 575,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 577,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 579,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "95%",
+    "vote_raw": "A 95%"
+  },
+  {
+    "q_num": 580,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 586,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "87%",
+    "vote_raw": "B 87%"
+  },
+  {
+    "q_num": 587,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "84%",
+    "vote_raw": "C 84%, B 16%"
+  },
+  {
+    "q_num": 588,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 589,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "89%",
+    "vote_raw": "B 89%"
+  },
+  {
+    "q_num": 592,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 596,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "93%",
+    "vote_raw": "A 93%"
+  },
+  {
+    "q_num": 598,
+    "original_ans": "C,E,F",
+    "new_ans": "A, C, F",
+    "vote_pct": "96%",
+    "vote_raw": "ACF 96%"
+  },
+  {
+    "q_num": 604,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "94%",
+    "vote_raw": "D 94%"
+  },
+  {
+    "q_num": 605,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 609,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 612,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 614,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "83%",
+    "vote_raw": "D 83%, B 17%"
+  },
+  {
+    "q_num": 615,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "90%",
+    "vote_raw": "D 90%"
+  },
+  {
+    "q_num": 616,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 617,
+    "original_ans": "A,B",
+    "new_ans": "B, E",
+    "vote_pct": "100%",
+    "vote_raw": "BE 100%"
+  },
+  {
+    "q_num": 623,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "89%",
+    "vote_raw": "B 89%"
+  },
+  {
+    "q_num": 656,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "90%",
+    "vote_raw": "D 90%"
+  },
+  {
+    "q_num": 667,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "82%",
+    "vote_raw": "C 82%"
+  },
+  {
+    "q_num": 671,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 672,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "92%",
+    "vote_raw": "B 92%"
+  },
+  {
+    "q_num": 673,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "82%",
+    "vote_raw": "B 82%, C 18%"
+  },
+  {
+    "q_num": 674,
+    "original_ans": "A,C",
+    "new_ans": "B, D",
+    "vote_pct": "86%",
+    "vote_raw": "BD 86%"
+  },
+  {
+    "q_num": 675,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 678,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "93%",
+    "vote_raw": "B 93%"
+  },
+  {
+    "q_num": 680,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 681,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "94%",
+    "vote_raw": "A 94%"
+  },
+  {
+    "q_num": 682,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "94%",
+    "vote_raw": "A 94%"
+  },
+  {
+    "q_num": 683,
+    "original_ans": "C,E",
+    "new_ans": "A, C",
+    "vote_pct": "100%",
+    "vote_raw": "AC 100%"
+  },
+  {
+    "q_num": 686,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 688,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 689,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 690,
+    "original_ans": "A,C",
+    "new_ans": "C, D",
+    "vote_pct": "100%",
+    "vote_raw": "CD 100%"
+  },
+  {
+    "q_num": 691,
+    "original_ans": "A,D",
+    "new_ans": "B, E",
+    "vote_pct": "100%",
+    "vote_raw": "BE 100%"
+  },
+  {
+    "q_num": 692,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "81%",
+    "vote_raw": "A 81%"
+  },
+  {
+    "q_num": 693,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 695,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 697,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "83%",
+    "vote_raw": "B 83%"
+  },
+  {
+    "q_num": 698,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 700,
+    "original_ans": "B,C",
+    "new_ans": "A, C",
+    "vote_pct": "100%",
+    "vote_raw": "AC 100%"
+  },
+  {
+    "q_num": 701,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 703,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 704,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 705,
+    "original_ans": "A,E",
+    "new_ans": "A, D",
+    "vote_pct": "100%",
+    "vote_raw": "AD 100%"
+  },
+  {
+    "q_num": 707,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 708,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 709,
+    "original_ans": "D,E",
+    "new_ans": "B, E",
+    "vote_pct": "83%",
+    "vote_raw": "BE 83%"
+  },
+  {
+    "q_num": 711,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 712,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "91%",
+    "vote_raw": "A 91%"
+  },
+  {
+    "q_num": 713,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 716,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 718,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "83%",
+    "vote_raw": "C 83%, B 17%"
+  },
+  {
+    "q_num": 720,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 721,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "80%",
+    "vote_raw": "D 80%, C 20%"
+  },
+  {
+    "q_num": 722,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 725,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 727,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 729,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 732,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 735,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 737,
+    "original_ans": "A,B",
+    "new_ans": "C, E",
+    "vote_pct": "85%",
+    "vote_raw": "CE 85%"
+  },
+  {
+    "q_num": 738,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "93%",
+    "vote_raw": "B 93%"
+  },
+  {
+    "q_num": 740,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 741,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 742,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 743,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "81%",
+    "vote_raw": "D 81%, A 19%"
+  },
+  {
+    "q_num": 744,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "92%",
+    "vote_raw": "A 92%"
+  },
+  {
+    "q_num": 745,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 746,
+    "original_ans": "B,E",
+    "new_ans": "A, C",
+    "vote_pct": "100%",
+    "vote_raw": "AC 100%"
+  },
+  {
+    "q_num": 747,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 748,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "86%",
+    "vote_raw": "A 86%"
+  },
+  {
+    "q_num": 749,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "81%",
+    "vote_raw": "B 81%, A 19%"
+  },
+  {
+    "q_num": 750,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 754,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "83%",
+    "vote_raw": "B 83%, D 17%"
+  },
+  {
+    "q_num": 755,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 756,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "91%",
+    "vote_raw": "A 91%"
+  },
+  {
+    "q_num": 758,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 760,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "91%",
+    "vote_raw": "C 91%"
+  },
+  {
+    "q_num": 761,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 762,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 763,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 764,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "93%",
+    "vote_raw": "B 93%"
+  },
+  {
+    "q_num": 766,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 767,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 768,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 769,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 770,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 771,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 773,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "80%",
+    "vote_raw": "D 80%, C 20%"
+  },
+  {
+    "q_num": 774,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 775,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 776,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 777,
+    "original_ans": "B,C",
+    "new_ans": "A, C",
+    "vote_pct": "100%",
+    "vote_raw": "AC 100%"
+  },
+  {
+    "q_num": 778,
+    "original_ans": "C",
+    "new_ans": "B",
+    "vote_pct": "88%",
+    "vote_raw": "B 88%"
+  },
+  {
+    "q_num": 792,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "85%",
+    "vote_raw": "A 85%, B 15%"
+  },
+  {
+    "q_num": 793,
+    "original_ans": "D",
+    "new_ans": "C",
+    "vote_pct": "80%",
+    "vote_raw": "C 80%, D 20%"
+  },
+  {
+    "q_num": 798,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 800,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 801,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 802,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 803,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 804,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 805,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 806,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "90%",
+    "vote_raw": "B 90%"
+  },
+  {
+    "q_num": 808,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 810,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "93%",
+    "vote_raw": "C 93%"
+  },
+  {
+    "q_num": 812,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 813,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 814,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "93%",
+    "vote_raw": "B 93%"
+  },
+  {
+    "q_num": 815,
+    "original_ans": "A",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 817,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 819,
+    "original_ans": "D",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 824,
+    "original_ans": "B",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 827,
+    "original_ans": "C",
+    "new_ans": "D",
+    "vote_pct": "85%",
+    "vote_raw": "D 85%, C 15%"
+  },
+  {
+    "q_num": 840,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "100%",
+    "vote_raw": "B 100%"
+  },
+  {
+    "q_num": 855,
+    "original_ans": "A",
+    "new_ans": "C",
+    "vote_pct": "100%",
+    "vote_raw": "C 100%"
+  },
+  {
+    "q_num": 857,
+    "original_ans": "D",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 860,
+    "original_ans": "C",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  },
+  {
+    "q_num": 865,
+    "original_ans": "A,B",
+    "new_ans": "A, E",
+    "vote_pct": "100%",
+    "vote_raw": "AE 100%"
+  },
+  {
+    "q_num": 873,
+    "original_ans": "A",
+    "new_ans": "B",
+    "vote_pct": "88%",
+    "vote_raw": "B 88%"
+  },
+  {
+    "q_num": 876,
+    "original_ans": "C,D",
+    "new_ans": "B, D",
+    "vote_pct": "100%",
+    "vote_raw": "BD 100%"
+  },
+  {
+    "q_num": 885,
+    "original_ans": "B,D",
+    "new_ans": "C, D",
+    "vote_pct": "100%",
+    "vote_raw": "CD 100%"
+  },
+  {
+    "q_num": 886,
+    "original_ans": "C,D",
+    "new_ans": "B, C",
+    "vote_pct": "100%",
+    "vote_raw": "BC 100%"
+  },
+  {
+    "q_num": 891,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 940,
+    "original_ans": "B",
+    "new_ans": "D",
+    "vote_pct": "100%",
+    "vote_raw": "D 100%"
+  },
+  {
+    "q_num": 965,
+    "original_ans": "B",
+    "new_ans": "A",
+    "vote_pct": "100%",
+    "vote_raw": "A 100%"
+  }
+]
