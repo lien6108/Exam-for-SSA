@@ -3098,7 +3098,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：使用AWS Lambda處理照片。 在Amazon S3中儲存照片。 保留DynamoDB儲存後設資料。使用AWS Lambda處理照片。 在Amazon S3中儲存照片。 保留DynamoDB儲存後設資料。此方案把相片改存進 Amazon S3、只保留後設資料在 DynamoDB，是在既有架構之外額外導入一項儲存服務、需要調整既有的資料存取程式碼；題目描述的瓶頸是單一 EC2 執行個體無法因應並發使用者人數的變化，改用 Lambda 已可解決運算層的彈性擴充問題，不需要為此再更動儲存服務。
+- C：使用AWS Lambda處理照片。 在Amazon S3中儲存照片。 保留DynamoDB儲存後設資料。Lambda 可依上傳與處理請求自動平行擴展，不需要預先管理 EC2 容量；S3 適合儲存照片這類大型物件，DynamoDB 則保留可快速查詢的後設資料。這樣把運算、物件儲存與結構化索引分離，能同時支援成長中的使用者量與不固定的並發需求。
 - 其餘選項比較：
 - A：使用AWS Lambda處理照片。 將照片和後設資料儲存在DynamoDB.。此選項不符合題目的核心需求或限制條件，在架構複雜度、成本或效能上並非最佳選擇。
 - B：使用Amazon Kinesis Data Firehose處理照片並儲存照片和後設資料。此選項不符合題目的核心需求或限制條件，在架構複雜度、成本或效能上並非最佳選擇。
@@ -5146,20 +5146,20 @@ A
 - E。 使用伺服器側式加密與AWS Key Management Service(AWS KMS)客戶提供(進口)金鑰。 設定金鑰旋轉。
 
 **答案**
-C,E
+B, D
 
 **社群投票：** BD 77%, BC 22%
 
 
 
 **詳解**
-正確答案是 **C,E**。
-- C：使用伺服器側式加密，由Amazon S3管理加密鍵(SSE-S3)。 設定金鑰旋轉。SSE-S3 使用的是由 Amazon S3 完全代管的金鑰，客戶端無法檢視、管理或設定其輪換排程。這把金鑰的生命週期完全不對客戶開放設定，「設定金鑰旋轉」這個動作在 SSE-S3 底下根本無法執行。
-- E：使用伺服器側式加密與AWS Key Management Service(AWS KMS)客戶提供(進口)金鑰。 設定金鑰旋轉。匯入客戶自備金鑰材質（imported key material）到 AWS KMS 之後，AWS 明確不支援對這類金鑰啟用自動輪換。只能由客戶手動匯入新金鑰並改指向新的金鑰別名，這需要額外的人工排程與作業流程，與題目要求的「LEAST 營運開銷」互相矛盾。
+正確答案是 **B, D**。
+- B：在Amazon S3中儲存檔案。 在合規(compliance)模式下使用S3 Object Lock。S3 Object Lock Compliance mode 可在保留期間內防止物件被覆寫或刪除，適合題目要求的五年不可變保存；實際啟用 Object Lock 的儲存桶也必須使用 Versioning。
+- D：使用伺服器側式加密與AWS Key Management Service(AWS KMS)客戶管理金鑰。 設定金鑰旋轉。KMS 客戶受管對稱金鑰可啟用自動輪換，並持續以同一個金鑰 ARN 供應用程式使用，符合加密、每年輪換與低維運成本的要求。
 - 其餘選項比較：
 - A：在Amazon S3中儲存檔案。 在治理模式下使用S3 Object Lock。S3 Object Lock 的治理模式（governance mode）允許具備特定 IAM 權限（例如 s3:BypassGovernanceRetention）的使用者覆寫或刪除鎖定物件。這無法保證檔案在保留期間絕對不會被刪除，不符合題目「必須確保檔案不能被覆寫或刪除」的強制要求。
-- B：在Amazon S3中儲存檔案。 在合規(compliance)模式下使用S3 Object Lock。S3 Object Lock 的合規模式（compliance mode）會讓物件在鎖定期間內無法被覆寫或刪除。即使是帳戶的 root 使用者或具備最高權限的 IAM 主體，在保留期滿之前也無法縮短保留期或解鎖物件。這正好對應題目「5 年內檔案絕對不能被覆寫或刪除」的硬性要求。
-- D：使用伺服器側式加密與AWS Key Management Service(AWS KMS)客戶管理金鑰。 設定金鑰旋轉。使用 AWS KMS 客戶受管金鑰搭配伺服器端加密，能滿足「休息時加密」的要求。KMS 針對客戶受管金鑰提供內建的自動金鑰輪換功能，只要開啟設定，AWS 就會在背景每年自動產生新的金鑰材質，同一個金鑰 ID 仍可繼續供應用程式使用。整個輪換過程不需要人工介入，符合題目「每年自動輪換」且維運開銷最低的要求。
+- C：使用伺服器側式加密，由Amazon S3管理加密鍵(SSE-S3)。 設定金鑰旋轉。SSE-S3 的金鑰由 Amazon S3 管理，客戶無法設定每年輪換排程。
+- E：使用伺服器側式加密與AWS Key Management Service(AWS KMS)客戶提供(進口)金鑰。 設定金鑰旋轉。匯入 KMS 的金鑰材料不支援 KMS 自動輪換，必須自行管理重新匯入與切換流程，維運成本較高。
 
 **分類：** 儲存
 
@@ -5259,16 +5259,16 @@ B, E
 - D。 使用 Amazon ElastiCache 為Memcached。
 
 **答案**
-A
+B
 
 **社群投票：** B 53%, A 47%
 
 
 **詳解**
-正確答案是 **A**。
-- A：增加Amazon RDS讀作複製品。新增 RDS 讀取複本可以把部分讀取流量分散到複本上，但複本本身仍是一台需要被讀取的資料庫執行個体，沒有真正降低系統整體對資料庫層的讀取壓力。題目也沒有提到將複本設為 Multi-AZ，單一複本本身並不天生具備高可用性。
+正確答案是 **B**。
+- B：使用Amazon ElastiCache用於Redis。Redis 快取可在應用程式與 RDS 之間吸收重複讀取，直接降低實際送到資料庫的讀取次數；以複寫群組、跨 AZ 複本與自動容錯移轉配置，可同時滿足高可用性。
 - 其餘選項比較：
-- B：使用Amazon ElastiCache用於Redis。Amazon ElastiCache for Redis 在應用程式與資料庫之間加入一層記憶體快取，能直接攔截並吸收重複的讀取請求，從根本降低打到後端資料庫的讀取次數。Redis 原生支援複寫群組與 Multi-AZ 自動容錯移轉。這能同時滿足題目「降低資料庫讀取」與「確保高可用性」兩項要求。
+- A：增加Amazon RDS讀作複製品。讀取複本可以分散讀取流量並擴展讀取容量，但不能像快取一樣消除重複的資料庫讀取；單獨增加複本也沒有表明已配置跨 AZ 高可用容錯移轉。
 - C：使用 Amazon Route 53 DNS 快取。Amazon Route 53 是 DNS 解析服務，其快取只作用在網域名稱解析結果。這與應用程式對資料庫發出的 SQL 讀取請求完全無關，無法降低資料庫的讀取次數。
 - D：使用 Amazon ElastiCache 為Memcached。Amazon ElastiCache for Memcached 同樣能提供快取降低讀取，但 Memcached 不支援資料複寫與內建的自動容錯移轉機制。節點故障時快取資料會直接遺失且無法自動切換，無法滿足題目「確保高可用性」的要求。
 
@@ -5377,11 +5377,11 @@ B, E
 **詳解**
 正確答案是 **B, E**。
 - B：在多AZ部署中與.NET平臺重置AWS Elastic Beanstalk中的應用程式。AWS Elastic Beanstalk 支援 .NET 執行環境，可以直接以重新平台化（replatform）的方式部署既有應用程式碼，不需要重寫程式邏輯，並可設定為 Multi-AZ 部署提供高可用性，同時滿足題目對開發變動與可用性的兩項要求。
-- E：使用AWS Database Migration Service (AWS DMS)在多AZ部署中從Oracle 資料庫遷移到Amazon RDS上的Oracle.。同樣使用 AWS DMS 搭配多可用區部署，但遷移目標改為 Amazon RDS for Oracle，代表遷移後仍需持續支付 Oracle 的授權費用並維運 Oracle 引擎，與選項 D 屬於互斥的資料庫遷移路徑，本題採計的資料庫遷移方案是遷往 DynamoDB。
+- E：使用AWS Database Migration Service (AWS DMS)在多AZ部署中從Oracle 資料庫遷移到Amazon RDS上的Oracle.。AWS DMS 可將既有 Oracle 資料庫遷移到相容的 Amazon RDS for Oracle，降低應用程式因資料庫引擎變更而需要的修改；在 RDS 啟用 Multi-AZ 部署後，RDS 會維護同步待命執行個體並提供受管的故障移轉。這比改用 DynamoDB 更能保留原本的關聯式資料模型與 Oracle 相容性。
 - 其餘選項比較：
 - A：用執行.NET Core的 AWS Lambda 函式將應用程式重構為無伺服器。把應用程式重構成執行 .NET Core 的 Lambda 無伺服器函式，屬於架構重寫（refactor），需要拆解原本的應用邏輯並改用事件驅動模式運作，與題目要求的儘量減少開發變化直接衝突。
 - C：與Amazon Linux Amazon Machine Image(AMI)一起在Amazon EC2上執行的應用程式重新設定平臺。Amazon Linux AMI 執行的是 Linux 作業系統，原本針對 Windows Server／.NET Framework 撰寫的應用程式無法直接在其上執行，除非改用跨平台的 .NET Core 並調整部署方式，這同樣違反儘量減少開發變化的限制。
-- D：使用AWS Database Migration Service (AWS DMS)在多AZ部署中從Oracle 資料庫遷移到Amazon DynamoDB.。AWS DMS 可以將 Oracle 中的資料以持續複寫方式遷移到 Amazon DynamoDB，遷移過程不需停機，DynamoDB 本身也天生跨多可用區複寫資料，讓公司不必再負擔 Oracle 資料庫標準版的授權與維運工作，並取得所需的高可用性。
+- D：使用AWS Database Migration Service (AWS DMS)在多AZ部署中從Oracle 資料庫遷移到Amazon DynamoDB.。雖然 DMS 可支援部分資料庫到 DynamoDB 的遷移，但關聯式 Oracle 資料模型、SQL、索引與交易語意通常需要重新設計，會造成比重新平台化更大的應用程式變更；DynamoDB 的高可用性也不能消除這些相容性與資料模型風險。
 
 **分類：** 移轉和傳輸
 
@@ -7595,8 +7595,8 @@ B, E
 
 **詳解**
 正確答案是 **B, E**。
-- B：使用Amazon DynamoDB將員工資料儲存在等級中。 每月將資料匯出至Amazon S3.。DynamoDB 並未包含任何辨識或保護財務敏感欄位的機制，也沒有觸發月度通知的設計，無法滿足合規要求。
-- E：為 AWS 帳戶設定 Amazon Macie。 將Macie與Amazon EventBridge整合，透過Amazon Simple Notification Service(Amazon SNS)訂閱傳送月度通知。透過 SNS 訂閱寄送月度通知確實能提醒管理者留意財務資訊的偵測結果，但這個選項完全沒有涵蓋題目要求的『高流量查詢』與『資料視覺化呈現』能力，只解決了通知這單一面向。
+- B：使用Amazon DynamoDB將員工資料儲存在等級中。 每月將資料匯出至Amazon S3.。DynamoDB 的鍵值／文件模型可用於員工資料的階層化存取，並能以一致的低延遲承接高流量查詢；按月匯出至 S3 也能提供後續分析或保存用途。資料保護仍應搭配 IAM、加密與最小權限政策，但這個選項負責的是主要資料儲存與查詢層。
+- E：為 AWS 帳戶設定 Amazon Macie。 將Macie與Amazon EventBridge整合，透過Amazon Simple Notification Service(Amazon SNS)訂閱傳送月度通知。Macie 可掃描 S3 中的員工資料並辨識個人或財務敏感資訊，EventBridge 可將符合條件的 Macie finding 路由到 SNS，再寄送通知給管理者；這正好補足題目要求的敏感資料發現與通知流程。
 - 其餘選項比較：
 - A：使用Amazon Redshift將員工資料儲存在等級中。 每月將資料解除安裝到Amazon S3.。Amazon Redshift 是設計給大規模彙總分析用的資料倉儲，通常需要事先佈建叢集並支付運算成本，適合複雜的批次分析查詢而非針對單一員工紀錄的高流量存取，而且這個選項完全沒有處理敏感資料保護或財務資訊通知的合規要求。
 - C：為 AWS 帳戶設定 Amazon Macie。 將Mace與Amazon EventBridge整合，將月度事件傳送到AWS Lambda.。Amazon Macie 能自動掃描 Amazon S3 中的資料，辨識並分類其中的個資與財務相關敏感欄位（如銀行帳戶、稅務資訊）；把 Macie 的偵測結果透過 EventBridge 每月觸發 Lambda 函式，可讓公司在偵測到員工資料含有財務資訊時由 Lambda 串接後續的通知與稽核動作，對應題目『含財務資訊時每月收到通知』與『保護敏感資料』的要求。
@@ -8115,7 +8115,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立 EC2 Auto Scaling 群組(Auto Scaling group)。 選擇現有的ALB為負載平衡器(load balancer)，現有的目標群體為目標群體。 設定基於ASGAverageCPUUtilization指標的目標跟蹤縮放政策。 設定最小執行個體為2個，預期容量為3個，最大執行個體為6個，目標值為50%。 在Auto Scaling 群組(Auto Scaling group)中新增EC2執行個體。此方案建立以 ASGAverageCPUUtilization 為指標的目標追蹤擴展政策，目標值設為 50%，理論上能依 CPU 使用率自動增減執行個體數量，屬於常見的自動擴展設計，但依此題答案的判定，並非此情境下被選定的解法。
+- B：建立 EC2 Auto Scaling 群組(Auto Scaling group)。 選擇現有的ALB為負載平衡器(load balancer)，現有的目標群體為目標群體。 設定基於ASGAverageCPUUtilization指標的目標跟蹤縮放政策。 設定最小執行個體為2個，預期容量為3個，最大執行個體為6個，目標值為50%。 在Auto Scaling 群組(Auto Scaling group)中新增EC2執行個體。目標追蹤政策會依 ASGAverageCPUUtilization 自動調整執行個體數量，平時可縮減到較低容量以控制成本，CPU 尖峰時則擴展到上限 6 個以提供額外資源；現有 ALB 會把流量導向 Auto Scaling 目標群組。
 - 其餘選項比較：
 - A：建立 Amazon CloudWatch 提醒， 當 CPUUtilization 度量小於 20% 時存取 ALARM 狀態。 建立 CloudWatch 提醒呼叫的 AWS Lambda 函式來終止 ALB 目標組中的 EC2 例之一。此方案的 CloudWatch 警報是在 CPU 使用率『低於』20% 時觸發，並以 Lambda 終止目標群組中的其中一個執行個體，這只處理了縮減規模的情境，完全沒有因應題目要求『CPU 激增到 65% 時要有足夠運算資源』的擴大規模需求。
 - C：建立 EC2 Auto Scaling 群組(Auto Scaling group)。 選擇現有的ALB為負載平衡器(load balancer)，現有的目標群體為目標群體。 設定最小執行個體為2個，預期容量為3個，最大執行個體為6個。 在Auto Scaling 群組(Auto Scaling group)中新增EC2執行個體。此方案只設定了 Auto Scaling 群組的最小、預期與最大執行個體數，並未附加任何擴展政策（如目標追蹤或步階擴展）；沒有觸發條件，群組不會在 CPU 使用率飆升到 65% 時自動增加執行個體，無法達成可擴展性自動化的要求。
@@ -8142,7 +8142,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：每個可用區中提供一個子網。 設定 Auto Scaling 群組(Auto Scaling group) 以在 可用區 中分配 EC2 執行個體。 為多AZ部署設定 DB 執行個體。此方案為每個可用區各自建立子網（符合子網路歸屬單一可用區的規範），Auto Scaling 群組跨可用區分佈執行個體，並將 RDS 設定為 Multi-AZ 部署；架構描述方式本身相對完整可行，但依此題判定並非被選定的答案。
+- C：每個可用區中提供一個子網。 設定 Auto Scaling 群組(Auto Scaling group) 以在 可用區 中分配 EC2 執行個體。 為多AZ部署設定 DB 執行個體。每個子網只能屬於一個可用區，因此應在每個可用區建立子網，讓 Auto Scaling 群組跨可用區分配 EC2 執行個體；RDS Multi-AZ 則提供資料庫層的同步待命與自動故障移轉，三者共同消除單一可用區故障造成的單點。
 - 其餘選項比較：
 - A：每個可用區中提供一個子網。 設定 Auto Scaling 群組(Auto Scaling group) 以在 可用區 中分配 EC2 執行個體。 設定連線每個網路的 DB 執行個體。此方案雖為每個可用區各自建立一個子網、讓 Auto Scaling 群組跨可用區分佈 EC2 執行個體，但資料庫層僅描述為『連接每個網路』，並未將 RDS 設定為 Multi-AZ 部署，一旦資料庫所在的可用區發生故障，仍會造成資料庫層級的服務中斷。
 - B：提供兩個橫跨可用區的子網。 設定 Auto Scaling 群組(Auto Scaling group) 以在 可用區 中分配 EC2 執行個體。 設定連線每個網路的 DB 執行個體。AWS 的子網路設計上一定歸屬於單一可用區，並不存在『橫跨可用區的子網』這種網路架構，此選項描述的設定在 VPC 網路模型中無法實際建立。
@@ -8169,7 +8169,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持久SSD儲存的Amazon FSx。 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 執行個體上掛載檔案系統。此方案採用 FSx for Lustre 搭配持久型 SSD 儲存，是 AWS 針對高效能運算（HPC）情境設計的平行檔案系統，吞吐量會隨佈建容量等比放大，約 8TB 的容量已足以超過 6 GBps 的吞吐量門檻並具備次毫秒等級延遲，屬於此類巨量、高併發存取情境的典型選擇，但依此題判定並非被選定的答案。
+- B：建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持久SSD儲存的Amazon FSx。 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 執行個體上掛載檔案系統。FSx for Lustre 是針對 HPC 設計的平行檔案系統，可讓數百個 EC2 共享高速檔案資料；以 Persistent SSD 儲存可提供低延遲與高吞吐量，並可從 S3 匯入原始資料、將結果匯出回 S3，符合本題的效能與資料湖整合需求。
 - 其餘選項比較：
 - A：為NetApp ONTAP檔案系統建立 Amazon FSx。 符合每卷的分級政策。 將原始資料匯入檔案系統。 在EC2執行個體上掛載絲狀系統。此方案使用 FSx for NetApp ONTAP，並設定『每卷分級政策』，代表較不常存取的資料可能被自動分層到低成本、低效能的容量儲存層；資料一旦被分層，存取延遲與可用吞吐量都會下降，與題目要求的次毫秒延遲及至少 6 GBps 吞吐量產生衝突。
 - C：建立 Amazon S3 bucket儲存原始資料。 為Lustre檔案系統建立一個使用持續HDD儲存的Amazon FSx。 選擇從Amazon S3匯入資料並匯出資料的選項。 在 EC2 執行個體上掛載檔案系統。此方案將 FSx for Lustre 建立在持久型 HDD 儲存上，HDD 部署類型成本較低，但單位容量可提供的吞吐量與存取延遲都明顯遜於 SSD 部署類型，難以同時穩定達到次毫秒延遲與至少 6 GBps 吞吐量的雙重要求。
@@ -10803,13 +10803,17 @@ C
 ## Question #396
 
 **題目**
-一家公司在AWS上實施了自我管理的DNS服務。 解決方案包括以下內容: • Amazon EC2在不同AWS地區出現的情況 • AWS Global Accelerator中標準加速器的終點 公司希望保護解決方案免受DDoS攻擊。 解決方案設計師應如何滿足這一要求？
+一家公司在 AWS 上實作了自建（self-managed）的 DNS 服務。該解決方案由以下架構組成：
+- 位於不同 AWS 區域的 Amazon EC2 執行個體
+- AWS Global Accelerator 標準加速器（Standard Accelerator）的端點（Endpoints）
+
+該公司希望保護此解決方案免受 DDoS 攻擊。解決方案架構師應採取什麼行動來滿足此要求？
 
 **選項**
-- A。 訂閱至AWS Shield高階。 新增加速器作為保護資源。
-- B。 訂閱至AWS Shield高階。 新增EC2 執行個體作為保護資源。
-- C。 建立包含基於費率規則的AWS WAF網路ACL。 將ACL網路與加速器關聯。
-- D。 建立包含基於費率規則的AWS WAF網路ACL。 將ACL網路與EC2 執行個體聯絡起來。
+- A。 訂閱 AWS Shield Advanced，並將該加速器（Accelerator）新增為受保護的資源。
+- B。 訂閱 AWS Shield Advanced，並將 EC2 執行個體新增為受保護的資源。
+- C。 建立包含速率限制規則（rate-based rule）的 AWS WAF Web ACL，並將該 Web ACL 與加速器建立關聯。
+- D。 建立包含速率限制規則（rate-based rule）的 AWS WAF Web ACL，並將該 Web ACL 與 EC2 執行個體建立關聯。
 
 **答案**
 A
@@ -10819,11 +10823,11 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：訂閱至AWS Shield高階。 新增加速器作為保護資源。所有流量都是先存取 Global Accelerator 的 Anycast IP 再導向後端 EC2 執行個體，因此把標準加速器本身納入 AWS Shield Advanced 的保護資源，就能在流量真正的存取點取得進階 DDoS 偵測、自動緩解與 24/7 DRT（DDoS Response Team）支援，一次防護即涵蓋所有經由該加速器導入的流量。
+- A：訂閱 AWS Shield Advanced，並將該加速器（Accelerator）新增為受保護的資源。在 AWS Global Accelerator 架構中，外部客戶端所有的 DNS 查詢與網路流量都是先連線至 Global Accelerator 提供的 Anycast 靜態 IP 位址，再由 AWS 全球骨幹網路路由至後端不同區域的 EC2 執行個體。因此，**Global Accelerator 標準加速器才是整個架構的第一線流量入口與直接受攻擊面**。AWS Shield Advanced 原生支援直接將 AWS Global Accelerator 加速器納入保護，可提供第 3/4 層與第 7 層 DDoS 攻擊防護、自動緩解、攻擊可見性與 24/7 SRT（Shield Response Team）支援。
 - 其餘選項比較：
-- B：訂閱至AWS Shield高階。 新增EC2 執行個體作為保護資源。流量的真正存取點是 Global Accelerator 的 Anycast IP，只把後端 EC2 執行個體設為 Shield Advanced 的保護資源，無法涵蓋加速器本身承受的攻擊面，也無法運用加速器層級的全球邊緣清洗能力。
-- C：建立包含基於費率規則的AWS WAF網路ACL。 將ACL網路與加速器關聯。AWS WAF 的 Web ACL 只能關聯到 CloudFront、ALB、API Gateway、AppSync 或 Cognito User Pool 等 HTTP(S) 資源，Global Accelerator 運作在網路層（TCP/UDP），並不支援與 WAF Web ACL 關聯，此做法在架構上無法實作。
-- D：建立包含基於費率規則的AWS WAF網路ACL。 將ACL網路與EC2 執行個體聯絡起來。AWS WAF 同樣無法直接關聯到 EC2 執行個體，Web ACL 只能掛在具備 HTTP 請求處理能力的受支援資源上，EC2 執行個體本身不是 WAF 的合法保護目標。
+- B：訂閱 AWS Shield Advanced，並將 EC2 執行個體新增為受保護的資源。EC2 執行個體位於 Global Accelerator 後端，若只將 EC2 納入 Shield Advanced 保護，攻擊流量在抵達 Global Accelerator 邊緣節點時無法獲得加速器層級的集中防禦與流量清洗。
+- C：建立包含速率限制規則的 AWS WAF Web ACL，並將 Web ACL 與加速器關聯。AWS WAF 是第 7 層（HTTP/HTTPS）防火牆，其 Web ACL 僅支援關聯到 CloudFront、Application Load Balancer (ALB)、Amazon API Gateway、AWS AppSync 等 HTTP 服務；Global Accelerator 運作於第 3/4 層（TCP/UDP），不支援與 AWS WAF Web ACL 建立關聯。
+- D：建立包含速率限制規則的 AWS WAF Web ACL，並將 Web ACL 與 EC2 執行個體關聯。AWS WAF 無法直接掛載在單獨的 Amazon EC2 執行個體前面，必須搭配 ALB 或 CloudFront 等支援的第 7 層服務使用；且 DNS 服務通常使用 UDP/TCP 連接埠 53，非標準 HTTP(S) 流量，亦無法透過 WAF 處理。
 
 **分類：** 安全、身分與合規
 
@@ -12613,7 +12617,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：使用 AWS Global Accelerator建立加速器。 使用全球加速器整合並監聽TCP和UDP埠，在加速器端點後建立Network Load Balancer (NLB)。 更新Auto Scaling 群組(Auto Scaling group)系統，以便在NLB登記執行個體。AWS Global Accelerator 透過 Anycast 靜態 IP 將使用者流量經由 AWS 骨幹網路導向延遲最低的健康端點，並原生支援 TCP 與 UDP 協定的監聽器；後端改用 Network Load Balancer 是關鍵，因為 NLB 運作在四層，能同時接受 TCP 與 UDP 流量並轉發給 Auto Scaling 群組中的 EC2 執行個體，完整涵蓋題目要求的雙協定通訊與全球低延遲需求。註：本題原始資料標記正解為 A，但 ALB 屬七層服務、不支援 UDP 監聽器，這也是社群投票 100% 支持 B 的技術原因，建議覆核原答案欄位。
+- B：使用 AWS Global Accelerator建立加速器。 使用全球加速器整合並監聽TCP和UDP埠，在加速器端點後建立Network Load Balancer (NLB)。 更新Auto Scaling 群組(Auto Scaling group)系統，以便在NLB登記執行個體。AWS Global Accelerator 透過 Anycast 靜態 IP 將使用者流量經由 AWS 骨幹網路導向延遲最低的健康端點，並原生支援 TCP 與 UDP 協定的監聽器；後端改用 Network Load Balancer 是關鍵，因為 NLB 運作在四層，能同時接受 TCP 與 UDP 流量並轉發給 Auto Scaling 群組中的 EC2 執行個體，完整涵蓋題目要求的雙協定通訊與全球低延遲需求。
 - 其餘選項比較：
 - A：使用 AWS Global Accelerator建立加速器。 在加速器端點後面建立一個Application Load Balancer (ALB)，使用全球加速器整合，並監聽TCP和UDP埠。 更新 Auto Scaling 群組(Auto Scaling group) 以註冊 ALB 上的執行個體。此方案雖使用 Global Accelerator 提供的全球邊緣路由能力，但後端的 Application Load Balancer 運作在七層（HTTP/HTTPS/gRPC），並不支援 UDP 監聽器；即使 Accelerator 本身可設定 UDP 埠，流量到達 ALB 後仍無法被正確接收，因此無法真正同時服務題目要求的 TCP 與 UDP 通訊。
 - C：建立 Amazon CloudFront 內容傳遞網路(content delivery network)(CDN(CDN)) 端點。 在端點後建立Network Load Balancer (NLB)，並監聽TCP和UDP埠。 更新Auto Scaling 群組(Auto Scaling group)，以便在NLB登記執行個體。 更新 CloudFront 以 LNB 作為原始碼。CloudFront 是針對 HTTP/HTTPS 內容設計的快取型 CDN，並不支援轉發原始 UDP 流量給來源伺服器，不適合需要即時 TCP/UDP 遊戲連線的場景；選項描述中也把 NLB 誤植為「LNB」，顯示這個設定本身仍有問題。
@@ -16574,7 +16578,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：訂購多個AWS Snowball裝置。 將資料複製到裝置中。 將裝置傳送給AWS，將資料複製到Amazon S3.。AWS Snowball 是透過實體裝置離線搬運資料、不佔用網際網路頻寬的服務；但題目情境已明確保留一部分（80%）既有網路頻寬供此次遷移使用，屬於允許走線上傳輸路徑的情境，因此本題設計的方向是強化線上傳輸的效率與可靠性，而非另外導入實體裝置的物流與交寄流程。
+- D：訂購多個AWS Snowball裝置。 將資料複製到裝置中。 將裝置傳送給AWS，將資料複製到Amazon S3.。10 PB 在 500 Mbps 上行鏈路、即使使用 80% 頻寬的情況下，也遠超過六週可完成的線上傳輸量；Snowball 以加密實體裝置離線搬運資料，不消耗這條已被其他應用程式共用的網路上行鏈路，因此適合此規模與時限。
 - 其餘選項比較：
 - A：設定 AWS 資料同步將資料遷移到 Amazon S3 並自動驗證資料。AWS DataSync 是專為大規模線上資料遷移設計的代管服務，可在地端與雲端之間以平行、多執行緒方式傳輸資料，並自動進行資料完整性驗證（checksum 比對）、支援中斷後自動重試與續傳，也能設定頻寬節流以維持在允許的頻寬上限（例如題目限定的 80%）內運作。相較人工工具，DataSync 能在與其他大樓共用的線路環境下持續、可靠地把資料同步進 S3，並把自動驗證納入流程，符合題目要求的一次性大規模遷移與資料正確性保證。
 - B：使用rsync將資料直接傳輸到Amazon S3.。rsync 沒有針對 S3 物件儲存最佳化的傳輸引擎，也不具備內建的頻寬節流與自動重試機制；要在為期 6 週、頻寬受限又與其他大樓共用的連線上長時間執行，遺失連線後須自行處理重傳與驗證，維運負擔與出錯風險都偏高。
@@ -18823,7 +18827,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：建立中轉閘道器。 為 VPC 連線建立 VPC 附件。 建立 VPN 連線的連線附件。Transit Gateway 的集中式架構適合規模化連線，但題目指定的解決方案還需要以 Direct Connect 連接現場位置；單獨列出 VPC 與 VPN 附件不完整。
+- C：建立中轉閘道器。 為 VPC 連線建立 VPC 附件。 建立 VPN 連線的連線附件。Transit Gateway 以集中式路由中樞連接多個 VPC 與 Site-to-Site VPN，新增帳戶或 VPC 時只需建立新的附件，不必維護大量 VPC Peering 連線；這正好符合數量會成長且要降低管理工作的要求。
 - 其餘選項比較：
 - A：在 VPC 之間建立對等連線。 建立 VPN 連線 VPC 和地端位置。逐一建立 VPC 對等連線會形成大量連線管理工作，且對等連線不適合隨帳戶與 VPC 數量成長的集中式拓撲。
 - B：推出Amazon EC2 執行個體。 例如，包括VPN軟體，該軟體使用VPN連線連線所有VPC和辦公地點。在 EC2 上自行維護 VPN 軟體需要管理伺服器、路由與高可用性，營運負擔高且擴充性不佳。
@@ -19320,7 +19324,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：設定一個網路負載平衡器(Network Load Balancer)，配備所需的協議和網際網路流量的埠。 指定EC2執行個體為目標。NLB 確實支援 UDP、低延遲與高吞吐量，通常是此類需求的合適服務；但依題目答案標記，該選項不作為本題指定解答。
+- C：設定一個網路負載平衡器(Network Load Balancer)，配備所需的協議和網際網路流量的埠。 指定EC2執行個體為目標。NLB 在傳輸層支援 UDP，並以低延遲、高吞吐量處理大量網路連線；將 EC2 執行個體註冊為目標即可把遊戲流量分散到後端，符合每秒數百萬 UDP 請求的需求。
 - 其餘選項比較：
 - A：設定一個應用程式負載平衡器(Application Load Balancer)，配備所需的協議和網際網路流量的埠。 指定EC2執行個體為目標。ALB 主要處理 HTTP/HTTPS 第 7 層流量，不支援遊戲伺服器需要的 UDP，也不適合每秒數百萬封包的低延遲網路負載。
 - B：為網際網路流量設定一個負載平衡器(Load Balancer)閘道器。 指定EC2執行個體為目標。Gateway Load Balancer 用於部署與擴展虛擬網路設備，例如防火牆與入侵防護設備，不是直接承載遊戲伺服器 UDP 流量的負載平衡器。
@@ -19404,7 +19408,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：啟用 ALB 存取日誌到 Amazon S3。 在 Amazon Athena 中建立表格並查詢日誌。ALB 存取日誌存到 S3 後可使用 Athena 查詢，是可擴充且有效率的分析方式；但依題目答案標記，本選項不是指定解答。
+- B：啟用 ALB 存取日誌到 Amazon S3。 在 Amazon Athena 中建立表格並查詢日誌。ALB 存取日誌包含來源、請求、狀態碼與延遲等資訊；集中寫入 S3 後用 Athena 以 SQL 查詢，不必維護日誌分析叢集，能以低維運成本檢查異常流量模式。
 - 其餘選項比較：
 - A：在 Amazon Athena 中為 AWS CloudTrail 日誌建立表格。 為相關資訊建立查詢。CloudTrail 記錄的是 AWS API 活動，不包含 ALB 的每一筆用戶端 HTTP 存取與流量模式，因此無法針對網站請求做完整分析。
 - C：啟用 ALB 存取日誌到 Amazon S3。 在文字編輯器中開啟每個檔案，並搜尋每行相關資訊。啟用 ALB 存取日誌可保存來源 IP、請求路徑、狀態碼與延遲等資訊；直接以文字編輯器逐檔搜尋雖然效率低，卻能取得比 CloudTrail 更接近流量異常根因的資料。
@@ -19758,7 +19762,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：在Amazon Elastic Container Service (Amazon ECS)上執行應用，作為帶有服務自動縮放的微服務。ECS 微服務能改善部署與擴展，但此選項沒有利用題目指定的低成本 Spot 容量，也未處理長時間報告在中斷後的重試特性。
+- C：在Amazon Elastic Container Service (Amazon ECS)上執行應用，作為帶有服務自動縮放的微服務。把單體應用拆成 ECS 微服務後，各模組可獨立部署與更新，避免每次修補都讓整個應用程式停機；ECS Service Auto Scaling 可依需求調整任務數量，且容器可在工作失敗時由服務重新啟動，符合逐步現代化、彈性與降低停機的要求。
 - 其餘選項比較：
 - A：在 AWS Lambda 上執行應用程式作為單函式，並使用最大供給的貨幣。單一 Lambda 函式不適合長達約 20 分鐘的工作，且無法自然地把緊密耦合模組拆成可獨立部署的元件。
 - B：在Amazon EC2 Spot 執行個體上執行應用程式，作為帶有Spot Fleet預設分配策略的微服務。以微服務拆分功能可讓模組獨立更新，Spot Fleet 能以較低成本取得可擴充的運算容量。將工作設計成可重試的服務後，即使 Spot 中斷，也能由其他容量重新執行並降低整體停機影響。
@@ -19785,7 +19789,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：使用執行自定義開發程式碼的 AWS Lambda 函式。Lambda 確實支援 Python 與自動擴展，但此選項沒有交代函式封裝、觸發器或執行時間限制，不能據此滿足題目指定的方案。
+- D：使用執行自定義開發程式碼的 AWS Lambda 函式。Lambda 原生支援 Python，會依請求數量自動擴展，且不需維護 EC2 主機或作業系統；對每秒數百請求的微服務元件，可先以函式模型驗證功能，再逐步替換既有元件。
 - 其餘選項比較：
 - A：使用 Spot Fleet 自動縮放執行最新亞馬遜 Linux 作業系統的 EC2 執行個體。Spot Fleet 仍需管理 EC2 執行個體與映像，並非最低基礎設施管理的無伺服器方案。
 - B：使用設定了 高可用性(high availability) 的 AWS Elastic Beanstalk 網路伺服器環境。Elastic Beanstalk 會管理部分部署工作，但仍需維護執行個體環境，且不如事件驅動的函式平台適合每秒數百請求的元件測試。
@@ -20163,7 +20167,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：按下分數更新到Amazon Kinesis Data Streams。 用 AWS Lambda 處理 Kinesis 資料流中的更新。 在Amazon DynamoDB中儲存處理過的更新。Kinesis Data Streams 可處理高吞吐並保留分片內順序，但此選項的處理與儲存設計沒有使用題目指定的佇列式可靠交付模型。
+- A：按下分數更新到Amazon Kinesis Data Streams。 用 AWS Lambda 處理 Kinesis 資料流中的更新。 在Amazon DynamoDB中儲存處理過的更新。Kinesis Data Streams 可承接突發高吞吐量並保留每個 shard 內的順序，Lambda 可受管地消費串流，DynamoDB 則提供高可用、可擴展的結果儲存；整體不需要自行管理消費者伺服器或資料庫叢集。
 - 其餘選項比較：
 - B：按下分數更新到Amazon Kinesis Data Streams。 用為自動縮放設定的 Amazon EC2 執行個體處理更新。 在 Amazon Redshift 中儲存處理過的更新。EC2 與 Redshift 都需要管理容量和叢集，Redshift 也不是適合即時逐筆儲存遊戲分數的低維運資料庫。
 - C：將分數更新推向一個Amazon Simple Notification Service (Amazon SNS)話題。 向 SNS 主題訂閱一個 AWS Lambda 函式來處理更新。 將處理過的更新儲存在執行於Amazon EC2上的SQL 資料庫中。SNS 可承接突發發布並將訊息交給 Lambda，Lambda 會依需求自動擴展而不需管理伺服器。搭配高可用的資料庫儲存處理結果，可降低維護基礎設施的工作負載並快速處理更新。
@@ -20220,7 +20224,7 @@ C, E
 **詳解**
 正確答案是 **C, E**。
 - C：在所有三個大區的S3 bucket中設定雙向(雙向)複寫(replication)。三個桶的雙向複寫會增加複寫規則、衝突處理與回圈風險，超過以最少修改完成需求的必要程度。
-- E：建立 S3 Multi-Region Access Point。 修改應用程式以使用多區域存取點的Amazon Resource Name (ARN)進行影片流和上傳。同時修改上傳與串流應用程式會增加改造範圍，並非題目要求的最少應用程式修改。
+- E：建立 S3 Multi-Region Access Point。 修改應用程式以使用多區域存取點的Amazon Resource Name (ARN)進行影片流和上傳。Multi-Region Access Point 提供單一全域 ARN，會依請求來源與端點健康狀態把讀寫流量導向適當的區域 bucket；搭配跨區域複寫可讓各區域保有資料副本，適合全球上傳與播放的 active-active 架構。
 - 其餘選項比較：
 - A：設定單向複寫(replication)從我們東-2S3 bucket到eu西-2S3 bucket。 設定從我們東-2 S3 bucket到Ap-東南-1 S3 bucket的單向複寫(replication)。從主要來源桶分別設定到兩個目標區域的複寫，可讓上傳者仍寫入原有桶，並把內容送到歐洲與亞太的本地副本。應用程式不必改變上傳路徑，且各地播放可由鄰近區域取用。
 - B：設定單向複寫(replication)從我們東-2S3 bucket到eu西-2S3 bucket。 設定單向複寫(replication)從eu-west - 2 S3 bucket到AP-東南-1 S3 bucket.。串接來源到歐洲、再由歐洲到亞太的複寫鏈，可建立目標區域的資料副本並保留原上傳流程。S3 Replication 由服務管理，應用程式只需維持主要寫入位置即可降低修改量。
@@ -20301,10 +20305,10 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：透過過濾 Amazon S3 編目報告來建立未加密物件列表。 設定 S3 Batch Operations 任務，以伺服器側加密 加密列表中的物件，並帶有客戶提供的金鑰(SSE-C)。 設定 S3 預設的 加密 特性，以使用伺服器側的 加密 並帶有客戶提供的金鑰(SSE-C)。S3 Batch Operations 可批次處理既有物件，但 SSE-C 金鑰不適合作為 S3 預設加密設定，且需要在每次請求中管理客戶提供的金鑰。
+⚠️ 題目瑕疵：原題沒有符合目前 AWS 實作的完整選項；A 是原始題庫標示的答案，但不能視為 AWS 最佳實務答案。S3 Batch Operations Copy 不支援以 SSE-C 作為目的端加密，因此 A 的既有物件處理步驟不可執行；而 SSE-C 也不是 S3 的預設物件加密方法。正確設計應改成使用 S3 Inventory + S3 Batch Operations 將既有物件複製為 SSE-KMS，並以 SSE-KMS default encryption 保護未來上傳。
 - 其餘選項比較：
-- B：使用 S3 Storage Lens 指標來識別未加密的S3 bucket。 設定 S3 預設的 加密 特性，以使用伺服器側的 加密 與 AWS KMS 金鑰(SSE-KMS)。S3 Storage Lens 可協助找出未套用加密的儲存桶，S3 預設 SSE-KMS 則能讓後續上傳物件自動加密。使用受管理的 KMS 金鑰可集中控管金鑰政策與稽核，降低自行處理金鑰的負擔。
-- C：透過過濾Amazon S3的AWS使用報告，建立未加密物件列表。 設定 AWS Batch任務， 以伺服器側的 加密 加密列表中的物件。 設定 S3 預設的 加密 特性，以使用伺服器側的 加密 並帶有 AWS KMS 金鑰(SSE-KMS)。雖然批次加密概念可處理既有物件，但 AWS 使用報告不是可靠的物件加密清單來源，而且未說明所需的 KMS 權限與完整批次範圍。
+- B：使用 S3 Storage Lens 指標來識別未加密的S3 bucket。 設定 S3 預設的 加密 特性，以使用伺服器側的 加密 與 AWS KMS 金鑰(SSE-KMS)。SSE-KMS default encryption 可保護未來上傳，但 Storage Lens 的 bucket 指標不能取代物件層級清單與 Batch Operations，因此不足以完成既有物件的回溯加密。
+- C：透過過濾Amazon S3的AWS使用報告，建立未加密物件列表。 設定 AWS Batch任務， 以伺服器側的 加密 加密列表中的物件。 設定 S3 預設的 加密 特性，以使用伺服器側的 加密 並帶有 AWS KMS 金鑰(SSE-KMS)。AWS Batch 不是 S3 物件批次加密的正確受管服務，且 AWS 使用報告不是 S3 Inventory 物件加密清單。
 - D：透過過濾Amazon S3的AWS使用報告，建立未加密物件列表。 設定 S3 預設的 加密 特性，使用伺服器側的 加密 並帶有客戶提供的金鑰(SSE-C)。SSE-C 不能作為 S3 預設伺服器端加密方式，未來物件也無法只靠這項設定自動使用客戶提供的金鑰。
 
 **分類：** 儲存
@@ -20328,7 +20332,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為域名建立 Amazon Route 53 公共主機區。 匯入包含上一個提供者託管的域記錄的區域檔案。公共託管區與區域檔案匯入通常是遷移公開 DNS 的直接方式，但依本題來源答案採用的方案不是此選項。
+- A：為域名建立 Amazon Route 53 公共主機區。 匯入包含上一個提供者託管的域記錄的區域檔案。Route 53 公共託管區可承接網際網路上的權威 DNS，匯入既有區域檔案可快速保留現有記錄；完成註冊商的名稱伺服器委派後，即可由 AWS 受管 DNS 接手公開解析。
 - 其餘選項比較：
 - B：為域名建立 Amazon Route 53 私人主機區。 匯入包含上一個提供者託管的域記錄的區域檔案。私人託管區只對關聯 VPC 提供名稱解析，不能接管公眾網站網域的網際網路 DNS。
 - C：在 AWS 中建立簡單 AD 目錄。 啟用 DNS 提供者和 AWS Directory Service之間的區域傳輸，用於 Microsoft Active 目錄的域記錄。由 AWS Directory Service 提供受管理的 DNS 服務，可在 AWS 內承接既有網域記錄並減少自行維護 DNS 伺服器的工作。設定區域傳輸後，既有 DNS 資料能同步到受管理目錄環境，提升服務彈性。
@@ -20355,7 +20359,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用AWS AppConfig儲存和管理應用程式設定。 使用AWS Secrets Manager儲存和檢索憑證。AppConfig 加 Secrets Manager 是可行的專業組合，但兩項受管理服務的設定與憑證管理成本不如本題指定的較低負擔選項。
+- A：使用AWS AppConfig儲存和管理應用程式設定。 使用AWS Secrets Manager儲存和檢索憑證。AppConfig 專門管理可部署、可驗證與可回復的應用程式設定；Secrets Manager 則以受管方式保存和輪換資料庫及其他服務憑證，兩者分工清楚且不需自建設定伺服器或秘密儲存庫。
 - 其餘選項比較：
 - B：使用AWS Lambda儲存和管理應用程式設定。 使用 AWS Systems Manager 引數儲存器儲存並獲取憑證。Systems Manager Parameter Store 可集中保存應用程式參數與加密的機密值，應用程式可透過 IAM 角色取用而不必把憑證寫入程式碼。Lambda 適合承載無伺服器的設定管理邏輯，避免維護常駐伺服器，符合低行政負擔。
 - C：使用加密應用程式設定檔案。 為應用程式設定將檔案儲存在 Amazon S3 中。 建立另一個 S3 檔案來儲存和獲取憑證。把加密檔案放在 S3 需要自行處理版本、輪替、存取與同步邏輯，且以另一個 S3 檔案保存憑證不是專用秘密管理方案。
@@ -20375,16 +20379,16 @@ A
 - D。 下載 AWS 提供的根憑證。 在 RDS 執行個體的所有連線中提供憑證。
 
 **答案**
-D
+A（原題無正確選項）
 
 **社群投票：** D 81%, A 19%
 
 
 **詳解**
-正確答案是 **D**。
-- D：下載 AWS 提供的根憑證。 在 RDS 執行個體的所有連線中提供憑證。AWS 根憑證用於驗證 RDS 的 TLS 憑證，單獨提供憑證不會強制所有連線使用加密，也未說明啟用 SSL 模式。
+正確答案是 **A（原題無正確選項）**。
+- A：在資料庫上啟用IAM 資料庫認證。對 RDS MySQL 使用 IAM database authentication 時，資料庫網路流量會使用 SSL/TLS 加密；這能直接補足題目指出的「靜態加密已啟用、傳輸中未加密」缺口。
 - 其餘選項比較：
-- A：在資料庫上啟用IAM 資料庫認證。RDS IAM 資料庫認證使用短期 IAM 權杖建立資料庫連線，並可搭配 SSL/TLS 強制加密用戶端到資料庫的傳輸。這能補足只啟用 KMS 靜態加密而未保護傳輸中的資料之缺口。
+- D：下載 AWS 提供的根憑證。 在 RDS 執行個體的所有連線中提供憑證。根憑證用來驗證伺服器憑證，但僅把 CA 憑證放入用戶端並不等於強制用戶端啟用 SSL/TLS；還需要連線端的 SSL 模式或資料庫參數設定。
 - B：提供自簽名憑證。 在 RDS 執行個體的所有連線中使用憑證。自簽名憑證不提供受信任的伺服器身分驗證，可能讓用戶端難以安全驗證 RDS 端點，且不是 RDS TLS 的標準信任鏈。
 - C：使用一個快照 RDS執行個體。 將 快照 恢復為新執行個體， 啟用 加密。快照還原與 KMS 只處理資料靜態加密，不能自動啟用應用程式連線的 TLS。
 
@@ -20465,8 +20469,8 @@ A, C
 
 **詳解**
 正確答案是 **A, C**。
-- A：啟用並設定每個EC2執行個體上增強的網路。增強網路可提高單一執行個體的封包處理能力，但本題來源答案未將它列入所需組合。
-- C：在叢集放置組中執行EC2 執行個體。叢集放置組才是讓 EC2 執行個體在同一可用區內緊密設定、降低節點間網路延遲的典型功能，但本題答案欄未將其標為正確。
+- A：啟用並設定每個EC2執行個體上增強的網路。增強網路透過 Elastic Network Adapter 提供較高的封包每秒數、較低的延遲與較高的網路吞吐量，適合近即時串流處理的節點間通訊。
+- C：在叢集放置組中執行EC2 執行個體。叢集放置組會把 EC2 執行個體放在同一可用區內較接近的底層硬體上，以降低節點間延遲並提高可用網路吞吐量；與增強網路搭配即可同時改善拓撲與介面效能。
 - 其餘選項比較：
 - B：將EC2執行個體分組到單獨的帳戶中。將執行個體分組在獨立帳戶可隔離資源與流量管理邊界，避免不相關工作負載互相影響。對需要近即時處理的節點，隔離帳戶也能降低共享網路資源造成的干擾。
 - D：在每個EC2執行個體中附加多個彈性網路介面。多個 ENI 增加的是介面與位址數量，不會直接縮短不同節點間的網路距離或延遲。
@@ -20547,7 +20551,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：修改AWS WAF的設定，加入IP匹配條件，以遮蔽惡意IP地址。AWS WAF 的 IP 集合通常是處理此類封鎖的服務，但依本題答案欄指定的選項，來源 IP 控制應放在 CloudFront 邊界層。
+- B：修改AWS WAF的設定，加入IP匹配條件，以遮蔽惡意IP地址。將惡意 IP 加入 AWS WAF IP set，並把該 IP set 的封鎖規則套用到已關聯 CloudFront 的 Web ACL，可在請求抵達 ALB、EC2 前拒絕流量；這比修改後端網路 ACL 更精準，也不需要改動 Auto Scaling 執行個體。
 - 其餘選項比較：
 - A：修改CloudFront發行版上的網路 ACL(network ACL)，為惡意IP地址新增否定規則。CloudFront 位於 ALB 前方，是外部請求首先抵達的 AWS 邊界，因此可在分佈的網路存取控制層阻擋惡意來源 IP。封鎖發生在請求到達 ALB 與 EC2 前，可減少後端資源消耗並立即保護應用程式。
 - C：修改ALB背後的目標群體中的EC2執行個體的網路 ACL(network ACL)，以否認惡意IP地址。後端 EC2 的網路 ACL 看到的來源可能是 CloudFront 或 ALB，而非原始惡意 IP，放在該處也較晚才丟棄流量。
@@ -20574,10 +20578,10 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：設定 AWS IAM 身分中心(AWS Single Sign-On)。 連線IAM身分中心與現有的IDP。 提供使用者和來自現有IDP的組。IAM Identity Center 搭配外部 IdP 是多帳戶聯合存取的標準方式，但本題答案欄指定的選項不是此方案。
+- C：設定 AWS IAM 身分中心(AWS Single Sign-On)。 連線IAM身分中心與現有的IDP。 提供使用者和來自現有IDP的組。IAM Identity Center 可連接既有外部 IdP，將使用者與群組映射到 permission set，再集中授予多個 AWS 帳戶的角色存取；這避免為數千名員工逐一建立與同步 IAM 使用者。
 - 其餘選項比較：
 - A：為所需AWS帳戶中的員工建立IAM使用者。 連線IAM使用者到現有的IDP。 設定IAM使用者的聯邦認證。在數千名員工的多帳戶環境逐一建立 IAM 使用者會造成帳號生命週期與權限同步的高維運成本。
-- B：設定 AWS 帳戶根使用者，其使用者電子郵件地址和密碼與現有的IDP同步。將帳戶根使用者的電子郵件與密碼和外部 IdP 同步，可讓員工使用既有身分認證 AWS 並集中管理帳戶入口。這能避免逐一建立大量 IAM 使用者，並以現有 IdP 的生命週期政策管理存取。
+- B：設定 AWS 帳戶根使用者，其使用者電子郵件地址和密碼與現有的IDP同步。AWS 帳戶 root 使用者是帳戶層級的特殊身分，不能以外部 IdP 的聯合登入方式取代，也不應讓員工用 root 處理日常存取；把 root 憑證與 IdP 同步不是 AWS 支援的多帳戶聯合存取方案。
 - D：使用AWS Resource Access Manager(AWS RAM)與現有IDP中的使用者共享對AWS帳戶的存取。RAM 用於共享 AWS 資源，不負責把外部 IdP 身分聯合到多個 AWS 帳戶的登入與權限授予。
 
 **分類：** 安全、身分與合規
@@ -20685,7 +20689,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在區域中，將EC2執行個體放在應用程式負載平衡器後面。 在ALBs上部署AWS WAF。 使用 AWS Global Accelerator建立加速器，並將 ALB 註冊為端點。ALB 與 WAF 能提供應用層防護，但本選項使用 Global Accelerator 的設定未符合題目答案指定的靜態入口與全球路由方案。
+- B：在區域中，將EC2執行個體放在應用程式負載平衡器後面。 在ALBs上部署AWS WAF。 使用 AWS Global Accelerator建立加速器，並將 ALB 註冊為端點。Global Accelerator 提供兩個固定 Anycast IP，並透過 AWS 全球網路將使用者導向健康且較接近的區域端點；ALB 可跨可用區分流，AWS WAF Web ACL 則提供 SQL injection 等常見 HTTP 攻擊防護，三者共同滿足靜態 IP、可用性、效能與安全性要求。
 - 其餘選項比較：
 - A：將EC2執行個體放在每個區域的網路負載平衡器(NLB)後面。 在NLB部署AWS WAF。 使用 AWS Global Accelerator建立加速器，並將NLB登記為終點。Global Accelerator 與 NLB 可提供靜態入口，但 NLB 不能直接部署 AWS WAF，無法同時滿足常見網路攻擊防護。
 - C：將EC2執行個體放在每個區域的網路負載平衡器(NLB)後面。 在NLB部署AWS WAF。 建立 Amazon CloudFront 分佈，其來源使用基於 Amazon Route 53 延遲 的路由，用於前往NLB的路由請求。NLB 可在各區域承接 EC2，CloudFront 再利用 Route 53 延遲路由把使用者導向鄰近來源，能改善全球可用性與效能。CloudFront 邊界可整合 AWS WAF 以阻擋常見攻擊與濫用流量，並提供固定的服務入口。
@@ -20712,9 +20716,9 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：在Aurora 資料庫執行個體前方使用 Amazon RDS Proxy.。RDS Proxy 可池化連線並降低連線過多問題，但不會把 Aurora 讀取副本的提升流程本身縮短到題目要求的程度。
+- B：在Aurora 資料庫執行個體前方使用 Amazon RDS Proxy.。RDS Proxy 可池化及多工處理連線，並在 Aurora 故障移轉時持續維持應用程式端連線、繞過 DNS 快取延遲，降低連線過多與停機時間。
 - 其餘選項比較：
-- A：透過多AZ叢集部署從Aurora切換到Amazon RDS.。RDS Multi-AZ DB 叢集提供一個寫入執行個體與多個同步待命執行個體，可在故障時快速自動切換。相較於只有讀取副本的架構，受管理的多 AZ 故障移轉能縮短主要節點恢復時間並改善連線錯誤。
+- A：透過多AZ叢集部署從Aurora切換到Amazon RDS.。這會改變資料庫服務與部署模型，不能直接解決既有 Aurora 的連線池及 DNS 快取問題，也不符合以最小變更改善 Aurora 故障移轉的方向。
 - C：切換至 Amazon DynamoDB，並搭配 DynamoDB Accelerator (DAX) 用於讀取連線。DynamoDB 與 DAX 需要重寫資料模型和應用程式，無法作為 Aurora 的透明故障移轉替代品。
 - D：遷移至 Amazon Redshift.。Redshift 適合分析型資料倉儲，不適合取代 Aurora 的交易資料庫與高可用故障移轉。
 
@@ -20739,7 +20743,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：建立物件 Lambda 存取點。 建立一個 AWS Lambda 函式，當函式讀取檔案時會編輯 PII。 指示外部服務提供商存取Object Lambda存取點。S3 Object Lambda 可在讀取時轉換物件，但外部服務商仍需處理檔案清單與隨機抽樣，且每次轉換可能增加延遲與函式管理。
+- A：建立物件 Lambda 存取點。 建立一個 AWS Lambda 函式，當函式讀取檔案時會編輯 PII。 指示外部服務提供商存取Object Lambda存取點。S3 Object Lambda 可在 GET、LIST、HEAD 回應時由 Lambda 動態轉換資料，因此可讓外部服務商取得可抽樣的清單與已遮罩的對話內容，而不需要建立第二份資料或管理 EC2；Lambda 也會隨請求量擴展。
 - 其餘選項比較：
 - B：在 Amazon EC2 執行個體上建立批次程序，定期讀取所有新檔案，從檔案中編輯PII，並將編輯的檔案寫入不同的S3 bucket。 指示外部服務提供商存取不含PII的桶。EC2 批次程序需要管理主機、排程、重試與所有新增檔案的掃描，不能以最低營運開銷隨對話量彈性擴展。
 - C：在 Amazon EC2 執行個體上建立網路應用程式，以顯示檔案列表，從檔案中編輯PII，並允許外部服務提供商下載已編輯PII的檔案的新版本。自建 EC2 網路應用程式需要管理伺服器、下載權限與 PII 編輯流程，並增加外部服務商整合的攻擊面。
@@ -20793,7 +20797,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：使用Amazon Elastic Container Service (Amazon ECS)。 設定 Amazon ECS 服務自動縮放以使用目標跟蹤縮放。 設定最小容量為3。 設定任務佈置策略型別以 可用區 屬性展開。ECS 能以較少維運部署容器，但此選項的服務自動縮放與可用區展開設定不符合題庫指定答案。
+- A：使用Amazon Elastic Container Service (Amazon ECS)。 設定 Amazon ECS 服務自動縮放以使用目標跟蹤縮放。 設定最小容量為3。 設定任務佈置策略型別以 可用區 屬性展開。ECS 服務可直接執行既有容器映像，目標追蹤可依使用量調整任務數量，並以 spread placement 將至少三個任務分散到不同可用區；相較自管 EKS 節點或 EC2，管理負擔較低且應用程式改動較少。
 - 其餘選項比較：
 - B：使用Amazon Elastic Kubernetes Service(Amazon EKS) 自行管理的節點。 設定應用程式自動縮放以使用目標跟蹤縮放。 設定最小容量為3.。EKS 可在三個可用區執行容器化工作負載，Kubernetes 的部署模型通常只需少量修改既有容器映像。自動縮放節點與工作負載容量可支援跨可用區高可用性，並避免把應用程式綁定到單一主機。
 - C：使用 Amazon EC2 預留執行個體。 在分散式安置組中推出三個EC2 執行個體。 設定 Auto Scaling 群組(Auto Scaling group) 以使用目標跟蹤縮放。 設定最小容量為3.。EC2 預留執行個體需要管理作業系統、映像、修補與叢集設定，營運負擔高於受管理的容器平台。
@@ -21009,7 +21013,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：將AmazonSSMManaged Instance Core IAM 政策(IAM policy)附加到與EC2執行個體相關的IAM角色中。 指示開發者使用 AWS Systems Manager 會話管理器存取 EC2 執行個體。Systems Manager Session Manager 需要 SSM Agent 與對服務端點的可達性，且不是題目指定的 SSH 網路存取設計；只附加角色本身不足以完成遠端連線。
+- D：將AmazonSSMManaged Instance Core IAM 政策(IAM policy)附加到與EC2執行個體相關的IAM角色中。 指示開發者使用 AWS Systems Manager 會話管理器存取 EC2 執行個體。Session Manager 透過 SSM Agent 建立受控的互動式 shell，不需要公開 SSH 埠、bastion 主機或管理 SSH 金鑰；EC2 只要能經現有 NAT 或 VPC 端點連到 Systems Manager，即可由授權開發者安全地取得命令列存取。
 - 其餘選項比較：
 - A：與 EC2 執行個體在同一子網建立 bastion 主機。 授予開發者 ec2: CreateVpnConnection IAM 權限。 安裝 EC2 執行個體連線， 以便開發者可以連線到 EC2 執行個體。EC2 Instance Connect 不會自行建立 VPN，而且讓開發者擁有建立 VPN 連線的權限過度寬廣；同一子網的 bastion 也未解決遠端辦公室的安全連線。
 - B：在公司網路和VPC之間建立AWS Site-to-Site VPN連線。 指示開發者在開發者在公司網路上時使用站點對站點VPN連線存取EC2執行個體。 指示開發者在遠端工作時為存取設定另一個VPN連線。Site-to-Site VPN 可把公司網路安全延伸到 VPC，讓辦公室使用者經由私有路由存取私有子網中的 EC2。遠端工作者可再使用適當的用戶端 VPN 路徑存取公司網路，免除公開 SSH 端點與 bastion 主機的維護。
@@ -21063,7 +21067,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為表格設定時間點恢復。DynamoDB point-in-time recovery 是原生的低維護還原能力，但此選項沒有表明啟用涵蓋最近 24 小時的需求。
+- A：為表格設定時間點恢復。DynamoDB point-in-time recovery 會持續保留可還原的時間點，讓表格能回復到最近指定的時間，而不必自行建立備份排程、複製資料或管理備份伺服器；啟用後即可涵蓋題目要求的近期資料復原窗口。
 - 其餘選項比較：
 - B：表格使用 AWS Backup。AWS Backup 可集中管理 DynamoDB 備份與保留政策，但要進行任意時間點還原仍需搭配持續備份設定，單獨使用並非最直接的表級設定。
 - C：使用一個 AWS Lambda 函式，每小時製作一個按需的 備份 表格。以 Lambda 每小時建立按需備份，可在最近 24 小時內提供每小時一個可還原點，並由無伺服器函式自動執行而不需管理 EC2。排程、保留與刪除舊備份可一併自動化，適合要求低營運負擔的情境。
@@ -21117,7 +21121,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：為生產執行個體使用Compute Savings Plans（運算節省方案）。 對非生產執行個體使用Spot 執行個體。 未使用時， 關閉非生產執行個體。非生產環境使用 Spot 仍可能在測試期間被中斷，且計算 Savings Plans 應優先涵蓋穩定的生產使用量；選項的折扣設定不符合兩種環境的使用模式。
+- C：為生產執行個體使用Compute Savings Plans（運算節省方案）。 對非生產執行個體使用Spot 執行個體。 未使用時， 關閉非生產執行個體。Compute Savings Plans 適合承諾穩定的生產運算用量；非生產測試可使用可中斷的 Spot，並在平日以外停止，符合兩種環境的實際使用模式。
 - 其餘選項比較：
 - A：對生產執行個體使用Spot 執行個體。 僅在週末的非生產場合使用專用主機。Spot 執行個體 可能被中斷，不適合作為跨時區持續運作的生產工作負載；專用主機也會為只在平日使用的非生產環境造成不必要費用。
 - B：使用預留執行個體進行生產和非生產執行個體。 未使用時， 關閉非生產執行個體。預留執行個體（Reserved Instances, RI） 需要承諾固定使用量，而非生產環境在夜間與週末會關閉，長期承諾可能無法充分利用。
@@ -21201,7 +21205,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：設定一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板，從預先設定的Amazon Machine Image (AMI)開始新的執行個體。依流量啟動新 EC2 雖能擴展，但冷啟動時間可能無法應對突然尖峰；選項沒有預熱容量或停止執行個體的成本最佳化措施。
+- D：設定一個 Auto Scaling 群組(Auto Scaling group) , 隨著流量的增加而擴大。 建立一個啟動模板，從預先設定的Amazon Machine Image (AMI)開始新的執行個體。Auto Scaling 依需求增加跨 AZ 的 EC2 容量，啟動模板搭配預先設定 AMI 可縮短新執行個體的啟動與設定時間，是處理季節性尖峰的標準彈性方案。
 - 其餘選項比較：
 - A：建立一個Auto Scaling 群組(Auto Scaling group)，規模足以處理高峰流量負載。 停止一半的 Amazon EC2 例。 設定 Auto Scaling 群組(Auto Scaling group) 以在流量增加時使用已停止的例來縮放。Auto Scaling group 可以預先建立足夠的 EC2 執行個體並在需求上升時納入已停止的執行個體，避免銷售尖峰才等待新執行個體啟動。跨多個可用區部署可維持可用性，同時只在需要時承擔峰值容量成本。
 - B：為網站建立 Auto Scaling 群組(Auto Scaling group)。 設定Auto Scaling 群組(Auto Scaling group)的最低尺寸，使其可以處理高流量而無需擴大。把最低容量固定在高流量規模會在平時持續支付大量 EC2 費用，沒有利用季節性負載的彈性擴縮。
@@ -21228,7 +21232,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：啟用限制Ssh AWS Config管理規則，並在建立不符合規則時生成Amazon Simple Notification Service (Amazon SNS)通知。AWS Config 的受管規則適合偵測安全群組違規，但此選項未正確說明規則名稱或如何把合規變更交給通知服務。
+- B：啟用限制Ssh AWS Config管理規則，並在建立不符合規則時生成Amazon Simple Notification Service (Amazon SNS)通知。AWS Config 的受管規則可持續評估安全群組是否對 SSH 開放過寬，並透過 EventBridge／SNS 將不合規變更通知安全團隊；這比定期人工檢查更符合自動化治理與持續偵測的最佳實務。
 - 其餘選項比較：
 - A：寫一個 AWS Lambda 指令碼，用於監視安全小組的SSH 開啟 0.0.0.0/0 地址，並在每次找到時建立一個通知。自行撰寫 Lambda 監視器需要維護事件擷取、週期掃描、去重與通知邏輯，不能以最低營運負擔快速落地。
 - C：建立IAM角色，授權全球開放安全團體和網路ACL。 建立一個Amazon Simple Notification Service(Amazon SNS)主題，每次由使用者承擔角色時生成通知。以 IAM 角色集中授權對安全群組與網路 ACL 的變更，並以 SNS 在角色被承擔時通知，可快速留下誰使用高風險管理權限的稽核線索。SNS 是受管通知服務，無需維護郵件或輪詢伺服器。
@@ -21255,7 +21259,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立VPC Lattice服務網路。 把微服務與服務網路聯絡起來。 為每項服務定義 HTTPS 聽器。 登記微服務計算資源為目標。 確定需要與服務機構進行溝通的VPC。 將這些自願人員與服務網路聯絡起來。VPC Lattice 的服務網路才是題目所需的服務登錄與跨 VPC 服務對服務通訊機制；此選項描述的是另一個服務，無法直接提供這些能力。
+- B：建立VPC Lattice服務網路。 把微服務與服務網路聯絡起來。 為每項服務定義 HTTPS 聽器。 登記微服務計算資源為目標。 確定需要與服務機構進行溝通的VPC。 將這些自願人員與服務網路聯絡起來。VPC Lattice 提供服務登錄、服務網路與跨 VPC 的服務對服務通訊，並可將 HTTPS 請求導向各服務的目標；把相關 VPC 與服務加入同一個 service network，即可集中管理這類微服務連線。
 - 其餘選項比較：
 - A：建立檢查VPC。 部署AWS網路防火牆(Firewall)防火牆(firewall)，用於檢查VPC。 將檢查VPC附加到一個新的中轉閘道器。 途徑VPC至VPC的交通前往檢查VPC。 應用防火牆(firewall)規則只允許HTTPS通訊。VPC Lattice 可跨帳戶與 VPC 建立服務網路，集中提供服務登錄、服務探索、HTTPS listener 與存取控制。把 Lambda 與 EKS 的服務加入同一網路後，團隊不必各自維護 PrivateLink、負載平衡器與大量對等路由。
 - C：建立Network Load Balancer (NLB)，每個微型服務都有HTTPS的聽眾和目標群體。 為每個微服務建立 AWS PrivateLink 端點服務。 在每個 VPC 中建立需要消耗該微服務的介面 VPC 端點(VPC endpoint)。每個微服務都建立 NLB、端點服務與各消費者端點，雖可用 PrivateLink 私有發布服務，但資源數量與跨帳戶管理工作會快速增加。
@@ -21311,10 +21315,10 @@ A, C
 
 **詳解**
 正確答案是 **A, C**。
-- A：將開發團隊的OU Amazon Resource Name(ARN)加入AMIs的發射許可列表。AMI 啟動權限不能直接以 OU ARN 作為分享主體；通常必須指定帳戶，或使用組織/組織單位分享支援的機制。
+- A：將開發團隊的OU Amazon Resource Name(ARN)加入AMIs的發射許可列表。EC2 支援直接把 AMI 分享給組織單位（OU）ARN，該 OU 下的帳戶即可取得啟動權限；這比逐一列出開發帳戶更容易隨組織變更維護。
 - C：更新關鍵策略，允許開發團隊的OU使用用於解密快照的AWS KMS金鑰。加密 AMI 的 EBS 快照時，使用者帳戶必須能透過 KMS key policy 與 IAM 權限使用解密金鑰。授權開發帳戶或組織使用該金鑰後，啟動共享 AMI 才能成功讀取快照。
 - 其餘選項比較：
-- B：將根Amazon Resource Name (ARN)新增到AMIs的啟動權限列表中。把組織根 ARN 加入 AMI 的啟動權限，可讓組織內符合政策的帳戶使用該共享 AMI，避免逐一登記帳戶。這能集中管理已核准映像的發布範圍，適合多帳戶環境。
+- B：將根Amazon Resource Name (ARN)新增到AMIs的啟動權限列表中。把組織根 ARN 分享出去會讓組織根下的所有子 OU 與帳戶取得 AMI 使用權，範圍超過題目指定的開發 OU，違反最小權限與核准映像的邊界要求。
 - D：將開發團隊帳戶Amazon Resource Name(ARN)加入AMIs的發射許可列表。逐一加入開發帳戶 ARN 需要隨帳戶增加持續更新啟動權限，無法直接以 OU 為單位管理。
 - E：重新建立 AWS KMS 金鑰。 新增一個關鍵政策，允許根Amazon Resource Name (ARN)的組織使用 AWS KMS 金鑰。重新建立 KMS 金鑰會增加金鑰輪替與資料重新加密工作；題目只需授權既有加密快照的使用者，沒有必要更換金鑰。
 
@@ -22019,7 +22023,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：設定 Amazon Cognito 使用者池進行使用者認證。 啟用基於風險的具有多要素認證(MFA)的適應認證功能。Cognito User Pool 的適應式認證需另外啟用風險評估與相應的進階安全設定，單獨描述啟用功能不能保證所有異常登入都強制完成兩要素驗證。題目指定的身分控制應由可明確套用 MFA 政策的主體承擔。
+- A：設定 Amazon Cognito 使用者池進行使用者認證。 啟用基於風險的具有多要素認證(MFA)的適應認證功能。Cognito User Pool 是面向應用程式使用者的可擴展身分目錄；其適應式認證可依登入位置、IP 與裝置等風險訊號要求 MFA，符合「異常登入才提升驗證強度」及數百萬使用者的需求。實作時仍須依 AWS 文件啟用相應的進階安全功能與 MFA 設定。
 - 其餘選項比較：
 - B：設定 Amazon Cognito 身分池用於使用者認證。 啟用多要素認證( MFA)。Identity Pool 主要負責聯合身分並交換 AWS 臨時憑證，不是管理數百萬應用程式使用者登入與風險型 MFA 的使用者目錄。
 - C：設定 AWS 身分和存取管理(IAM)使用者進行使用者認證。 附加一個允許允許管理OwnUserMFA動作的 IAM 政策(IAM policy)。IAM 使用者可透過 IAM policy 允許使用者管理自己的 MFA 裝置，並以 MFA 條件限制敏感操作。IAM 是 AWS 的受管身分服務，能在多帳戶與大量主體下集中套用權限控制。
@@ -22262,7 +22266,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：設定 AWS Glue DataBrew 以轉換資料。 透過使用Databrew配方與員工共享轉換步驟。Glue DataBrew 確實提供資料剖析與配方，但本題指定的處理流程和答案以 EMR Serverless 的工作執行模式為準。DataBrew 配方較適合互動式準備與剖析，未必涵蓋這裡的完整分散式轉換工作。
+- C：設定 AWS Glue DataBrew 以轉換資料。 透過使用Databrew配方與員工共享轉換步驟。Glue DataBrew 是無程式碼的視覺化資料準備服務，能對 S3 中的資料做剖析、建立可重複使用的 recipe，並分享給其他使用者；它正好對應題目要求的預先建構、資料剖析、轉換流程與全公司共享。
 - 其餘選項比較：
 - A：設定 AWS Glue Studio 視覺畫布來轉換資料。 透過使用AWS Glue崗位與員工共享轉型步驟。Glue Studio 視覺化畫布可建立 Glue 工作，但工作通常仍會產生並執行 ETL 程式碼。它不是題目所指的可由全公司共享配方、同時提供互動式資料剖析的無程式碼工具。
 - B：設定 Amazon EMR 無伺服器轉換資料。 透過使用EMR無伺服器的工作與員工共享轉換步驟。EMR Serverless 可執行以 Spark 為基礎的批次轉換，服務會代為佈建和釋放運算資源，適合多步驟的大型 Parquet 處理。將轉換流程封裝為可重複執行的 EMR 工作後，團隊可以共享同一套資料處理定義而不必維護叢集。
@@ -22343,7 +22347,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：在 AWS Global Accelerator中建立標準加速器。 將現有的NLB設定為目標終點。Global Accelerator 能以 Anycast 靜態 IP 將 TCP 流量導向健康的 NLB，通常是跨區域降低延遲的專用方案；但本題答案指定以各區域 ALB 架構處理。單獨建立加速器並不能取代題目要求的區域應用層入口設計。
+- D：在 AWS Global Accelerator中建立標準加速器。 將現有的NLB設定為目標終點。Global Accelerator 以固定 Anycast IP 接收流量，經 AWS 全球骨幹網路把 TCP 連線導向健康的 NLB 端點；沿用既有多區域 NLB 不需重建應用層，能降低全球使用者的端到端延遲。
 - 其餘選項比較：
 - A：在每個區域中建立應用程式負載平衡器(ALB)，以取代現有的NLB。 將現有的EC2執行個體登記為每個區域中ALB的目標。在各區域使用 ALB 可提供受管的第 7 層入口與健康檢查，並讓每個區域的 EC2 目標就近處理請求。ALB 也能在目標不健康時停止轉送，降低單一區域故障對使用者的影響。
 - B：設定 Amazon Route 53，在每個區域中將同樣加權的交通線路通往NLB.。Route 53 加權路由只按權重分配 DNS 回應，未必依使用者位置選擇最低延遲端點。若沒有健康檢查或延遲路由，故障區域仍可能持續收到流量。
@@ -22397,7 +22401,7 @@ C
 
 **詳解**
 正確答案是 **C**。
-- C：向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 bucket。Amazon Comprehend 是直接提供情緒與文字分析的受管服務，反而不需要自行建立模型；但題目答案指定採用 SageMaker 的自訂模型路徑。若需求是最低開銷的現成情緒分析，這個選項的服務組合才更直接。
+- C：向Amazon Comprehend提供所提取的真知灼見進行分析。 將分析儲存為 Amazon S3 bucket。Amazon Comprehend 提供受管的自然語言與情緒分析，不需自行收集訓練資料、訓練模型或維護推論端點；把 Textract 的文字結果交給 Comprehend，再將分析結果寫入 S3，符合最低營運負擔。
 - 其餘選項比較：
 - A：向Amazon Athena提供所提取的見解以供分析。 在Amazon S3 bucket中儲存所提取的洞察力和分析。Athena 適合以 SQL 查詢已整理的資料，但不負責從新聞文字抽取語意或情緒。僅把 Textract 結果交給 Athena，無法完成情緒分析。
 - B：在Amazon DynamoDB表格中儲存所提取的見解。 使用Amazon SageMaker來建立情感模型。將 Textract 抽取的文字集中保存後，可用 SageMaker 建立並部署符合公司需求的情感模型。這種方式能針對新聞語料訓練模型並持續擴充分析，結果可存放在 DynamoDB 供應用程式查詢。
@@ -22451,7 +22455,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：將大資料作為物件儲存在 Amazon S3 bucket中。 在 DynamoDB 表格中，建立一個具有指向資料 S3 URL 屬性的專案。S3 加上 DynamoDB 中的物件位置通常是處理大型資料的標準設計，但本題答案指定以壓縮方式保留資料。若壓縮後仍超過 DynamoDB 單項上限，這個模式仍需額外分片或物件儲存。
+- B：將大資料作為物件儲存在 Amazon S3 bucket中。 在 DynamoDB 表格中，建立一個具有指向資料 S3 URL 屬性的專案。DynamoDB 單一項目有大小上限，大型資料應放在 S3，DynamoDB 只保存物件鍵、URI 與查詢所需的中繼資料；這能隨物件大小與數量成長，避免為超大項目引入第二個資料庫或自行分片。
 - 其餘選項比較：
 - A：建立一個 AWS Lambda 函式來過濾超過 DynamoDB 專案大小限制的資料。 將更大的資料儲存在Amazon DocumentDB(與MongoDB相容)資料庫中。把超過 DynamoDB 限制的資料另存 DocumentDB 會引入第二種資料庫和額外資料模型，且仍需自行處理資料關聯。這不是最簡單的大物件儲存模式。
 - C：將所有輸入的大資料分割為擁有相同分割槽金鑰的專案集合。 使用 BatchWrite 專案 API 操作，將資料寫入單個操作中的 DynamoDB 表格。把資料切成多個項目後仍使用相同分割區金鑰，可能造成熱分割區。BatchWriteItem 也有單次請求大小與項目數限制，不能單獨解決不斷增長的大型資料。
@@ -22665,7 +22669,7 @@ D
 
 **詳解**
 正確答案是 **D**。
-- D：設定叢集以使用Aurora I/O-O-optimized儲存設定。I/O-Optimized 若工作負載的 I/O 量不足，I/O-Optimized 的固定儲存價格未必最具成本效益。
+- D：設定叢集以使用Aurora I/O-O-optimized儲存設定。題目描述大量流量與隨負載增加的儲存 I/O；Aurora I/O-Optimized 將 I/O 成本納入較可預測的定價，適合 I/O 密集型工作負載，避免高 I/O 時另外累積大量 I/O 費用。
 - 其餘選項比較：
 - A：設定叢集以使用 Aurora 標準儲存設定。Aurora Standard 儲存適合一般 I/O 模式，但在大量流量和高 I/O 應用中，I/O 費用可能成為主要成本。它沒有針對高 I/O 使用情境提供最佳化的計費方式。
 - B：設定叢集儲存型別為提供IOPS.。題目所述的 IOPS 佈建型儲存不是 Aurora Serverless v2 的標準儲存選項。不能以一般佈建 IOPS 模式直接套用到此叢集來解決需求。
@@ -23016,7 +23020,7 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：AWS Global Accelerator。Global Accelerator 主要加速 TCP/UDP 到支援的 AWS 端點，適合固定 IP 的應用入口，但本題的 RTMP 直播串流解法以 CloudFront 來源加速為指定服務。它也不提供 CloudFront 的內容與串流分發功能。
+- B：AWS Global Accelerator。Global Accelerator 提供固定 Anycast IP，並在 TCP 連線建立後透過 AWS 全球網路骨幹把流量導向健康的廣播系統端點；這正對應題目「加速 TCP 連線回廣播系統」的要求。它不是內容快取服務，但本題需求是記者上傳直播到來源，而不是把影片物件分發給觀眾。
 - 其餘選項比較：
 - A：Amazon CloudFront.。CloudFront 可提供全球邊緣網路入口，並支援將 RTMP 直播請求加速到 AWS 上的來源。記者可就近連到邊緣位置，再透過 AWS 骨幹網路回到廣播系統，改善長距離 TCP 連線品質。
 - C：AWS 客戶端 VPN。Client VPN 是讓個別用戶端安全存取 VPC 的遠端存取服務，不是全球記者上傳直播流的公開入口。VPN 還會增加用戶端設定和集中式連線管理。
@@ -23475,7 +23479,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：設定 EC2 執行個體，使其成為叢集放置組的一部分。叢集放置群組確實可把 EC2 放在較接近的硬體上，以降低節點間延遲並提高網路吞吐量；但本題答案指定的是即時容量保留。單靠放置群組還不保證尖峰時能取得所需的執行個體容量。
+- A：設定 EC2 執行個體，使其成為叢集放置組的一部分。叢集放置組會把 EC2 執行個體集中在同一可用區內較接近的硬體，適合緊密耦合 HPC 節點，能降低節點間延遲並提供高網路吞吐量；這正是題目要求的網路拓撲最佳化。
 - 其餘選項比較：
 - B：啟動EC2 執行個體與專門案例租賃。專用執行個體主要提供實體隔離與合規特性，不會自動改善 HPC 節點間網路延遲或吞吐量。它也可能增加成本。
 - C：啟動 EC2 執行個體為 Spot 執行個體。Spot 執行個體適合可中斷的低成本工作，但可能被回收，會破壞緊密耦合的 HPC 工作。Spot 本身也不是網路拓撲最佳化機制。
@@ -23559,7 +23563,7 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：在 VPC 中建立 Amazon S3 的閘道器端點。 在私有子網的路由表中，新增一個閘道器端點的條目。S3 Gateway Endpoint 通常是存取 S3 最省成本的 VPC 路徑，但本題答案指定使用介面端點。若需要透過私有 IP、端點政策或安全群組進行更細緻控制，應使用 PrivateLink 介面端點。
+- A：在 VPC 中建立 Amazon S3 的閘道器端點。 在私有子網的路由表中，新增一個閘道器端點的條目。S3 Gateway VPC Endpoint 會在路由表加入 S3 prefix list 路由，讓私有子網直接經 AWS 網路存取 S3，不需 NAT Gateway 或公有網際網路；Gateway Endpoint 沒有每小時或資料處理費，最符合題目要求的成本最佳化。
 - 其餘選項比較：
 - B：在公共子網建立單一的NAT閘道器。 在私有子網的路由表中，新增一條指向NAT閘道器的預設路由。NAT Gateway 會對經過的資料收取處理費，且把私有子網流量集中到公共子網的 NAT。跨可用區共用單一 NAT 還可能增加跨區資料傳輸與故障範圍。
 - C：在 VP 中為 Amazon S3 建立 AWS PrivateLink 介面端點 在私有子網的路由表中，為介面端點新增一個條目。S3 的 PrivateLink 介面端點會在指定子網建立私有 IP，EC2 可透過 VPC 內部路徑存取 S3，不需經 NAT 或公共網際網路。介面端點可搭配安全群組與端點政策限制存取，適合機密大型檔案的私有處理架構。
@@ -23697,7 +23701,7 @@ A, E
 **詳解**
 正確答案是 **A, E**。
 - A：使用Amazon Kinesis Data Firehose來攝取資料。Kinesis Data Firehose 是可擴展的串流擷取服務，能承接突發資料量而不必自行管理伺服器。它適合作為即時資料存取 AWS 的受管理入口，降低大量流量造成的排隊延遲。
-- E：使用AWS Fargate與Amazon Elastic Container Service (Amazon ECS)處理資料。Fargate 能免除主機管理，但仍需維護 ECS 服務、容器映像與任務設定；題目指定的串流擷取與工作編排可由 Firehose、Lambda 和 Step Functions 直接完成。
+- E：使用AWS Fargate與Amazon Elastic Container Service (Amazon ECS)處理資料。Fargate 可執行超過 Lambda 單次 15 分鐘上限的 30 分鐘工作，同時免除 EC2 主機佈建、修補與容量管理；ECS 服務可以依工作量擴展任務數量，適合此長時間且突發的串流處理負載。
 - 其餘選項比較：
 - B：使用帶有AWS Step函式的AWS Lambda處理資料。Lambda 可無伺服器地隨事件數量擴展，Step Functions 則能編排多個 Lambda 步驟，讓需要超過單一 Lambda 15 分鐘上限的 30 分鐘工作拆成可重試的流程。這組合不需管理 EC2，且可隨資料量增加而擴展。
 - C：使用 AWS Database Migration Service (AWS DMS)來攝取資料。AWS DMS 用於資料庫遷移與持續複寫，不是一般即時串流工作負載的資料擷取服務。
@@ -23994,7 +23998,7 @@ B, D
 
 **詳解**
 正確答案是 **B, D**。
-- B：在 EC2 執行個體前設定 網路負載平衡器(Network Load Balancer)。只在單一 EC2 前放置 NLB 並未建立跨可用區的運算冗餘，單一執行個體故障時仍會中斷服務。
+- B：在 EC2 執行個體前設定 網路負載平衡器(Network Load Balancer)。NLB 可在傳輸層接收題目所需的連線，並將流量導向 Auto Scaling 群組中跨可用區的健康 EC2 目標；搭配 D 的多可用區 Auto Scaling 與應用程式健康檢查，即可在單一執行個體或可用區故障時維持服務。
 - D：為 EC2 執行個體建立 Auto Scaling 群組(Auto Scaling group)。 設定 Auto Scaling 群組(Auto Scaling group) 使用多個 可用區。 設定 Auto Scaling 群組(Auto Scaling group) 對執行個體進行應用健康檢查。跨多個可用區的 Auto Scaling Group 能在執行個體故障時自動補足容量，健康檢查也會移除異常執行個體。搭配 NLB 可形成跨區域的高可用 TCP 服務，且不需手動維護每台主機。
 - 其餘選項比較：
 - A：在不同的可用區中設定新的EC2執行個體。 使用 Amazon Route 53 到所有執行個體的線路流量。Route 53 線路或延遲路由本身不會在多個可用區部署備援執行個體，也不能取代負載平衡器的健康檢查與故障移除。
@@ -24251,7 +24255,7 @@ C, D
 
 **詳解**
 正確答案是 **C, D**。
-- C：購買SageMaker Savings Plans（節省方案）。單獨購買 SageMaker Savings Plans 只涵蓋 SageMaker，不能支付 EC2、Lambda 與 Fargate 的大部分運算使用量，仍需其他計畫。
+- C：購買SageMaker Savings Plans（節省方案）。SageMaker Savings Plans 專門涵蓋 SageMaker 使用量；與 D 的 Compute Savings Plans 搭配，兩個方案即可涵蓋 EC2、Lambda、Fargate 及 SageMaker，符合「最少方案」的要求。
 - D：為Lambda、Fargate和Amazon EC2購買Compute Savings Plans（運算節省方案）。Compute Savings Plans 可跨 EC2、Lambda 與 Fargate 套用，不綁定單一執行個體類型，適合同時使用這三種運算服務且負載穩定的情況。與另一項計畫搭配即可涵蓋題目中的主要服務。
 - 其餘選項比較：
 - A：為Amazon EC2和SageMaker購買EC2 Instance Savings Plans（EC2 執行個體節省方案）。EC2 Instance Savings Plans 只適用 EC2，不涵蓋 SageMaker；SageMaker 需要自己的 SageMaker Savings Plans。
@@ -24281,7 +24285,7 @@ B, C
 
 **詳解**
 正確答案是 **B, C**。
-- B：啟用 Aurora PostgreSQL 上的 Babelfish 來執行應用程式中的 SQL 查詢。Babelfish 可提供部分 T-SQL 相容性，但本選項沒有搭配 schema 與資料的實際遷移流程，單靠相容層不能完成資料庫搬遷。
+- B：啟用 Aurora PostgreSQL 上的 Babelfish 來執行應用程式中的 SQL 查詢。Babelfish 提供 T-SQL 相容端點，讓既有 SQL Server 應用程式以較少查詢語法修改連線到 Aurora PostgreSQL；再搭配 C 完成 schema 與資料遷移。
 - C：透過使用AWS Schema轉換工具(AWS SCT)和AWS 資料庫遷移服務(AWS DMS)來移動資料庫的計劃和資料。AWS SCT 可轉換 SQL Server 的 schema 與資料庫物件，AWS DMS 則可遷移完整資料並支援持續複寫以縮短停機時間。兩者搭配能處理結構轉換與資料搬遷，符合移往 Aurora PostgreSQL 的需求。
 - 其餘選項比較：
 - A：使用 AWS Schema 轉換工具(AWS SCT)來重寫應用程式中的 SQL 查詢。AWS SCT 可協助轉換資料庫結構與 SQL 語法，但它不會自動重寫應用程式程式碼中的查詢；直接選用它無法保證最小修改完成相容遷移。
@@ -24383,18 +24387,18 @@ B
 - D。 建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3標準-不頻繁存取(S3 Standard-IA)。 在物件建立4年後將檔案移動到 S3 Glacier Flexible Retrieval。
 
 **答案**
-D
+B
 
 **社群投票：** C 50%, A 45%
 
 
 **詳解**
-正確答案是 **D**。
-- D：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3標準-不頻繁存取(S3 Standard-IA)。 在物件建立4年後將檔案移動到 S3 Glacier Flexible Retrieval。先在前 30 天使用頻繁存取層，之後轉至 Standard-IA，可在四年保存期間維持立即取回並降低儲存費。到達四年保存期限後再轉入 Glacier Flexible Retrieval，適合後續低成本保留或等待刪除的資料。
+正確答案是 **B**。
+- A：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3 Glacier Instant Retrieval。 刪除物件建立4年後的檔案。前 30 天使用 S3 Standard，之後轉到 S3 Glacier Instant Retrieval；此儲存類別針對長期少量存取且仍要求毫秒級取回的物件，成本低於 Standard-IA，並在四年後依生命週期規則刪除。
 - 其餘選項比較：
-- A：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3 Glacier Instant Retrieval。 刪除物件建立4年後的檔案。Glacier Instant Retrieval 的確支援快速取回，但本題指定的生命週期設定應在四年保存期後再轉入較低成本的 Flexible Retrieval；本選項沒有採用該分階段策略。
+- D：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3標準-不頻繁存取(S3 Standard-IA)。 在物件建立4年後將檔案移動到 S3 Glacier Flexible Retrieval。四年時應刪除物件，而不是再移到需要取回等待時間的 Glacier Flexible Retrieval；這也無法保證物件在保存期限結束時立即可用或已被刪除。
+- C：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3標準-不頻繁存取(S3 Standard-IA)。 刪除物件建立4年後的檔案。Standard-IA 也能立即取回，但長期少量存取的儲存成本通常高於 Glacier Instant Retrieval，並非本題最具成本效益的層級。
 - B：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3 One Zone-In頻繁存取(S3 One Zone-IA)。 刪除物件建立4年後的檔案。S3 One Zone-IA 只在單一可用區保存，區域性故障時的資料韌性較低，不適合無法重現且需保存四年的檔案。
-- C：建立一個 S3 生命週期政策(Lifecycle policy)，在物件建立30天后將檔案移動到 S3標準-不頻繁存取(S3 Standard-IA)。 刪除物件建立4年後的檔案。S3 Standard-IA 能立即取回，但對長期少量存取的資料通常不如 Glacier Instant Retrieval 成本有效，且仍需支付較高的標準 IA 儲存費。
 
 **分類：** 儲存
 
@@ -25069,16 +25073,16 @@ C
 - D。 為每個客戶的資料建立單獨的 AWS KMS 金鑰，這些金鑰具有顆粒存取控制(access control) 和登入功能。
 
 **答案**
-A
+B
 
 
 **詳解**
-正確答案是 **A**。
-- A：為每個客戶生成一個獨特的加密金鑰。 把鑰匙放在Amazon S3 bucket裡 啟用伺服器側 加密。為每位客戶使用獨立的加密資料金鑰，可在靜態資料層形成租戶間的密文隔離。由 S3 伺服器端加密負責資料寫入與讀取時的加解密，應用程式不必自行管理加密流程，並可用 IAM 限制金鑰儲存位置的存取。
+正確答案是 **B**。
+- D：為每個客戶的資料建立單獨的 AWS KMS 金鑰，這些金鑰具有顆粒存取控制(access control) 和登入功能。每個客戶使用獨立的客戶受管 KMS 金鑰，可在金鑰政策與 IAM 層級分離租戶存取，並由 CloudTrail／KMS 稽核金鑰使用情形；KMS 代管金鑰生命週期與高可用性，符合集中式金鑰管理和最低營運負擔的要求。
 - 其餘選項比較：
+- A：為每個客戶生成一個獨特的加密金鑰。 把鑰匙放在Amazon S3 bucket裡 啟用伺服器側 加密。自行產生並把金鑰放在 S3 會把金鑰保管、輪換、權限隔離與稽核責任交回應用程式團隊，S3 也不是專用的金鑰管理服務；這不符合題目明確要求使用 AWS KMS 的集中管理能力。
 - B：在AWS環境中部署硬體安全裝置，安全儲存客戶提供的加密金鑰。 將安全器械與AWS KMS整合，以加密應用程式中的敏感資料。自建硬體安全模組需要部署、修補、備援和容量管理，營運負擔遠高於直接使用 AWS KMS。
 - C：建立一個單獨的 AWS KMS 金鑰來加密整個應用程式的所有敏感資料。所有客戶共用一把 KMS 金鑰，無法在金鑰層級隔離各租戶，也難以實作客戶別的細粒度授權與稽核。
-- D：為每個客戶的資料建立單獨的 AWS KMS 金鑰，這些金鑰具有顆粒存取控制(access control) 和登入功能。每位客戶各自使用 KMS 金鑰在一般設計上可提供細粒度控制，但本題答案指定的方案是以 S3 伺服器端加密保存獨立資料金鑰；選項描述也未明確說明完整的資料加密整合流程。
 
 **分類：** 安全、身分與合規
 
