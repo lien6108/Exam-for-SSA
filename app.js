@@ -55,10 +55,27 @@ const MODES = {
       '支援標記題號與答題列表檢查，送出後即時呈現正確率與全題解析',
     ],
   },
+  practice: {
+    name: '逐題練習',
+    size: 10,
+    timeLimit: null,
+    weighted: false,
+    hasReview: false,
+    hasMark: false,
+    passScore: null,
+    instantFeedback: true,
+    rules: [
+      '依選定章節主題隨機出題，題數可自由設定',
+      '選好答案後按「確認答案」，立即查看正確答案與詳解',
+      '答案確認後無法修改，理解解析後再前往下一題',
+      '完成練習後，所有答錯的題目會自動打包存入錯題庫',
+    ],
+  },
 };
 
 let currentMode = 'exam';
 let selectedChapterId = 'compute';
+let practiceQuestionCount = 10;
 
 // ── 章節領域定義 ──────────────────────────────────────────────────
 const CHAPTER_DOMAINS = [
@@ -186,6 +203,7 @@ let examElapsed   = 0;   // 秒
 let wrongBankRecords = [];
 let activeWrongRecordId = null;
 let currentAttemptSaved = false;
+let lockedAnswers = new Set();
 
 // ── DOM 快取 ──────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -221,17 +239,17 @@ function getDateKey(date = new Date()) {
 }
 
 function getAttemptTitle() {
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     const chapter = CHAPTER_DOMAINS.find(c => c.id === selectedChapterId) || CHAPTER_DOMAINS[0];
-    return chapter.title;
+    return currentMode === 'practice' ? `逐題練習 · ${chapter.title}` : chapter.title;
   }
   return currentMode === 'quiz' ? '小考 · 隨機練習' : '模擬考 · 綜合題型';
 }
 
 function getAttemptIcon(record) {
-  if (record.mode === 'chapter') {
+  if (record.mode === 'chapter' || record.mode === 'practice') {
     const chapter = CHAPTER_DOMAINS.find(c => c.id === record.chapterId);
-    return chapter ? chapter.icon : '🏷️';
+    return record.mode === 'practice' ? '💡' : (chapter ? chapter.icon : '🏷️');
   }
   return record.mode === 'quiz' ? '⚡' : '📝';
 }
@@ -259,7 +277,7 @@ function saveAttemptToWrongBank(result) {
     createdAt: now.toISOString(),
     dateKey: getDateKey(now),
     mode: currentMode,
-    chapterId: currentMode === 'chapter' ? selectedChapterId : null,
+    chapterId: (currentMode === 'chapter' || currentMode === 'practice') ? selectedChapterId : null,
     title: getAttemptTitle(),
     score: result.score,
     correctCount: result.correctCount,
@@ -375,7 +393,7 @@ function renderWrongBank() {
     date.textContent = record.dateKey || getDateKey(new Date(record.createdAt));
     const mode = document.createElement('span');
     mode.className = 'wrong-bank-mode';
-    mode.textContent = `${getAttemptIcon(record)} ${record.mode === 'chapter' ? '章節測驗' : record.mode === 'quiz' ? '小考' : '模擬考'}`;
+    mode.textContent = `${getAttemptIcon(record)} ${record.mode === 'chapter' ? '章節測驗' : record.mode === 'practice' ? '逐題練習' : record.mode === 'quiz' ? '小考' : '模擬考'}`;
     top.append(date, mode);
 
     const title = document.createElement('span');
@@ -407,7 +425,7 @@ function renderWrongDetail(recordId) {
   heading.innerHTML = '';
   const kicker = document.createElement('span');
   kicker.className = 'archive-kicker';
-  kicker.textContent = `${record.dateKey} · ${record.mode === 'chapter' ? 'CHAPTER REVIEW' : 'QUIZ REVIEW'}`;
+  kicker.textContent = `${record.dateKey} · ${record.mode === 'chapter' ? 'CHAPTER REVIEW' : record.mode === 'practice' ? 'PRACTICE REVIEW' : 'QUIZ REVIEW'}`;
   const title = document.createElement('h1');
   title.className = 'archive-title';
   title.textContent = record.title;
@@ -615,6 +633,7 @@ function renderChapterSelector() {
         c.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
       updateBankCountDisplay();
+      if (currentMode === 'practice') syncPracticeCount();
     });
 
     grid.appendChild(card);
@@ -626,7 +645,7 @@ function updateBankCountDisplay() {
   const bankLabelEl = $('meta-bank-label');
   if (!bankCountEl) return;
 
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     const count = getQuestionsByChapter(selectedChapterId).length;
     if (bankLabelEl) bankLabelEl.textContent = '該章題數';
     bankCountEl.textContent = `${count} 題`;
@@ -634,6 +653,18 @@ function updateBankCountDisplay() {
     if (bankLabelEl) bankLabelEl.textContent = '題庫數量';
     bankCountEl.textContent = `${allQuestions.length} 題`;
   }
+}
+
+function syncPracticeCount(nextValue = practiceQuestionCount) {
+  const poolSize = Math.max(1, getQuestionsByChapter(selectedChapterId).length);
+  practiceQuestionCount = Math.min(poolSize, Math.max(1, Number.parseInt(nextValue, 10) || 1));
+  MODES.practice.size = practiceQuestionCount;
+  const input = $('practice-count');
+  if (input) {
+    input.max = poolSize;
+    input.value = practiceQuestionCount;
+  }
+  if (currentMode === 'practice') $('meta-size').textContent = `${practiceQuestionCount} 題`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -649,11 +680,15 @@ function switchMode(mode) {
     btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
   });
 
+  if (mode === 'practice') syncPracticeCount();
   $('meta-size').textContent = `${cfg.size} 題`;
 
   if (cfg.timeLimit) {
     $('meta-time-label').textContent = '限制時間';
     $('meta-time').textContent = `${cfg.timeLimit / 60} 分鐘`;
+  } else if (mode === 'practice') {
+    $('meta-time-label').textContent = '作答方式';
+    $('meta-time').textContent = '不限時';
   } else {
     $('meta-time-label').textContent = '建議時間';
     $('meta-time').textContent = '130 分鐘';
@@ -664,11 +699,14 @@ function switchMode(mode) {
   // 章節選擇器顯示與隱藏
   const chapterWrap = $('chapter-select-wrap');
   if (chapterWrap) {
-    chapterWrap.classList.toggle('hidden', mode !== 'chapter');
-    if (mode === 'chapter') {
+    const usesChapter = mode === 'chapter' || mode === 'practice';
+    chapterWrap.classList.toggle('hidden', !usesChapter);
+    if (usesChapter) {
       renderChapterSelector();
     }
   }
+
+  $('practice-settings').classList.toggle('hidden', mode !== 'practice');
 
   updateBankCountDisplay();
 
@@ -685,7 +723,7 @@ function switchMode(mode) {
 function startExam() {
   const cfg = MODES[currentMode];
 
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     const pool = [...getQuestionsByChapter(selectedChapterId)];
     // Fisher-Yates 隨機打散
     for (let i = pool.length - 1; i > 0; i--) {
@@ -723,6 +761,7 @@ function startExam() {
   examElapsed  = 0;
   startTime    = Date.now();
   currentAttemptSaved = false;
+  lockedAnswers = new Set();
 
   showScreen('screen-question');
   renderQuestionPage(currentIndex);
@@ -751,7 +790,7 @@ function renderQuestionPage(idx) {
   typeBadge.className = 'q-type-badge' + (isMulti ? ' multi' : '');
 
   const domainBadge = $('q-domain-badge');
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     domainBadge.textContent = q.chapterInfo ? q.chapterInfo.title : '章節主題';
     domainBadge.style.display = '';
   } else if (cfg.weighted) {
@@ -780,13 +819,20 @@ function renderQuestionPage(idx) {
   const container = $('options-container');
   container.innerHTML = '';
   const selected = userAnswers[idx] || new Set();
+  const isLocked = lockedAnswers.has(idx);
 
   q.options.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn' + (selected.has(opt.key) ? ' selected' : '');
+    let optionState = selected.has(opt.key) ? ' selected' : '';
+    if (cfg.instantFeedback && isLocked) {
+      if (q.answers.includes(opt.key)) optionState += ' answer-correct';
+      else if (selected.has(opt.key)) optionState += ' answer-wrong';
+    }
+    btn.className = 'option-btn' + optionState;
     btn.setAttribute('data-key', opt.key);
     btn.setAttribute('type', 'button');
     btn.setAttribute('aria-pressed', selected.has(opt.key) ? 'true' : 'false');
+    btn.disabled = isLocked;
 
     const keySpan  = document.createElement('span');
     keySpan.className = 'option-key';
@@ -806,7 +852,18 @@ function renderQuestionPage(idx) {
   const isLast = idx === examQuestions.length - 1;
   $('btn-prev').disabled = idx === 0;
 
-  if (!cfg.hasReview && isLast) {
+  const feedback = $('instant-feedback');
+  feedback.classList.toggle('hidden', !(cfg.instantFeedback && isLocked));
+  if (cfg.instantFeedback && isLocked) renderInstantFeedback(q, selected);
+
+  $('btn-prev').style.display = cfg.instantFeedback ? 'none' : '';
+
+  if (cfg.instantFeedback) {
+    $('btn-next').textContent = isLocked ? (isLast ? '查看結果 →' : '下一題 →') : '確認答案';
+    $('btn-next').disabled = !isLocked && selected.size === 0;
+    $('btn-next').dataset.practiceAction = isLocked ? (isLast ? 'finish' : 'next') : 'check';
+    delete $('btn-next').dataset.submitMode;
+  } else if (!cfg.hasReview && isLast) {
     $('btn-next').textContent = '送出批改 ✔';
     $('btn-next').disabled = false;
     $('btn-next').dataset.submitMode = 'true';
@@ -817,7 +874,25 @@ function renderQuestionPage(idx) {
   }
 }
 
+function renderInstantFeedback(q, selected) {
+  const selectedKeys = [...selected].sort();
+  const correctKeys = [...q.answers].sort();
+  const isCorrect = selectedKeys.length === correctKeys.length && correctKeys.every(key => selectedKeys.includes(key));
+  const feedback = $('instant-feedback');
+  feedback.className = `instant-feedback ${isCorrect ? 'correct' : 'wrong'}`;
+  feedback.innerHTML = '';
+
+  const heading = document.createElement('div');
+  heading.className = 'instant-feedback-heading';
+  heading.textContent = isCorrect ? '✓ 回答正確' : `✕ 回答錯誤｜正確答案：${correctKeys.join('、')}`;
+  const explanation = document.createElement('p');
+  explanation.className = 'instant-feedback-explanation';
+  explanation.textContent = q.explanation || '題庫目前沒有提供這題的詳解。';
+  feedback.append(heading, explanation);
+}
+
 function handleOptionClick(idx, key, isMulti) {
+  if (lockedAnswers.has(idx)) return;
   if (!userAnswers[idx]) userAnswers[idx] = new Set();
   const sel = userAnswers[idx];
   if (isMulti) {
@@ -953,7 +1028,7 @@ function renderResultPage(result) {
     return;
   }
 
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     renderChapterResult(correctCount, wrongItems);
     return;
   }
@@ -1159,7 +1234,7 @@ function renderChapterResult(correctCount, wrongItems) {
   const summary = document.createElement('div');
   summary.className = 'quiz-summary chapter-summary';
   summary.innerHTML = `
-    <div class="chapter-summary-badge">${currentChapter.icon} ${currentChapter.title}</div>
+    <div class="chapter-summary-badge">${currentMode === 'practice' ? '💡 逐題練習 · ' : `${currentChapter.icon} `}${currentChapter.title}</div>
     <div class="quiz-summary-score">${pct}%</div>
     <div class="quiz-summary-label">答對 ${correctCount} / ${examQuestions.length} 題（正確率）</div>
     <div class="quiz-summary-time">作答時間 ${formatTime(examElapsed)}</div>
@@ -1385,10 +1460,28 @@ function wireEvents() {
     btn.addEventListener('click', () => switchMode(btn.dataset.mode));
   });
 
+  $('practice-count').addEventListener('input', event => syncPracticeCount(event.target.value));
+  $('practice-count').addEventListener('blur', event => syncPracticeCount(event.target.value));
+  $('practice-count-minus').addEventListener('click', () => syncPracticeCount(practiceQuestionCount - 1));
+  $('practice-count-plus').addEventListener('click', () => syncPracticeCount(practiceQuestionCount + 1));
+
   $('btn-prev').addEventListener('click', () => {
     if (currentIndex > 0) renderQuestionPage(currentIndex - 1);
   });
   $('btn-next').addEventListener('click', () => {
+    if (currentMode === 'practice') {
+      const action = $('btn-next').dataset.practiceAction;
+      if (action === 'check') {
+        lockedAnswers.add(currentIndex);
+        renderQuestionPage(currentIndex);
+      } else if (action === 'next') {
+        renderQuestionPage(currentIndex + 1);
+      } else if (action === 'finish') {
+        stopTimer();
+        renderResultPage(gradeExam());
+      }
+      return;
+    }
     if ($('btn-next').dataset.submitMode) {
       stopTimer();
       const result = gradeExam();
@@ -1442,6 +1535,7 @@ async function init() {
     if (allQuestions.length === 0) throw new Error('沒有解析到任何題目，請確認 MD 格式是否正確。');
 
     updateBankCountDisplay();
+    if (currentMode === 'practice') syncPracticeCount();
     $('btn-start').disabled = false;
   } catch (err) {
     console.error(err);

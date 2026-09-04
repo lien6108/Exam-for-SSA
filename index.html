@@ -35,6 +35,10 @@
             <span class="mode-tab-icon">🏷️</span>
             <span class="mode-tab-label">章節測驗</span>
           </button>
+          <button id="tab-practice" class="mode-tab" role="tab" aria-selected="false" data-mode="practice">
+            <span class="mode-tab-icon">💡</span>
+            <span class="mode-tab-label">逐題練習</span>
+          </button>
         </div>
 
         <button id="btn-wrong-bank" class="wrong-bank-entry" type="button">
@@ -53,6 +57,19 @@
             <span class="chapter-select-hint">依據考題類型集中特訓</span>
           </div>
           <div id="chapter-grid" class="chapter-grid"></div>
+        </div>
+
+        <div id="practice-settings" class="practice-settings hidden">
+          <label class="practice-count-label" for="practice-count">
+            <span>本次練習題數</span>
+            <small id="practice-count-hint">可依目前章節題庫自由設定</small>
+          </label>
+          <div class="practice-count-control">
+            <button id="practice-count-minus" type="button" aria-label="減少題數">−</button>
+            <input id="practice-count" type="number" min="1" value="10" inputmode="numeric" aria-describedby="practice-count-hint" />
+            <button id="practice-count-plus" type="button" aria-label="增加題數">＋</button>
+            <span>題</span>
+          </div>
         </div>
 
         <div class="start-meta">
@@ -194,6 +211,8 @@
             <legend class="sr-only">選項</legend>
             <div id="options-container" class="options-container"></div>
           </fieldset>
+
+          <div id="instant-feedback" class="instant-feedback hidden" role="status" aria-live="polite"></div>
         </div>
       </main>
 
