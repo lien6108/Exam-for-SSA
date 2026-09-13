@@ -10888,13 +10888,13 @@ C
 ## Question #399
 
 **題目**
-一個金融公司在AWS上託管一個網路應用程式。 該應用程式使用Amazon API Gateway區域API端點，讓使用者能夠檢索當前股票價格。 該公司的保安小組注意到API請求數量有所增加。 安全小組擔心,HTTP精液攻擊可能佔用使用異丁胺。 解決方案架構師必須設計一個解決方案來保護應用程式免受這類攻擊。 LEAST 營運開銷符合這些要求的解決方案是什麼？
+一家金融公司在 AWS 上託管一個網路應用程式。該應用程式使用 Amazon API Gateway 區域型（Regional）API 端點，讓使用者可以查詢目前的股票價格。該公司的資安團隊注意到 API 請求數量有所增加，擔心 HTTP 洪水攻擊（HTTP flood attack）可能會耗用運算資源並增加成本。解決方案架構師必須設計一個方案來保護應用程式，使其免受此類攻擊。在符合需求的前提下，哪個解決方案的維運開銷（operational overhead）最低？
 
 **選項**
-- A。 在API Gateway Regional API端點前建立Amazon CloudFront分佈，最高TTL為24小時。
-- B。 建立區域AWS WAF網路ACL，實行按費率計價規則。 將ACL網路與API Gateway階段聯絡起來。
-- C。 使用 Amazon CloudWatch 指標來監控計數度量，並在達到預定義的速率時提醒安全團隊。
-- D。 在 API Gateway區域 API 端點前用 Lambda@ Edge 建立 Amazon CloudFront 分佈。 建立一個 AWS Lambda 函式，以阻斷來自IP地址超過預定義速率的請求。
+- A。 在 API Gateway 區域型 API 端點前建立 Amazon CloudFront 發佈（distribution），並將最大 TTL 設為 24 小時。
+- B。 建立一個區域型 AWS WAF Web ACL，套用按速率（rate-based）規則，並將此 Web ACL 與 API Gateway 的階段（stage）建立關聯。
+- C。 使用 Amazon CloudWatch 指標監控請求計數（Count），並在達到預先定義的速率時通知資安團隊。
+- D。 在 API Gateway 區域型 API 端點前，透過 Lambda@Edge 建立 Amazon CloudFront 發佈；建立一個 AWS Lambda 函式，用來阻擋來自某 IP 位址、且請求速率超過預先定義門檻的請求。
 
 **答案**
 B
@@ -10904,11 +10904,11 @@ B
 
 **詳解**
 正確答案是 **B**。
-- B：建立區域AWS WAF網路ACL，實行按費率計價規則。 將ACL網路與API Gateway階段聯絡起來。針對 Regional API Gateway 端點建立 Regional AWS WAF Web ACL 並套用 rate-based rule，可依來源 IP 在一段時間內的請求次數自動偵測並封鎖超過門檻的來源，且能直接關聯到 API Gateway 的 stage；這是 AWS 完全託管的服務，不需額外撰寫程式碼或建置基礎設施，能以最低維運成本達成防護 HTTP flood 攻擊的需求。
+- B：建立一個區域型 AWS WAF Web ACL，套用按速率（rate-based）規則，並將此 Web ACL 與 API Gateway 的階段（stage）建立關聯。針對 Regional API Gateway 端點建立 Regional AWS WAF Web ACL 並套用 rate-based rule，可依來源 IP 在一段時間內的請求次數自動偵測並封鎖超過門檻的來源，且能直接關聯到 API Gateway 的 stage；這是 AWS 完全託管的服務，不需額外撰寫程式碼或建置基礎設施，能以最低維運成本達成防護 HTTP flood 攻擊的需求。
 - 其餘選項比較：
-- A：在API Gateway Regional API端點前建立Amazon CloudFront分佈，最高TTL為24小時。在 API Gateway 前加上 CloudFront 並設定 24 小時最大 TTL，效果是快取回應以降低後端負載，但股票報價屬於即時性資料查詢，高 TTL 快取既無助於偵測高頻率的 HTTP flood 請求，也不是阻擋惡意流量的機制。
-- C：使用 Amazon CloudWatch 指標來監控計數度量，並在達到預定義的速率時提醒安全團隊。使用 CloudWatch 指標監控並在達到門檻時提醒安全團隊，只能做到事後告警，仍需人工介入才能真正阻擋攻擊流量，這會顯著提高維運負擔，不符合題目「LEAST 營運開銷」的要求。
-- D：在 API Gateway區域 API 端點前用 Lambda@ Edge 建立 Amazon CloudFront 分佈。 建立一個 AWS Lambda 函式，以阻斷來自IP地址超過預定義速率的請求。透過 Lambda@Edge 建立 CloudFront 發佈並自行撰寫 Lambda 函式依 IP 請求頻率封鎖來源，需要開發、部署與維護自訂程式碼邏輯，維運複雜度遠高於直接使用 AWS WAF 內建的 rate-based rule。
+- A：在 API Gateway 區域型 API 端點前建立 Amazon CloudFront 發佈，並將最大 TTL 設為 24 小時。在 API Gateway 前加上 CloudFront 並設定 24 小時最大 TTL，效果是快取回應以降低後端負載，但股票報價屬於即時性資料查詢，高 TTL 快取既無助於偵測高頻率的 HTTP flood 請求，也不是阻擋惡意流量的機制。
+- C：使用 Amazon CloudWatch 指標監控請求計數（Count），並在達到預先定義的速率時通知資安團隊。使用 CloudWatch 指標監控並在達到門檻時提醒安全團隊，只能做到事後告警，仍需人工介入才能真正阻擋攻擊流量，這會顯著提高維運負擔，不符合題目「LEAST 營運開銷」的要求。
+- D：在 API Gateway 區域型 API 端點前，透過 Lambda@Edge 建立 Amazon CloudFront 發佈；建立一個 AWS Lambda 函式，用來阻擋來自某 IP 位址、且請求速率超過預先定義門檻的請求。透過 Lambda@Edge 建立 CloudFront 發佈並自行撰寫 Lambda 函式依 IP 請求頻率封鎖來源，需要開發、部署與維護自訂程式碼邏輯，維運複雜度遠高於直接使用 AWS WAF 內建的 rate-based rule。
 
 **分類：** 安全、身分與合規
 
