@@ -120,6 +120,26 @@ body {
 .wrong-bank-entry-copy small { color: var(--text3); font-size: .75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wrong-bank-entry-count { margin-left: auto; color: var(--blue); font-size: .76rem; font-weight: 700; white-space: nowrap; }
 
+/* ===== Sync Bar ===== */
+.sync-bar {
+  width: 100%; display: flex; align-items: center; gap: .85rem; flex-wrap: wrap;
+  padding: .85rem 1rem; text-align: left; color: var(--text);
+  background: linear-gradient(105deg, rgba(108,99,255,.1), rgba(56,189,248,.1));
+  border: 1px solid rgba(108,99,255,.24); border-radius: var(--radius);
+}
+.sync-bar-icon { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: .7rem; background: rgba(108,99,255,.14); font-size: 1.15rem; flex-shrink: 0; }
+.sync-bar-copy { display: flex; flex-direction: column; gap: .05rem; min-width: 0; }
+.sync-bar-copy strong { font-size: .95rem; }
+.sync-bar-copy small { color: var(--text3); font-size: .75rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sync-bar-actions { display: flex; gap: .5rem; margin-left: auto; flex-wrap: wrap; }
+.sync-bar-btn {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+  color: var(--text2); border-radius: 999px; padding: .35rem .85rem;
+  font-family: inherit; font-size: .74rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+}
+.sync-bar-btn:hover { background: rgba(255,255,255,.12); color: var(--text); }
+
 /* ===== Wrong Bank Archive ===== */
 #screen-wrong-bank, #screen-wrong-detail { overflow-y: auto; }
 .archive-header {

@@ -1,6 +1,13 @@
 name = "exam-for-saa"
+main = "worker.js"
 compatibility_date = "2025-05-21"
 
 [assets]
 directory = "./"
+binding = "ASSETS"
 not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "exam-for-saa-db"
+database_id = "f5227994-e117-445e-b967-11329ed0bf39"

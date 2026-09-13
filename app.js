@@ -1,13 +1,15 @@
 'use strict';
 
-// ── 題庫檔案清單（相對路徑）────────────────────────────────────────
+// ── 題庫檔案清單（相對路徑，建置期由 tools/build-question-bank.js 產生）──
 const QUESTION_FILES = [
-  'saa_003_zh-TW.md',
+  'question-bank/saa_003.json',
 ];
 
 const TOTAL_SCORE = 1000;
 const WRONG_BANK_STORAGE_KEY = 'aws-saa-wrong-bank-v1';
 const WRONG_BANK_MAX_RECORDS = 50;
+const SYNC_CODE_STORAGE_KEY = 'aws-saa-sync-code-v1';
+const SYNC_CODE_QUERY_PARAM = 'sync';
 
 const MODES = {
   exam: {
@@ -298,6 +300,125 @@ function saveAttemptToWrongBank(result) {
 
   wrongBankRecords = [record, ...wrongBankRecords].slice(0, WRONG_BANK_MAX_RECORDS);
   saveWrongBank();
+  pushRecordToCloud(record);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Wrong Bank Sync — 跨裝置同步（同步碼／連結，見 worker.js）
+// ═══════════════════════════════════════════════════════════════════
+let syncCode = null;
+
+function generateSyncCode() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function initSyncCode() {
+  const url = new URL(window.location.href);
+  const fromLink = url.searchParams.get(SYNC_CODE_QUERY_PARAM);
+  if (fromLink) {
+    url.searchParams.delete(SYNC_CODE_QUERY_PARAM);
+    window.history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+    setSyncCode(fromLink.trim(), { replace: true });
+    return;
+  }
+
+  let stored = null;
+  try { stored = localStorage.getItem(SYNC_CODE_STORAGE_KEY); } catch { /* noop */ }
+  syncCode = stored || generateSyncCode();
+  try { localStorage.setItem(SYNC_CODE_STORAGE_KEY, syncCode); } catch { /* noop */ }
+  renderSyncUI();
+  pullAndMergeCloud();
+}
+
+function setSyncCode(code, { replace = false } = {}) {
+  if (!code) return;
+  syncCode = code;
+  try { localStorage.setItem(SYNC_CODE_STORAGE_KEY, syncCode); } catch { /* noop */ }
+  renderSyncUI();
+  pullAndMergeCloud({ replace });
+}
+
+function renderSyncUI() {
+  const el = $('sync-code-display');
+  if (el) el.textContent = syncCode || '尚未產生';
+}
+
+function flashSyncMessage(msg) {
+  const el = $('sync-code-display');
+  if (!el) return;
+  const original = syncCode || '';
+  el.textContent = msg;
+  setTimeout(() => { el.textContent = original; }, 2200);
+}
+
+async function pushRecordToCloud(record) {
+  if (!syncCode) return;
+  try {
+    await fetch(`/api/wrong-bank/${encodeURIComponent(syncCode)}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(record),
+    });
+  } catch (err) {
+    console.warn('錯題庫同步上傳失敗（下次載入時會再嘗試合併）:', err);
+  }
+}
+
+async function pullAndMergeCloud({ replace = false } = {}) {
+  if (!syncCode) return;
+  let remoteRecords;
+  try {
+    const res = await fetch(`/api/wrong-bank/${encodeURIComponent(syncCode)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    remoteRecords = Array.isArray(data.records) ? data.records : [];
+  } catch (err) {
+    console.warn('錯題庫同步下載失敗，暫時維持本機資料:', err);
+    return;
+  }
+
+  const byId = new Map();
+  if (!replace) wrongBankRecords.forEach(r => byId.set(r.id, r));
+  remoteRecords.forEach(r => { if (r && r.id) byId.set(r.id, r); });
+
+  wrongBankRecords = [...byId.values()]
+    .filter(r => r && r.id && r.createdAt && Array.isArray(r.items))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, WRONG_BANK_MAX_RECORDS);
+
+  try {
+    localStorage.setItem(WRONG_BANK_STORAGE_KEY, JSON.stringify(wrongBankRecords));
+  } catch (err) {
+    console.warn('錯題庫保存失敗:', err);
+  }
+  updateWrongBankEntry();
+  if ($('screen-wrong-bank')?.classList.contains('active')) renderWrongBank();
+}
+
+function wireSyncEvents() {
+  $('btn-copy-sync-link')?.addEventListener('click', async () => {
+    if (!syncCode) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set(SYNC_CODE_QUERY_PARAM, syncCode);
+    url.hash = '';
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      flashSyncMessage('已複製同步連結 →');
+    } catch {
+      window.prompt('複製這組同步連結：', url.toString());
+    }
+  });
+
+  $('btn-enter-sync-code')?.addEventListener('click', () => {
+    const input = window.prompt('請輸入其他裝置顯示的同步碼：');
+    if (!input) return;
+    const code = input.trim();
+    if (!code || code === syncCode) return;
+    const confirmed = window.confirm('切換同步碼將以雲端資料覆蓋目前顯示的錯題庫，確定要切換嗎？');
+    if (!confirmed) return;
+    setSyncCode(code, { replace: true });
+  });
 }
 
 function createAnswerText(options, keys, emptyText = '（未作答）') {
@@ -441,83 +562,27 @@ function renderWrongDetail(recordId) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 1. loadQuestionBanks — fetch 所有 MD 檔案
+// 1. loadQuestionBanks — fetch 建置期產生的題庫 JSON
 // ═══════════════════════════════════════════════════════════════════
 async function loadQuestionBanks() {
   const results = await Promise.allSettled(
     QUESTION_FILES.map(f => fetch(f).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${f}`);
-      return r.text();
+      return r.json();
     }))
   );
-  const texts = [];
+  const lists = [];
   const errors = [];
   results.forEach((r, i) => {
-    if (r.status === 'fulfilled') texts.push(r.value);
+    if (r.status === 'fulfilled') lists.push(r.value);
     else errors.push(QUESTION_FILES[i]);
   });
   if (errors.length) console.warn('無法載入:', errors.join(', '));
-  return texts;
+  return lists.flat();
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 2. parseMarkdownQuestions — 解析 MD 文字成題目物件陣列
-// ═══════════════════════════════════════════════════════════════════
-function parseMarkdownQuestions(mdText) {
-  const questions = [];
-  // 以 ## Question # 分割
-  const blocks = mdText.split(/^## Question\s*#\d+/m).slice(1);
-  const headers = [...mdText.matchAll(/^## Question\s*#(\d+)/gm)];
-
-  blocks.forEach((block, i) => {
-    const idMatch = headers[i] ? headers[i][1] : null;
-    const id = idMatch ? parseInt(idMatch, 10) : null;
-    if (!id) return;
-
-    // 題目
-    const qMatch  = block.match(/\*\*題目\*\*\s*\n([\s\S]*?)(?=\*\*選項\*\*)/);
-    // 選項
-    const opMatch = block.match(/\*\*選項\*\*\s*\n([\s\S]*?)(?=\*\*答案\*\*)/);
-    // 答案（支援 "A"、"A,B" 與 "AB" 三種格式，相容冒號與空白）
-    const anMatch = block.match(/\*\*答案[：:]?\*\*\s*([A-Za-z,\s]+)/);
-
-    if (!qMatch || !opMatch || !anMatch) return;
-
-    const questionText = qMatch[1].trim();
-    const optionsRaw   = opMatch[1].trim();
-    const answerRaw    = anMatch[1].trim().toUpperCase();
-
-    // 解析選項 "- A. 文字"、"- A。 文字"、"- A、 文字" 等
-    const options = [];
-    const optLines = optionsRaw.split('\n').filter(l => l.trim().match(/^-\s*[A-Z][.、。:\s]/i));
-    optLines.forEach(line => {
-      const m = line.trim().match(/^-\s*([A-Z])[.、。:\s]\s*(.*)/i);
-      if (m) options.push({ key: m[1].toUpperCase(), text: m[2].trim() });
-    });
-
-    if (options.length < 2) return;
-
-    // 複選 or 單選：逗號分隔 "A,B" 或連寫 "AB"
-    const answers = answerRaw.includes(',')
-      ? answerRaw.split(',').map(a => a.trim()).filter(a => /^[A-Z]$/.test(a))
-      : answerRaw.split('').filter(c => /[A-Z]/.test(c));
-
-    // 詳解（選填）
-    const exMatch = block.match(/\*\*詳解\*\*\s*\n([\s\S]*?)(?=\n\*\*分類|$)/);
-    const explanation = exMatch ? exMatch[1].trim() : '';
-
-    // 分類標籤
-    const catMatch = block.match(/\*\*分類[：:]\*\*\s*([^\n\r]+)/);
-    const category = catMatch ? catMatch[1].trim() : '';
-
-    questions.push({ id, questionText, options, answers, explanation, category });
-  });
-
-  return questions;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// 3. validateQuestions
+// 2. validateQuestions — 安全網，防止 JSON 格式異常的題目混入
 // ═══════════════════════════════════════════════════════════════════
 function validateQuestions(questions) {
   return questions.filter(q => {
@@ -569,6 +634,12 @@ function classifyDomain(question) {
 }
 
 function getQuestionChapter(q) {
+  // chapterId 已在建置期（tools/build-question-bank.js）算好，直接查表即可。
+  if (q.chapterId) {
+    const found = CHAPTER_DOMAINS.find(c => c.id === q.chapterId);
+    if (found) return found;
+  }
+  // fallback：極少數缺 chapterId 的題目（例如舊格式題庫）才現場分類
   if (q.category) {
     const found = CHAPTER_DOMAINS.find(c => c.id !== 'all' && c.rawCategories.includes(q.category));
     if (found) return found;
@@ -1455,6 +1526,7 @@ function wireEvents() {
   $('btn-back-home').addEventListener('click', () => showScreen('screen-start'));
   $('btn-detail-back').addEventListener('click', showWrongBank);
   $('btn-empty-start').addEventListener('click', () => showScreen('screen-start'));
+  wireSyncEvents();
 
   document.querySelectorAll('.mode-tab').forEach(btn => {
     btn.addEventListener('click', () => switchMode(btn.dataset.mode));
@@ -1527,12 +1599,12 @@ function wireEvents() {
 async function init() {
   wireEvents();
   loadWrongBank();
+  initSyncCode();
   try {
-    const texts    = await loadQuestionBanks();
-    const parsed   = texts.flatMap(t => parseMarkdownQuestions(t));
+    const parsed   = await loadQuestionBanks();
     allQuestions   = validateQuestions(parsed);
 
-    if (allQuestions.length === 0) throw new Error('沒有解析到任何題目，請確認 MD 格式是否正確。');
+    if (allQuestions.length === 0) throw new Error('沒有解析到任何題目，請確認題庫 JSON 是否正確。');
 
     updateBankCountDisplay();
     if (currentMode === 'practice') syncPracticeCount();
