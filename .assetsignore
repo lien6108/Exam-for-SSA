@@ -1,9 +1,10 @@
 .git
 .claude
 .wrangler
+.openai
 bk
 docs
-question-bank
+question-bank/questions.md
 node_modules
 README.md
 wrangler.toml
@@ -12,5 +13,8 @@ AWS_SAA_cleaned.md
 AWS_SAA_cleaning_report.md
 AWS_SAA_完整整理版_1_1019.md
 tools
+migrations
+worker.js
 mismatches.json
 *chunk_output.txt
+saa_003_zh-TW.md

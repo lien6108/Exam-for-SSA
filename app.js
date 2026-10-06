@@ -1,13 +1,16 @@
 'use strict';
 
-// ── 題庫檔案清單（相對路徑）────────────────────────────────────────
+// ── 題庫檔案清單（相對路徑，建置期由 tools/build-question-bank.js 產生）──
 const QUESTION_FILES = [
-  'saa_003_zh-TW.md',
+  'question-bank/saa_003.json',
 ];
 
 const TOTAL_SCORE = 1000;
 const WRONG_BANK_STORAGE_KEY = 'aws-saa-wrong-bank-v1';
 const WRONG_BANK_MAX_RECORDS = 50;
+const WRONG_ONLY_SIZE = 30;
+const SYNC_CODE_STORAGE_KEY = 'aws-saa-sync-code-v1';
+const SYNC_CODE_QUERY_PARAM = 'sync';
 
 const MODES = {
   exam: {
@@ -55,10 +58,42 @@ const MODES = {
       '支援標記題號與答題列表檢查，送出後即時呈現正確率與全題解析',
     ],
   },
+  practice: {
+    name: '逐題練習',
+    size: 10,
+    timeLimit: null,
+    weighted: false,
+    hasReview: false,
+    hasMark: false,
+    passScore: null,
+    instantFeedback: true,
+    rules: [
+      '依選定章節主題隨機出題，題數可自由設定',
+      '選好答案後按「確認答案」，立即查看正確答案與詳解',
+      '答案確認後無法修改，理解解析後再前往下一題',
+      '完成練習後，所有答錯的題目會自動打包存入錯題庫',
+    ],
+  },
+  wrongOnly: {
+    name: '只考錯題',
+    size: 0,
+    timeLimit: null,
+    weighted: false,
+    hasReview: true,
+    hasMark: true,
+    passScore: null,
+    rules: [
+      '從錯題庫抽出曾經答錯的題目（涵蓋模擬考、小考、章節測驗、逐題練習），單次最多抽 30 題',
+      '同一題若在多次紀錄中都答錯，只會出現一次；答錯次數越多，抽中機率越高',
+      '可標記題目並自由切換上一題 / 下一題，交卷前可用答題列表檢查',
+      '無時間限制、無及格分數，專注複習尚未掌握的弱點題',
+    ],
+  },
 };
 
 let currentMode = 'exam';
 let selectedChapterId = 'compute';
+let practiceQuestionCount = 10;
 
 // ── 章節領域定義 ──────────────────────────────────────────────────
 const CHAPTER_DOMAINS = [
@@ -186,6 +221,9 @@ let examElapsed   = 0;   // 秒
 let wrongBankRecords = [];
 let activeWrongRecordId = null;
 let currentAttemptSaved = false;
+let lockedAnswers = new Set();
+let downloadableWrongItems = [];
+let downloadableResultMeta = null;
 
 // ── DOM 快取 ──────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -221,18 +259,20 @@ function getDateKey(date = new Date()) {
 }
 
 function getAttemptTitle() {
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     const chapter = CHAPTER_DOMAINS.find(c => c.id === selectedChapterId) || CHAPTER_DOMAINS[0];
-    return chapter.title;
+    return currentMode === 'practice' ? `逐題練習 · ${chapter.title}` : chapter.title;
   }
+  if (currentMode === 'wrongOnly') return '只考錯題 · 弱點複習';
   return currentMode === 'quiz' ? '小考 · 隨機練習' : '模擬考 · 綜合題型';
 }
 
 function getAttemptIcon(record) {
-  if (record.mode === 'chapter') {
+  if (record.mode === 'chapter' || record.mode === 'practice') {
     const chapter = CHAPTER_DOMAINS.find(c => c.id === record.chapterId);
-    return chapter ? chapter.icon : '🏷️';
+    return record.mode === 'practice' ? '💡' : (chapter ? chapter.icon : '🏷️');
   }
+  if (record.mode === 'wrongOnly') return '🎯';
   return record.mode === 'quiz' ? '⚡' : '📝';
 }
 
@@ -259,7 +299,7 @@ function saveAttemptToWrongBank(result) {
     createdAt: now.toISOString(),
     dateKey: getDateKey(now),
     mode: currentMode,
-    chapterId: currentMode === 'chapter' ? selectedChapterId : null,
+    chapterId: (currentMode === 'chapter' || currentMode === 'practice') ? selectedChapterId : null,
     title: getAttemptTitle(),
     score: result.score,
     correctCount: result.correctCount,
@@ -280,6 +320,125 @@ function saveAttemptToWrongBank(result) {
 
   wrongBankRecords = [record, ...wrongBankRecords].slice(0, WRONG_BANK_MAX_RECORDS);
   saveWrongBank();
+  pushRecordToCloud(record);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Wrong Bank Sync — 跨裝置同步（同步碼／連結，見 worker.js）
+// ═══════════════════════════════════════════════════════════════════
+let syncCode = null;
+
+function generateSyncCode() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function initSyncCode() {
+  const url = new URL(window.location.href);
+  const fromLink = url.searchParams.get(SYNC_CODE_QUERY_PARAM);
+  if (fromLink) {
+    url.searchParams.delete(SYNC_CODE_QUERY_PARAM);
+    window.history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+    setSyncCode(fromLink.trim(), { replace: true });
+    return;
+  }
+
+  let stored = null;
+  try { stored = localStorage.getItem(SYNC_CODE_STORAGE_KEY); } catch { /* noop */ }
+  syncCode = stored || generateSyncCode();
+  try { localStorage.setItem(SYNC_CODE_STORAGE_KEY, syncCode); } catch { /* noop */ }
+  renderSyncUI();
+  pullAndMergeCloud();
+}
+
+function setSyncCode(code, { replace = false } = {}) {
+  if (!code) return;
+  syncCode = code;
+  try { localStorage.setItem(SYNC_CODE_STORAGE_KEY, syncCode); } catch { /* noop */ }
+  renderSyncUI();
+  pullAndMergeCloud({ replace });
+}
+
+function renderSyncUI() {
+  const el = $('sync-code-display');
+  if (el) el.textContent = syncCode || '尚未產生';
+}
+
+function flashSyncMessage(msg) {
+  const el = $('sync-code-display');
+  if (!el) return;
+  const original = syncCode || '';
+  el.textContent = msg;
+  setTimeout(() => { el.textContent = original; }, 2200);
+}
+
+async function pushRecordToCloud(record) {
+  if (!syncCode) return;
+  try {
+    await fetch(`/api/wrong-bank/${encodeURIComponent(syncCode)}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(record),
+    });
+  } catch (err) {
+    console.warn('錯題庫同步上傳失敗（下次載入時會再嘗試合併）:', err);
+  }
+}
+
+async function pullAndMergeCloud({ replace = false } = {}) {
+  if (!syncCode) return;
+  let remoteRecords;
+  try {
+    const res = await fetch(`/api/wrong-bank/${encodeURIComponent(syncCode)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    remoteRecords = Array.isArray(data.records) ? data.records : [];
+  } catch (err) {
+    console.warn('錯題庫同步下載失敗，暫時維持本機資料:', err);
+    return;
+  }
+
+  const byId = new Map();
+  if (!replace) wrongBankRecords.forEach(r => byId.set(r.id, r));
+  remoteRecords.forEach(r => { if (r && r.id) byId.set(r.id, r); });
+
+  wrongBankRecords = [...byId.values()]
+    .filter(r => r && r.id && r.createdAt && Array.isArray(r.items))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, WRONG_BANK_MAX_RECORDS);
+
+  try {
+    localStorage.setItem(WRONG_BANK_STORAGE_KEY, JSON.stringify(wrongBankRecords));
+  } catch (err) {
+    console.warn('錯題庫保存失敗:', err);
+  }
+  updateWrongBankEntry();
+  if ($('screen-wrong-bank')?.classList.contains('active')) renderWrongBank();
+}
+
+function wireSyncEvents() {
+  $('btn-copy-sync-link')?.addEventListener('click', async () => {
+    if (!syncCode) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set(SYNC_CODE_QUERY_PARAM, syncCode);
+    url.hash = '';
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      flashSyncMessage('已複製同步連結 →');
+    } catch {
+      window.prompt('複製這組同步連結：', url.toString());
+    }
+  });
+
+  $('btn-enter-sync-code')?.addEventListener('click', () => {
+    const input = window.prompt('請輸入其他裝置顯示的同步碼：');
+    if (!input) return;
+    const code = input.trim();
+    if (!code || code === syncCode) return;
+    const confirmed = window.confirm('切換同步碼將以雲端資料覆蓋目前顯示的錯題庫，確定要切換嗎？');
+    if (!confirmed) return;
+    setSyncCode(code, { replace: true });
+  });
 }
 
 function createAnswerText(options, keys, emptyText = '（未作答）') {
@@ -288,6 +447,180 @@ function createAnswerText(options, keys, emptyText = '（未作答）') {
     const option = options.find(item => item.key === key);
     return `${key}. ${option ? option.text : ''}`;
   }).join('　');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function createWrongQuestionsHtml(wrongItems, meta) {
+  const questionCards = wrongItems.map(({ q, i, selected, correct }, index) => {
+    const selectedKeys = Array.isArray(selected) ? selected : [];
+    const correctKeys = Array.isArray(correct) ? correct : [];
+    const options = Array.isArray(q.options) ? q.options : [];
+    const optionsHtml = options.map(option => {
+      const isCorrect = correctKeys.includes(option.key);
+      const isSelected = selectedKeys.includes(option.key);
+      const classes = ['option'];
+      if (isCorrect) classes.push('correct');
+      else if (isSelected) classes.push('selected-wrong');
+
+      const badges = [
+        isCorrect ? '<span class="badge correct-badge">正確答案</span>' : '',
+        isSelected ? `<span class="badge ${isCorrect ? 'selected-correct-badge' : 'selected-wrong-badge'}">你的選擇</span>` : '',
+      ].filter(Boolean).join('');
+
+      return `
+        <li class="${classes.join(' ')}">
+          <span class="option-key">${escapeHtml(option.key)}</span>
+          <span class="option-text">${escapeHtml(option.text)}</span>
+          <span class="option-badges">${badges}</span>
+        </li>`;
+    }).join('');
+
+    const domain = q.domain ? q.domain.label.split('/')[0].trim() : '未分類';
+    const type = q.answers.length >= 2 ? '複選題' : '單選題';
+    return `
+      <article class="question-card">
+        <div class="question-meta">
+          <span class="question-number">錯題 ${index + 1}</span>
+          <span>原題號 Q${i + 1}</span>
+          <span>ID: ${escapeHtml(q.id)}</span>
+          <span>${type}</span>
+          <span>${escapeHtml(domain)}</span>
+        </div>
+        <h2>${escapeHtml(q.questionText)}</h2>
+        <ol class="options">${optionsHtml}</ol>
+        <div class="answer-summary">
+          <p><strong class="your-answer">你的答案：</strong>${escapeHtml(createAnswerText(options, selectedKeys))}</p>
+          <p><strong class="correct-answer">正確答案：</strong>${escapeHtml(createAnswerText(options, correctKeys))}</p>
+        </div>
+        <section class="explanation">
+          <h3>詳解</h3>
+          <p>${escapeHtml(q.explanation || '題庫目前沒有提供這題的詳解。')}</p>
+        </section>
+      </article>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(meta.title)}｜AWS SAA 錯題複習</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, "Noto Sans TC", "Microsoft JhengHei", sans-serif; color: #172033; background: #eef2f7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.65; }
+    main { width: min(920px, calc(100% - 32px)); margin: 40px auto 72px; }
+    .hero, .question-card { background: #fff; border: 1px solid #dbe3ee; border-radius: 16px; box-shadow: 0 8px 24px rgba(15, 23, 42, .06); }
+    .hero { padding: 28px 32px; margin-bottom: 20px; }
+    .kicker { color: #2563eb; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+    h1 { margin: 4px 0 8px; font-size: clamp(26px, 5vw, 40px); line-height: 1.25; }
+    .meta-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 22px; }
+    .meta-item { padding: 12px 14px; background: #f7f9fc; border-radius: 10px; }
+    .meta-item span { display: block; color: #64748b; font-size: 12px; }
+    .meta-item strong { font-size: 16px; }
+    .question-card { padding: 24px 28px; margin-top: 16px; break-inside: avoid; }
+    .question-meta { display: flex; flex-wrap: wrap; gap: 7px; color: #64748b; font-size: 12px; }
+    .question-meta span { padding: 3px 8px; border: 1px solid #dbe3ee; border-radius: 999px; }
+    .question-meta .question-number { color: #b91c1c; background: #fef2f2; border-color: #fecaca; font-weight: 800; }
+    h2 { margin: 14px 0 18px; font-size: 18px; line-height: 1.6; }
+    .options { display: grid; gap: 9px; padding: 0; list-style: none; }
+    .option { display: grid; grid-template-columns: 34px 1fr auto; align-items: start; gap: 10px; padding: 11px 12px; border: 1px solid #dbe3ee; border-radius: 10px; }
+    .option.correct { border-color: #86efac; background: #f0fdf4; }
+    .option.selected-wrong { border-color: #fca5a5; background: #fef2f2; }
+    .option-key { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #e2e8f0; font-weight: 800; }
+    .correct .option-key { color: #fff; background: #16a34a; }
+    .selected-wrong .option-key { color: #fff; background: #dc2626; }
+    .option-text { padding-top: 2px; }
+    .option-badges { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+    .badge { padding: 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .correct-badge, .selected-correct-badge { color: #166534; background: #dcfce7; }
+    .selected-wrong-badge { color: #991b1b; background: #fee2e2; }
+    .answer-summary { margin-top: 16px; padding: 12px 16px; background: #f8fafc; border-radius: 10px; }
+    .answer-summary p { margin: 3px 0; }
+    .answer-summary strong { display: inline-block; min-width: 78px; }
+    .your-answer { color: #b91c1c; }
+    .correct-answer { color: #15803d; }
+    .explanation { margin-top: 16px; padding: 14px 16px; border-left: 4px solid #6366f1; background: #f5f3ff; border-radius: 0 10px 10px 0; }
+    .explanation h3 { margin: 0 0 4px; color: #4f46e5; font-size: 13px; letter-spacing: .08em; }
+    .explanation p { margin: 0; white-space: pre-wrap; }
+    footer { margin-top: 24px; color: #64748b; font-size: 12px; text-align: center; }
+    @media (max-width: 680px) {
+      main { width: min(100% - 20px, 920px); margin-top: 16px; }
+      .hero, .question-card { padding: 20px; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
+      .option { grid-template-columns: 34px 1fr; }
+      .option-badges { grid-column: 2; justify-content: flex-start; }
+    }
+    @media print {
+      body { background: #fff; }
+      main { width: 100%; margin: 0; }
+      .hero, .question-card { box-shadow: none; }
+      .question-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <span class="kicker">AWS SAA MISSED QUESTIONS</span>
+      <h1>${escapeHtml(meta.title)}</h1>
+      <p>本檔案已將本次測驗的錯題、完整選項與詳解整理完成，可離線開啟複習。</p>
+      <div class="meta-grid">
+        <div class="meta-item"><span>匯出時間</span><strong>${escapeHtml(meta.exportedAt)}</strong></div>
+        <div class="meta-item"><span>作答時間</span><strong>${escapeHtml(meta.elapsed)}</strong></div>
+        <div class="meta-item"><span>答對題數</span><strong>${meta.correctCount} / ${meta.total}</strong></div>
+        <div class="meta-item"><span>錯題數</span><strong>${wrongItems.length}</strong></div>
+      </div>
+    </header>
+    ${questionCards}
+    <footer>AWS Solutions Architect Associate 模擬考試系統</footer>
+  </main>
+</body>
+</html>`;
+}
+
+function prepareWrongQuestionsDownload(result) {
+  downloadableWrongItems = result.wrongItems;
+  downloadableResultMeta = {
+    title: getAttemptTitle(),
+    exportedAt: new Date().toLocaleString('zh-TW'),
+    elapsed: formatTime(examElapsed),
+    correctCount: result.correctCount,
+    total: examQuestions.length,
+  };
+
+  const button = $('btn-download-wrong');
+  const label = button?.querySelector('span');
+  if (!button || !label) return;
+  button.disabled = downloadableWrongItems.length === 0;
+  label.textContent = downloadableWrongItems.length
+    ? `⬇️ 下載錯題 HTML（${downloadableWrongItems.length} 題）`
+    : '🎉 沒有錯題可下載';
+}
+
+function downloadWrongQuestions() {
+  if (!downloadableWrongItems.length || !downloadableResultMeta) return;
+
+  const html = createWrongQuestionsHtml(downloadableWrongItems, downloadableResultMeta);
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const date = new Date().toLocaleDateString('sv-SE');
+  const safeTitle = downloadableResultMeta.title.replace(/[\\/:*?"<>|]/g, '-');
+  link.href = url;
+  link.download = `AWS-SAA-錯題-${date}-${safeTitle}.html`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 function createWrongDetailItem(item, index) {
@@ -375,7 +708,7 @@ function renderWrongBank() {
     date.textContent = record.dateKey || getDateKey(new Date(record.createdAt));
     const mode = document.createElement('span');
     mode.className = 'wrong-bank-mode';
-    mode.textContent = `${getAttemptIcon(record)} ${record.mode === 'chapter' ? '章節測驗' : record.mode === 'quiz' ? '小考' : '模擬考'}`;
+    mode.textContent = `${getAttemptIcon(record)} ${record.mode === 'chapter' ? '章節測驗' : record.mode === 'practice' ? '逐題練習' : record.mode === 'quiz' ? '小考' : record.mode === 'wrongOnly' ? '只考錯題' : '模擬考'}`;
     top.append(date, mode);
 
     const title = document.createElement('span');
@@ -407,7 +740,7 @@ function renderWrongDetail(recordId) {
   heading.innerHTML = '';
   const kicker = document.createElement('span');
   kicker.className = 'archive-kicker';
-  kicker.textContent = `${record.dateKey} · ${record.mode === 'chapter' ? 'CHAPTER REVIEW' : 'QUIZ REVIEW'}`;
+  kicker.textContent = `${record.dateKey} · ${record.mode === 'chapter' ? 'CHAPTER REVIEW' : record.mode === 'practice' ? 'PRACTICE REVIEW' : record.mode === 'wrongOnly' ? 'WRONG-ONLY REVIEW' : 'QUIZ REVIEW'}`;
   const title = document.createElement('h1');
   title.className = 'archive-title';
   title.textContent = record.title;
@@ -423,83 +756,27 @@ function renderWrongDetail(recordId) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 1. loadQuestionBanks — fetch 所有 MD 檔案
+// 1. loadQuestionBanks — fetch 建置期產生的題庫 JSON
 // ═══════════════════════════════════════════════════════════════════
 async function loadQuestionBanks() {
   const results = await Promise.allSettled(
     QUESTION_FILES.map(f => fetch(f).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${f}`);
-      return r.text();
+      return r.json();
     }))
   );
-  const texts = [];
+  const lists = [];
   const errors = [];
   results.forEach((r, i) => {
-    if (r.status === 'fulfilled') texts.push(r.value);
+    if (r.status === 'fulfilled') lists.push(r.value);
     else errors.push(QUESTION_FILES[i]);
   });
   if (errors.length) console.warn('無法載入:', errors.join(', '));
-  return texts;
+  return lists.flat();
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 2. parseMarkdownQuestions — 解析 MD 文字成題目物件陣列
-// ═══════════════════════════════════════════════════════════════════
-function parseMarkdownQuestions(mdText) {
-  const questions = [];
-  // 以 ## Question # 分割
-  const blocks = mdText.split(/^## Question\s*#\d+/m).slice(1);
-  const headers = [...mdText.matchAll(/^## Question\s*#(\d+)/gm)];
-
-  blocks.forEach((block, i) => {
-    const idMatch = headers[i] ? headers[i][1] : null;
-    const id = idMatch ? parseInt(idMatch, 10) : null;
-    if (!id) return;
-
-    // 題目
-    const qMatch  = block.match(/\*\*題目\*\*\s*\n([\s\S]*?)(?=\*\*選項\*\*)/);
-    // 選項
-    const opMatch = block.match(/\*\*選項\*\*\s*\n([\s\S]*?)(?=\*\*答案\*\*)/);
-    // 答案（支援 "A"、"A,B" 與 "AB" 三種格式，相容冒號與空白）
-    const anMatch = block.match(/\*\*答案[：:]?\*\*\s*([A-Za-z,\s]+)/);
-
-    if (!qMatch || !opMatch || !anMatch) return;
-
-    const questionText = qMatch[1].trim();
-    const optionsRaw   = opMatch[1].trim();
-    const answerRaw    = anMatch[1].trim().toUpperCase();
-
-    // 解析選項 "- A. 文字"、"- A。 文字"、"- A、 文字" 等
-    const options = [];
-    const optLines = optionsRaw.split('\n').filter(l => l.trim().match(/^-\s*[A-Z][.、。:\s]/i));
-    optLines.forEach(line => {
-      const m = line.trim().match(/^-\s*([A-Z])[.、。:\s]\s*(.*)/i);
-      if (m) options.push({ key: m[1].toUpperCase(), text: m[2].trim() });
-    });
-
-    if (options.length < 2) return;
-
-    // 複選 or 單選：逗號分隔 "A,B" 或連寫 "AB"
-    const answers = answerRaw.includes(',')
-      ? answerRaw.split(',').map(a => a.trim()).filter(a => /^[A-Z]$/.test(a))
-      : answerRaw.split('').filter(c => /[A-Z]/.test(c));
-
-    // 詳解（選填）
-    const exMatch = block.match(/\*\*詳解\*\*\s*\n([\s\S]*?)(?=\n\*\*分類|$)/);
-    const explanation = exMatch ? exMatch[1].trim() : '';
-
-    // 分類標籤
-    const catMatch = block.match(/\*\*分類[：:]\*\*\s*([^\n\r]+)/);
-    const category = catMatch ? catMatch[1].trim() : '';
-
-    questions.push({ id, questionText, options, answers, explanation, category });
-  });
-
-  return questions;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// 3. validateQuestions
+// 2. validateQuestions — 安全網，防止 JSON 格式異常的題目混入
 // ═══════════════════════════════════════════════════════════════════
 function validateQuestions(questions) {
   return questions.filter(q => {
@@ -512,16 +789,16 @@ function validateQuestions(questions) {
 // ═══════════════════════════════════════════════════════════════════
 // 4. sampleWeightedQuestions — 加權抽題，不重複
 // ═══════════════════════════════════════════════════════════════════
-function sampleWeightedQuestions(pool, n) {
+function sampleWeightedQuestions(pool, n, weightFn = q => q.id) {
   if (pool.length <= n) return [...pool];
   const selected = [];
   const remaining = [...pool];
   while (selected.length < n && remaining.length > 0) {
-    const totalWeight = remaining.reduce((s, q) => s + q.id, 0);
+    const totalWeight = remaining.reduce((s, q) => s + weightFn(q), 0);
     let r = Math.random() * totalWeight;
     let idx = 0;
     for (let i = 0; i < remaining.length; i++) {
-      r -= remaining[i].id;
+      r -= weightFn(remaining[i]);
       if (r <= 0) { idx = i; break; }
     }
     selected.push(remaining.splice(idx, 1)[0]);
@@ -551,6 +828,12 @@ function classifyDomain(question) {
 }
 
 function getQuestionChapter(q) {
+  // chapterId 已在建置期（tools/build-question-bank.js）算好，直接查表即可。
+  if (q.chapterId) {
+    const found = CHAPTER_DOMAINS.find(c => c.id === q.chapterId);
+    if (found) return found;
+  }
+  // fallback：極少數缺 chapterId 的題目（例如舊格式題庫）才現場分類
   if (q.category) {
     const found = CHAPTER_DOMAINS.find(c => c.id !== 'all' && c.rawCategories.includes(q.category));
     if (found) return found;
@@ -577,6 +860,26 @@ function getQuestionsByChapter(chapterId) {
     const assigned = getQuestionChapter(q);
     return assigned.id === chapterId;
   });
+}
+
+// 只考錯題模式：跨所有錯題庫紀錄去重並累計每題答錯次數，比對回完整題目
+function getWrongOnlyQuestions() {
+  const questionsById = new Map(allQuestions.map(q => [q.id, q]));
+  const wrongCounts = new Map();
+  wrongBankRecords.forEach(record => {
+    record.items.forEach(item => {
+      wrongCounts.set(item.questionId, (wrongCounts.get(item.questionId) || 0) + 1);
+    });
+  });
+  const pool = [];
+  wrongCounts.forEach((count, questionId) => {
+    const q = questionsById.get(questionId);
+    if (q) {
+      q.wrongCount = count;
+      pool.push(q);
+    }
+  });
+  return pool;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -615,6 +918,7 @@ function renderChapterSelector() {
         c.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
       updateBankCountDisplay();
+      if (currentMode === 'practice') syncPracticeCount();
     });
 
     grid.appendChild(card);
@@ -626,14 +930,29 @@ function updateBankCountDisplay() {
   const bankLabelEl = $('meta-bank-label');
   if (!bankCountEl) return;
 
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     const count = getQuestionsByChapter(selectedChapterId).length;
     if (bankLabelEl) bankLabelEl.textContent = '該章題數';
     bankCountEl.textContent = `${count} 題`;
+  } else if (currentMode === 'wrongOnly') {
+    if (bankLabelEl) bankLabelEl.textContent = '可複習錯題';
+    bankCountEl.textContent = `${getWrongOnlyQuestions().length} 題`;
   } else {
     if (bankLabelEl) bankLabelEl.textContent = '題庫數量';
     bankCountEl.textContent = `${allQuestions.length} 題`;
   }
+}
+
+function syncPracticeCount(nextValue = practiceQuestionCount) {
+  const poolSize = Math.max(1, getQuestionsByChapter(selectedChapterId).length);
+  practiceQuestionCount = Math.min(poolSize, Math.max(1, Number.parseInt(nextValue, 10) || 1));
+  MODES.practice.size = practiceQuestionCount;
+  const input = $('practice-count');
+  if (input) {
+    input.max = poolSize;
+    input.value = practiceQuestionCount;
+  }
+  if (currentMode === 'practice') $('meta-size').textContent = `${practiceQuestionCount} 題`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -649,11 +968,16 @@ function switchMode(mode) {
     btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
   });
 
+  if (mode === 'practice') syncPracticeCount();
+  if (mode === 'wrongOnly') cfg.size = Math.min(WRONG_ONLY_SIZE, getWrongOnlyQuestions().length);
   $('meta-size').textContent = `${cfg.size} 題`;
 
   if (cfg.timeLimit) {
     $('meta-time-label').textContent = '限制時間';
     $('meta-time').textContent = `${cfg.timeLimit / 60} 分鐘`;
+  } else if (mode === 'practice' || mode === 'wrongOnly') {
+    $('meta-time-label').textContent = '作答方式';
+    $('meta-time').textContent = '不限時';
   } else {
     $('meta-time-label').textContent = '建議時間';
     $('meta-time').textContent = '130 分鐘';
@@ -664,13 +988,22 @@ function switchMode(mode) {
   // 章節選擇器顯示與隱藏
   const chapterWrap = $('chapter-select-wrap');
   if (chapterWrap) {
-    chapterWrap.classList.toggle('hidden', mode !== 'chapter');
-    if (mode === 'chapter') {
+    const usesChapter = mode === 'chapter' || mode === 'practice';
+    chapterWrap.classList.toggle('hidden', !usesChapter);
+    if (usesChapter) {
       renderChapterSelector();
     }
   }
 
+  $('practice-settings').classList.toggle('hidden', mode !== 'practice');
+
   updateBankCountDisplay();
+
+  // 只考錯題：尚無錯題紀錄時停用開始按鈕並顯示提示
+  const wrongOnlyHint = $('wrong-only-hint');
+  const isWrongOnlyEmpty = mode === 'wrongOnly' && cfg.size === 0;
+  if (wrongOnlyHint) wrongOnlyHint.classList.toggle('hidden', !isWrongOnlyEmpty);
+  $('btn-start').disabled = allQuestions.length === 0 || isWrongOnlyEmpty;
 
   // 更新規則清單
   const rulesList = $('rules-list');
@@ -685,7 +1018,22 @@ function switchMode(mode) {
 function startExam() {
   const cfg = MODES[currentMode];
 
-  if (currentMode === 'chapter') {
+  if (currentMode === 'wrongOnly') {
+    const pool = getWrongOnlyQuestions();
+    if (pool.length === 0) { switchMode('wrongOnly'); return; }
+    // 依答錯次數加權抽題（次數越多權重越高），最多 WRONG_ONLY_SIZE 題
+    const drawn = sampleWeightedQuestions(pool, Math.min(WRONG_ONLY_SIZE, pool.length), q => q.wrongCount || 1);
+    // Fisher-Yates 隨機打散呈現順序
+    for (let i = drawn.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [drawn[i], drawn[j]] = [drawn[j], drawn[i]];
+    }
+    examQuestions = drawn;
+    examQuestions.forEach(q => {
+      q.domain = classifyDomain(q);
+      q.chapterInfo = getQuestionChapter(q);
+    });
+  } else if (currentMode === 'chapter' || currentMode === 'practice') {
     const pool = [...getQuestionsByChapter(selectedChapterId)];
     // Fisher-Yates 隨機打散
     for (let i = pool.length - 1; i > 0; i--) {
@@ -723,6 +1071,7 @@ function startExam() {
   examElapsed  = 0;
   startTime    = Date.now();
   currentAttemptSaved = false;
+  lockedAnswers = new Set();
 
   showScreen('screen-question');
   renderQuestionPage(currentIndex);
@@ -751,10 +1100,10 @@ function renderQuestionPage(idx) {
   typeBadge.className = 'q-type-badge' + (isMulti ? ' multi' : '');
 
   const domainBadge = $('q-domain-badge');
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice') {
     domainBadge.textContent = q.chapterInfo ? q.chapterInfo.title : '章節主題';
     domainBadge.style.display = '';
-  } else if (cfg.weighted) {
+  } else if (cfg.weighted || currentMode === 'wrongOnly') {
     domainBadge.textContent = q.domain ? q.domain.label.split('/')[0].trim() : '未分類';
     domainBadge.style.display = '';
   } else {
@@ -780,13 +1129,20 @@ function renderQuestionPage(idx) {
   const container = $('options-container');
   container.innerHTML = '';
   const selected = userAnswers[idx] || new Set();
+  const isLocked = lockedAnswers.has(idx);
 
   q.options.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn' + (selected.has(opt.key) ? ' selected' : '');
+    let optionState = selected.has(opt.key) ? ' selected' : '';
+    if (cfg.instantFeedback && isLocked) {
+      if (q.answers.includes(opt.key)) optionState += ' answer-correct';
+      else if (selected.has(opt.key)) optionState += ' answer-wrong';
+    }
+    btn.className = 'option-btn' + optionState;
     btn.setAttribute('data-key', opt.key);
     btn.setAttribute('type', 'button');
     btn.setAttribute('aria-pressed', selected.has(opt.key) ? 'true' : 'false');
+    btn.disabled = isLocked;
 
     const keySpan  = document.createElement('span');
     keySpan.className = 'option-key';
@@ -806,7 +1162,18 @@ function renderQuestionPage(idx) {
   const isLast = idx === examQuestions.length - 1;
   $('btn-prev').disabled = idx === 0;
 
-  if (!cfg.hasReview && isLast) {
+  const feedback = $('instant-feedback');
+  feedback.classList.toggle('hidden', !(cfg.instantFeedback && isLocked));
+  if (cfg.instantFeedback && isLocked) renderInstantFeedback(q, selected);
+
+  $('btn-prev').style.display = cfg.instantFeedback ? 'none' : '';
+
+  if (cfg.instantFeedback) {
+    $('btn-next').textContent = isLocked ? (isLast ? '查看結果 →' : '下一題 →') : '確認答案';
+    $('btn-next').disabled = !isLocked && selected.size === 0;
+    $('btn-next').dataset.practiceAction = isLocked ? (isLast ? 'finish' : 'next') : 'check';
+    delete $('btn-next').dataset.submitMode;
+  } else if (!cfg.hasReview && isLast) {
     $('btn-next').textContent = '送出批改 ✔';
     $('btn-next').disabled = false;
     $('btn-next').dataset.submitMode = 'true';
@@ -817,7 +1184,25 @@ function renderQuestionPage(idx) {
   }
 }
 
+function renderInstantFeedback(q, selected) {
+  const selectedKeys = [...selected].sort();
+  const correctKeys = [...q.answers].sort();
+  const isCorrect = selectedKeys.length === correctKeys.length && correctKeys.every(key => selectedKeys.includes(key));
+  const feedback = $('instant-feedback');
+  feedback.className = `instant-feedback ${isCorrect ? 'correct' : 'wrong'}`;
+  feedback.innerHTML = '';
+
+  const heading = document.createElement('div');
+  heading.className = 'instant-feedback-heading';
+  heading.textContent = isCorrect ? '✓ 回答正確' : `✕ 回答錯誤｜正確答案：${correctKeys.join('、')}`;
+  const explanation = document.createElement('p');
+  explanation.className = 'instant-feedback-explanation';
+  explanation.textContent = q.explanation || '題庫目前沒有提供這題的詳解。';
+  feedback.append(heading, explanation);
+}
+
 function handleOptionClick(idx, key, isMulti) {
+  if (lockedAnswers.has(idx)) return;
   if (!userAnswers[idx]) userAnswers[idx] = new Set();
   const sel = userAnswers[idx];
   if (isMulti) {
@@ -944,6 +1329,7 @@ function gradeExam() {
 function renderResultPage(result) {
   stopTimer();
   saveAttemptToWrongBank(result);
+  prepareWrongQuestionsDownload(result);
   const cfg = MODES[currentMode];
   const { score, correctCount, wrongItems, domainStats } = result;
   const wrongCnt = examQuestions.length - correctCount;
@@ -953,7 +1339,7 @@ function renderResultPage(result) {
     return;
   }
 
-  if (currentMode === 'chapter') {
+  if (currentMode === 'chapter' || currentMode === 'practice' || currentMode === 'wrongOnly') {
     renderChapterResult(correctCount, wrongItems);
     return;
   }
@@ -1156,10 +1542,13 @@ function renderChapterResult(correctCount, wrongItems) {
   section.className = 'quiz-result-section';
 
   // 摘要卡片
+  const badgeLabel = currentMode === 'wrongOnly'
+    ? '🎯 只考錯題 · 弱點複習'
+    : `${currentMode === 'practice' ? '💡 逐題練習 · ' : `${currentChapter.icon} `}${currentChapter.title}`;
   const summary = document.createElement('div');
   summary.className = 'quiz-summary chapter-summary';
   summary.innerHTML = `
-    <div class="chapter-summary-badge">${currentChapter.icon} ${currentChapter.title}</div>
+    <div class="chapter-summary-badge">${badgeLabel}</div>
     <div class="quiz-summary-score">${pct}%</div>
     <div class="quiz-summary-label">答對 ${correctCount} / ${examQuestions.length} 題（正確率）</div>
     <div class="quiz-summary-time">作答時間 ${formatTime(examElapsed)}</div>
@@ -1210,7 +1599,7 @@ function renderChapterResult(correctCount, wrongItems) {
     section.appendChild(item);
   });
 
-  resultContainer.insertBefore(section, $('btn-restart'));
+  resultContainer.insertBefore(section, $('result-actions'));
   showScreen('screen-result');
 
   // 再次挑戰按鈕綁定
@@ -1342,7 +1731,7 @@ function renderQuizResult(correctCount, wrongItems) {
     section.appendChild(item);
   });
 
-  resultContainer.insertBefore(section, $('btn-restart'));
+  resultContainer.insertBefore(section, $('result-actions'));
   showScreen('screen-result');
 
   // 再次挑戰後恢復模擬考專用區塊
@@ -1380,15 +1769,35 @@ function wireEvents() {
   $('btn-back-home').addEventListener('click', () => showScreen('screen-start'));
   $('btn-detail-back').addEventListener('click', showWrongBank);
   $('btn-empty-start').addEventListener('click', () => showScreen('screen-start'));
+  $('btn-download-wrong').addEventListener('click', downloadWrongQuestions);
+  wireSyncEvents();
 
   document.querySelectorAll('.mode-tab').forEach(btn => {
     btn.addEventListener('click', () => switchMode(btn.dataset.mode));
   });
 
+  $('practice-count').addEventListener('input', event => syncPracticeCount(event.target.value));
+  $('practice-count').addEventListener('blur', event => syncPracticeCount(event.target.value));
+  $('practice-count-minus').addEventListener('click', () => syncPracticeCount(practiceQuestionCount - 1));
+  $('practice-count-plus').addEventListener('click', () => syncPracticeCount(practiceQuestionCount + 1));
+
   $('btn-prev').addEventListener('click', () => {
     if (currentIndex > 0) renderQuestionPage(currentIndex - 1);
   });
   $('btn-next').addEventListener('click', () => {
+    if (currentMode === 'practice') {
+      const action = $('btn-next').dataset.practiceAction;
+      if (action === 'check') {
+        lockedAnswers.add(currentIndex);
+        renderQuestionPage(currentIndex);
+      } else if (action === 'next') {
+        renderQuestionPage(currentIndex + 1);
+      } else if (action === 'finish') {
+        stopTimer();
+        renderResultPage(gradeExam());
+      }
+      return;
+    }
     if ($('btn-next').dataset.submitMode) {
       stopTimer();
       const result = gradeExam();
@@ -1434,15 +1843,14 @@ function wireEvents() {
 async function init() {
   wireEvents();
   loadWrongBank();
+  initSyncCode();
   try {
-    const texts    = await loadQuestionBanks();
-    const parsed   = texts.flatMap(t => parseMarkdownQuestions(t));
+    const parsed   = await loadQuestionBanks();
     allQuestions   = validateQuestions(parsed);
 
-    if (allQuestions.length === 0) throw new Error('沒有解析到任何題目，請確認 MD 格式是否正確。');
+    if (allQuestions.length === 0) throw new Error('沒有解析到任何題目，請確認題庫 JSON 是否正確。');
 
-    updateBankCountDisplay();
-    $('btn-start').disabled = false;
+    switchMode(currentMode);
   } catch (err) {
     console.error(err);
     $('bank-count').textContent = '載入失敗';

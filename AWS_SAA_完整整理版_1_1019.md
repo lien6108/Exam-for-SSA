@@ -8300,7 +8300,7 @@ A company is designing a solution to capture customer activity in different web 
 - D. Configure a Gateway Load Balancer (GWLB) in front of an Amazon Elastic Container Service (Amazon ECS) container instance that stores the information that the company receives on an Amazon Elastic File System (Amazon EFS) file system. Use an AWS Lambda function to resolve authorization.
 
 **答案**
-D
+C
 
 ## Question #588
 
