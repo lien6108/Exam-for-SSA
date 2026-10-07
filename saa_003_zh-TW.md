@@ -12032,11 +12032,11 @@ A, C
 **詳解**
 正確答案是 **A, C**。
 - A：將RDS 快照直接匯入Aurora.。Amazon RDS 主控台提供原生的「Migrate Snapshot」功能，可以把相容 MySQL 的 RDS 快照直接轉換、還原成 Aurora MySQL 相容版本的叢集，不需要先匯出檔案或經過任何中介儲存步驟，是題目情境下最直接可用的路徑之一。
-- C：上傳資料庫傾印 (dump) 上傳至 Amazon S3，然後將傾印匯入 Aurora.。mysqldump 產生的傾印檔是一連串 SQL 陳述式組成的邏輯備份，上傳到 S3 後仍必須另外執行匯入指令碼把 SQL 陳述式重新播放進 Aurora，步驟繁瑣且耗時遠高於直接快照遷移，不是這裡最直接可行的方案。
+- C：上傳資料庫傾印 (dump) 上傳至 Amazon S3，然後將傾印匯入 Aurora.。Aurora 使用者指南「Migrating data to an Amazon Aurora MySQL DB cluster」列出的邏輯遷移路徑：用 mysqldump 建立傾印，再匯入既有的 Aurora MySQL 叢集（mysqldump 傾印是 SQL 陳述式，用 mysql client 重播即可）。S3 在這裡只是暫存傾印檔的位置，也能從 S3 取回後匯入，所以這是可行的第二條路徑。注意：Aurora「從 S3 還原叢集」的實體遷移功能需要 Percona XtraBackup 備份檔，不吃 mysqldump；本題選 C 是因為「傾印 + 匯入」這條邏輯遷移路徑成立。
 - 其餘選項比較：
-- B：上傳RDS 快照至Amazon S3。 然後將RDS 快照匯入到Aurora.。RDS 快照是由服務內部管理的儲存物件，並沒有把快照本身匯出成單一檔案再上傳到 Amazon S3 的原生功能，此路徑在既有 AWS 服務中並不存在對應的支援流程。
-- D：使用 AWS Database Migration Service (AWS DMS)將 RDS 快照 匯入 Aurora.。AWS Database Migration Service 可以把 RDS 快照還原出的資料庫作為遷移來源，透過受管理、可監控的複寫工作把資料寫入新建立的 Aurora MySQL 目標叢集，同樣能達成「用既有備份建立新 DB 執行個體」的需求，且過程有進度追蹤與錯誤處理機制。
-- E：上傳資料庫傾印 (dump) 上傳至 Amazon S3，然後使用 AWS DMS 將傾印匯入 Aurora.。把傾印檔上傳到 S3 後再透過 AWS DMS 匯入，同樣要先經過人工匯出、上傳兩道手續才能開始遷移，操作步驟比直接對快照做遷移或用 DMS 對還原後的資料庫做遷移還要迂迴，不是最直接的方案。
+- B：上傳RDS 快照至Amazon S3。 然後將RDS 快照匯入到Aurora.。RDS 快照不能以原始格式下載或上傳；「Export snapshot to S3」匯出的是 Apache Parquet 格式的資料檔，用於 Athena 等分析，Aurora 無法把它還原成叢集。快照要轉 Aurora 只能用 A 的 Migrate snapshot。
+- D：使用 AWS Database Migration Service (AWS DMS)將 RDS 快照 匯入 Aurora.。DMS 的來源端點必須是執行中的資料庫（或 S3 上的 CSV／Parquet 資料檔），不能直接讀取 RDS 快照。若要用 DMS，得先把快照還原成 DB 執行個體再當來源，等於多繞一圈；而且 Aurora 遷移文件把 DMS 定位為「從非 MySQL 相容資料庫遷移」的選項，MySQL → Aurora MySQL 直接用 A 即可。
+- E：上傳資料庫傾印 (dump) 上傳至 Amazon S3，然後使用 AWS DMS 將傾印匯入 Aurora.。DMS 以 S3 當來源時，只能讀 CSV 或 Parquet 格式的資料檔，而且要另外提供表格結構定義（external table definition）；mysqldump 產生的是 SQL 陳述式檔，DMS 無法解析。這不是「比較迂迴」，而是根本不支援。傾印檔的正確用法是 C：用 mysql client 重播 SQL 匯入 Aurora。
 
 **分類：** 資料庫
 
@@ -14577,9 +14577,9 @@ A
 
 **詳解**
 正確答案是 **A**。
-- A：為 Lambda 函式建立函式 URL。 向第三方提供 Lambda 函式 URL 用於 Webhook。建立 Lambda 函式 URL 是曝露單一 Lambda 函式最直接的方式，但函式 URL 直接綁定在該函式上，日後若需要在同一入口下加入更多後端目標、依規則分流，或整合其他既有的負載平衡資源，靈活度不如統一由負載平衡器管理進出流量的做法。
+- A：為 Lambda 函式建立函式 URL。 向第三方提供 Lambda 函式 URL 用於 Webhook。依 Lambda 開發者指南，函式 URL 是「a dedicated HTTP(S) endpoint for your Lambda function」，建立後 Lambda 會自動產生固定不變的 https://<url-id>.lambda-url.<region>.on.aws 端點，任何 HTTP 用戶端都能直接呼叫；AWS 官方甚至有「Tutorial: Creating a webhook endpoint using a Lambda function URL」專門示範這個用法。不需要額外部署或管理任何資源，是讓第三方呼叫單一 Lambda 函式最直接的做法。
 - 其餘選項比較：
-- B：在Lambda函式前部署一個Application Load Balancer (ALB)。 向第三方提供 ALB URL 用於網頁瀏覽。在 Lambda 函式前面部署一個應用程式負載平衡器，把 Lambda 函式設為 ALB 的目標，再將 ALB 的 URL 提供給第三方作為接收 webhook 呼叫的端點；ALB 原生支援以 Lambda 函式作為目標，能將外部的 HTTP 請求轉送並觸發函式執行，讓第三方能以標準 HTTP 呼叫的方式送達 webhook 通知。
+- B：在Lambda函式前部署一個Application Load Balancer (ALB)。 向第三方提供 ALB URL 用於網頁瀏覽。ALB 確實支援以 Lambda 作為目標，技術上能運作，但要額外建立 ALB、目標群組、監聽器與安全群組，還有 ALB 的固定時數費用；題目只有單一函式、不需要依路徑分流或整合其他後端，多一層 ALB 只增加成本與維運負擔。另外選項寫的是「用於網頁瀏覽」，也不是題目要的 webhook 呼叫。
 - C：建立一個Amazon Simple Notification Service (Amazon SNS)主題。 將此主題附加於 Lambda 函式。 向第三方提供 SNS 主題的公開主機名， 用於 Webhook。Amazon SNS 主題並沒有可供第三方以一般 HTTP 呼叫的公開主機名端點，外部服務要發布訊息到 SNS 主題必須透過 AWS API 並以 SigV4 簽章驗證身分，並非單純呼叫一個公開網址即可送達的 webhook 接收端。
 - D：建立 Amazon Simple Queue Service( Amazon SQS) 佇列。 將佇列附加到 Lambda 函式中。 為 Webhook 提供 SQS 佇列的公開主機名給第三方。Amazon SQS 佇列同樣沒有提供給第三方以公開主機名方式直接呼叫的 webhook 端點，寫入訊息到 SQS 佇列一樣需要透過 AWS API 呼叫並具備適當的 IAM 認證，無法被第三方當成一般的 webhook URL 使用。
 
@@ -16433,21 +16433,21 @@ A, C, F
 - F。 為Amazon ECS叢集提供額外能力，以減輕伺服器故障和維護事件
 
 **答案**
-A,C,E
+A,C,F
 
 **社群投票：** ACF 50%, ACE 26%, ACD 21%
 
 
 
 **詳解**
-正確答案是 **A,C,E**。
-- A：向外站架提供彈性電源和網路連線。依 AWS Outposts 共同責任模型，公司需要自行提供具備備援能力的電力與網路連線，將外站機架連接到既有的資料中心網路與 AWS 區域，這條銜接線路的準備與可用性屬於客戶設施端的責任，不是 AWS 負責的範圍。
-- C：資料中心環境的實物安全和出入控制。外站機架安裝在公司自有的資料中心內，該場地本身的實體安全管制與門禁進出，是公司對自有機房環境所要承擔的責任，AWS 只負責機架設備本身的安全防護，不涵蓋整個機房建築的門禁管理。
-- E：外站部分的實際維修。外站設備一旦故障需要現場維修，由於機架安裝在公司自有機房內，公司仍須安排人員配合並允許 AWS 工程師進出場地處理故障零組件，這類涉及自有機房存取與現場協調的任務落在負責設施與場地管理的業務團隊身上。
+正確答案是 **A, C, F**（已依 AWS Outposts High Availability Design 白皮書「Understanding the AWS Outposts Shared Responsibility Model」校正，原題庫答案為 A, C, E）。
+- A：向外站架提供彈性電源和網路連線。白皮書原文：「you are responsible for providing resilient power and network connectivity to the Outpost racks」。電源與連回 Region 的網路由客戶在自家機房端提供。
+- C：資料中心環境的實物安全和出入控制。白皮書原文：「you are responsible for the physical security and access controls of the data center environment」。機架放在公司自己的機房，機房門禁由公司負責。
+- F：為Amazon ECS叢集提供額外能力，以減輕伺服器故障和維護事件。白皮書原文：Outposts 容量有限，客戶必須自行決定需要多少容量，以「provide extra capacity to mitigate server failures and maintenance events」。這幾乎就是選項 F 的原句，容量規劃（N+M 備援）屬於客戶責任。題目中的「運營團隊／業務團隊」是 operations team 的機翻，兩者指同一個團隊，不能拿來排除 F。
 - 其餘選項比較：
+- E：外站部分的實際維修。白皮書原文：「AWS is responsible for the availability of the Outposts infrastructure including the power supplies, servers, and networking equipment within the AWS Outposts racks」。硬體故障時由 AWS 派人更換零組件，公司只需讓 AWS 人員進入機房（這已包含在 C 的門禁責任裡），實體維修本身不是公司的責任。
 - B：管理虛擬化超影片、儲存系統以及執行在外站的AWS服務。管理外站設備上的虛擬化 hypervisor、儲存系統以及執行在外站的 AWS 服務，屬於 AWS 對其代管基礎設施（含韌體與軟體層）的維運責任，並不是公司業務團隊需要處理的項目。
 - D：提供外站基礎設施，包括電力供應、伺服器和外站架內的聯網裝置。外站基礎設施（電力供應、伺服器與機架內聯網裝置）是由 AWS 出貨、安裝並持續維護的硬體資產，屬於 AWS 對 Outposts 設備生命週期管理的責任，不是公司需要自行採購或提供的項目。
-- F：為Amazon ECS叢集提供額外能力，以減輕伺服器故障和維護事件。為 Amazon ECS 叢集規劃額外容量以降低單一伺服器故障或維護事件對服務的影響，屬於應用程式架構層面的技術決策，是正與解決方案架構師協同建置應用程式的「運營團隊」職責範圍，而非題目所問、負責機架場地與設施面向的「業務團隊」責任。
 
 **分類：** 運算
 
@@ -18941,9 +18941,9 @@ C, D
 **詳解**
 正確答案是 **C, D**。
 - C：使用 S3 多段上傳。S3 Multipart Upload 會把大型檔案分成多個部分並平行上傳，能提高從現場資料中心到 S3 的吞吐量，也適合 GB 等級檔案的可靠上傳。
-- D：獲取平行物件的多個位元組範圍。平行取得單一物件的多個位元組範圍主要是下載最佳化，不能同時改善題目要求的現場資料中心上傳吞吐量。
+- D：獲取平行物件的多個位元組範圍。依 S3 效能指南「Use byte-range fetches」，在 GET 請求帶 Range 標頭、以多條並行連線抓同一物件的不同位元組範圍，可取得比單一整檔請求更高的總吞吐量，正好對應題目「從 S3 下載到 EC2」這一段。C 解決上傳、D 解決下載，兩者合起來才完整回應題目的兩個方向。
 - 其餘選項比較：
-- A：使用S3 bucket存取點，而不是直接存取S3 bucket.。S3 Access Point 可針對不同應用程式提供獨立端點與政策，讓大量平行請求分散到不同的存取點，改善從資料中心與 EC2 fleet 存取 S3 的可擴充性。
+- A：使用S3 bucket存取點，而不是直接存取S3 bucket.。S3 Access Point 是存取管理工具：為每個應用程式提供專屬的主機名稱與存取政策，用來簡化大型共用資料集的權限控管，並不會提升單一物件的上傳或下載吞吐量；S3 效能指南列出的吞吐量作法（並行連線、byte-range fetch、Transfer Acceleration 等）也不包含 Access Point。
 - B：上傳檔案到多個 S3 bucket。把資料分散到多個儲存貯體會增加資料管理與轉碼流程的複雜度，不能取代 S3 對單一物件採用多段上傳的吞吐量最佳化。
 - E：上傳檔案時在每個物件中新增隨機字首。隨機前綴曾用於避免舊式 S3 分割區熱點，但現代 S3 已可自動處理高請求率，新增前綴也不是這個上傳與下載情境的主要最佳化方法。
 
@@ -20473,9 +20473,9 @@ A, C
 - A：啟用並設定每個EC2執行個體上增強的網路。增強網路透過 Elastic Network Adapter 提供較高的封包每秒數、較低的延遲與較高的網路吞吐量，適合近即時串流處理的節點間通訊。
 - C：在叢集放置組中執行EC2 執行個體。叢集放置組會把 EC2 執行個體放在同一可用區內較接近的底層硬體上，以降低節點間延遲並提高可用網路吞吐量；與增強網路搭配即可同時改善拓撲與介面效能。
 - 其餘選項比較：
-- B：將EC2執行個體分組到單獨的帳戶中。將執行個體分組在獨立帳戶可隔離資源與流量管理邊界，避免不相關工作負載互相影響。對需要近即時處理的節點，隔離帳戶也能降低共享網路資源造成的干擾。
-- D：在每個EC2執行個體中附加多個彈性網路介面。多個 ENI 增加的是介面與位址數量，不會直接縮短不同節點間的網路距離或延遲。
-- E：使用Amazon Elastic Block Store (Amazon EBS)最佳化執行個體型別。EBS 最佳化執行個體提供專用的 EBS 頻寬，能避免儲存 I/O 與其他網路流量互相競爭。對需要近即時處理的工作負載，穩定的專用 I/O 路徑有助於維持節點間處理效能。
+- B：將EC2執行個體分組到單獨的帳戶中。AWS 帳戶是帳務、權限與資源管理的邊界，不影響執行個體在實體網路上的位置或網卡效能；把節點拆到不同帳戶反而還要另外處理跨帳戶網路連通，對降低節點間延遲沒有幫助。
+- D：在每個EC2執行個體中附加多個彈性網路介面。多個 ENI 增加的是介面與 IP 位址數量，常用於管理網路分流或多子網路連接，不會縮短節點間的實體距離，也不會降低封包延遲；執行個體的總網路頻寬上限由執行個體類型決定，不會因為多掛 ENI 而提高。
+- E：使用Amazon Elastic Block Store (Amazon EBS)最佳化執行個體型別。EBS 最佳化執行個體提供的是執行個體與 EBS 磁碟區之間的專用頻寬，改善的是儲存 I/O，與執行個體彼此之間的網路延遲無關。
 
 **分類：** 運算
 
